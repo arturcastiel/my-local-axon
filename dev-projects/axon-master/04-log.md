@@ -1,19 +1,18 @@
-# Implementation Log — AXON Master
+# 04-log — axon-master implementation log
 
-## Entries
+## 2026-05-16 — Round 2 study: code-dev focused
+- 4-cycle deep study of code-dev subsystem completed
+- 13 helpers written: cd-c1..cd-c4, p1..p4
+- Headline finding: code-dev-pr-review.cmp.md has negative compression (-1%, ~5,760 tokens wasted per invocation)
+- Executive top-15 in helpers/cd-c4-p3-improvements.md
+- Net-new capabilities deferred (Waves 6-11): pr-stack, reviewer-bot, migrate-v4, pr-import, release, coverage-delta, conflict-predict
+- All top-15 items have well-mapped prior art (only D-B4 library-dev bridge is AXON-novel)
+- Phase advanced: 1-study-complete → 1-study-complete-r2
 
-### 2026-05-16 · Project created
-- Multi-cycle study initiated. Each cycle: study → workflows → improvements → web research.
-- Helpers folder seeded.
-- Cycle 1 starting: parallel exploration of kernel, workspace, tools.
-
-### 2026-05-16 · Cycles 1-3 complete
-- 12 helper files written (c1-p1..c3-p4 + INDEX + METHODOLOGY).
-- Cycle 1: broad survey (kernel/programs/tools maps + 40 workflows + 47-item backlog + web research on caching/frameworks/DSL/Claude-Code primitives).
-- Cycle 2: deep internals (compiler/scheduler/memory/processes/programs) — surfaced 8 spec inconsistencies + 25 open questions.
-- Cycle 3: token economy — discovered **24 of 73 compiled programs have 0% compression** (silent waste). Tokenizer mismatch (cl100k_base under Claude). Caching gaps in dispatch/pattern/document-parser/web-search.
-
-### 2026-05-16 · Cycle 4 — synthesis written
-- `01-study.md` written. ~18 KB / 11 sections.
-- Top-12 backlog identified. 5 recommended PRs (cache audit · cleanup+gate · tokenizer fix · spec doc cluster · top-3 caches).
-- Phase 1 of code-dev v4 workflow complete. Ready for `code-dev plan`.
+## 2026-05-16 — Round 3 study: code-dev tools organization
+- 4 helpers written: cd-tools-p1..p4
+- Proposed 10-verb umbrella (pr, review, journal, state, safety, knowledge, flow, shape, lifecycle, meta)
+- 8 retire candidates identified (combine, divide, hold, since, replay, diff, check-structure, explain-reviewer) — alias-stub for 1 release
+- 5-wave migration plan, fully backward-compatible during transition
+- Prior art validation: gh/kubectl/docker/gt all use 8-15 verb umbrellas
+- Net effect: 57 user-visible verbs → 10, with same capability

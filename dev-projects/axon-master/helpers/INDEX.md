@@ -39,6 +39,52 @@ where N = cycle (1-4), M = phase (1-4).
 ### Cycle 4 (synthesis)
 - consolidates into ../01-study.md
 
+---
+
+## ROUND 2 — code-dev focused study (cd-*)
+
+Same 4-cycle structure, scoped exclusively to the `code-dev` sub-system.
+57 programs · v4 schema · shadow indexing · 11-gate preflight.
+
+### Cycle 1 (broad survey)
+- [cd-c1-p1-program-map.md](cd-c1-p1-program-map.md) — 57 programs by cluster, compile state
+- [cd-c1-p1-schema-map.md](cd-c1-p1-schema-map.md) — v4 layout, v1 deltas, migration story
+- [cd-c1-p1-tools-map.md](cd-c1-p1-tools-map.md) — tools invoked by code-dev (shadow, shell, clock, …)
+- [cd-c1-p2-workflows.md](cd-c1-p2-workflows.md) — end-to-end lifecycle narrative
+- [cd-c1-p3-gaps.md](cd-c1-p3-gaps.md) — G-CD-A..G ranked backlog (~25 items)
+- [cd-c1-p4-web-findings.md](cd-c1-p4-web-findings.md) — stacked-PRs, agent loops, indexing prior art
+
+### Cycle 2 (deep internals)
+- [cd-c2-p1-internals.md](cd-c2-p1-internals.md) — pr-review 9 phases, preflight 11 gates, shadow, undo, reviewer-state
+- [cd-c2-p2-workflows.md](cd-c2-p2-workflows.md) — W1–W15 refined workflows (pr-stack, reviewer-bot, finalize, …)
+- [cd-c2-p3-gaps.md](cd-c2-p3-gaps.md) — D-A..G ranked, top-15
+- [cd-c2-p4-web-findings.md](cd-c2-p4-web-findings.md) — git-spice/Graphite/Sapling/Aider/Sweep deep dives
+
+### Cycle 3 (token economy — measured)
+- [cd-c3-p1-tokens.md](cd-c3-p1-tokens.md) — measured compression ratios; `code-dev-pr-review.cmp.md` = **-1%** (negative)
+- [cd-c3-p2-workflows.md](cd-c3-p2-workflows.md) — CW1–CW15 caching workflows
+- [cd-c3-p3-improvements.md](cd-c3-p3-improvements.md) — T-A..F ranked, top-15
+- [cd-c3-p4-web-findings.md](cd-c3-p4-web-findings.md) — prompt-caching, bm25, jsonl observability
+
+### Cycle 4 (synthesis)
+- [cd-c4-p1-synthesis.md](cd-c4-p1-synthesis.md) — what code-dev IS, today (consolidated)
+- [cd-c4-p2-workflows.md](cd-c4-p2-workflows.md) — target end-state workflow + token budget
+- [cd-c4-p3-improvements.md](cd-c4-p3-improvements.md) — **EXECUTIVE TOP-15** + 5-wave sequencing
+- [cd-c4-p4-web-findings.md](cd-c4-p4-web-findings.md) — top-15 vs prior art (only 1 item is novel)
+
+---
+
+## ROUND 3 — code-dev tools organization (cd-tools-*)
+
+Focused mini-study on consolidating the 57 code-dev programs into a 10-verb umbrella.
+
+- [cd-tools-p1-inventory.md](cd-tools-p1-inventory.md) — overlap matrix, 8 retire candidates, 10 functional clusters
+- [cd-tools-p2-umbrella.md](cd-tools-p2-umbrella.md) — proposed verbs (`pr`, `review`, `journal`, `state`, `safety`, `knowledge`, `flow`, `shape`, `lifecycle`, `meta`) + sub-command shape
+- [cd-tools-p3-migration.md](cd-tools-p3-migration.md) — 5-wave migration plan, risks, roll-back
+- [cd-tools-p4-prior-art.md](cd-tools-p4-prior-art.md) — `gh` / `kubectl` / `docker` / `gt` / `git` validation
+
 ## Cross-links
-- Final report: `../01-study.md`
+- Final report (round 1): `../01-study.md`
 - Backlog (filtered): `../02-prs.md` (after `code-dev plan`)
+- **Round 2 executive backlog:** `cd-c4-p3-improvements.md` (top-15 token/quality)
+- **Round 3 reorganization plan:** `cd-tools-p3-migration.md` (5 waves)
