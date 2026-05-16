@@ -16,3 +16,11 @@
 - 5-wave migration plan, fully backward-compatible during transition
 - Prior art validation: gh/kubectl/docker/gt all use 8-15 verb umbrellas
 - Net effect: 57 user-visible verbs → 10, with same capability
+
+## 2026-05-16 — Round 4 study: code-dev workflow (4 layers)
+- 16 helpers written: cd-wf-c1..c4 × p1..p4
+- L1 usage: 8 named workflows (WF1..WF8), 12 recipes, 13 design patterns
+- L2 industrial gaps: 14 scored (top: pr list, meta board, context use)
+- L3 naming: top-15 confusing names; 30+ renames + 12 new programs
+- L4 synthesis + roadmap (11 releases) + 14 next-study candidates
+- Recommended next study: Study H — failure modes / postmortem patterns

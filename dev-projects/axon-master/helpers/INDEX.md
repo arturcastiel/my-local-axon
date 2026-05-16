@@ -83,8 +83,40 @@ Focused mini-study on consolidating the 57 code-dev programs into a 10-verb umbr
 - [cd-tools-p3-migration.md](cd-tools-p3-migration.md) — 5-wave migration plan, risks, roll-back
 - [cd-tools-p4-prior-art.md](cd-tools-p4-prior-art.md) — `gh` / `kubectl` / `docker` / `gt` / `git` validation
 
+---
+
+## ROUND 4 — code-dev workflow study (cd-wf-*)
+
+4-layer deep dive: usage, industrial gaps, naming, synthesis + next-study.
+
+### Layer 1 — usage (what to do, how to use)
+- [cd-wf-c1-p1-canonical-flows.md](cd-wf-c1-p1-canonical-flows.md) — 8 named workflows (WF1..WF8), coverage map
+- [cd-wf-c1-p2-entry-points.md](cd-wf-c1-p2-entry-points.md) — onboarding, discovery surfaces, cheatsheet proposal
+- [cd-wf-c1-p3-cookbook.md](cd-wf-c1-p3-cookbook.md) — 12 copy-paste recipes
+- [cd-wf-c1-p4-web-findings.md](cd-wf-c1-p4-web-findings.md) — 13 CLI design patterns
+
+### Layer 2 — industrial gaps (what's missing)
+- [cd-wf-c2-p1-industrial-gaps.md](cd-wf-c2-p1-industrial-gaps.md) — 14 gaps scored (G-I1..G-I14)
+- [cd-wf-c2-p2-ci-cd-integration.md](cd-wf-c2-p2-ci-cd-integration.md) — `pr sync` + coverage + check parsers
+- [cd-wf-c2-p3-team-collab-gaps.md](cd-wf-c2-p3-team-collab-gaps.md) — 8 team gaps (G-T1..G-T8), team-mode toggle
+- [cd-wf-c2-p4-web-findings.md](cd-wf-c2-p4-web-findings.md) — Graphite, Aviator, gh, release-please, codecov
+
+### Layer 3 — naming & categories (what's confusing)
+- [cd-wf-c3-p1-name-collisions.md](cd-wf-c3-p1-name-collisions.md) — top-15 confusing names, 6 collision classes
+- [cd-wf-c3-p2-rename-proposal.md](cd-wf-c3-p2-rename-proposal.md) — full rename table (30+ moves, 12 new)
+- [cd-wf-c3-p3-categories.md](cd-wf-c3-p3-categories.md) — 10 umbrella definition cards + boundary tests
+- [cd-wf-c3-p4-web-findings.md](cd-wf-c3-p4-web-findings.md) — Heroku/MS/kubectl/gh naming rules
+
+### Layer 4 — synthesis (what next)
+- [cd-wf-c4-p1-synthesis.md](cd-wf-c4-p1-synthesis.md) — three-pane view + cross-round backlog
+- [cd-wf-c4-p2-roadmap.md](cd-wf-c4-p2-roadmap.md) — 11-release sequenced plan
+- [cd-wf-c4-p3-next-study.md](cd-wf-c4-p3-next-study.md) — 14 candidate next-studies (top pick: **Study H — failure-modes**)
+- [cd-wf-c4-p4-web-findings.md](cd-wf-c4-p4-web-findings.md) — research seeds for each next-study
+
 ## Cross-links
 - Final report (round 1): `../01-study.md`
 - Backlog (filtered): `../02-prs.md` (after `code-dev plan`)
 - **Round 2 executive backlog:** `cd-c4-p3-improvements.md` (top-15 token/quality)
 - **Round 3 reorganization plan:** `cd-tools-p3-migration.md` (5 waves)
+- **Round 4 unified roadmap:** `cd-wf-c4-p2-roadmap.md` (11 releases)
+- **Recommended next study:** `cd-wf-c4-p3-next-study.md` → Study H (postmortems)
