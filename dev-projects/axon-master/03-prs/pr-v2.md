@@ -15,5 +15,9 @@ Wave-2 ships study modes, sessions, governance teeth, rename harness, usage logg
 - **Rollback**: revert.
 - **Owner**: AGENT writes; HUMAN reviews CHANGELOG.
 
+## Codebase grounding
+- **modify**: [`VERSION`](../../../../VERSION) — `0.7.0` → `0.8.0`.
+- **modify**: [`CHANGELOG.md`](../../../../CHANGELOG.md) — seal `## 0.8.0 — <ISO>` block with W2 PR list.
+
 ## Cross-refs
 - Master plan: `../03-plan.md` § Wave 2 close.

@@ -57,6 +57,13 @@ $ code-dev pr list --all-projects --json
 - **Rollback**: revert.
 - **Owner**: AGENT writes; HUMAN runs.
 
+## Codebase grounding
+- **new**: `workspace/programs/code-dev-pr-list.md` — mirrors style of [`code-dev-pr.md`](../../../../workspace/programs/code-dev-pr.md). Routes through new umbrella router `code-dev-pr` (PR-14).
+- **new**: `tools/pr_aggregate.py` — walks `my-axon/dev-projects/*/`, reads each `_meta.md`, parses every `pr-N.*` line (regex `^pr-(\d+\.?\d*)\.(\w+):\s*(.+)$`), emits table. Use [`tools/prefs.py.parse_pref_file`](../../../../tools/prefs.py) as the parse pattern.
+- **modify**: [`tools/REGISTRY.json`](../../../../tools/REGISTRY.json) — add `pr_aggregate` entry.
+- **flags**: `--all-projects` (default scoped to `RETRIEVE(W:code-dev-project)`), `--state=open|done|blocked|in-progress`, `--json`.
+- **columns**: `id | slug | phase | state | last-program | age` (age from `_meta.updated`).
+
 ## Cross-refs
 - Master plan: `../03-plan.md` § Wave 2 / PR-9.5.
 - Helpers: `helpers/cd-c4-p3-improvements.md` (D-B1), `helpers/cd-wf-c2-p1-industrial-gaps.md` (G-I1), `helpers/cd-wf-c4-p2-roadmap.md` Wave 2.

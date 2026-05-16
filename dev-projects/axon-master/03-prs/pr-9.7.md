@@ -57,6 +57,13 @@ auto-save? [Y/n] y
 - **Rollback**: revert; users fall back to `code-dev load <slug>` (no auto-save).
 - **Owner**: AGENT writes; HUMAN tests dirty-switch path.
 
+## Codebase grounding
+- **new**: `workspace/programs/code-dev-meta-context.md` — sub-program of new `meta` umbrella (PR-14). Subcommands: `list`, `use <slug>`, `current`.
+- **modify**: [`tools/prefs.py`](../../../../tools/prefs.py) — currently 45 lines aggregating `workspace/preferences/*.md`; extend to also write workspace prefs via new helper `set_pref(key, value)` (calls `_axon_io.atomic_write`).
+- **target W: key**: `W:code-dev-project` (already used by `code-dev-load.md` per [`workspace/programs/code-dev-load.md`](../../../../workspace/programs/code-dev-load.md) pattern).
+- **dirty-switch check**: read `_session.md` state; if `active` and not `tagged` within last 5 min → WARN before switch.
+- **validate slug**: ensure `{W:myaxon-dev-projects}/<slug>/_meta.md` exists.
+
 ## Cross-refs
 - Master plan: `../03-plan.md` § Wave 2 / PR-9.7.
 - Helpers: `helpers/cd-wf-c2-p1-industrial-gaps.md` (G-I10), `helpers/cd-wf-c1-p3-cookbook.md` recipe 7, `helpers/cd-gap-c2-p4-failure-modes.md` (F-G3).

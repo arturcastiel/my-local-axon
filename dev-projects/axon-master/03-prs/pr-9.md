@@ -72,6 +72,15 @@ proceed? [y/N]
 - **Rollback**: revert; `_session.md` becomes a stale orphan but causes no error.
 - **Owner**: AGENT writes; HUMAN runs concurrent-edit test, exercises resume after a synthetic kill.
 
+## Codebase grounding
+- **new**: `tools/session.py` — exposes `start(chat_id) / checkpoint(state) / transition(new_state) / recover()`. State enum: `active | frozen | tagged | closed | recovered`. JSONL append to `_session.md` (one event per line under `---` frontmatter).
+- **modify**: [`tools/_axon_io.py`](../../../../tools/_axon_io.py) — `atomic_write` already exists (58 lines, uses `tempfile.mkstemp` + `os.replace`). No code change needed; extend usage to cover `_actions.log` and `journal/*` writes in handoff/freeze/tag/resume programs.
+- **modify**: [`workspace/programs/code-dev-handoff.md`](../../../../workspace/programs/code-dev-handoff.md), [`code-dev-freeze.md`](../../../../workspace/programs/code-dev-freeze.md), [`code-dev-tag.md`](../../../../workspace/programs/code-dev-tag.md), [`code-dev-resume.md`](../../../../workspace/programs/code-dev-resume.md) — each calls `TOOL(session, transition=<state>)` and `TOOL(session, checkpoint)`.
+- **auto-checkpoint trigger**: every 20 turns counted via `W:turn-counter`, AND before any `_meta.md` mutation; intercept in handoff/freeze/tag entry blocks.
+- **new**: `tests/test_session.py` — fork two processes writing concurrently, assert no torn write (compare hash after) using `multiprocessing.Process` per [`tests/test_tools_core.py`](../../../../tests/test_tools_core.py) pattern.
+- **modify**: [`tools/REGISTRY.json`](../../../../tools/REGISTRY.json) — add `session` tool entry.
+- **journal/**: per-project `journal/` directory created on first checkpoint; one file per ISO date.
+
 ## Cross-refs
 - Master plan: `../03-plan.md` § Wave 2 / PR-9.
 - Helpers: `helpers/cd-gap-c3-p2-session-model.md`, `helpers/cd-gap-c2-p4-failure-modes.md` (Class B, F-C4).

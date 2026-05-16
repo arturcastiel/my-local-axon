@@ -77,6 +77,15 @@ exit 1
 - **Owner**: AGENT writes; HUMAN reviews precedence doc.
 - **Parallelism**: ⊥ PR-3 (independent files).
 
+## Codebase grounding
+- **new**: `workspace/safety/rules.md` — initial empty schema doc. Parallel to existing [`workspace/safety/`](../../../../workspace/safety/) (verify dir exists; create if missing).
+- **new**: `workspace/AXON-DOCS-GOVERNANCE.md` — alongside [`workspace/AXON-DOCS.md`](../../../../workspace/AXON-DOCS.md).
+- **new**: `tools/rules.py` — parser (regex `^([\w.-]+):\s*(.+)$` per [`tools/prefs.py`](../../../../tools/prefs.py) line 6-15), `load_rules()`, `PRECEDENCE = [...]` 8-tier constant. Register in [`tools/REGISTRY.json`](../../../../tools/REGISTRY.json) under `tools`.
+- **new**: `tests/test_governance.py` — pattern from [`tests/test_tools_core.py`](../../../../tests/test_tools_core.py); empty-rules.md → `[]`; one synthetic rule → blocks one option.
+- **modify**: [`workspace/programs/code-dev-plan.md`](../../../../workspace/programs/code-dev-plan.md) — add `## GOVERNANCE TRACE` block emission after `LOAD CONTEXT` section (line ~30); reads via `TOOL(rules)`.
+- **modify**: [`workspace/programs/code-dev-pr-ready.md`](../../../../workspace/programs/code-dev-pr-ready.md) — accept `--strict` flag; in W1 emit stub `"--strict gating not yet implemented (full in PR-10)"` + exit 1.
+- **precedence tiers** (documented in AXON-DOCS-GOVERNANCE.md): kernel-rules > user-memory-safety > project-rules > ad-hoc `--rule` > legacy `dont-do.md` > workspace defaults > heuristics > silent-default.
+
 ## Cross-refs
 - Master plan: `../03-plan.md` § Wave 1 / PR-4.
 - Helpers: `helpers/cd-gap-c3-p1-governance.md`, `helpers/cd-gap-c2-p4-failure-modes.md` (Class E), `helpers/cd-study-c3-p1-plan-modes.md`.

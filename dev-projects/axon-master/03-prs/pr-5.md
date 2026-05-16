@@ -55,6 +55,14 @@ exit 1
 - **Rollback**: revert `log.py` (redaction off, logs append raw).
 - **Owner**: AGENT writes; HUMAN runs scan pre-push.
 
+## Codebase grounding
+- **new**: `tools/redact.py` — standalone module exposing `redact(text: str) -> tuple[str, list[Hit]]`. Patterns: `sk-[A-Za-z0-9]{20,}`, `AKIA[0-9A-Z]{16}`, `eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+`, `[A-Z_]*_TOKEN=\S+`, `[A-Z_]*_KEY=\S+`, `gh[ps]_[A-Za-z0-9]{36}`.
+- **modify**: [`tools/log.py`](../../../../tools/log.py) (34 lines today) — before writing entry line (currently `entry = f"[{ts}] | ..."` at ~line 25), call `from redact import redact; msg, hits = redact(args.msg)`. If `hits`, also write sidecar to `my-axon/memory/local/<basename>.redactions.log`.
+- **new**: `tools/scan_pre_push.py` — reads `git diff --cached -U0`, runs `redact()` over each `+` line, exits 1 on hit. Wire as `.git/hooks/pre-push` snippet emitted by program.
+- **new**: `workspace/safety/redact-allowlist.md` — path globs exempted (tests/fixtures, templates). Same `key: value` parser as [`tools/prefs.py`](../../../../tools/prefs.py).
+- **new**: `tests/test_redact.py` — 5 positive cases + 3 allow-list bypasses.
+- **modify**: [`tools/REGISTRY.json`](../../../../tools/REGISTRY.json) — add `redact`, `scan_pre_push` tool entries.
+
 ## Cross-refs
 - Master plan: `../03-plan.md` § Wave 1 / PR-5.
 - Helpers: `helpers/cd-gap-c2-p4-failure-modes.md` (F-H1), `helpers/cd-gap-c1-p3-goals-extracted.md` (G.safe.03, G.safe.08).

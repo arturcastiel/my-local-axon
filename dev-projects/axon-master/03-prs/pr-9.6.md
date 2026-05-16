@@ -48,6 +48,11 @@ $ code-dev next
 - **Rollback**: revert; old behavior fully restored.
 - **Owner**: AGENT writes; HUMAN sanity-checks one turn.
 
+## Codebase grounding
+- **modify**: [`workspace/programs/code-dev-preflight.md`](../../../../workspace/programs/code-dev-preflight.md) — add `--mode=summary` short-circuit at top of `## LOAD CONTEXT`; reads only `_meta.md` (`branch`, `phase`, `workflow-step`, `current-pr`), emits one line.
+- **modify**: [`workspace/programs/code-dev-next.md`](../../../../workspace/programs/code-dev-next.md) (current 10-moment classifier, ~120 lines) — before `## SIGNALS` block, read `meta.next-action` if present; if set with ts < 1h old, dispatch directly to `MOMENT: cached-next` and emit cached recommendation. Otherwise fall through to existing 10-moment logic.
+- **`_meta.next-action` schema**: `next-action: code-dev <verb>` + `next-action-set-at: <ISO>`. Programs writing this: `code-dev-handoff.md`, `code-dev-freeze.md`, `code-dev-pr-ready.md` (set after their work).
+
 ## Cross-refs
 - Master plan: `../03-plan.md` § Wave 2 / PR-9.6.
 - Helpers: `helpers/cd-c4-p3-improvements.md` (T-C1, T-C2), `helpers/cd-c3-p3-improvements.md`.

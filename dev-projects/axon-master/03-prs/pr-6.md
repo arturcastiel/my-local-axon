@@ -60,6 +60,11 @@ $ less workspace/AXON-DOCS-CHEATSHEET.md
 - **Rollback**: `git rm workspace/AXON-DOCS-CHEATSHEET.md`.
 - **Owner**: AGENT writes; HUMAN reads + signs off.
 
+## Codebase grounding
+- **new**: `workspace/AXON-DOCS-CHEATSHEET.md` — alongside existing [`workspace/AXON-DOCS.md`](../../../../workspace/AXON-DOCS.md) (top-level reference). One-pager, ≤ 80 lines. Sections: 10 verbs (from `# desc:` in `code-dev-*.md` source files), 5 named flows (boot → study → plan → pr → review), 3 escape hatches (`code-dev resume`, `code-dev preflight`, `code-dev undo`).
+- **inputs read**: walk [`workspace/programs/code-dev-*.md`](../../../../workspace/programs/) for `# desc:` lines (manual selection of 10 in W1; auto in PR-34.5).
+- **future marker**: include `<!-- AUTO-VERBS-START -->` ... `<!-- AUTO-VERBS-END -->` markers now (no content yet) so PR-34.5 can fill them.
+
 ## Cross-refs
 - Master plan: `../03-plan.md` § Wave 1 / PR-6.
 - Helpers: `helpers/cd-wf-c1-p2-entry-points.md`, `helpers/cd-gap-c3-p3-documentation.md`.

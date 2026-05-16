@@ -88,3 +88,11 @@
 - POST-1.0 queue now NAMED EXPLICITLY (was vague): D-E1 pr-stack, D-E2 reviewer-bot, D-B4 pr-import, G-CD-A4 release, D-C8 coverage-delta, D-C6 conflict-predict, G.tok.06 cache-hit-rate, G.wf.05 tutorial, G.wf.06 cookbook, G.inf.06 v5 schema, G.team.*, T-S2-S6, NS-3-14, R3 T5 drop-stubs, CI deep, plan-vs-plan diff, plan→PR materialization
 - Phase advanced: 2-plan-complete-v4 → 2-plan-complete-v5
 - Coverage statement: every R2-R6 actionable item is now in-plan OR explicitly deferred with reason
+
+## 2026-05-16 — PR detail files grounded in /mnt/c/projects/axon
+
+- All 53 per-PR files in 03-prs/ now carry a "## Codebase grounding" section
+- Each grounding lists concrete files (new/modify), real symbol/line refs, REGISTRY.json hits, test fixture paths
+- Surveyed substrate: tools/_axon_io.py, log.py, prefs.py, compile-write.py, tokenizer.py, usage.py, shadow.py, events.py, igap.py, dispatch.py, dispatch_stats.py, cron.py, docgen.py; 58 code-dev-*.md sources + 10 *.cmp.md compiled; tests/conftest.py; workspace/templates v4
+- Effect: each PR is now execution-ready without consulting helpers/ first; implementer can start with a clear file list
+- Phase: 2-plan-complete-v5-detailed

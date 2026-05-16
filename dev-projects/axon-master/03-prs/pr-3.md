@@ -72,6 +72,17 @@ $ python3 tools/migrate_meta.py --apply my-axon/dev-projects/axon-master
 - **Owner**: AGENT writes + runs dry-run; HUMAN approves, runs `--apply`.
 - **Parallelism**: ⊥ PR-4 (governance schema separate). Depends on PR-1 (T1 verifies post-migration), PR-2 (no recompile until gate ships).
 
+## Codebase grounding
+- **new**: `tools/migrate_meta.py` — reads `_meta.md` line-by-line (parser tolerant of v1 `key: value` syntax, same shape as [`tools/prefs.py.parse_pref_file`](../../../../tools/prefs.py)); emits v4.1 with required sections `phase / status / codebase / parent / sub-projects / created / updated / pr-N blocks / token-ceiling / session-recording / study`.
+- **new**: `workspace/AXON-DOCS-SCHEMA.md` — reference doc; cross-link from [`workspace/AXON-DOCS.md`](../../../../workspace/AXON-DOCS.md). v4 templates already exist at [`workspace/templates/v4-meta.md`](../../../../workspace/templates/v4-meta.md) and [`workspace/templates/v4-schema.md`](../../../../workspace/templates/v4-schema.md) — extend to v4.1, do NOT duplicate.
+- **new**: `workspace/programs/code-dev-migrate.md` — program file alongside existing `code-dev-*.md`; registers with [`tools/REGISTRY.json`](../../../../tools/REGISTRY.json).
+- **modify**: [`tools/_axon_io.py.atomic_write`](../../../../tools/_axon_io.py) — already provides the atomicity; migrator uses it via `from _axon_io import atomic_write`. Backup file naming: `_meta.md.bak.<ISO>` (retention=3).
+- **modify**: [`workspace/programs/code-dev-resume.md`](../../../../workspace/programs/code-dev-resume.md) — recognize v4.1 schema; fail loudly on v1 with hint to run `code-dev migrate`.
+- **new**: `tests/test_migrator.py` — fixtures under `tests/fixtures/projects/v1-minimal/` and `tests/fixtures/projects/v1-with-custom/`. Uses `conftest.run()` and `tmp_ws` patterns from [`tests/test_tools_core.py`](../../../../tests/test_tools_core.py).
+- **modify**: `my-axon/.gitignore` — add `*.bak.*` (current ignore unknown; verify before committing).
+- **side-effect**: creates empty `study/_index.md` skeleton (consumed by PR-17).
+- **dry-run pattern**: model after existing tools that emit `{"plan": [...]}` JSON without writes; reuse the `--dry-run` argparse pattern from [`tools/cron.py`](../../../../tools/cron.py).
+
 ## Cross-refs
 - Master plan: `../03-plan.md` § Wave 1 / PR-3.
 - Helpers: `helpers/cd-gap-c2-p2-schema-migrator.md` (design), `helpers/cd-c1-p1-schema-map.md` (v1 vs v4), `helpers/cd-study-c4-p2-targets.md` (T-S0.1-2).

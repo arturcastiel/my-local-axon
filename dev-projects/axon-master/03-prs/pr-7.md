@@ -63,6 +63,13 @@ example-F-A2-2026-05-15.md
 - **Rollback**: `git rm` the three files.
 - **Owner**: AGENT writes; HUMAN reviews catalog accuracy.
 
+## Codebase grounding
+- **new**: `workspace/log/failure-modes.md` — lives next to existing [`workspace/log/entries/`](../../../../workspace/log/entries/) (where [`tools/log.py`](../../../../tools/log.py) writes daily files). Catalog format: `## F-<Class><n> <name>` header, then `Trigger / Signal / Mitigation / Owner / last-reviewed: <ISO>` fields.
+- **new**: `workspace/templates/postmortem.md` — alongside existing templates [`workspace/templates/v4-meta.md`](../../../../workspace/templates/v4-meta.md), `v4-schema.md`, `v4-session-marker.md`, `code-dev-pr-opm.tpl.md`. Schema fields: `incident-id / date / detected-by / failure-mode (F-*) / chain-of-events / root-cause / mitigation / prevention / lessons`.
+- **classes (A-H)**: A=structural, B=performance, C=ergonomics, D=dispatch/control-flow, E=governance, F=cron/scheduling, G=token, H=secret/safety.
+- **seed entries**: ≥ 25 modes; populate from `helpers/cd-gap-c2-p4-failure-modes.md` which already lists 34.
+- **synthetic example**: postmortem for 2026-05-15 unauthorized-push incident (see user memory `/memories/operational-safety.md`).
+
 ## Cross-refs
 - Master plan: `../03-plan.md` § Wave 1 / PR-7.
 - Helpers: `helpers/cd-gap-c2-p4-failure-modes.md` (source-of-truth seed), `helpers/cd-gap-c4-p2-priority-matrix.md` (top-10 mitigations).

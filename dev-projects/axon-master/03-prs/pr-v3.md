@@ -14,5 +14,9 @@ Wave-3 closes observability + perf + integration + docs.
 - **Rollback**: revert.
 - **Owner**: AGENT; HUMAN reviews.
 
+## Codebase grounding
+- **modify**: [`VERSION`](../../../../VERSION) — `0.8.0` → `0.9.0`.
+- **modify**: [`CHANGELOG.md`](../../../../CHANGELOG.md) — seal `## 0.9.0 — <ISO>` block with W3 PR list.
+
 ## Cross-refs
 - Master plan: `../03-plan.md` § Wave 3 close.

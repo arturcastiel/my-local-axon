@@ -15,5 +15,9 @@ Wave-1 closes the foundation: T1 lints, compile gate, schema migrator, governanc
 - **Rollback**: revert.
 - **Owner**: AGENT writes; HUMAN reviews CHANGELOG text.
 
+## Codebase grounding
+- **modify**: [`VERSION`](../../../../VERSION) — single-line file at repo root.
+- **modify**: [`CHANGELOG.md`](../../../../CHANGELOG.md) — repo root. Append `## 0.7.0 — <ISO date>` block above the previous version block; clear `## Unreleased` to empty placeholder.
+
 ## Cross-refs
 - Master plan: `../03-plan.md` § Wave 1 close.

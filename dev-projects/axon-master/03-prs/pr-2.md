@@ -62,6 +62,17 @@ ERROR: cmp_bytes (4180) > 0.95 × src_bytes (4280). Refusing to write.
 - **Owner**: AGENT writes; HUMAN runs audit + reviews quarantine list.
 - **Parallelism**: blocks PR-3 (resume edit must not regress compiled size) and all recompiles.
 
+## Codebase grounding
+- **new**: `tools/audit_compiled.py` — walks [`workspace/programs/compiled/*.cmp.md`](../../../../workspace/programs/compiled/) (10 files today: code-dev, code-dev-audit, -explain, -init, -log, -plan, -pr, -pr-review, -shadow, -study), pairs each to its source in [`workspace/programs/`](../../../../workspace/programs/), runs [`tools/tokenizer.py`](../../../../tools/tokenizer.py) on both, classifies GREEN/YELLOW/RED/GREY.
+- **modify**: [`tools/compile-write.py`](../../../../tools/compile-write.py) (~65 lines) — between current `ratio` calculation (line ~40) and the `with open(out_path, "w") as f:` write block, insert gate: load prior `.cmp.md` token count, compare to new; if new > prior × 1.05 (bytes or tokens) AND prior_src ≥ 512 B → BLOCK unless `--override <reason>` provided; log to `_actions.log`.
+- **modify**: [`tools/tokenizer.py`](../../../../tools/tokenizer.py) — currently uses `tiktoken.get_encoding(args.encoding)` defaulting to `cl100k_base`; pin to Anthropic-aligned encoding selection by version, fallback to `len(text) // 4` if tiktoken import fails (already partially handled at line 13).
+- **modify**: [`tools/REGISTRY.json`](../../../../tools/REGISTRY.json) — add `audit_compiled` entry under `tools` (mirror `tokenizer`/`compile-write` entries; ~line 15 pattern).
+- **modify**: [`tests/test_compiled_regression.py`](../../../../tests/test_compiled_regression.py) — currently iterates `COMPILED_DIR.glob("*.cmp.md")`; add a parametrized test asserting ratio ≤ stored baseline + ε; baseline in `tests/compiled-baseline.json`.
+- **new**: `workspace/preferences/compile.toml` — sibling to `workspace/preferences/smart-dispatch.md`; field `gate-mode = "warn" | "block"`. Read via existing pattern in [`tools/prefs.py`](../../../../tools/prefs.py).
+- **new**: `workspace/programs/compiled/_quarantine.md` — header lists quarantined programs (T-A1: `code-dev-pr-review` per `helpers/cd-c3-p1-tokens.md` line 9, src 22,856 → cmp 23,056 = −1%).
+- **new**: `study/compiled-audit.md` inside `my-axon/dev-projects/axon-master/study/` — full audit table.
+- **static-prefix lint**: assert first 2048 bytes of each `.cmp.md` byte-identical across two consecutive compiles (no timestamp/random in prefix).
+
 ## Cross-refs
 - Master plan: `../03-plan.md` § Wave 1 / PR-2.
 - Helpers: `helpers/cd-c3-p1-tokens.md`, `helpers/cd-c4-p3-improvements.md` (T-A1, T-A3, top of backlog), `helpers/cd-gap-c2-p1-compiled-audit.md`, `helpers/cd-c3-p4-web-findings.md` (prompt-caching).

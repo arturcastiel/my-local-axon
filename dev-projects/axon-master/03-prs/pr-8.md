@@ -64,6 +64,15 @@ walking 47 files (glob expanded)…
 - **Rollback**: revert; `study --mode=…` flag silently absent; default behavior unchanged.
 - **Owner**: AGENT writes; HUMAN runs one of each mode and reviews shape.
 
+## Codebase grounding
+- **modify**: [`workspace/programs/code-dev-study.md`](../../../../workspace/programs/code-dev-study.md) — add `--mode`, `--target`, `--output`, `--input` to HELP block; introduce `STORE(W:code-dev-study-mode, ...)` and a mode dispatch table in `## LOAD CONTEXT`.
+- **new**: `workspace/programs/code-dev-study-area.md` — area-scoped study program; reuses [`tools/shadow.py`](../../../../tools/shadow.py) `check`/`init` per file under `--target` (path or glob).
+- **glob expansion**: use Python `glob.glob` / `pathlib.Path.rglob` in the program tool. `--target="src/**/*.py"` resolves before walk.
+- **machine output**: front-matter parseable by `tools/study_index.py` (created in PR-17). Schema: `---\nmode: standard\ntarget: ...\nstaleness: fresh\n---`.
+- **outputs**: write to `{project-dir}/study/<mode>.md` (per-mode file) instead of monolithic `01-study.md`. Compatible with future PR-17 `study/_index.md`.
+- **back-compat**: when invoked with no flags → mode=`standard` writing to legacy `01-study.md` location.
+- **compiled program**: [`workspace/programs/compiled/code-dev-study.cmp.md`](../../../../workspace/programs/compiled/) exists — will require recompile post-PR-2 gate.
+
 ## Cross-refs
 - Master plan: `../03-plan.md` § Wave 2 / PR-8.
 - Helpers: `helpers/cd-study-c4-p2-targets.md` (T-S1.*), `helpers/cd-study-c1-p2-modes-taxonomy.md`, `helpers/cd-study-c3-p2-study-modes-detail.md`.

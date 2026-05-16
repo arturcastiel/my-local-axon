@@ -55,6 +55,14 @@ $ cat tests/coverage.json
 - **Owner**: AGENT writes; HUMAN runs `pytest` + boot smoke.
 - **Parallelism**: blocks PR-3 (migrator needs T1 to verify post-migration), PR-12 (rename snapshot needs T1 ground truth), PR-31.5 (loop detector extends this file).
 
+## Codebase grounding
+- **modify**: [`tests/test_programs_md.py`](../../../../tests/test_programs_md.py) — currently parametrizes via `_collect_programs()` over `axon/programs/` + `workspace/programs/`; extend to assert: `# desc:` present, `## HELP`/`## IDENTITY LOCK`/`## GUARD` sections present, every `EXEC(code-dev-X)` matches an existing program file.
+- **modify**: [`tests/conftest.py`](../../../../tests/conftest.py) — already exposes `ROOT`, `AXON`, `TOOLS`, `run()`; add a `code_dev_programs()` fixture returning the 58 `workspace/programs/code-dev-*.md` files.
+- **new**: `tests/coverage.json` at the workspace root, written by the test on first pass; enumerates `{program: {tested: bool, has_desc: bool, has_help: bool, exec_refs: [...]}}`.
+- **new**: `tests/test_tour_lint.py` — reads `workspace/programs/code-dev-tour.md`, regex-extracts every backticked verb (`code-dev <verb>`), asserts each maps to a real program file.
+- **boot smoke**: re-use [`tools/boot.py`](../../../../tools/boot.py) — AGENT emits `python3 axon.py --check` (already exists in [`axon.py`](../../../../axon.py)); HUMAN runs.
+- **scope of current code-dev surface**: 58 source `.md` + 10 compiled `.cmp.md` under [`workspace/programs/`](../../../../workspace/programs/) (enumerated 2026-05-16).
+
 ## Cross-refs
 - Master plan: `../03-plan.md` § Wave 1 / PR-1.
 - Helpers: `helpers/cd-gap-c2-p3-test-surface.md`, `helpers/cd-gap-c1-p3-goals-extracted.md` (G.test.01, G.test.09), `helpers/cd-plan-i1-p-draft.md`.
