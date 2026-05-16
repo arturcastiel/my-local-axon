@@ -1,7 +1,7 @@
 # Project: AXON Master
 slug:         axon-master
 status:       active
-phase:        2-plan-complete-v5
+phase:        2-plan-complete-v5-detailed
 codebase:     /mnt/c/projects/axon
 parent:       (none)
 sub-projects: []

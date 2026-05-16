@@ -1,5 +1,15 @@
 # 04-log — axon-master implementation log
 
+## 2026-05-16 — Plan v5 detailed: per-PR files
+- Restructured plan to address "too master, loses context" feedback
+- Created `03-prs/` directory with 52 per-PR detail files (51 PRs + INDEX.md)
+- Each PR file ~60-100 lines with sections: WHY · Evidence (helper citations) · Design notes · Pitfalls (F-* codes) · Interface sketch · Spec (Files / Acceptance / Rollback / Owner) · Cross-refs
+- Every PR cites the helper file(s) justifying it inline (study evidence preserved with each PR)
+- Slimmed `03-plan.md` from 485 → ~210 lines: kept envelope, wave tables (now linkable), gates, risk register, governance trace, execution semantics, Post-1.0 queue, plan acceptance
+- Wave tables now: W1 (8), W2 (14), W3 (16), W4 (14) — one row per PR with summary + link
+- Phase advanced: 2-plan-complete-v5 → 2-plan-complete-v5-detailed
+- Local commit only; not pushed (per safety rule)
+
 ## 2026-05-16 — Round 2 study: code-dev focused
 - 4-cycle deep study of code-dev subsystem completed
 - 13 helpers written: cd-c1..cd-c4, p1..p4
