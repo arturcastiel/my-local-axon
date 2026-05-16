@@ -24,3 +24,12 @@
 - L3 naming: top-15 confusing names; 30+ renames + 12 new programs
 - L4 synthesis + roadmap (11 releases) + 14 next-study candidates
 - Recommended next study: Study H — failure modes / postmortem patterns
+
+## 2026-05-16 — Round 5 study: code-dev study & plan modes (4 layers)
+- 16 helpers written: cd-study-c1..c4 × p1..p4
+- L1: 14 study modes proposed (overview, subsystem, security, performance, dependencies, tests, api-surface, data-model, dead-code, naming, observability, error-handling, dataflow, history)
+- L2: WF-S1..WF-S10 workflows; 20 study-gaps + 14 plan-gaps
+- L3: 10 plan modes (execution, risk-first, budgeted, constrained, multi-dev, replay, cost, alignment, exploratory, dry); 7 recipes; 6-wave roadmap (S0..S6)
+- L4: synthesis + per-target acceptance criteria (T-S0.1..T-S6.5)
+- 01-study.md monolith → study/ folder with _index.md
+- Recommended next study: NS-1 + NS-2 (evals + idempotence) joint workstream

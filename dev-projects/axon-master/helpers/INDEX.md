@@ -113,10 +113,41 @@ Focused mini-study on consolidating the 57 code-dev programs into a 10-verb umbr
 - [cd-wf-c4-p3-next-study.md](cd-wf-c4-p3-next-study.md) — 14 candidate next-studies (top pick: **Study H — failure-modes**)
 - [cd-wf-c4-p4-web-findings.md](cd-wf-c4-p4-web-findings.md) — research seeds for each next-study
 
+---
+
+## ROUND 5 — code-dev study & plan modes (cd-study-*)
+
+4-layer deep dive on `code-dev study` (turning it into 14 modes) and `code-dev plan` (turning it into 10 modes), with 7 named recipes and a folder-based output layout (`study/_index.md`).
+
+### Layer 1 — modes inventory
+- [cd-study-c1-p1-current-state.md](cd-study-c1-p1-current-state.md) — what study/plan do today + what they don't
+- [cd-study-c1-p2-modes-taxonomy.md](cd-study-c1-p2-modes-taxonomy.md) — 14 study modes with token budgets
+- [cd-study-c1-p3-prior-art.md](cd-study-c1-p3-prior-art.md) — Sourcegraph / CodeQL / Semgrep / coverage tools
+- [cd-study-c1-p4-mode-composition.md](cd-study-c1-p4-mode-composition.md) — sequential/parallel/recipe composition
+
+### Layer 2 — workflows + gaps
+- [cd-study-c2-p1-workflows.md](cd-study-c2-p1-workflows.md) — WF-S1..WF-S10 (onboarding, perf hunt, brownfield, etc.)
+- [cd-study-c2-p2-workflow-gaps.md](cd-study-c2-p2-workflow-gaps.md) — 20 study-side gaps (G-S1..G-S20)
+- [cd-study-c2-p3-plan-gaps.md](cd-study-c2-p3-plan-gaps.md) — 14 plan-side gaps + 10 plan modes
+- [cd-study-c2-p4-integration.md](cd-study-c2-p4-integration.md) — staleness, pr ready, state next, meta board
+
+### Layer 3 — design detail
+- [cd-study-c3-p1-plan-modes.md](cd-study-c3-p1-plan-modes.md) — full design of 10 plan modes
+- [cd-study-c3-p2-study-modes-detail.md](cd-study-c3-p2-study-modes-detail.md) — per-mode contract + 7 recipes
+- [cd-study-c3-p3-implementation.md](cd-study-c3-p3-implementation.md) — 6-wave roadmap (S0..S6)
+- [cd-study-c3-p4-web-findings.md](cd-study-c3-p4-web-findings.md) — per-mode external tooling references
+
+### Layer 4 — synthesis + targets
+- [cd-study-c4-p1-synthesis.md](cd-study-c4-p1-synthesis.md) — 8 headlines + 20-gap re-ranking
+- [cd-study-c4-p2-targets.md](cd-study-c4-p2-targets.md) — definition-of-done per target (T-S0.1..T-S6.5)
+- [cd-study-c4-p3-next-study.md](cd-study-c4-p3-next-study.md) — 14 next-study candidates (top: **NS-1 + NS-2 evals + idempotence**)
+- [cd-study-c4-p4-web-findings.md](cd-study-c4-p4-web-findings.md) — refs for evaluation, idempotence, plan A/B
+
 ## Cross-links
 - Final report (round 1): `../01-study.md`
 - Backlog (filtered): `../02-prs.md` (after `code-dev plan`)
 - **Round 2 executive backlog:** `cd-c4-p3-improvements.md` (top-15 token/quality)
 - **Round 3 reorganization plan:** `cd-tools-p3-migration.md` (5 waves)
 - **Round 4 unified roadmap:** `cd-wf-c4-p2-roadmap.md` (11 releases)
-- **Recommended next study:** `cd-wf-c4-p3-next-study.md` → Study H (postmortems)
+- **Round 5 study/plan modes targets:** `cd-study-c4-p2-targets.md` (6 waves)
+- **Recommended next study:** `cd-study-c4-p3-next-study.md` → NS-1 + NS-2 (evals + idempotence)
