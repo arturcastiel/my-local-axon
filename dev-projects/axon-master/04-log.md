@@ -1,5 +1,15 @@
 # 04-log — axon-master implementation log
 
+## 2026-05-16 — Plan DAG: PR-16.5 + seed graph artifacts
+- Audit found: plan v5 claimed "DAG acyclic; verified topologically" but emitted no graph
+- Added PR-16.5: `tools/plan_dag.py` — extracts `**Depends-on**:` lines from per-PR files, validates acyclicity, emits Mermaid + JSON
+- Generated manual seed: `03-prs/DAG.md` (Mermaid `graph LR` + topo table + critical path) and `03-prs/DAG.json`
+- Critical path: pr-1 → pr-2 → pr-3 → pr-9 → pr-15 → pr-33 → pr-34 → pr-v4 (8 hops)
+- Leaves: 8 PRs with no inbound deps (pr-1, pr-2, pr-4, pr-5, pr-6, pr-7, pr-9.6, pr-13)
+- Bottleneck fan-out: pr-1, pr-3, pr-13, pr-4, pr-8
+- Total: 49 functional + 4 version PRs = 53
+- INDEX.md + 03-plan.md updated to link to DAG
+
 ## 2026-05-16 — Plan v5 detailed: per-PR files
 - Restructured plan to address "too master, loses context" feedback
 - Created `03-prs/` directory with 52 per-PR detail files (51 PRs + INDEX.md)

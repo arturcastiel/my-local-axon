@@ -1,0 +1,73 @@
+{
+  "schema": "plan-dag-v1",
+  "project": "axon-master",
+  "generated": "2026-05-16",
+  "source": "**Depends-on**: lines in 03-prs/pr-*.md",
+  "acyclic": true,
+  "nodes": [
+    "pr-1", "pr-2", "pr-3", "pr-4", "pr-5", "pr-6", "pr-7", "pr-v1",
+    "pr-8", "pr-9", "pr-9.5", "pr-9.6", "pr-9.7", "pr-10", "pr-11",
+    "pr-12", "pr-13", "pr-14", "pr-15", "pr-16", "pr-16.5", "pr-17", "pr-v2",
+    "pr-15.5", "pr-15.6", "pr-18", "pr-19", "pr-20", "pr-20.5", "pr-20.6",
+    "pr-20.7", "pr-20.8", "pr-21", "pr-22", "pr-23", "pr-24", "pr-25", "pr-25.5", "pr-v3",
+    "pr-26", "pr-27", "pr-28", "pr-28.5", "pr-29", "pr-30", "pr-31", "pr-31.5",
+    "pr-32", "pr-32.5", "pr-33", "pr-34", "pr-34.5", "pr-v4"
+  ],
+  "edges": [
+    ["pr-1", "pr-3"], ["pr-2", "pr-3"],
+    ["pr-1", "pr-12"],
+    ["pr-3", "pr-8"], ["pr-3", "pr-9"], ["pr-3", "pr-9.5"], ["pr-3", "pr-9.7"], ["pr-3", "pr-17"], ["pr-3", "pr-24"],
+    ["pr-4", "pr-10"], ["pr-4", "pr-11"], ["pr-4", "pr-16"], ["pr-4", "pr-22"], ["pr-4", "pr-24"],
+    ["pr-12", "pr-14"], ["pr-12", "pr-20.8"], ["pr-12", "pr-26"],
+    ["pr-8", "pr-17"], ["pr-8", "pr-16.5"], ["pr-8", "pr-23"], ["pr-8", "pr-30"], ["pr-8", "pr-32"],
+    ["pr-9", "pr-15"], ["pr-9", "pr-15.5"], ["pr-9", "pr-31"],
+    ["pr-11", "pr-16"],
+    ["pr-16", "pr-16.5"], ["pr-16", "pr-23"], ["pr-16", "pr-30"],
+    ["pr-2", "pr-20"], ["pr-2", "pr-20.8"],
+    ["pr-13", "pr-15.5"], ["pr-13", "pr-15.6"], ["pr-13", "pr-19"], ["pr-13", "pr-20.5"], ["pr-13", "pr-20.7"], ["pr-13", "pr-21"], ["pr-13", "pr-32.5"], ["pr-13", "pr-34.5"],
+    ["pr-15.5", "pr-15.6"],
+    ["pr-14", "pr-18"], ["pr-14", "pr-26"], ["pr-14", "pr-28.5"],
+    ["pr-18", "pr-19"], ["pr-18", "pr-25"],
+    ["pr-9.5", "pr-20.6"], ["pr-9.5", "pr-28.5"],
+    ["pr-25", "pr-20.7"],
+    ["pr-20.5", "pr-20.8"], ["pr-20.5", "pr-32.5"],
+    ["pr-20", "pr-21"], ["pr-20", "pr-30"],
+    ["pr-3", "pr-24"], ["pr-4", "pr-24"],
+    ["pr-1", "pr-25"], ["pr-1", "pr-29"], ["pr-1", "pr-31.5"],
+    ["pr-17", "pr-25.5"], ["pr-9.6", "pr-25.5"],
+    ["pr-26", "pr-27"], ["pr-27", "pr-28"],
+    ["pr-20.8", "pr-29"],
+    ["pr-9.7", "pr-31"],
+    ["pr-20.7", "pr-32"],
+    ["pr-15", "pr-33"], ["pr-7", "pr-33"],
+    ["pr-23", "pr-34"], ["pr-33", "pr-34"], ["pr-23", "pr-34.5"]
+  ],
+  "topo": [
+    "pr-1", "pr-2", "pr-4", "pr-5", "pr-6", "pr-7", "pr-9.6", "pr-13",
+    "pr-3", "pr-12", "pr-22",
+    "pr-8", "pr-9", "pr-9.5", "pr-9.7", "pr-10", "pr-11", "pr-20", "pr-24",
+    "pr-14", "pr-15", "pr-16", "pr-17", "pr-15.5", "pr-20.5", "pr-21",
+    "pr-16.5", "pr-23", "pr-18", "pr-20.6", "pr-15.6", "pr-31.5",
+    "pr-v1", "pr-v2",
+    "pr-19", "pr-25", "pr-20.8", "pr-20.7", "pr-25.5",
+    "pr-26", "pr-27", "pr-28", "pr-28.5",
+    "pr-29", "pr-30", "pr-31", "pr-32", "pr-32.5",
+    "pr-33", "pr-34", "pr-34.5",
+    "pr-v3", "pr-v4"
+  ],
+  "critical_path": ["pr-1", "pr-2", "pr-3", "pr-9", "pr-15", "pr-33", "pr-34", "pr-v4"],
+  "critical_path_length": 8,
+  "leaves": ["pr-1", "pr-2", "pr-4", "pr-5", "pr-6", "pr-7", "pr-9.6", "pr-13"],
+  "bottleneck_fanout": {
+    "pr-1": ["pr-3", "pr-12", "pr-25", "pr-29", "pr-31.5", "pr-v1"],
+    "pr-3": ["pr-8", "pr-9", "pr-9.5", "pr-9.7", "pr-17", "pr-24", "pr-v1"],
+    "pr-13": ["pr-15.5", "pr-15.6", "pr-19", "pr-20.5", "pr-20.7", "pr-21", "pr-32.5", "pr-34.5"],
+    "pr-4": ["pr-10", "pr-11", "pr-16", "pr-22", "pr-24"],
+    "pr-8": ["pr-17", "pr-16.5", "pr-23", "pr-30", "pr-32"]
+  },
+  "notes": [
+    "Wave-close bumps (pr-v1..v4) carry their full-wave dependencies implicitly; not all enumerated in edges to keep DAG readable.",
+    "Forward-reference narrative comments in PR files (e.g. 'PR-17 will fill _index.md' in pr-8) are not treated as edges; only the **Depends-on**: line counts.",
+    "Manual generation, will be replaced by tools/plan_dag.py output once PR-16.5 ships."
+  ]
+}

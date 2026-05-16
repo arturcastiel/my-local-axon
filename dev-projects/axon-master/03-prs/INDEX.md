@@ -74,6 +74,7 @@ $ code-dev <verb> …
 | [pr-14](pr-14.md)   | Router stubs (full 10-umbrella set)                      | 4.0 | G.umb.01 (R3) |
 | [pr-15](pr-15.md)   | Compaction recovery + sess.04 harness                    | 3.5 | G.sess.04 (F-A1, F-C4) |
 | [pr-16](pr-16.md)   | Plan modes (4) + `--budget N`                            | 3.0 | G.plan.01-02, T-S1.10 |
+| [pr-16.5](pr-16.5.md) | Plan DAG emitter (`tools/plan_dag.py`) + Mermaid + JSON | 3.5 | G.plan.06 (acyclicity machine-check) |
 | [pr-17](pr-17.md)   | `study/_index.md` + staleness flags + journal vocabulary | 3.5 | G.study.02-03, T-S0.4 (F-E4) |
 | pr-v2               | Version bump 0.8.0                                        | —   | — |
 
