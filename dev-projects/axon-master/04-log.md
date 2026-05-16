@@ -43,3 +43,15 @@
 - Pre-plan readiness checklist: COMPLETE — all 13 areas covered, ~50 P0 goals queued
 - Phase advanced: 1-study-complete-r5 → 1-study-complete-r6
 - Ready for plan command (no plan generated in this round per user instruction)
+
+## 2026-05-16 — Plan v4 (FINAL) via 4 iterations of study→audit→plan
+- 12 iteration helpers + 03-plan.md written
+- I1 (draft): VAGUE items picked; 2 new goals added (G.safe.09, G.test.09) → 93 total
+- I2 (challenge v1): 5 adversarial issues → 5 fixes; 5 new risks → mitigations; MUST/NICE split (4 MUST)
+- I3 (risk/sequencing): per-PR execution risks catalogued; DAG with 11 edges; HUMAN/AGENT split explicit; test-orchestration per-area
+- I4 (acceptance + completeness): W3 + W4 detailed; version-bump + changelog discipline; W5+ queued explicitly
+- Plan: 34 PRs across W1-W4 + 4 version-bump PRs; DONE = 1.0.0 at end of W4
+- W1 MUST = PR-1..4 (T1, gate, migrator, governance schema); NICE = PR-5..7
+- All P0 goals scheduled in W1-W3; all top-10 failure modes mitigated by W3
+- Plan-level governance trace empty (rules.md empty by design)
+- Phase advanced: 1-study-complete-r6 → 2-plan-complete-v4
