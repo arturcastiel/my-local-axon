@@ -55,3 +55,16 @@
 - All P0 goals scheduled in W1-W3; all top-10 failure modes mitigated by W3
 - Plan-level governance trace empty (rules.md empty by design)
 - Phase advanced: 1-study-complete-r6 → 2-plan-complete-v4
+
+## 2026-05-16 — Plan v5 (FULL STUDY COVERAGE) via iteration 5
+- 3 helpers written: cd-plan-i5-{s-crosswalk, a-audit, p-final}.md
+- I5 cross-walked every R2-R6 actionable item against plan v4; found 14 missing items + 11 fold-in opportunities
+- Plan v5: 48 functional PRs + 4 version bumps = 52 PRs across W1-W4 (was 34 + 4 in v4)
+- NEW PRs added:
+  - W2 (+3): PR-9.5 `pr list`, PR-9.6 preflight-summary+next-cached, PR-9.7 `meta context use`
+  - W3 (+7): PR-15.5 events-bus wiring, PR-15.6 igap feedback, PR-20.5 caches bundle, PR-20.6 `meta board`, PR-20.7 study-evals (NS-1), PR-20.8 pr-review P1-P9 split, PR-25.5 `next` reads _index.md
+  - W4 (+4): PR-28.5 PR-ergonomics suite (pr sync/drift/export/suggest-reviewer + review-coverage), PR-31.5 loop detector+tour lint, PR-32.5 nightly shadow cron, PR-34.5 cheatsheet auto-section
+- FOLD-INS to existing PRs: PR-1 (boot smoke+tour lint), PR-3 (study _index skeleton), PR-7 (last-reviewed field), PR-8 (--target/--output/--input), PR-9 (atomic journal/), PR-11 (--rule), PR-14 (5→10 routers), PR-16 (--budget), PR-17 (journal vocab), PR-23 (canonical-flows doc)
+- POST-1.0 queue now NAMED EXPLICITLY (was vague): D-E1 pr-stack, D-E2 reviewer-bot, D-B4 pr-import, G-CD-A4 release, D-C8 coverage-delta, D-C6 conflict-predict, G.tok.06 cache-hit-rate, G.wf.05 tutorial, G.wf.06 cookbook, G.inf.06 v5 schema, G.team.*, T-S2-S6, NS-3-14, R3 T5 drop-stubs, CI deep, plan-vs-plan diff, plan→PR materialization
+- Phase advanced: 2-plan-complete-v4 → 2-plan-complete-v5
+- Coverage statement: every R2-R6 actionable item is now in-plan OR explicitly deferred with reason
