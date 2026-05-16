@@ -10,7 +10,7 @@
 
 ## Plan envelope
 - **Scope**: AXON OS hardening so code-dev is dependable as flagship workflow; **all** R2-R6 study outputs are addressed.
-- **PR count**: **49** functional PRs + **4** version-bump PRs = **53 PRs** across W1-W4.
+- **PR count**: **49** functional PRs + **4** version-bump PRs + **1** consistency gate (W0) = **54 PRs** across W0-W4.
 - **DONE**: 0.9.x → 1.0.0 at end of W4.
 - **Out of scope (explicit, named in Post-1.0 queue below)**: multi-actor, library-dev parallel, PR-stack, v5 schema, visual UI, network sync, CI deep integration, reviewer-bot loop, release workflow, coverage-delta, conflict-predict, first-30-min tutorial, cookbook, NS-3..NS-14 future studies, R3 Wave T5 (drop alias stubs).
 - **Constraints**: kernel rules, user-memory safety rules, AGENT contract all in force. Empty `safety/rules.md` is allowed; plan proceeds.
@@ -20,9 +20,11 @@
 - **HUMAN**: runs `pytest`, runs `compile.py`, runs `migrate_meta.py` (after dry-run review), runs `git push` (only on explicit consent), merges PRs.
 
 ## How to read this plan
+- **W0 (pr-0) must land first** — ships the consistency checks (`_dag-check.py`, `_schema-check.py`, `_workflow-audit.md`) that gate every later PR.
 - The wave tables below are the navigable index.
 - For each PR, the row gives a one-line summary + link to the per-PR detail file in [`03-prs/`](03-prs/).
-- Each detail file contains: WHY · Evidence (helper citations) · Design notes · Pitfalls (F-* codes) · Interface sketch · Spec (Files / Acceptance / Rollback / Owner / Parallelism) · Cross-refs.
+- Each detail file contains: WHY · Evidence (helper citations) · Design notes · Pitfalls (F-* codes) · Interface sketch · Spec (Files / Acceptance / Rollback / Owner / Parallelism) · Codebase grounding · Cross-refs.
+- **Every PR's Acceptance implicitly requires**: `bash 03-prs/_check-all.sh` exits 0.
 - Wave gates remain in this file (authoritative for execution).
 - Risk register, governance trace, replan trigger, acceptance — all in this file.
 

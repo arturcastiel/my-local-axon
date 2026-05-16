@@ -96,3 +96,19 @@
 - Surveyed substrate: tools/_axon_io.py, log.py, prefs.py, compile-write.py, tokenizer.py, usage.py, shadow.py, events.py, igap.py, dispatch.py, dispatch_stats.py, cron.py, docgen.py; 58 code-dev-*.md sources + 10 *.cmp.md compiled; tests/conftest.py; workspace/templates v4
 - Effect: each PR is now execution-ready without consulting helpers/ first; implementer can start with a clear file list
 - Phase: 2-plan-complete-v5-detailed
+
+## 2026-05-16 — Consistency gate (PR-0) + folder cleanup
+
+User directive: "ensure consistency, we are losing integrity of code-dev — so other changes are updated first."
+
+Changes:
+- **New PR-0** (`03-prs/pr-0.md`) — Consistency gate. Must land before any other PR. Ships `_dag-check.py`, `_schema-check.py`, `_check-all.sh`, `_workflow-audit.md`.
+- **_meta.md** — added INVARIANTS section (5 invariants: DAG, schema, code-dev consistency, folder layout, enforcement). Phase corrected to `2-plan-complete-v5-detailed`.
+- **DASHBOARD.md → 00-dashboard.md** (NN- convention).
+- **02-brainstorm.md** — placeholder explaining the deliberate gap (brainstorm output lives in helpers/*-p2-*.md).
+- **helpers/ reorganized** — flat 100+ files moved into `c1/` (6), `c2/` (4), `c3/` (4), `cd/` (85) subdirs. `INDEX.md` + `METHODOLOGY.md` stay at root.
+- **Schema backfill** — 13 PRs got `## Interface sketch`; 3 also got `## Pitfalls` (pr-24, pr-33, pr-34). Now all 54 PRs pass `_schema-check.py`.
+- **DAG.json + INDEX.md** — pr-0 added as node + wave-0 table entry.
+- **03-plan.md** — count updated 53 → 54, W0 reading-order note added.
+
+Verification: `bash 03-prs/_check-all.sh` → exit 0. DAG = 54 nodes ↔ 54 files, schema = 54/54.

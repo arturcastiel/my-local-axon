@@ -45,6 +45,14 @@ $ code-dev <verb> …
 - Studies: helpers/cd-…
 ```
 
+## Wave 0 — consistency gate (1 PR, must land first)
+
+| PR | Slug | Score | Goals |
+|----|------|------:|-------|
+| [pr-0](pr-0.md)   | Consistency gate (DAG check + PR schema check + workflow audit) | — | INVARIANTS in `_meta.md` |
+
+> PR-0 ships `_dag-check.py`, `_schema-check.py`, `_check-all.sh` and a generated `_workflow-audit.md`. Every later PR's Acceptance implicitly requires `bash 03-prs/_check-all.sh` to exit 0.
+
 ## Wave 1 — foundation (7 PRs + 1 version bump)
 
 | PR | Slug | Score | Goals |
