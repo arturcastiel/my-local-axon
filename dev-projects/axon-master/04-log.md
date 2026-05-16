@@ -33,3 +33,13 @@
 - L4: synthesis + per-target acceptance criteria (T-S0.1..T-S6.5)
 - 01-study.md monolith → study/ folder with _index.md
 - Recommended next study: NS-1 + NS-2 (evals + idempotence) joint workstream
+
+## 2026-05-16 — Round 6 study: code-dev gap-closure (4 layers)
+- 16 helpers written: cd-gap-c1..c4 × p1..p4
+- L1 coverage audit: 54 prior helpers inventoried; 8 shallow/missing topics (U-1..U-8) catalogued
+- L2 deep dives: U-1 compiled audit + regression gate; U-2 schema migrator v1→v4→v4.1; U-3 test surface (T1-T8); U-4 failure-mode catalog (8 classes, ~30 modes)
+- L3 cross-cutting: U-5 governance precedence; U-6 session model + compaction recovery; U-7 Diátaxis docs (9 AXON-DOCS-*.md target files + cheatsheet); U-8 unified token/cost framework
+- L4 consolidated goal tree: 91 normalized goals across 13 areas (G.inf, G.tok, G.umb, G.wf, G.study, G.plan, G.gov, G.sess, G.test, G.doc, G.obs, G.safe, G.team-deferred); priority matrix; wave-1/2/3 candidates; critical path
+- Pre-plan readiness checklist: COMPLETE — all 13 areas covered, ~50 P0 goals queued
+- Phase advanced: 1-study-complete-r5 → 1-study-complete-r6
+- Ready for plan command (no plan generated in this round per user instruction)
