@@ -11,7 +11,7 @@
   "critical-path-hops": 5,
   "critical-path-note": "Five longest paths of length-5 exist (all ending at pr-117 or pr-118 via pr-108, or at pr-111/112/115/120 via pr-109). Listed one canonical path; structurally equivalent alternatives surface in DAG.md.",
   "nodes": [
-    {"id": "pr-101", "kind": "pr", "name": "pr-101", "label": "PR-101 · glossary → docs",                      "status": "implemented-in-axon"},
+    {"id": "pr-101", "kind": "pr", "name": "pr-101", "label": "PR-101 · glossary → docs",                      "status": "merged"},
     {"id": "pr-102", "kind": "pr", "name": "pr-102", "label": "PR-102 · predicate tool",                       "status": "pending"},
     {"id": "pr-103", "kind": "pr", "name": "pr-103", "label": "PR-103 · goal tool + schema",                   "status": "pending"},
     {"id": "pr-104", "kind": "pr", "name": "pr-104", "label": "PR-104 · synapse-contract schema",              "status": "pending"},

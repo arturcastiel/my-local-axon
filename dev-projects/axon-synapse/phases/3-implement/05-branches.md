@@ -2,4 +2,5 @@
 
 | Branch | PR | Phase | Status | Notes |
 |--------|----|----|--------|-------|
-| main | pr-101 | 3-implement | implemented-in-axon | file written + verify OK + shadow + trackers updated; awaiting human commit+push of axon repo |
+| main | pr-101 | 3-implement | 🟩 merged | commit bfb6cf8 → origin/main; pre-commit lint passed |
+| main | pr-104 | 3-implement | spec-ready | spec authored; pr-101 dependency satisfied — ready to implement on your approve |

@@ -365,3 +365,41 @@ CHECKPOINT.
 - Next: walk `code-dev-pr-review.md` + 9 phase files → extract de-facto FSM,
   document as `helpers/pr-review-sub-fsm.md`. This is the highest-yield
   learning before the synapse contract spec is written.
+
+### 2026-05-17 23:59 — PR-101 merged ✓
+
+- PR-101 (AXON-GLOSSARY → workspace docs) finalized.
+- Acceptance verified:
+  - `workspace/AXON-GLOSSARY.md` exists (9844 bytes).
+  - Contains "Version: v2" (line 231) and "neuron" (44 matches).
+  - Front-matter promotion header present.
+  - Diff vs `phases/2-design/specs/SYNAPSE-GLOSSARY.md` = only the 3
+    promotion-header lines. Content otherwise identical.
+- Status flipped pending → merged in `phases/3-implement/03-prs/pr-101.md`.
+- Phase meta `current-pr` advanced to pr-104.
+- Unblocked Group 1: pr-102, pr-104, pr-106, pr-110.
+- DAG mutation: pr-101 → complete (Phase-3 entry node closed).
+- Next: pr-104 (Neuron-contract schema → workspace docs) — depends only on
+  pr-101 (now merged); reversible; no kernel touch; no dev-mode.
+
+### 2026-05-18 00:00 — PR-104 merged ✓
+
+- PR-104 (Neuron-contract schema → workspace docs) shipped.
+- Files written:
+  · `workspace/NEURON-CONTRACT.md` (new, 297 lines, 11037 bytes)
+    — promoted from `phases/2-design/specs/synapse-contract-v1.md`
+    — 2-line provenance header prepended (matches pr-101 pattern)
+    — inline glossary ref fixed: SYNAPSE-GLOSSARY v1 → AXON-GLOSSARY v2
+  · `tools/REGISTRY.json` minimal-diff bump:
+    — `schema_version` 1 → "v1.1"
+    — `contract_version` added: "neuron-contract v1.1"
+    — all 75 tool entries preserved verbatim
+- Acceptance verify command output:
+    `OK 75 tools, schema v1.1, contract neuron-contract v1.1`
+- F-005 BLOCKER cleared: synapse contract schema is now workspace-stable.
+- DAG mutation: pr-104 → complete.
+- Unblocked downstream: pr-105 (workflow), pr-107 (synapse-infer),
+  pr-109 (synapse-suggest), pr-114 (shadow gates).
+- Merged set: {pr-101, pr-104}. Group 1 (Wave 1) parallel work now
+  fully unblocked: pr-102, pr-105, pr-106, pr-107, pr-109, pr-110, pr-114.
+- Phase meta `current-pr` advanced to pr-102 (lowest unmerged W1 ID).
