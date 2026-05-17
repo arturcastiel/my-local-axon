@@ -50,6 +50,20 @@ branch:         main
 - INDEX.md regenerated.
 - CHECKPOINT.
 
+### 2026-05-17 — Phase 3 opened (user: "move to the next phase — guide me through it")
+
+- Phase 2 closed; status=complete in _meta.md (implicit sign-off).
+- Project _meta.md: phase=3-implement, workflow-step=implement.
+- Phase 3 scaffolded with v4 layout (8 stub files).
+- `phases/3-implement/GUIDE.md` written — 7-step per-PR rhythm, vocabulary,
+  what's autonomous vs human-only, 28-PR roadmap, risk handling.
+- First PR spec authored: `03-prs/pr-101.md` (glossary → workspace docs;
+  low-risk file copy; no tests; unblocks Group 1).
+- Implementation log + branch registry initialized.
+- masterplan.md: Phase 3 marked ACTIVE.
+- CHECKPOINT.
+- Awaiting user "approve" on pr-101 spec to proceed with implementation.
+
 ### 2026-05-17 — docs-pass (user: "append a documentation plan…make it useful for others")
 
 **docs-plan-v1 spec authored** (`phases/2-design/specs/docs-plan-v1.md`):

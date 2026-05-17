@@ -11,10 +11,12 @@
 
 ```
 1-study  →  2-design  →  3-implement  →  4-validate
-  ✓             ✓             ⬜             ⬜
-  17 findings   10 specs +   20 PRs          retros +
-  + 30 demands  20-PR plan   (PR-101..120)   ranker tuning +
-  + synthesis   + plan DAG                   second-domain proof
+  ✓             ✓            ACTIVE           ⬜
+  17 findings  11 specs +   28 PRs            retros +
+  + 30 demands 28-PR plan   pr-101 spec       ranker tuning +
+  + synthesis  + plan DAG   ready for review  second-domain proof
+               + 9 docs +
+               flaws-fixed
 ```
 
 - **1-study** — full audit of axon/ + workspace/programs/ + tools/REGISTRY

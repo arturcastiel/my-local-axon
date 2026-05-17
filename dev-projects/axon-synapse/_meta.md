@@ -3,8 +3,8 @@ slug:            axon-synapse
 schema-version:  v4
 status:          active
 legacy:          false
-phase:           2-design
-workflow-step:   design
+phase:           3-implement
+workflow-step:   implement
 branch:          main
 codebase:        /mnt/c/projects/axon
 parent:          (none)

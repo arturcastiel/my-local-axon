@@ -1,6 +1,7 @@
 # Phase: 2-design
 schema-version: v4
-status:         ready-for-signoff
+status:         complete
+closed:         2026-05-17  (user: "move to the next phase" — implicit sign-off)
 workflow-step:  design
 branch:         main
 current-pr:     (none)
