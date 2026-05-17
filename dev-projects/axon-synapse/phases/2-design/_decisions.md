@@ -130,6 +130,23 @@ terminates workflow.
 **Decision.** PR-116 → PR-116a..f (one per project, internal sub-DAG).
 PR-108 ships `--rollback-per-file` mode using existing `undo` tool.
 
+## D-037 — 2026-05-17 — Documentation plan + 5-tier audience structure
+**Context.** User: "append a documentation plan, workflow and explaining
+everything, also special docs for me to read with a plan to make it useful
+for others."
+**Decision.** Ship `docs-plan-v1.md` spec defining 5 audience tiers
+(author / contributors / users / agents / strategy) + a docs workflow
+(`docs.canonical.yml`) + maintenance rules (doc bound to spec, glossary-
+locked vocabulary, examples must be real, reading-time budget).
+Author seed corpus this phase: READ-FIRST, 00-EXECUTIVE-SUMMARY,
+01-CONCEPT-MAP, 02-ARCHITECTURE-AT-A-GLANCE, 03-DECISION-DIGEST,
+04-FLAW-DIGEST, users/QUICKSTART, users/HOW-AXON-THINKS,
+strategy/MAKE-IT-USEFUL-FOR-OTHERS.
+**Consequences.** PR-130 (Phase 3) ships docs neurons (docs-new,
+docs-outline, docs-draft, docs-link-check, docs-glossary-check,
+docs-publish) + the canonical workflow file. axon-audit gets a
+docs-staleness row (Phase 3 PR-119 extension).
+
 ## D-036 — 2026-05-17 — Improvement artifacts I-01..I-06
 **Decision.** Ship six improvement artifacts: `_flaws.md` register,
 `_versions.md` per phase, orchestrator fixture corpus, per-PR rollback

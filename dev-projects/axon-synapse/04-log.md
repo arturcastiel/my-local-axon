@@ -50,6 +50,33 @@ branch:         main
 - INDEX.md regenerated.
 - CHECKPOINT.
 
+### 2026-05-17 — docs-pass (user: "append a documentation plan…make it useful for others")
+
+**docs-plan-v1 spec authored** (`phases/2-design/specs/docs-plan-v1.md`):
+- 5 audience tiers (A: author / B: contributors / C: users / D: agents / E: strategy)
+- Maintenance rules: doc bound to spec; glossary-locked; real examples; reading-time budget
+- 4 acceptance criteria; 3 open questions
+- D-037 ADR added
+
+**Seed corpus shipped (9 docs):**
+- `docs/READ-FIRST.md`                       (tier-A reading order, ~25min full insider load)
+- `docs/00-EXECUTIVE-SUMMARY.md`             (one-page TLDR, 5-min read)
+- `docs/01-CONCEPT-MAP.md`                   (neuron/synapse/axon model visualized)
+- `docs/02-ARCHITECTURE-AT-A-GLANCE.md`      (layer cake + 3 core flows + persistence map)
+- `docs/03-DECISION-DIGEST.md`               (36 ADRs in one-line each)
+- `docs/04-FLAW-DIGEST.md`                   (24 flaws in one-line each)
+- `docs/users/QUICKSTART.md`                 (tier-C, 5-min boot-to-workflow)
+- `docs/users/HOW-AXON-THINKS.md`            (tier-C, 10-min synapse model)
+- `docs/strategy/MAKE-IT-USEFUL-FOR-OTHERS.md` (tier-A+E, adoption playbook,
+                                                Phase A/B/C 12-month plan)
+
+**Docs workflow file shipped:**
+- `docs/strategy/docs.canonical.yml`         (reference workflow file —
+                                              7-synapse chain;
+                                              real neurons land in PR-130)
+
+CHECKPOINT.
+
 ### 2026-05-17 — remediate-everything pass (user: "remediate everything … names metaphor error")
 
 **Vocabulary fix (OP-01 — biggest leverage):**

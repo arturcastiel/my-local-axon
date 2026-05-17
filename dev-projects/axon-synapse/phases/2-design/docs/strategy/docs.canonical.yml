@@ -1,0 +1,116 @@
+# Documentation workflow — canonical chain
+#
+# Authors a new documentation file end-to-end:
+#   outline → draft → self-review → link-check → glossary-check → publish
+#
+# This file is a reference workflow shipped under axon-synapse.
+# After PR-130 lands, identical content lives at:
+#   workspace/workflows/docs.canonical.yml
+# and the neurons referenced below exist as real programs.
+
+name:             docs.canonical
+version:          1
+glossary:         AXON-GLOSSARY v2
+domain:           meta
+execution-mode:   fixed
+
+default-goal:
+  statement:      "Author a new documentation file, audit-clean and glossary-consistent."
+  measurement:
+    - "file.exists(docs/{tier}/{filename}.md)"
+    - "file.contains('{filename}', 'glossary:')"
+    - "docs-link-check passes (no broken cross-refs)"
+  acceptance-criterion: "file.exists(target) AND glossary-check passes AND link-check passes"
+  rejection-criterion:  "user abort OR validation failed twice"
+
+triggers:
+  - kind: keyword
+    when: "user said one of [write doc, document, new doc, explain in docs]"
+  - kind: explicit
+    when: "workflow run docs.canonical"
+
+allow-suggestions: true
+allow-deviation:   true
+suggestion-channel: [footer]
+suggestion-budget:
+  sideband-per-step: 1
+  sideband-per-run:  5
+  dismiss-decay:     0.5
+  rate-limit-window: "5min"
+
+synapses:
+
+  - id:   s1
+    name: docs-new
+    args:
+      tier:     "{ask}"          # tier-A / B / C / D / E
+      audience: "{ask}"          # who reads this
+      topic:    "{ask}"          # one-line subject
+    on-complete:
+      - next: s2
+
+  - id:   s2
+    name: docs-outline
+    description: "Sketch H1/H2 headings + section bullets"
+    on-complete:
+      - next: s3
+
+  - id:   s3
+    name: docs-draft
+    description: "Write the body of each section; LLM-aided"
+    mode-switch: ["fixed→adaptive"]   # may go adaptive if topic is novel
+    on-complete:
+      - next: s4
+
+  - id:   s4
+    name: code-dev-self-review        # shared neuron (cross-domain reuse)
+    args:
+      target: "{draft-file}"
+    on-complete:
+      - if: "review.passes()"
+        next: s5
+      - if: "review.has-objections()"
+        next: s3                       # back to draft
+
+  - id:   s5
+    name: docs-link-check
+    description: "Verify all file/path references exist or are tagged 'example only'"
+    role: gate
+    on-complete:
+      - if: "link-check.passes()"
+        next: s6
+      - if: "link-check.fail()"
+        next: s3                       # back to draft to fix refs
+
+  - id:   s6
+    name: docs-glossary-check
+    description: "Verify glossary terms used per AXON-GLOSSARY v2; flag drift"
+    role: gate
+    on-complete:
+      - if: "glossary-check.passes()"
+        next: s7
+      - if: "glossary-check.fail()"
+        next: s3                       # back to draft
+
+  - id:   s7
+    name: docs-publish
+    description: "Write final file to docs/{tier}/; update _versions.md; EMIT axon.doc.published"
+    on-complete: []                    # terminal
+
+start: s1
+
+# Per-step execution-mode (hybrid example)
+# Defaults to workflow.execution-mode (fixed).
+# s3 (draft) may switch to adaptive if topic is exploratory.
+
+# Metadata
+author:           "axon-synapse Phase 2 design"
+created:          2026-05-17
+tags:             [meta, documentation, fixed]
+parent-workflow:  null
+
+# Status of dependencies (as of 2026-05-17)
+# All listed neurons land in PR-130 (Phase 3).
+# Until then, this workflow is a reference / mockup —
+# `workflow simulate docs.canonical` shows the path; running it requires
+# PR-130 to merge.
