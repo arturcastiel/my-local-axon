@@ -174,7 +174,11 @@ Phase 4 follow-ups (post-1.0):
 - Risk: medium-high. Parser robustness.
 - Tests: infer contracts for 20-program corpus; spot-check accuracy.
 
-### PR-108 · Domain folder scaffold + metadata migration
+### PR-108 [v1.1 — per-file rollback] · Domain folder scaffold + metadata migration
+**v1.1 addition (OP-04):** ships with `--rollback-per-file` mode using the
+existing `undo` tool. On any header-parse failure during re-read, that
+file's previous content restored automatically; remainder of the PR
+continues. Each per-file rollback logged in 04-log.
 - Files: `workspace/domains/` directory + symlinks back to `workspace/programs/`
   for backwards compat. Bulk-add `domain:` field to every existing synapse
   contract via inference.
@@ -238,6 +242,26 @@ Phase 4 follow-ups (post-1.0):
 - Risk: medium.
 - Tests: 5 fixture descriptions → valid workflow files.
 
+### PR-116 [v1.1 — SPLIT into PR-116a..f]
+
+Original PR-116 was a single PR mutating shadow files across 119 PR
+specs in 6 projects. v1.1 splits per project for rollback granularity
+and per-project review:
+
+| PR | Project | PR count |
+|----|---------|---------|
+| PR-116a | axon-master  | 55 |
+| PR-116b | axon-tests   | 21 |
+| PR-116c | axon-cleanup | 25 |
+| PR-116d | axon-user    | 17 |
+| PR-116e | axon-docs    |  1 |
+| PR-116f | axon-synapse |  0 (placeholder for ongoing self-shadow) |
+
+Each PR-116X has its own internal sub-DAG (per dag-spec v1.1) listing
+the source-touching PRs that need shadow files. Each ships with
+dry-run + undo per affected project.
+
+Original PR-116 description (kept for reference):
 ### PR-116 · Shadow retroactive bulk migration
 - Files: `workspace/programs/shadow-retroactive-bulk.md`.
 - One-shot migration over all `my-axon/dev-projects/*` (119 PRs).

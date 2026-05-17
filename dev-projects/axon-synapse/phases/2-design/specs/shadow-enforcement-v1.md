@@ -178,14 +178,32 @@ Used by `axon-audit`, `code-dev safety-audit`, workflow `acceptance` evaluators.
 Shadow check is cheap: hash compare + file existence. Per-PR check < 10ms.
 Project-wide check on 119 PRs < 2 seconds.
 
-## Backwards compatibility (D-014 / D-025)
+## Backwards compatibility (D-014 / D-025) + v1.1 flip protocol (FL-10)
 
 - Existing PRs without shadow files do NOT immediately fail audit until
-  the retroactive migration completes. A grace flag
-  `L:shadow-enforcement-strict` (default false until migration done)
-  gates the hard fail.
-- After migration: flag flipped to true; subsequent PRs hard-fail audit
-  without shadow.
+  the retroactive migration completes. Grace flag
+  `L:shadow-enforcement-strict` (default false).
+
+### Grace-flag flip protocol (v1.1 — closes FL-10)
+
+The flag flips `false → true` **only** when ALL conditions hold:
+
+1. `shadow-coverage-report --root <project>` returns `coverage == 100`
+   for every active project, **twice consecutive ≥ 5 minutes apart**.
+2. `axon-audit` shows zero shadow-related open findings across projects.
+3. User-confirm via explicit command: `shadow-enforce strict`. A QUERY
+   surfaces with current coverage stats; user must type `yes`.
+
+On flip:
+- `L:shadow-enforcement-strict-flipped-ts` recorded with ISO timestamp.
+- `EMIT axon.shadow.enforcement-strict {ts, by-user, coverage-snapshot}`.
+- Subsequent PR finalize gates hard-fail on missing shadow (no grace).
+
+### Unflip path (last-resort)
+
+Flag may revert `true → false` only under: `L:dev-mode == true` AND
+explicit user command `shadow-enforce relax --reason "<text>"`. Logged
+with rationale; surfaces in axon-audit as a regression flag.
 
 ## Version + change rule
 

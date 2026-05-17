@@ -122,7 +122,33 @@ After front-matter, the manifest may contain free-form documentation:
 - Cross-references to other domains.
 - Known edge cases.
 
-## Reference manifest — `code-dev`
+### v1.1 additions
+
+### `layer:` axis (OP-03 split)
+Each neuron carries `layer:` ∈ `{kernel, system, meta, shared, domain}`
+per AXON-GLOSSARY v2. Splits the v1 overloaded `category` axis.
+`category` preserved for backwards-compat.
+
+### `source-artifact-glob:` field (FL-08)
+Each manifest declares which file patterns constitute "source artifacts"
+for the domain — driving the `requires-shadow` inference:
+
+```yaml
+source-artifact-glob:
+  - "**/*.py"       # code-dev (Python source)
+  - "**/*.cpp"      # code-dev (C++ source)
+  - "**/*.hpp"
+  # ...
+```
+
+For library-dev: `**/*.pdf`, `**/*.txt`.
+For study-dev / science-dev: declared on adoption.
+
+A neuron's `requires-shadow` flag derives unambiguously:
+`requires-shadow = (neuron.affects-source AND outputs match
+domain.source-artifact-glob)`.
+
+# Reference manifest — `code-dev`
 
 ```yaml
 ---

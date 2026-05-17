@@ -189,7 +189,22 @@ Workflow trigger:
 open  →  in-progress  →  designed  →  met
                                   ↘
                                     deferred
+                  met (parent, ≥1 child still open)
+                       → met-with-open-children   (terminal-with-flag)
 ```
+
+## Parent-child status semantics (v1.1 — closes GAP-05)
+
+- Parent goal's `acceptance-criterion` evaluates true while ≥ 1 child
+  has `status ∈ {open, in-progress}` → parent transitions to
+  `met-with-open-children`. Audit surfaces it; user QUERY required to
+  close orphans (mark `deferred`) or close parent (force `met`).
+- Child closure does **not** retroactively alter parent. Parent stays
+  `met` (or `met-with-open-children`).
+- Parent's `rejection-criterion` evaluates true → all open / in-progress
+  children transition to `parent-rejected` (terminal). New children
+  blocked on parent that is rejected.
+- Cycles forbidden: `goal-validate` rejects parent-of-parent loops.
 
 Transition rules:
 - `open → in-progress` — any synapse fires that references this goal.

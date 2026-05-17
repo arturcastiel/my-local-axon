@@ -507,3 +507,19 @@
 | D-023 suggestion footer default | OQ-03 | D-11, D-12, D-13, D-30 |
 | D-024 workflow-compile → Phase 4 | OQ-05 deferral | D-8, D-9 |
 | D-025 synthesis single gate (P1 close) | OQ-10 | D-15, D-24 |
+
+## Phase-2 v1.1 remediation ADRs (D-026..D-036) [tighten-to-flawless pass]
+
+| ADR | Resolves | Applies to demands |
+|-----|----------|--------------------|
+| D-026 biology-correct vocab rename | OP-01 | all (vocabulary) |
+| D-027 predicate language v1.1 formalized | FL-01, FL-02, FL-03, GAP-06 | D-10, D-11, D-22 |
+| D-028 ranker tie-break ladder | FL-04 | D-21 |
+| D-029 zero-candidate fallback | FL-05 | D-7, D-21 |
+| D-030 cold-start ranker bootstrap | FL-07 | D-7, D-28 |
+| D-031 layer axis added | OP-03 | D-1, D-6, D-26 |
+| D-032 source-artifact-glob per domain | FL-08 | D-23 |
+| D-033 grace-flag flip protocol explicit | FL-10 | D-23, D-25 |
+| D-034 interrupt-gate workflow-aware | FL-09 | D-7, D-14 |
+| D-035 PR-116 split + PR-108 per-file rollback | FL-06, OP-04 | D-25, D-23 |
+| D-036 improvement artifacts I-01..I-06 | (process improvement) | D-19, D-24, D-25 |

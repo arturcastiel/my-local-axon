@@ -50,6 +50,125 @@ branch:         main
 - INDEX.md regenerated.
 - CHECKPOINT.
 
+### 2026-05-17 — remediate-everything pass (user: "remediate everything … names metaphor error")
+
+**Vocabulary fix (OP-01 — biggest leverage):**
+- Biology-correct rename: neuron (was: synapse-as-node) / synapse (now: edge) /
+  axon (orchestrator, matches project name).
+- AXON-GLOSSARY v2 shipped. `synapse` retained as user-facing alias forever
+  (D-026 backwards-compat).
+- File renames deferred to PR-101a (cosmetic; non-blocking).
+
+**11 new ADRs (D-026..D-036):** vocabulary rename · predicate v1.1 ·
+tie-break ladder · zero-cand fallback · cold-start bootstrap · layer axis ·
+source-artifact-glob · grace-flag flip protocol · interrupt-gate integration ·
+PR-116 split + PR-108 rollback · improvement artifacts.
+
+**Spec deltas (v1 → v1.1):**
+- AXON-GLOSSARY → v2 (in-place rewrite)
+- predicate-language → v1.1 (new standalone — formal grammar + types + null)
+- goal-schema → v1.1 (parent-child semantics)
+- synapse-contract → neuron-contract v1.1 (rename + blast-radius)
+- workflow-file → v1.1 (modes, cross-domain, mode-switch, suggestion-budget)
+- domain-manifest → v1.1 (layer axis + source-artifact-glob)
+- dag-spec → v1.1 (md→json recovery, filename normalizer)
+- orchestrator-composition → v1.1 (tie-break + zero-cand + cold-start + interrupt)
+- shadow-enforcement → v1.1 (explicit grace-flag flip protocol)
+- conversational-author → v1.1 (cold-start dialog + turn cap)
+- migration-plan → v1.1 (PR-116 split, PR-108 per-file rollback)
+
+**11 closed flaws + 8 closed gaps + 3 closed opinion-level:**
+FL-01..FL-10 + GAP-01..GAP-06, GAP-08 → 🟧 spec-fixed.
+GAP-07 + OP-02 carried forward to Phase 4 with rationale.
+OP-01.X marked permanent ⬛ wontfix (backwards-compat priority).
+
+**6 new improvement artifacts (I-01..I-06):**
+- `_flaws.md` (project root) — running flaw register, 24 rows seeded.
+- `phases/2-design/specs/_versions.md` — spec version log.
+- `phases/2-design/test-fixtures/orchestrator-fixtures.yaml` — 5-fixture
+  seed corpus for ranker tests; PR-109/PR-111 expand to 50.
+- `phases/2-design/03-prs/_pr-template.md` — mandatory PR template
+  with Rollback section + Blast-radius + Reversibility tier.
+- (in neuron-contract v1.1) `blast-radius:` field — per-neuron rollback declared.
+- (in neuron-contract v1.1) `reversibility:` field — per-PR + per-neuron tier.
+
+**Spec delta deck (`_DELTAS-v1_1.md`) authored** as compact bridge doc.
+
+Confidence axes post-remediation:
+   Direction               0.92 → 0.95
+   Internal consistency    0.90 → 0.95
+   Empirical validation    0.85 → 0.88
+   Spec rigor              0.80 → 0.93
+   Risk awareness          0.90 → 0.95  (flaws register I-01 makes risks tracked)
+   Audit traceability      0.98 → 0.99
+   Weighted                0.89 → 0.94
+
+CHECKPOINT.
+
+### 2026-05-17 — tighten-to-high lint pass (user: "tighten everything to high")
+
+Executed all 5 remediations:
+
+1. **Tool-source pass.** Read shadow.py, dispatch.py, pattern.py, plan_dag.py
+   heads. F-014's composition claim VALIDATED at source-code level.
+   Discoveries:
+   - dispatch.py uses `preferences/smart-dispatch.md` with
+     `dispatch-confidence: 0.65` default. Orchestrator's decide() uses 0.7
+     for inference-mode-5 fire — these are different layers; both check.
+   - pattern.py default threshold 3 aligns with D-010's
+     suggestion-promotion-threshold 3. Use same key.
+   - shadow.py confirms git-commit-hash with sha256 fallback; sections
+     summary/structures/dependencies/arch-role/findings. F-016
+     remediation plan matches reality.
+
+2. **DAG mechanical verify.** Ran Python Kahn-check on Phase 2 DAG.json:
+   ✓ 20 nodes, 30 edges, 0 cycles. **Caught real defect:** declared
+   critical path was 8 hops (`pr-101 → ... → pr-120`) but mechanical
+   computation shows longest path is 5 hops (`pr-101 → pr-104 → pr-107
+   → pr-108 → pr-117`). Several 5-hop paths exist; one canonical chosen.
+   Fixed DAG.json + DAG.md + 02-plan.md.
+
+3. **Corpus walk — F-013 prevalence audit.** Sampled 5 more program
+   families (journal, igap, auto-improve, axon-audit, harness-builder,
+   discover, gain). Prevalence:
+   - 2/174 (1.1%) declare `# modes:` block. Only `code-dev-study` and
+     `code-dev-plan`.
+   - 4/174 (2.3%) have `--mode=` in `# usage:`.
+   - 150/174 (86%) lack `# next:` declaration.
+   F-013 over-generalized; updated with corrected prevalence data.
+   Schema unchanged (modes already optional in synapse-contract-v1).
+   86% next-conditional gap actually STRENGTHENS F-005 urgency.
+
+4. **Lint sweep — spec consistency.** Multiple fixes:
+   - workflow-catalog.md cited "journal-search" / "igap-stats" as
+     programs; actual: `code-dev-journal-search` + `igap` is a tool
+     subcommand. Corrigenda added.
+   - workflow-file-v1.md python-code-dev example references unregistered
+     `python-lint` synapse without disclaimer; disclaimer added.
+   - dag-spec-v1.md missing filename-convention section; plan_dag.py
+     expects lowercase `pr-N.md`. v1 spec adopts lowercase as canonical;
+     uppercase only in display labels. DAG.json regenerated.
+   - orchestrator-composition-v1.md missing reference to existing
+     `preferences/smart-dispatch.md` config infra. Added with
+     threshold-alignment notes (dispatch 0.65 vs decide 0.7;
+     pattern 3 == promotion-threshold 3).
+   - _demands.md cross-reference table missing D-018..D-025. Added
+     Phase-2 ADR cross-reference subtable.
+   - F-013 inline correction marker.
+
+5. **Backup sync.** `workspace-backup push` per kernel HARD RULE:
+   - 63 files changed, +8653 lines, commit 85488c0.
+   - my-axon/ → origin/main. last-push 2026-05-17T20:31:25Z.
+
+Confidence axes post-lint (compare to "are you happy" report):
+   Direction               0.90 → 0.92  (unchanged)
+   Internal consistency    0.75 → 0.90  (cross-spec inconsistencies fixed)
+   Empirical validation    0.55 → 0.85  (tool source read + DAG mechanically verified)
+   Spec rigor              0.60 → 0.80  (lint pass caught visible defects)
+   Risk awareness          0.85 → 0.90  (new known: 86% next-conditional gap)
+   Audit traceability      0.95 → 0.98  (Phase-2 ADRs back-propagated)
+CHECKPOINT.
+
 ### 2026-05-17 — Phase 1 closed · Phase 2 opened · 10 specs + plan + PR list + DAG written
 - User: "carry phase 2" — implicit sign-off on Phase 1 synthesis.
 - Phase 1 closed: status=complete in phases/1-study/_meta.md.

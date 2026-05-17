@@ -281,9 +281,43 @@ The Phase 3 PR seed list (per synthesis-draft) ships these:
    strict mode.
 5. `library-dev.yml` — library-dev canonical chain (Fixed).
 
+## v1.1 additions (2026-05-17)
+
+### `execution-mode` values expanded (GAP)
+Closed list: `fixed | adaptive | hybrid | exploratory | scheduled`.
+See AXON-GLOSSARY v2 for semantics.
+
+### Cross-domain workflows (GAP-01)
+`domain:` field accepts a list:
+```yaml
+domain: [code-dev, library-dev]
+```
+Resolution: first-listed domain's manifest is primary; subsequent
+manifests provide secondary verb-maps. Naming collisions in verb-map
+resolved by primary.
+
+### Mid-workflow mode switching (GAP-02)
+Each step may declare:
+```yaml
+- id: s4
+  name: code-dev-pr-review
+  mode-switch: ["fixed→adaptive", "adaptive→fixed"]   # allowed transitions
+```
+Defaults to `[]` (no mid-step switching).
+A switch requires explicit user-confirm via QUERY OR an `on-complete.if`
+clause that names the switch.
+
+### Suggestion budget (GAP-03)
+```yaml
+suggestion-budget:
+  sideband-per-step: 1
+  sideband-per-run:  10
+  dismiss-decay:     0.5     # after dismiss, weight halves for 30 min
+  rate-limit-window: "5min"
+```
+Suppresses suggestion noise. Per-workflow override.
+
 ## Version + change rule
 
-**Version: v1 (2026-05-17).**
-
-Schema edits require: ADR + version bump + re-validation of reference
-workflows.
+**Version: v1.1 (2026-05-17).** Bumps require ADR + version bump +
+re-validation of reference workflows.

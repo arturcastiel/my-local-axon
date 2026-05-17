@@ -225,7 +225,28 @@ in lowercase when PR-110 lands. Tracked as a Phase-3 housekeeping task.
    (mostly identical; minor field renames).
 5. PR-level DAGs are created on-demand only.
 
+## v1.1 additions (2026-05-17)
+
+### MD → JSON recovery (GAP-04 — addresses single-point-of-failure)
+
+`dag recover --from-md <DAG.md>` best-effort parses md → JSON, writing
+output to `DAG.recovery.json` (NEVER `DAG.json` directly). User reviews
+diff with `dag verify --against <recovery>` then promotes via
+`dag promote-recovery`. This is a last-resort path — primary editing
+remains JSON + mutator commands.
+
+### Mixed-case filename migration (GAP-08)
+
+`dag normalize-pr-filenames --project <slug>` walks the project's
+03-prs/ tree, case-normalizes `PR-NNN.md` / `pr-NNN.md` → lowercase
+`pr-NNN.md`. Updates DAG.json node names + edges. Leaves a
+backwards-compat symlink (`PR-NNN.md → pr-NNN.md`) for tooling that
+still expects uppercase. Idempotent.
+
+Existing dev-projects: axon-master = lowercase (no-op);
+axon-cleanup = uppercase (normalization needed in Phase-3 housekeeping).
+
 ## Version + change rule
 
-**Version: v1 (2026-05-17).** Schema-version field in every DAG.json.
+**Version: v1.1 (2026-05-17).** Schema-version field in every DAG.json.
 Bumps require migration tool.

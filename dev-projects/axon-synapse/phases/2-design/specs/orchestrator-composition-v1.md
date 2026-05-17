@@ -293,7 +293,54 @@ Compact mode shows top-1 only.
 Per turn, log: `{state-hash, goal-id, candidates[], chosen, accepted-by-user}`.
 Periodic report: top-1 hit-rate vs user-acceptance. Target ≥ 90 % per D-21.
 
+## v1.1 additions (2026-05-17)
+
+### Tie-break ladder (FL-04)
+When top-k candidates have raw-score within ±0.05:
+1. higher  `canonical` status (canonical > alias > stub-never)
+2. higher  `recency.last-fired` timestamp
+3. better  `role-match` (mutator if state needs change; reader otherwise)
+4. lower   `cost.tokens-estimate`
+5. higher  `goal-alignment.score` (recomputed at finer resolution)
+6. **lexicographic name** (deterministic terminal tiebreak)
+
+Reproducibility: identical state + goal + history → identical top-1
+across sessions.
+
+### Zero-candidate fallback (FL-05)
+```
+IF candidates == []:
+    EMIT axon.orchestrator.no-candidates
+    fallback = TF-IDF match goal.statement against FULL registry → top-3
+    IF fallback non-empty:
+        QUERY "No declared candidates. Closest matches: [list]. Pick or describe."
+    ELSE:
+        QUERY "No matches. Options: register-tool / workflow-new / free text."
+    log no-candidate-fallback event
+```
+Never hangs.
+
+### Cold-start ranker bootstrap (FL-07)
+First 20 fires of a fresh session (no dispatch/usage/pattern history):
+- Frequency prior from REGISTRY `invocation_source`: program=0.5,
+  cli=0.3, kernel=0.0.
+- Disable absent-signal weights; renormalize remaining.
+- After 20 user-confirmed fires, exit cold-start; full ranker active.
+
+### Interrupt-gate integration (FL-09)
+When KERNEL-SLIM active-program-interrupt-gate fires with
+`W:active-workflow != null`:
+- Continuation commands (yes/no/continue/...) → pass through gate.
+- Deviation request → surface deviation suggestion; gate yields.
+- Pause-and-task → CHECKPOINT workflow; route input to adaptive path.
+- Abort → terminate workflow; menu.
+Classification uses mode-detect with workflow-context bonus.
+
+### Configuration home
+`workspace/preferences/smart-dispatch.md` extends to include:
+`synapse-suggest-weights:`, `suggestion-budget:`, `cold-start-fires: 20`.
+
 ## Version + change rule
 
-**Version: v1 (2026-05-17).** Ranker weights live in `L:`; default
-weights here. Adjust via `L:ranker-weights` without schema bump.
+**Version: v1.1 (2026-05-17).** v1 → v1.1 additions above. Ranker weights
+live in `L:` + `preferences/smart-dispatch.md`. Schema bumps require ADR.

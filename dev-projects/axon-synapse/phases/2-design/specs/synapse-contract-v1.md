@@ -1,4 +1,11 @@
-# Synapse Contract Schema (v1)
+# Neuron Contract Schema (v1.1; was Synapse Contract v1)
+
+> v1.1 rename: per AXON-GLOSSARY v2 (OP-01 fix), "synapse" now refers to
+> the weighted edge between neurons; the per-program/per-tool contract is
+> now the **neuron** contract. `next-conditional:` field renames to
+> `synapses:`. Backwards-compat: `synapse-contract` accepted as alias.
+
+
 
 > glossary: SYNAPSE-GLOSSARY v1
 > resolves: F-005 (BLOCKER), F-013 (parameterization), D-005, D-013
@@ -129,7 +136,9 @@ New fields added at the same level:
 | `next-conditional` | list[`{if, suggest, confidence}`] | `[]` | `# next:` line (constant clause) |
 | `cost` | `{tokens-estimate, duration-estimate, side-effect-risk}` | `{tokens: budget.input-cap, duration: ?, risk: low}` | `# budget:` block |
 | `canonical` | string (other synapse name) | absent | `# desc:` containing "alias for X" |
-| `requires-shadow` | bool | `true` if synapse role=mutator AND outputs any source-file path; else `false` | body inspection (D-011) |
+| `affects-source` | bool | `true` if any output path matches the active domain's `source-artifact-glob` (per domain-manifest v1.1) | output-glob match against domain manifest |
+| `requires-shadow` | bool | derived: `affects-source AND role ∈ {mutator, composer}` | computed (was: ambiguous "source-file path" detection) |
+| `blast-radius` | object: `{ reversibility, affected-paths, rollback }` | `{ reversibility: "reversible", affected-paths: outputs, rollback: "undo <neuron>" }` | declared per neuron (I-05) |
 
 ### input-spec
 

@@ -64,6 +64,77 @@ QUERY plumbing.
 file authoring. Compilation cache is Phase 4 (PR-153) for perf.
 **Consequences.** No `workspace/workflows/compiled/` directory in Phase 3.
 
+## D-026 — 2026-05-17 — Biology-correct vocabulary rename (closes OP-01)
+**Context.** User: "you pointed the names metaphor error". Original
+"each program = synapse" inverted biology — synapses are connections,
+not nodes.
+**Decision.** Vocabulary rename in v2 glossary:
+  - **neuron** = firing unit (program or tool) — was "synapse"
+  - **synapse** = weighted edge (`next-conditional`) between neurons
+  - **axon** = the orchestrator (matches project name)
+  - **dendrite** = receiver (precondition / input) — for prose only
+Backwards-compat: `synapse` accepted as alias for `neuron` in user input
+and external docs forever. Spec/schema fields canonical-named.
+**Consequences.** Glossary v2 ships. neuron-contract supersedes
+synapse-contract. `next-conditional:` → `synapses:`. File renames
+deferred to Phase-3 PR-101a (cosmetic). 
+
+## D-027 — 2026-05-17 — Predicate language v1.1 formalized (closes FL-01..FL-03, GAP-06)
+**Decision.** Formal grammar with precedence (AND > OR, NOT prefix,
+implication right-assoc, comparison non-associative). Strict type
+system with explicit coercion. Safe-eval null mode (default; null = false
+in predicate context); opt-in strict-null mode. Snapshot semantics:
+entry-time default, continuous opt-in.
+**Consequences.** New standalone spec `predicate-language-v1.1`. PR-102
+(predicate tool) implements the formal grammar. 50-fixture corpus seeded.
+
+## D-028 — 2026-05-17 — Ranker tie-break ladder (closes FL-04)
+**Decision.** Six-level tie-break ladder when raw-scores within ±0.05:
+canonical-status → recency → role-match → cost → goal-alignment →
+lexicographic name. Lexicographic terminal ensures reproducibility.
+
+## D-029 — 2026-05-17 — Zero-candidate fallback (closes FL-05)
+**Decision.** When `rank-candidates()` returns empty: TF-IDF goal-keyword
+match against full registry → top-3 surfaced. If still empty, QUERY
+offering register-tool / workflow-new / free-text routes. Never silent-hang.
+
+## D-030 — 2026-05-17 — Cold-start ranker bootstrap (closes FL-07)
+**Decision.** First 20 fires of a fresh session: frequency-prior from
+REGISTRY `invocation_source` (program=0.5, cli=0.3, kernel=0.0). After
+20 user-confirmed fires, full ranker active. Conversational author
+gets parallel cold-start path: first 3 picks skip ranker; show all
+same-domain neurons.
+
+## D-031 — 2026-05-17 — Layer axis added; meta-overload split (closes OP-03)
+**Decision.** Five-value `layer:` axis: kernel | system | meta | shared |
+domain. Splits old `category` overload. `category` preserved for
+backwards-compat; queries prefer `layer`.
+
+## D-032 — 2026-05-17 — source-artifact-glob declared per domain (closes FL-08)
+**Decision.** Each domain manifest declares
+`source-artifact-glob:` patterns. `requires-shadow` inference becomes
+`affects-source AND outputs-match-domain-glob`. Removes ambiguity.
+
+## D-033 — 2026-05-17 — Shadow-grace-flag flip protocol explicit (closes FL-10)
+**Decision.** Flag flips ONLY when: 100% coverage twice ≥ 5min apart
++ axon-audit clean + explicit user QUERY confirm. Unflip requires
+dev-mode + reason.
+
+## D-034 — 2026-05-17 — Interrupt-gate workflow-aware (closes FL-09)
+**Decision.** Existing active-program-interrupt-gate (KERNEL-SLIM §168)
+integrates with axon orchestrator: continuation passes through;
+deviation surfaces; pause-and-task CHECKPOINTS + adaptive; abort
+terminates workflow.
+
+## D-035 — 2026-05-17 — PR-116 split per project; PR-108 per-file rollback (closes FL-06, OP-04)
+**Decision.** PR-116 → PR-116a..f (one per project, internal sub-DAG).
+PR-108 ships `--rollback-per-file` mode using existing `undo` tool.
+
+## D-036 — 2026-05-17 — Improvement artifacts I-01..I-06
+**Decision.** Ship six improvement artifacts: `_flaws.md` register,
+`_versions.md` per phase, orchestrator fixture corpus, per-PR rollback
+template, blast-radius declaration, reversibility tier.
+
 ## D-025 — 2026-05-17 — Phase 1 validation gate: synthesis sign-off, no per-track gate
 **Context.** OQ-10.
 **Decision.** Per-track sign-off is not required. The synthesis document

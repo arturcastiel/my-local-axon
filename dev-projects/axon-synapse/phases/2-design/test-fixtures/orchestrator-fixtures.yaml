@@ -1,0 +1,129 @@
+# Orchestrator ranker fixture corpus (I-03)
+# Seeded 2026-05-17. PR-109 / PR-111 expand to 50 entries.
+# Format: each fixture is (state, goal, expected-top-1, rationale).
+# Ranker is reproducible: same state + goal → same top-1.
+
+version: 1
+glossary: AXON-GLOSSARY v2
+
+fixtures:
+
+  - id: FX-001
+    description: Fresh code-dev project, just-loaded — should suggest study
+    state:
+      W.code-dev-project: "fixture-proj"
+      W.active-phase: null
+      W.active-workflow: null
+      W.current-goal: "Audit a Python codebase"
+      project.phase: "1-study"
+      file.exists('phases/1-study/01-study.md'): true
+      file.contains('phases/1-study/01-study.md', '_Run: code-dev study_'): true
+      tests.pass(): null
+    goal:
+      statement: "Audit a Python codebase"
+      acceptance: "file.contains('phases/1-study/01-study.md', 'populated')"
+    expected-top-1: code-dev-study
+    expected-mode: subsystem      # or overview; tied
+    rationale:
+      - goal-alignment: study advances acceptance
+      - precondition: code-dev-study GUARD passes
+      - role-match: mutator (state needs change)
+      - cold-start: frequency-prior boost (code-dev family, program invocation)
+
+  - id: FX-002
+    description: Phase-1 study populated, ready to plan
+    state:
+      W.code-dev-project: "fixture-proj"
+      W.active-phase: "code-dev-study:done"
+      file.exists('phases/1-study/01-study.md'): true
+      file.size('phases/1-study/01-study.md'): 5000
+      W.current-goal: "Produce a tactical PR plan"
+    goal:
+      statement: "Produce a tactical PR plan"
+      acceptance: "file.exists('phases/1-study/02-plan.md') AND file.exists('phases/1-study/02-prs.md')"
+    expected-top-1: code-dev-plan
+    expected-mode: tactical
+    rationale:
+      - goal-alignment: plan tactical matches statement
+      - precondition: 02-prs.md absent (precondition for plan firing)
+      - next-conditional: study → plan declared
+      - role-match: mutator
+
+  - id: FX-003
+    description: Mid-PR-review, P7 (verification) failed — adaptive deviation
+    state:
+      W.code-dev-project: "fixture-proj"
+      W.active-workflow: "code-dev.canonical"
+      W.active-workflow-step: "s8"             # pr-review
+      W.pr-review-phase: "p7"
+      tests.pass(): false
+      tests.fail(): true
+      audit.open_findings(): 3
+      W.current-goal: "PR-007 ready to merge"
+    goal:
+      acceptance: "review.passes() AND tests.pass()"
+    expected-top-1: code-dev-review-tests
+    rationale:
+      - state.tests.fail = true triggers deviation
+      - synapse: P7 → conditional next on tests.fail()
+      - suggestion-type: deviation
+      - confidence: 0.9 (declared synapse)
+
+  - id: FX-004
+    description: Free-text input, no active workflow, cold-start
+    state:
+      W.code-dev-project: null
+      W.active-workflow: null
+      W.recent-user-input: "I want to read these PDFs and find common themes"
+      L.dispatch-history: []                   # cold-start
+      L.usage-history: []
+      W.current-goal: null
+    goal: null                                  # adaptive entry; goal will be inferred
+    expected-top-1: library-dev
+    expected-action: "QUERY user: It looks like you want library-dev. Confirm?"
+    rationale:
+      - mode-detect: high score on "read PDFs" + "themes" keywords
+      - confidence: 0.65 (medium — triggers QUERY per decide())
+      - cold-start: frequency-prior boost
+
+  - id: FX-005
+    description: Shadow obligation pending — boost shadow synapse
+    state:
+      W.code-dev-project: "fixture-proj"
+      W.active-phase: "code-dev-pr-create:done"
+      W.last-fired-pr: "PR-005"
+      shadow.coverage('phases/3-implement'): 85
+      shadow.contains('phases/3-implement/shadow/PR-005.findings.md'): false
+    goal:
+      acceptance: "shadow.coverage('phases/3-implement') == 100"
+    expected-top-1: code-dev-knowledge-shadow
+    expected-args:
+      pr: "PR-005"
+    rationale:
+      - shadow-obligation: pending (D-23 enforcement)
+      - ranker shadow-weight contributes +0.10
+      - synapse: code-dev-pr-create → next-conditional shadow declared
+      - role-match: mutator
+
+# === Reserved IDs (PR-109 / PR-111 to fill) ===
+# FX-006 through FX-050:
+#   - hybrid workflow mid-flip
+#   - exploratory mode entry
+#   - scheduled cron-trigger evaluation
+#   - cross-domain workflow (cite step)
+#   - workflow-author mid-dialog
+#   - rejection-criterion fires
+#   - parent-met-child-open audit
+#   - interrupt-gate workflow-continuation
+#   - interrupt-gate workflow-deviation
+#   - zero-candidate fallback registry-search
+#   - drift-state diverged suggestion suppression
+#   - high context-pressure single-cheap-candidate collapse
+#   - register-tool wizard sequence
+#   - dev-mode-flip required for PR-112 surface
+#   - shadow grace-flag flip prompt
+#   - DAG mutation: merge / split / fold-in
+#   - sub-DAG nested consistency
+#   - goal status transitions (5 cases)
+#   - alias resolution (code-dev-shadow → code-dev-knowledge-shadow)
+#   - stub neuron filter (code-dev-finalize not suggested)

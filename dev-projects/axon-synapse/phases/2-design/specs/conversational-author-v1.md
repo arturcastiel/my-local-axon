@@ -243,7 +243,26 @@ Pattern reused from existing programs:
 4. Two parallel authoring sessions; assert no interference (W: keys
    namespaced by session id).
 
+## v1.1 — cold-start dialog (FL-07)
+
+When the conversational author runs in a fresh session with empty
+dispatch / usage / pattern history:
+
+1. **Skip the ranker** for the first 3 synapse picks. Use heuristic
+   suggestions from REGISTRY filtered by declared `domain` + `family`
+   matching the user-stated workflow name.
+2. **Surface ALL same-domain neurons as candidates** for first pick
+   (not just ranked top-3), giving user agency before ranker has signal.
+3. After 3 picks, hand off to normal ranker with accumulated dialog
+   context as seed signal.
+4. Log cold-start status in the workflow file's `inference-log:`.
+
+### Dialog max-length protection
+- Max 30 turns per workflow author session.
+- At turn 25 surface "approaching max — finalize?" QUERY.
+- At turn 30 force a finalization or abort prompt.
+
 ## Version + change rule
 
-**Version: v1 (2026-05-17).** Dialog scripts may evolve; YAML output
+**Version: v1.1 (2026-05-17).** Dialog scripts may evolve; YAML output
 schema bumps require `workflow-file` spec bump.
