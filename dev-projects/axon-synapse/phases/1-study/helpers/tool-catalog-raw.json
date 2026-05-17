@@ -1,0 +1,895 @@
+{
+  "total": 75,
+  "tools": [
+    {
+      "name": "boot",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Parse workspace state, return JSON boot context",
+      "script": "tools/boot.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "memory",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "STORE/RETRIEVE/CLEAR/APPEND on W:/L:/E: scopes",
+      "script": "tools/memory.py",
+      "callers_count": 3,
+      "callers": [
+        "gain",
+        "stats",
+        "undo"
+      ]
+    },
+    {
+      "name": "log",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Append formatted entry to daily log file",
+      "script": "tools/log.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "queue",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Add/list/complete tasks in the scheduler queue",
+      "script": "tools/queue_tool.py",
+      "callers_count": 1,
+      "callers": [
+        "stats"
+      ]
+    },
+    {
+      "name": "index",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Update chat/plan INDEX.md tables",
+      "script": "tools/index.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "checkpoint",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Snapshot W: memory + append to episodic log",
+      "script": "tools/checkpoint.py",
+      "callers_count": 1,
+      "callers": [
+        "handoff"
+      ]
+    },
+    {
+      "name": "process",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Spawn/update/complete process lifecycle files",
+      "script": "tools/process.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "benchmark",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Record and report compilation benchmarks",
+      "script": "tools/benchmark.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "lint-paths",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Forbid hardcoded /home/<user> or /Users/<user> paths in shipping tree",
+      "script": "tools/lint_paths.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "auto-audit",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Append-only ledger of auto-applied changes (PR-015) \u2014 record/list/summary",
+      "script": "tools/auto_audit.py",
+      "callers_count": 2,
+      "callers": [
+        "auto-actions",
+        "menu"
+      ]
+    },
+    {
+      "name": "undo",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Restore a target file or W: key from its rollback snapshot (PR-016)",
+      "script": "tools/undo.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "auto-improve",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Daily orchestrator (PR-017) \u2014 auto-compile, auto-tune dispatch, auto-archive episodic. Gated by L:auto-improve (default false).",
+      "script": "tools/auto_improve.py",
+      "callers_count": 1,
+      "callers": [
+        "auto-improve"
+      ]
+    },
+    {
+      "name": "programs-registry",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Single source of truth for the program library (PR-020) \u2014 generate/query/validate",
+      "script": "tools/programs_registry.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "compile",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Unified compile pipeline \u2014 format/rank/scan/verify/optimize/test-all/check-composition (PR-007)",
+      "script": "tools/compile.py",
+      "callers_count": 1,
+      "callers": [
+        "compile-optimizer"
+      ]
+    },
+    {
+      "name": "compile-write",
+      "status": "OPTIONAL",
+      "category": "kernel",
+      "purpose": "DEPRECATED \u2014 use `compile format`. Backing script for the new unified tool.",
+      "script": "tools/compile-write.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "prefs",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Load and merge all workspace preference files",
+      "script": "tools/prefs.py",
+      "callers_count": 1,
+      "callers": [
+        "code-dev-pr-sync"
+      ]
+    },
+    {
+      "name": "enforce",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Machine-check compliance gates before actions",
+      "script": "tools/enforce.py",
+      "callers_count": 1,
+      "callers": [
+        "register-tool"
+      ]
+    },
+    {
+      "name": "test",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Validate program structure without executing",
+      "script": "tools/test.py",
+      "callers_count": 1,
+      "callers": [
+        "run-tests"
+      ]
+    },
+    {
+      "name": "run",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Execute mechanical ops from compiled .cmp.md",
+      "script": "tools/run.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "verify",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Verify program/output against kernel rule predicates",
+      "script": "tools/verify.py",
+      "callers_count": 1,
+      "callers": [
+        "health-check"
+      ]
+    },
+    {
+      "name": "drift",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Real drift score: edit distance between expected and actual tool sequence",
+      "script": "tools/drift.py",
+      "callers_count": 4,
+      "callers": [
+        "auto-improve",
+        "menu",
+        "meta",
+        "output-layer"
+      ]
+    },
+    {
+      "name": "usage",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Usage tracker \u2014 record/top/suggest. Identifies compile candidates by call frequency",
+      "script": "tools/usage.py",
+      "callers_count": 2,
+      "callers": [
+        "code-dev-meta-usage",
+        "meta"
+      ]
+    },
+    {
+      "name": "health",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Data-driven health-check runner \u2014 iterates REGISTRY.json",
+      "script": "tools/health.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "clock",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "NTP-accurate timestamps",
+      "script": "tools/clock.py",
+      "callers_count": 64,
+      "callers": [
+        "auto-actions",
+        "auto-improve",
+        "axon-audit",
+        "axon-compare",
+        "chat-input",
+        "code-dev",
+        "code-dev-branch",
+        "code-dev-cascade",
+        "code-dev-changelog",
+        "code-dev-combine",
+        "code-dev-divide",
+        "code-dev-dont-do",
+        "code-dev-init",
+        "code-dev-journal-decision",
+        "code-dev-journal-event",
+        "code-dev-journal-log",
+        "code-dev-knowledge-explain",
+        "code-dev-knowledge-impact",
+        "code-dev-link",
+        "code-dev-merge",
+        "code-dev-meta-dispatch-stats",
+        "code-dev-meta-usage",
+        "code-dev-new",
+        "code-dev-next",
+        "code-dev-phase-new",
+        "code-dev-phase-start",
+        "code-dev-plan",
+        "code-dev-plan-master",
+        "code-dev-pr-create",
+        "code-dev-pr-github"
+      ]
+    },
+    {
+      "name": "calculator",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "Safe math evaluation",
+      "script": "tools/calculator.py",
+      "callers_count": 13,
+      "callers": [
+        "code-dev",
+        "code-dev-next",
+        "code-dev-plan",
+        "code-dev-pr-create",
+        "code-dev-safety-audit",
+        "code-dev-since",
+        "code-dev-state-metrics",
+        "code-dev-study",
+        "gain",
+        "library-dev-status",
+        "memory-compact",
+        "menu",
+        "session-summary"
+      ]
+    },
+    {
+      "name": "tokenizer",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "Exact token counts",
+      "script": "tools/tokenizer.py",
+      "callers_count": 1,
+      "callers": [
+        "translate"
+      ]
+    },
+    {
+      "name": "audit_compiled",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "Audit compiled program sizes vs sources (PR-2)",
+      "script": "tools/audit_compiled.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "migrate_meta",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "Migrate project _meta.md from v1 to v4.1 (PR-3)",
+      "script": "tools/migrate_meta.py",
+      "callers_count": 1,
+      "callers": [
+        "code-dev-migrate"
+      ]
+    },
+    {
+      "name": "rules",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "Governance rules loader + precedence + trace (PR-4)",
+      "script": "tools/rules.py",
+      "callers_count": 3,
+      "callers": [
+        "code-dev-plan",
+        "code-dev-pr-ready",
+        "code-dev-rules-audit"
+      ]
+    },
+    {
+      "name": "redact",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "Secret redaction patterns (PR-5)",
+      "script": "tools/redact.py",
+      "callers_count": 1,
+      "callers": [
+        "code-dev-meta-igap"
+      ]
+    },
+    {
+      "name": "scan_pre_push",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "Pre-push secret scan over staged diff (PR-5)",
+      "script": "tools/scan_pre_push.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "session",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "Per-chat _session.md state + auto-checkpoint + recovery (PR-9)",
+      "script": "tools/session.py",
+      "callers_count": 6,
+      "callers": [
+        "code-dev-chats",
+        "code-dev-meta-context",
+        "code-dev-safety-freeze",
+        "code-dev-state-handoff",
+        "code-dev-state-resume",
+        "code-dev-state-save"
+      ]
+    },
+    {
+      "name": "pr_aggregate",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "Cross-phase PR list aggregator (PR-9.5)",
+      "script": "tools/pr_aggregate.py",
+      "callers_count": 2,
+      "callers": [
+        "code-dev-next",
+        "code-dev-pr-list"
+      ]
+    },
+    {
+      "name": "rename_snapshot",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "Rename-safety harness (PR-12)",
+      "script": "tools/rename_snapshot.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "plan_dag",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "Plan DAG emitter (Mermaid + JSON) with critical path (PR-16.5)",
+      "script": "tools/plan_dag.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "study_index",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "study/_index.md maintainer + staleness flags (PR-17)",
+      "script": "tools/study_index.py",
+      "callers_count": 2,
+      "callers": [
+        "code-dev-next",
+        "code-dev-study-area"
+      ]
+    },
+    {
+      "name": "budget_lint",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "code-dev per-program budget block lint (PR-20)",
+      "script": "tools/budget_lint.py",
+      "callers_count": 1,
+      "callers": [
+        "code-dev-meta-usage"
+      ]
+    },
+    {
+      "name": "cd_cache",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "code-dev caches bundle (T-B1/B2/B3/B5) (PR-20.5)",
+      "script": "tools/cd_cache.py",
+      "callers_count": 9,
+      "callers": [
+        "code-dev-pr-review-p1",
+        "code-dev-pr-review-p2",
+        "code-dev-pr-review-p3",
+        "code-dev-pr-review-p4",
+        "code-dev-pr-review-p5",
+        "code-dev-pr-review-p6",
+        "code-dev-pr-review-p7",
+        "code-dev-pr-review-p8",
+        "code-dev-pr-review-p9"
+      ]
+    },
+    {
+      "name": "board",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "ASCII Kanban over pr_aggregate (PR-20.6)",
+      "script": "tools/board.py",
+      "callers_count": 1,
+      "callers": [
+        "code-dev-meta-board"
+      ]
+    },
+    {
+      "name": "study_evals",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "study output evals against fixture corpora (PR-20.7)",
+      "script": "tools/study_evals.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "idem_test",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "code-dev idempotence harness (PR-25)",
+      "script": "tools/idem_test.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "pr_sync",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "PR CI status sync via gh CLI (PR-28.5)",
+      "script": "tools/pr_sync.py",
+      "callers_count": 1,
+      "callers": [
+        "code-dev-pr-sync"
+      ]
+    },
+    {
+      "name": "pr_drift",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "PR spec-vs-diff drift detector (PR-28.5)",
+      "script": "tools/pr_drift.py",
+      "callers_count": 1,
+      "callers": [
+        "code-dev-pr-drift"
+      ]
+    },
+    {
+      "name": "pr_export",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "PR self-contained export packet (PR-28.5)",
+      "script": "tools/pr_export.py",
+      "callers_count": 1,
+      "callers": [
+        "code-dev-pr-export"
+      ]
+    },
+    {
+      "name": "diff",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "File comparison and staleness detection",
+      "script": "tools/diff_tool.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "validator",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "JSON Schema validation",
+      "script": "tools/validator.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "notify",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "Slack/email alerts",
+      "script": "tools/notify.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "kv-store",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "Fast persistent key-value store",
+      "script": "tools/kv_store.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "document-parser",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "Extract text from PDF/DOCX",
+      "script": "tools/document_parser.py",
+      "callers_count": 1,
+      "callers": [
+        "code-dev-study"
+      ]
+    },
+    {
+      "name": "web-search",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "DuckDuckGo web search",
+      "script": "tools/web_search.py",
+      "callers_count": 5,
+      "callers": [
+        "axon-compare",
+        "code-dev-study",
+        "library-dev-cite",
+        "library-dev-search",
+        "meta"
+      ]
+    },
+    {
+      "name": "translate",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "Symbolic \u2192 human-readable translation",
+      "script": "tools/translate.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "events",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "EMIT/ON event bus \u2014 fire events, register handlers, dispatch",
+      "script": "tools/events.py",
+      "callers_count": 4,
+      "callers": [
+        "code-dev-events-emit",
+        "discover",
+        "handoff",
+        "stats"
+      ]
+    },
+    {
+      "name": "simulate",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Dry-run program \u2014 shadow writes, stub tools, simulation report",
+      "script": "tools/simulate.py",
+      "callers_count": 2,
+      "callers": [
+        "discover",
+        "simulate"
+      ]
+    },
+    {
+      "name": "cron",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Cron scheduler \u2014 add/list/check recurring program jobs",
+      "script": "tools/cron.py",
+      "callers_count": 1,
+      "callers": [
+        "stats"
+      ]
+    },
+    {
+      "name": "pack",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Pack/unpack .axon program bundles",
+      "script": "tools/pack.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "deps",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Program dependency graph \u2014 show/tree/graph/check",
+      "script": "tools/deps.py",
+      "callers_count": 2,
+      "callers": [
+        "deps",
+        "discover"
+      ]
+    },
+    {
+      "name": "hooks",
+      "status": "OPTIONAL",
+      "category": "kernel",
+      "purpose": "DEPRECATED \u2014 alias for events tool. Use `events hook-add/list/remove/fire/enable/disable`. Shim removed next release.",
+      "script": "tools/hooks.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "context",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Context pressure estimator \u2014 track token usage, surface pressure level",
+      "script": "tools/context.py",
+      "callers_count": 2,
+      "callers": [
+        "discover",
+        "gain"
+      ]
+    },
+    {
+      "name": "prompt-log",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Session prompt logger \u2014 captures user inputs for pattern analysis and smart dispatch",
+      "script": "tools/prompt_log.py",
+      "callers_count": 2,
+      "callers": [
+        "menu",
+        "prompt-log-consent"
+      ]
+    },
+    {
+      "name": "pattern",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Cluster prompt-log entries by TF-IDF similarity \u2014 surface compile candidates",
+      "script": "tools/pattern.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "compile-suggest",
+      "status": "OPTIONAL",
+      "category": "kernel",
+      "purpose": "DEPRECATED \u2014 use `compile rank` / `compile auto-compile` / `compile status`. Backing script for the new unified tool.",
+      "script": "tools/compile_suggest.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "dispatch",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Smart dispatch \u2014 match free-text prompt to compiled program using TF-IDF similarity",
+      "script": "tools/dispatch.py",
+      "callers_count": 2,
+      "callers": [
+        "code-dev-meta-dispatch-stats",
+        "compile-optimizer"
+      ]
+    },
+    {
+      "name": "dispatch-stats",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Weekly token savings summary \u2014 dispatched runs, accuracy, compile candidates",
+      "script": "tools/dispatch_stats.py",
+      "callers_count": 1,
+      "callers": [
+        "code-dev-meta-dispatch-stats"
+      ]
+    },
+    {
+      "name": "axon-audit",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Self-audit \u2014 1a: boot chain, registry, refs, internals; 1b: usefulness score and recommendations",
+      "script": "tools/axon_audit.py",
+      "callers_count": 2,
+      "callers": [
+        "axon-audit",
+        "axon-compare"
+      ]
+    },
+    {
+      "name": "compile-optimizer",
+      "status": "OPTIONAL",
+      "category": "kernel",
+      "purpose": "DEPRECATED \u2014 use `compile scan/verify/test-all/report/check-composition`. Backing script for the new unified tool.",
+      "script": "tools/compile_optimizer.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "rtk",
+      "status": "OPTIONAL",
+      "category": "kernel",
+      "purpose": "RTK token optimizer \u2014 wraps RTK CLI if installed",
+      "script": "tools/rtk.py",
+      "callers_count": 2,
+      "callers": [
+        "discover",
+        "gain"
+      ]
+    },
+    {
+      "name": "test-runner",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Run AXON test suite \u2014 unit, regression, integration; returns JSON results",
+      "script": "tools/test_runner.py",
+      "callers_count": 1,
+      "callers": [
+        "run-tests"
+      ]
+    },
+    {
+      "name": "session-save",
+      "status": "ACTIVE",
+      "category": "os",
+      "purpose": "Write L:last-session-summary and L:last-session-snapshot for boot-time session restore",
+      "script": "tools/session_save.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "docgen",
+      "status": "ACTIVE",
+      "category": "documentation",
+      "purpose": "Generate full AXON documentation with Mermaid diagrams, program catalog, tool registry, and relationship maps",
+      "script": "tools/docgen.py",
+      "callers_count": 1,
+      "callers": [
+        "axon-docs-gen"
+      ]
+    },
+    {
+      "name": "igap",
+      "status": "ACTIVE",
+      "category": "kernel",
+      "purpose": "Inference gap tracker \u2014 record/report/stats on turns where LLM had to infer rather than find explicit instructions",
+      "script": "tools/igap.py",
+      "callers_count": 4,
+      "callers": [
+        "code-dev-meta-igap",
+        "igap-improve",
+        "menu",
+        "session-summary"
+      ]
+    },
+    {
+      "name": "shadow",
+      "status": "ACTIVE",
+      "category": "code-dev",
+      "purpose": "Shadow index \u2014 versioned, content-addressed findings mirror for source files analysed during code-dev workflows",
+      "script": "tools/shadow.py",
+      "callers_count": 17,
+      "callers": [
+        "code-dev",
+        "code-dev-branch",
+        "code-dev-journal-log",
+        "code-dev-knowledge-explain",
+        "code-dev-knowledge-impact",
+        "code-dev-knowledge-shadow",
+        "code-dev-next",
+        "code-dev-pr-create",
+        "code-dev-pr-review",
+        "code-dev-safety-audit",
+        "code-dev-safety-preflight",
+        "code-dev-since",
+        "code-dev-state-handoff",
+        "code-dev-state-resume",
+        "code-dev-state-status",
+        "code-dev-study",
+        "code-dev-study-area"
+      ]
+    },
+    {
+      "name": "call_graph",
+      "status": "ACTIVE",
+      "category": "audit",
+      "purpose": "PR-31.5 recursive program-call cycle detector",
+      "script": "tools/call_graph.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "docgen_verify",
+      "status": "ACTIVE",
+      "category": "audit",
+      "purpose": "PR-34 cross-ref lint between AXON-DOCS-*.md and programs",
+      "script": "tools/docgen_verify.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "cheatsheet_gen",
+      "status": "ACTIVE",
+      "category": "docs",
+      "purpose": "PR-34.5 regenerate AUTO-VERBS block in cheatsheet",
+      "script": "tools/cheatsheet_gen.py",
+      "callers_count": 0,
+      "callers": []
+    },
+    {
+      "name": "shell",
+      "status": "OPTIONAL",
+      "category": "host",
+      "purpose": "Host shell passthrough \u2014 dispatched by the host harness, no Python script. Programs reference TOOL(shell, ...) for git/fs snippets; the harness fulfils them at runtime.",
+      "script": "tools/shell.py",
+      "callers_count": 33,
+      "callers": [
+        "code-dev",
+        "code-dev-branch",
+        "code-dev-journal-log",
+        "code-dev-journal-search",
+        "code-dev-knowledge-impact",
+        "code-dev-knowledge-shadow",
+        "code-dev-new",
+        "code-dev-next",
+        "code-dev-phase-new",
+        "code-dev-phase-start",
+        "code-dev-pr-create",
+        "code-dev-pr-ready",
+        "code-dev-pr-review",
+        "code-dev-review-coverage",
+        "code-dev-review-diff",
+        "code-dev-review-scope",
+        "code-dev-review-self",
+        "code-dev-safety-preflight",
+        "code-dev-since",
+        "code-dev-state-handoff",
+        "code-dev-state-resume",
+        "code-dev-state-status",
+        "code-dev-study",
+        "code-dev-study-area",
+        "code-dev-test-map",
+        "igap-improve",
+        "library-dev-explain",
+        "library-dev-ingest",
+        "library-dev-new",
+        "library-dev-search"
+      ]
+    }
+  ]
+}
