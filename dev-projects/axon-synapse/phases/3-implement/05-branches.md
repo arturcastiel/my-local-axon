@@ -2,4 +2,4 @@
 
 | Branch | PR | Phase | Status | Notes |
 |--------|----|----|--------|-------|
-| main | pr-101 | 3-implement | pending review | spec authored, awaiting approve |
+| main | pr-101 | 3-implement | implemented-in-axon | file written + verify OK + shadow + trackers updated; awaiting human commit+push of axon repo |

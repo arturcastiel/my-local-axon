@@ -2,4 +2,4 @@
 
 | File | PR | Note |
 |------|----|------|
-| (populated per PR — every PR appends its changed-files rows here) |  |  |
+| workspace/AXON-GLOSSARY.md | pr-101 | new — promoted from phases/2-design/specs/SYNAPSE-GLOSSARY.md with 2-line provenance header |
