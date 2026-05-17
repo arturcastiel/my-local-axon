@@ -1,6 +1,10 @@
 # pr-8 — Study modes core (+ --target / --output / --input)
 
-**Wave**: W2 · **Goals**: G.study.01, partial G.study.07, T-S1.2, T-S1.3, T-S1.4, T-S1.8 · **Depends-on**: PR-3 (schema), PR-17 will fill `_index.md`
+**Wave**: W2 · **Goals**: G.study.01, partial G.study.07, T-S1.2, T-S1.3, T-S1.4, T-S1.8 · **Depends-on**: PR-3 (schema)
+
+> Forward-reference (NOT a dep): PR-17 will later fill `study/_index.md`
+> from outputs produced by this PR. Documented per pr-16.5's
+> "forward references in narrative are not deps" rule.
 
 ## Why (problem statement)
 Today `code-dev study` writes one fixed-shape `01-study.md` per project. R5 measured this against industry tools (Sourcegraph / CodeQL / Semgrep) and found the program is doing **the work of 14 distinct study modes** behind one verb, with no scope control (`--target`), no output shape control (`--output`), and no external-input integration (`--input`). The mode taxonomy (`cd-study-c1-p2-modes-taxonomy.md`) defines 14 modes; this PR lands the core 3 (`overview / subsystem / deep`) plus the universal flags so downstream Wave-S2..S6 modes (PR-30 etc.) can slot in without touching the verb signature again.

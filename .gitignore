@@ -13,3 +13,6 @@ libraries/*/*.PDF
 
 # Scratch
 memory/working/
+
+# PR-3 — schema migrator backups
+_meta.md.bak.*

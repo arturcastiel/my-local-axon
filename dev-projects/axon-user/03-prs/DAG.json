@@ -1,0 +1,37 @@
+{
+  "schema": "plan-dag-v1",
+  "project": "axon-user",
+  "generated": "2026-05-16",
+  "source": "**Depends-on**: lines in 03-prs/u-*.md",
+  "acyclic": true,
+  "nodes": [
+    "u-1", "u-2", "u-3", "u-4", "u-5",
+    "u-6", "u-7", "u-8", "u-9", "u-v1"
+  ],
+  "edges": [
+    ["u-1", "u-4"],
+    ["u-1", "u-5"],
+    ["u-1", "u-6"],
+    ["u-2", "u-3"],
+    ["u-3", "u-v1"],
+    ["u-4", "u-v1"],
+    ["u-5", "u-v1"],
+    ["u-6", "u-v1"],
+    ["u-7", "u-v1"],
+    ["u-8", "u-v1"],
+    ["u-9", "u-v1"]
+  ],
+  "topo": [
+    "u-1", "u-2", "u-7", "u-8", "u-9",
+    "u-4", "u-5", "u-6", "u-3",
+    "u-v1"
+  ],
+  "critical_path": ["u-1", "u-3", "u-5", "u-6", "u-v1"],
+  "critical_path_length": 5,
+  "waves": {
+    "U.A": ["u-1", "u-2", "u-3"],
+    "U.B": ["u-4", "u-5"],
+    "U.C": ["u-6", "u-7", "u-8", "u-9"],
+    "U.D": ["u-v1"]
+  }
+}
