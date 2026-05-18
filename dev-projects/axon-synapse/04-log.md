@@ -555,3 +555,33 @@ Note: tests/test_domain_manifest.py exists but pytest has not been run
 - Implementation pending HUMAN go-ahead: this PR touches every program
   header, so AXON is pausing before execution for explicit confirmation.
 
+
+## 2026-05-18 — PR-108 implemented on branch (axon repo)
+
+Branch: pr-108-metadata-migration  (NOT merged to main yet)
+Commit: db55323
+Files: 205 changes (~+6000 lines).
+
+Acceptance gates met:
+- full-tree validate rate    90.8 %   (≥ 90 % gate)
+- 20-program corpus rate     90.0 %   (≥ 80 % gate)
+- migrator idempotent        verified (second run inserts 0)
+- domain scaffold            4 _index.md files written
+- remaining 16 failures      all real ALIAS-without-canonical
+                             (spec hand-tune pool; out of scope)
+
+Two real bugs caught + fixed during execution:
+1. migrator emitted `precondition: true` as a YAML bareword → re-parsed
+   as Python bool, breaking the schema. Fix: quote string scalars that
+   alias YAML keywords (true/false/null/...).
+2. validator predicate-token regex rejected backslash → regex predicates
+   like `url matches /^https?:\\\\//`  failed. Fix: add `\\` to the
+   allowed char class.
+
+Stray-file cleanup: workspace/memory/longterm/dev-mode* slipped into the
+first push of the branch (local OS state). Amended branch head, added
+workspace/memory/longterm/ to .gitignore, force-pushed branch (NOT main).
+
+Status: awaiting HUMAN review on branch + pytest run, then merge to main.
+PR URL hint: https://github.com/arturcastiel/axon/pull/new/pr-108-metadata-migration
+
