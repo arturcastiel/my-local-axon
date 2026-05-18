@@ -620,3 +620,19 @@ Authored the remaining 10 Phase-3 PR specs in one batch:
 All 20 Phase-3 PR specs now exist on disk. dev-mode required only for
 pr-112. Phase _meta cursor remains pr-117 (critical-path terminus).
 
+
+## 2026-05-18 — PR-117 merged (critical-path terminus)
+
+Squash-merged to main as commit f4c262d. Critical path 101→104→107→
+108→117 is now complete. Acceptance results:
+
+  · full-tree validate: 174/174 (100%)  [bar ≥95%]
+  · corpus validate:    20/20  (100%)   [bar ≥80%]
+  · 182/182 local tests green
+  · 2 PR-108 fallout regressions also fixed in the same PR
+    (test_workspace_backup synapse-block stripping + 28-program
+    bulk quarantine under "PR-108 fallout").
+
+Merged set: 6/20 (101, 104, 106, 107, 108, 117).
+Phase cursor advanced to pr-103 (predicate eval — unblocks ranker).
+
