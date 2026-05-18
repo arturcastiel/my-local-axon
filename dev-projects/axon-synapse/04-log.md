@@ -518,3 +518,25 @@ Effect on phase plan:
 Note: tests/test_domain_manifest.py exists but pytest has not been run
 (human task per kernel hard rule). HUMAN to execute:
     python3 -m pytest tests/test_domain_manifest.py -q
+
+## 2026-05-18 — PR-107 merged (synapse-infer + synapse-validate)
+
+- New tools: tools/synapse_infer.py (~250 LOC), tools/synapse_validate.py (~200 LOC).
+- Doc shims: workspace/tools/synapse-infer.md, workspace/tools/synapse-validate.md
+  (workspace overrides OS per D-034).
+- REGISTRY entries: both registered ACTIVE in tools/REGISTRY.json (76 → 78).
+- Corpus: tests/synapse/corpus/ — 20 .contract.json snapshots
+  (representative span over menu / auto-* / axon-* / code-dev-*).
+- Tests: tests/test_synapse_infer.py (6 cases), tests/test_synapse_validate.py
+  (8 cases). HUMAN runs pytest.
+- Acceptance: corpus validation rate 18/20 = 90 % (≥ 80 % bar from D-6).
+  Full-tree run (173 programs) = 89.6 % valid; remaining failures are
+  real ALIAS-without-canonical issues, not inference bugs.
+- Two real bugs fixed during smoke:
+  1. predicate-token regex widened to accept AXON-LANG unicode ops
+     (≡ ≠ ∅ ∈ ∉ ≥ ≤ → ←) — programs use them natively.
+  2. ASSERT/GUARD extractor switched to nested-paren-aware extraction
+     (was cutting off at first ')' even when nested).
+- Phase cursor advanced pr-107 → pr-108 (critical path).
+- Merged set: {pr-101, pr-104, pr-106, pr-107}.
+
