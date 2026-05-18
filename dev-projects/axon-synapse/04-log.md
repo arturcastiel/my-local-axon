@@ -600,3 +600,23 @@ pr-108.md Status: implemented → merged.
 Phase cursor advanced pr-108 → pr-117 (critical-path terminus).
 Merged set: {pr-101, pr-104, pr-106, pr-107, pr-108}.
 
+
+## 2026-05-18 — Wave-2..W6 batch spec author (10 PRs)
+
+Authored the remaining 10 Phase-3 PR specs in one batch:
+
+  pr-103  goal tool + goal-schema v1                 (W2 · medium)
+  pr-111  orchestrator loop (program)                (W3 · high)
+  pr-112  output-layer suggestions [dev-mode]        (W4 · medium · ONLY dev-mode PR)
+  pr-113  plan_dag auto-emit hook                    (W2 · low)
+  pr-115  workflow-new conversational author         (W4 · medium)
+  pr-116  shadow retroactive bulk migration          (W5 · medium)
+  pr-117  alias canonicalization + finalize +        (W5 · medium · critical-path
+          self-review collision                              terminus)
+  pr-118  reference workflows ship                   (W5 · low)
+  pr-119  axon-audit extension                       (W6 · low)
+  pr-120  igap + auto-improve wire                   (W6 · low)
+
+All 20 Phase-3 PR specs now exist on disk. dev-mode required only for
+pr-112. Phase _meta cursor remains pr-117 (critical-path terminus).
+
