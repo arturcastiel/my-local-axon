@@ -1,37 +1,194 @@
 {
-  "schema": "plan-dag-v1",
-  "project": "axon-user",
+  "schema": "axon-dag",
   "generated": "2026-05-16",
-  "source": "**Depends-on**: lines in 03-prs/u-*.md",
-  "acyclic": true,
   "nodes": [
-    "u-1", "u-2", "u-3", "u-4", "u-5",
-    "u-6", "u-7", "u-8", "u-9", "u-v1"
+    {
+      "id": "u-1",
+      "kind": "step",
+      "name": "u-1",
+      "label": "u-1",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "u-2",
+      "kind": "step",
+      "name": "u-2",
+      "label": "u-2",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "u-3",
+      "kind": "step",
+      "name": "u-3",
+      "label": "u-3",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "u-4",
+      "kind": "step",
+      "name": "u-4",
+      "label": "u-4",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "u-5",
+      "kind": "step",
+      "name": "u-5",
+      "label": "u-5",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "u-6",
+      "kind": "step",
+      "name": "u-6",
+      "label": "u-6",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "u-7",
+      "kind": "step",
+      "name": "u-7",
+      "label": "u-7",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "u-8",
+      "kind": "step",
+      "name": "u-8",
+      "label": "u-8",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "u-9",
+      "kind": "step",
+      "name": "u-9",
+      "label": "u-9",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "u-v1",
+      "kind": "step",
+      "name": "u-v1",
+      "label": "u-v1",
+      "status": "pending",
+      "child-dag": null
+    }
   ],
   "edges": [
-    ["u-1", "u-4"],
-    ["u-1", "u-5"],
-    ["u-1", "u-6"],
-    ["u-2", "u-3"],
-    ["u-3", "u-v1"],
-    ["u-4", "u-v1"],
-    ["u-5", "u-v1"],
-    ["u-6", "u-v1"],
-    ["u-7", "u-v1"],
-    ["u-8", "u-v1"],
-    ["u-9", "u-v1"]
+    {
+      "from": "u-1",
+      "to": "u-4",
+      "kind": "depends"
+    },
+    {
+      "from": "u-1",
+      "to": "u-5",
+      "kind": "depends"
+    },
+    {
+      "from": "u-1",
+      "to": "u-6",
+      "kind": "depends"
+    },
+    {
+      "from": "u-2",
+      "to": "u-3",
+      "kind": "depends"
+    },
+    {
+      "from": "u-3",
+      "to": "u-v1",
+      "kind": "depends"
+    },
+    {
+      "from": "u-4",
+      "to": "u-v1",
+      "kind": "depends"
+    },
+    {
+      "from": "u-5",
+      "to": "u-v1",
+      "kind": "depends"
+    },
+    {
+      "from": "u-6",
+      "to": "u-v1",
+      "kind": "depends"
+    },
+    {
+      "from": "u-7",
+      "to": "u-v1",
+      "kind": "depends"
+    },
+    {
+      "from": "u-8",
+      "to": "u-v1",
+      "kind": "depends"
+    },
+    {
+      "from": "u-9",
+      "to": "u-v1",
+      "kind": "depends"
+    }
   ],
-  "topo": [
-    "u-1", "u-2", "u-7", "u-8", "u-9",
-    "u-4", "u-5", "u-6", "u-3",
-    "u-v1"
-  ],
-  "critical_path": ["u-1", "u-3", "u-5", "u-6", "u-v1"],
-  "critical_path_length": 5,
-  "waves": {
-    "U.A": ["u-1", "u-2", "u-3"],
-    "U.B": ["u-4", "u-5"],
-    "U.C": ["u-6", "u-7", "u-8", "u-9"],
-    "U.D": ["u-v1"]
+  "schema-version": "v1",
+  "level": "plan",
+  "owner": "my-axon/dev-projects/axon-user/03-prs",
+  "generator": "tools/dag.py (migration)",
+  "validated": true,
+  "critical-path": [],
+  "_legacy": {
+    "project": "axon-user",
+    "source": "**Depends-on**: lines in 03-prs/u-*.md",
+    "acyclic": true,
+    "topo": [
+      "u-1",
+      "u-2",
+      "u-7",
+      "u-8",
+      "u-9",
+      "u-4",
+      "u-5",
+      "u-6",
+      "u-3",
+      "u-v1"
+    ],
+    "critical_path": [
+      "u-1",
+      "u-3",
+      "u-5",
+      "u-6",
+      "u-v1"
+    ],
+    "critical_path_length": 5,
+    "waves": {
+      "U.A": [
+        "u-1",
+        "u-2",
+        "u-3"
+      ],
+      "U.B": [
+        "u-4",
+        "u-5"
+      ],
+      "U.C": [
+        "u-6",
+        "u-7",
+        "u-8",
+        "u-9"
+      ],
+      "U.D": [
+        "u-v1"
+      ]
+    }
   }
 }

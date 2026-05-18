@@ -1,58 +1,419 @@
 {
-  "project": "axon-tests",
   "generated": "2026-05-16T21:44+02:00",
-  "source": "session.todo_deps (canonical) + 02-prs.md",
-  "node_count": 21,
-  "edge_count": 25,
-  "acyclic": true,
-  "critical_path_length": 7,
-  "critical_path": [
-    "PR-001", "PR-006", "PR-009", "PR-011", "PR-018", "PR-020", "PR-021"
-  ],
-  "levels": {
-    "L0": ["PR-001", "PR-003", "PR-004"],
-    "L1": ["PR-002", "PR-005", "PR-006", "PR-007", "PR-015", "PR-019"],
-    "L2": ["PR-008", "PR-009", "PR-010", "PR-013", "PR-016", "PR-017"],
-    "L3": ["PR-011", "PR-014"],
-    "L4": ["PR-012", "PR-018"],
-    "L5": ["PR-020"],
-    "L6": ["PR-021"]
-  },
-  "waves": {
-    "A_foundations":     ["PR-001","PR-002","PR-003","PR-004","PR-005","PR-006"],
-    "B_safety_critical": ["PR-007","PR-008","PR-009","PR-010","PR-011"],
-    "C_breadth":         ["PR-012","PR-013","PR-014","PR-015","PR-016","PR-017"],
-    "D_closure":         ["PR-018","PR-019","PR-020","PR-021"]
-  },
-  "spec_status": {
-    "ready": ["PR-001","PR-002","PR-003","PR-004","PR-005","PR-006"],
-    "pending_spec": ["PR-007","PR-008","PR-009","PR-010","PR-011","PR-012","PR-013","PR-014","PR-015","PR-016","PR-017","PR-018","PR-019","PR-020","PR-021"]
-  },
   "edges": [
-    {"from": "PR-001", "to": "PR-002"},
-    {"from": "PR-001", "to": "PR-005"},
-    {"from": "PR-001", "to": "PR-006"},
-    {"from": "PR-001", "to": "PR-007"},
-    {"from": "PR-001", "to": "PR-015"},
-    {"from": "PR-001", "to": "PR-019"},
-    {"from": "PR-003", "to": "PR-019"},
-    {"from": "PR-004", "to": "PR-007"},
-    {"from": "PR-004", "to": "PR-018"},
-    {"from": "PR-002", "to": "PR-017"},
-    {"from": "PR-005", "to": "PR-008"},
-    {"from": "PR-005", "to": "PR-010"},
-    {"from": "PR-005", "to": "PR-013"},
-    {"from": "PR-005", "to": "PR-014"},
-    {"from": "PR-005", "to": "PR-016"},
-    {"from": "PR-006", "to": "PR-009"},
-    {"from": "PR-006", "to": "PR-011"},
-    {"from": "PR-009", "to": "PR-011"},
-    {"from": "PR-011", "to": "PR-012"},
-    {"from": "PR-011", "to": "PR-018"},
-    {"from": "PR-013", "to": "PR-014"},
-    {"from": "PR-013", "to": "PR-018"},
-    {"from": "PR-014", "to": "PR-018"},
-    {"from": "PR-018", "to": "PR-020"},
-    {"from": "PR-020", "to": "PR-021"}
+    {
+      "from": "PR-001",
+      "to": "PR-002",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-001",
+      "to": "PR-005",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-001",
+      "to": "PR-006",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-001",
+      "to": "PR-007",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-001",
+      "to": "PR-015",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-001",
+      "to": "PR-019",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-003",
+      "to": "PR-019",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-004",
+      "to": "PR-007",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-004",
+      "to": "PR-018",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-002",
+      "to": "PR-017",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-005",
+      "to": "PR-008",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-005",
+      "to": "PR-010",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-005",
+      "to": "PR-013",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-005",
+      "to": "PR-014",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-005",
+      "to": "PR-016",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-006",
+      "to": "PR-009",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-006",
+      "to": "PR-011",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-009",
+      "to": "PR-011",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-011",
+      "to": "PR-012",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-011",
+      "to": "PR-018",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-013",
+      "to": "PR-014",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-013",
+      "to": "PR-018",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-014",
+      "to": "PR-018",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-018",
+      "to": "PR-020",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-020",
+      "to": "PR-021",
+      "kind": "depends"
+    }
+  ],
+  "schema": "axon-dag",
+  "schema-version": "v1",
+  "level": "project",
+  "owner": "my-axon/dev-projects/axon-tests",
+  "generator": "tools/dag.py (migration)",
+  "validated": true,
+  "critical-path": [],
+  "_legacy": {
+    "project": "axon-tests",
+    "source": "session.todo_deps (canonical) + 02-prs.md",
+    "node_count": 21,
+    "edge_count": 25,
+    "acyclic": true,
+    "critical_path_length": 7,
+    "critical_path": [
+      "PR-001",
+      "PR-006",
+      "PR-009",
+      "PR-011",
+      "PR-018",
+      "PR-020",
+      "PR-021"
+    ],
+    "levels": {
+      "L0": [
+        "PR-001",
+        "PR-003",
+        "PR-004"
+      ],
+      "L1": [
+        "PR-002",
+        "PR-005",
+        "PR-006",
+        "PR-007",
+        "PR-015",
+        "PR-019"
+      ],
+      "L2": [
+        "PR-008",
+        "PR-009",
+        "PR-010",
+        "PR-013",
+        "PR-016",
+        "PR-017"
+      ],
+      "L3": [
+        "PR-011",
+        "PR-014"
+      ],
+      "L4": [
+        "PR-012",
+        "PR-018"
+      ],
+      "L5": [
+        "PR-020"
+      ],
+      "L6": [
+        "PR-021"
+      ]
+    },
+    "waves": {
+      "A_foundations": [
+        "PR-001",
+        "PR-002",
+        "PR-003",
+        "PR-004",
+        "PR-005",
+        "PR-006"
+      ],
+      "B_safety_critical": [
+        "PR-007",
+        "PR-008",
+        "PR-009",
+        "PR-010",
+        "PR-011"
+      ],
+      "C_breadth": [
+        "PR-012",
+        "PR-013",
+        "PR-014",
+        "PR-015",
+        "PR-016",
+        "PR-017"
+      ],
+      "D_closure": [
+        "PR-018",
+        "PR-019",
+        "PR-020",
+        "PR-021"
+      ]
+    },
+    "spec_status": {
+      "ready": [
+        "PR-001",
+        "PR-002",
+        "PR-003",
+        "PR-004",
+        "PR-005",
+        "PR-006"
+      ],
+      "pending_spec": [
+        "PR-007",
+        "PR-008",
+        "PR-009",
+        "PR-010",
+        "PR-011",
+        "PR-012",
+        "PR-013",
+        "PR-014",
+        "PR-015",
+        "PR-016",
+        "PR-017",
+        "PR-018",
+        "PR-019",
+        "PR-020",
+        "PR-021"
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "PR-001",
+      "kind": "pr",
+      "name": "PR-001",
+      "label": "PR-001",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-002",
+      "kind": "pr",
+      "name": "PR-002",
+      "label": "PR-002",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-005",
+      "kind": "pr",
+      "name": "PR-005",
+      "label": "PR-005",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-006",
+      "kind": "pr",
+      "name": "PR-006",
+      "label": "PR-006",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-007",
+      "kind": "pr",
+      "name": "PR-007",
+      "label": "PR-007",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-015",
+      "kind": "pr",
+      "name": "PR-015",
+      "label": "PR-015",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-019",
+      "kind": "pr",
+      "name": "PR-019",
+      "label": "PR-019",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-003",
+      "kind": "pr",
+      "name": "PR-003",
+      "label": "PR-003",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-004",
+      "kind": "pr",
+      "name": "PR-004",
+      "label": "PR-004",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-018",
+      "kind": "pr",
+      "name": "PR-018",
+      "label": "PR-018",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-017",
+      "kind": "pr",
+      "name": "PR-017",
+      "label": "PR-017",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-008",
+      "kind": "pr",
+      "name": "PR-008",
+      "label": "PR-008",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-010",
+      "kind": "pr",
+      "name": "PR-010",
+      "label": "PR-010",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-013",
+      "kind": "pr",
+      "name": "PR-013",
+      "label": "PR-013",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-014",
+      "kind": "pr",
+      "name": "PR-014",
+      "label": "PR-014",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-016",
+      "kind": "pr",
+      "name": "PR-016",
+      "label": "PR-016",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-009",
+      "kind": "pr",
+      "name": "PR-009",
+      "label": "PR-009",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-011",
+      "kind": "pr",
+      "name": "PR-011",
+      "label": "PR-011",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-012",
+      "kind": "pr",
+      "name": "PR-012",
+      "label": "PR-012",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-020",
+      "kind": "pr",
+      "name": "PR-020",
+      "label": "PR-020",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-021",
+      "kind": "pr",
+      "name": "PR-021",
+      "label": "PR-021",
+      "status": "pending",
+      "child-dag": null
+    }
   ]
 }

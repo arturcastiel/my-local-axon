@@ -1,11 +1,12 @@
 # Phase: 3-implement
 schema-version: v4
-status:         active
-workflow-step:  implement
+status:         done
+workflow-step:  done
 branch:         main
-current-pr: pr-103
-updated:        2026-05-17
+current-pr:
+updated:        2026-05-18
 created:        2026-05-17
+completed:      2026-05-18
 
 ## Goal (per goal-schema-v1.1)
 Statement:    "Ship all 28 PRs in the v1.1 migration plan such that:

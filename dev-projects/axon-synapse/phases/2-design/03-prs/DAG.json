@@ -4,71 +4,344 @@
   "level": "plan",
   "owner": "axon-synapse/phases/2-design",
   "generated": "2026-05-17T16:30:00Z",
-  "generator": "manual (lint pass — normalized to lowercase pr-N convention per dag-spec-v1)",
+  "generator": "manual (lint pass \u2014 normalized to lowercase pr-N convention per dag-spec-v1)",
   "validated": true,
-  "validated-by": "Python Kahn check 2026-05-17 (lint pass) — 20 nodes, 30 edges, 0 cycles",
-  "critical-path": ["pr-101", "pr-104", "pr-107", "pr-108", "pr-117"],
-  "critical-path-hops": 5,
-  "critical-path-note": "Five longest paths of length-5 exist (all ending at pr-117 or pr-118 via pr-108, or at pr-111/112/115/120 via pr-109). Listed one canonical path; structurally equivalent alternatives surface in DAG.md.",
+  "critical-path": [
+    "pr-101",
+    "pr-104",
+    "pr-107",
+    "pr-108",
+    "pr-117"
+  ],
   "nodes": [
-    {"id": "pr-101", "kind": "pr", "name": "pr-101", "label": "PR-101 · glossary → docs",                      "status": "merged"},
-    {"id": "pr-102", "kind": "pr", "name": "pr-102", "label": "PR-102 · predicate tool",                       "status": "pending"},
-    {"id": "pr-103", "kind": "pr", "name": "pr-103", "label": "PR-103 · goal tool + schema",                   "status": "pending"},
-    {"id": "pr-104", "kind": "pr", "name": "pr-104", "label": "PR-104 · synapse-contract schema",              "status": "pending"},
-    {"id": "pr-105", "kind": "pr", "name": "pr-105", "label": "PR-105 · workflow file schema",                 "status": "pending"},
-    {"id": "pr-106", "kind": "pr", "name": "pr-106", "label": "PR-106 · domain manifest + ref manifests",      "status": "pending"},
-    {"id": "pr-107", "kind": "pr", "name": "pr-107", "label": "PR-107 · synapse-infer + synapse-validate",     "status": "pending"},
-    {"id": "pr-108", "kind": "pr", "name": "pr-108", "label": "PR-108 · domain folder + metadata migrate",     "status": "pending"},
-    {"id": "pr-109", "kind": "pr", "name": "pr-109", "label": "PR-109 · synapse-suggest tool",                 "status": "pending"},
-    {"id": "pr-110", "kind": "pr", "name": "pr-110", "label": "PR-110 · DAG spec + dag tool + sync",           "status": "pending"},
-    {"id": "pr-111", "kind": "pr", "name": "pr-111", "label": "PR-111 · orchestrator loop (program)",          "status": "pending"},
-    {"id": "pr-112", "kind": "pr", "name": "pr-112", "label": "PR-112 · output-layer suggestions [dev-mode]",  "status": "pending"},
-    {"id": "pr-113", "kind": "pr", "name": "pr-113", "label": "PR-113 · plan_dag auto-emit hook",              "status": "pending"},
-    {"id": "pr-114", "kind": "pr", "name": "pr-114", "label": "PR-114 · shadow enforcement gates",             "status": "pending"},
-    {"id": "pr-115", "kind": "pr", "name": "pr-115", "label": "PR-115 · workflow-new conversational author",   "status": "pending"},
-    {"id": "pr-116", "kind": "pr", "name": "pr-116", "label": "PR-116 · shadow retroactive bulk migration",    "status": "pending"},
-    {"id": "pr-117", "kind": "pr", "name": "pr-117", "label": "PR-117 · aliases + finalize + self-review",     "status": "pending"},
-    {"id": "pr-118", "kind": "pr", "name": "pr-118", "label": "PR-118 · reference workflows ship",             "status": "pending"},
-    {"id": "pr-119", "kind": "pr", "name": "pr-119", "label": "PR-119 · axon-audit extension",                 "status": "pending"},
-    {"id": "pr-120", "kind": "pr", "name": "pr-120", "label": "PR-120 · igap + auto-improve → synapse-suggest","status": "pending"}
+    {
+      "id": "pr-101",
+      "kind": "pr",
+      "name": "pr-101",
+      "label": "PR-101 \u00b7 glossary \u2192 docs",
+      "status": "merged",
+      "child-dag": null
+    },
+    {
+      "id": "pr-102",
+      "kind": "pr",
+      "name": "pr-102",
+      "label": "PR-102 \u00b7 predicate tool",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-103",
+      "kind": "pr",
+      "name": "pr-103",
+      "label": "PR-103 \u00b7 goal tool + schema",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-104",
+      "kind": "pr",
+      "name": "pr-104",
+      "label": "PR-104 \u00b7 synapse-contract schema",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-105",
+      "kind": "pr",
+      "name": "pr-105",
+      "label": "PR-105 \u00b7 workflow file schema",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-106",
+      "kind": "pr",
+      "name": "pr-106",
+      "label": "PR-106 \u00b7 domain manifest + ref manifests",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-107",
+      "kind": "pr",
+      "name": "pr-107",
+      "label": "PR-107 \u00b7 synapse-infer + synapse-validate",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-108",
+      "kind": "pr",
+      "name": "pr-108",
+      "label": "PR-108 \u00b7 domain folder + metadata migrate",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-109",
+      "kind": "pr",
+      "name": "pr-109",
+      "label": "PR-109 \u00b7 synapse-suggest tool",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-110",
+      "kind": "pr",
+      "name": "pr-110",
+      "label": "PR-110 \u00b7 DAG spec + dag tool + sync",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-111",
+      "kind": "pr",
+      "name": "pr-111",
+      "label": "PR-111 \u00b7 orchestrator loop (program)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-112",
+      "kind": "pr",
+      "name": "pr-112",
+      "label": "PR-112 \u00b7 output-layer suggestions [dev-mode]",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-113",
+      "kind": "pr",
+      "name": "pr-113",
+      "label": "PR-113 \u00b7 plan_dag auto-emit hook",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-114",
+      "kind": "pr",
+      "name": "pr-114",
+      "label": "PR-114 \u00b7 shadow enforcement gates",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-115",
+      "kind": "pr",
+      "name": "pr-115",
+      "label": "PR-115 \u00b7 workflow-new conversational author",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-116",
+      "kind": "pr",
+      "name": "pr-116",
+      "label": "PR-116 \u00b7 shadow retroactive bulk migration",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-117",
+      "kind": "pr",
+      "name": "pr-117",
+      "label": "PR-117 \u00b7 aliases + finalize + self-review",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-118",
+      "kind": "pr",
+      "name": "pr-118",
+      "label": "PR-118 \u00b7 reference workflows ship",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-119",
+      "kind": "pr",
+      "name": "pr-119",
+      "label": "PR-119 \u00b7 axon-audit extension",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-120",
+      "kind": "pr",
+      "name": "pr-120",
+      "label": "PR-120 \u00b7 igap + auto-improve \u2192 synapse-suggest",
+      "status": "pending",
+      "child-dag": null
+    }
   ],
   "edges": [
-    {"from": "pr-101", "to": "pr-102", "kind": "depends"},
-    {"from": "pr-101", "to": "pr-104", "kind": "depends"},
-    {"from": "pr-101", "to": "pr-106", "kind": "depends"},
-    {"from": "pr-101", "to": "pr-110", "kind": "depends"},
-    {"from": "pr-102", "to": "pr-103", "kind": "depends"},
-    {"from": "pr-102", "to": "pr-105", "kind": "depends"},
-    {"from": "pr-102", "to": "pr-109", "kind": "depends"},
-    {"from": "pr-103", "to": "pr-105", "kind": "depends"},
-    {"from": "pr-103", "to": "pr-109", "kind": "depends"},
-    {"from": "pr-103", "to": "pr-119", "kind": "depends"},
-    {"from": "pr-104", "to": "pr-105", "kind": "depends"},
-    {"from": "pr-104", "to": "pr-107", "kind": "depends"},
-    {"from": "pr-104", "to": "pr-109", "kind": "depends"},
-    {"from": "pr-104", "to": "pr-114", "kind": "depends"},
-    {"from": "pr-106", "to": "pr-108", "kind": "depends"},
-    {"from": "pr-107", "to": "pr-108", "kind": "depends"},
-    {"from": "pr-107", "to": "pr-109", "kind": "depends"},
-    {"from": "pr-107", "to": "pr-119", "kind": "depends"},
-    {"from": "pr-108", "to": "pr-117", "kind": "depends"},
-    {"from": "pr-108", "to": "pr-118", "kind": "depends"},
-    {"from": "pr-109", "to": "pr-111", "kind": "depends"},
-    {"from": "pr-109", "to": "pr-112", "kind": "depends"},
-    {"from": "pr-109", "to": "pr-115", "kind": "depends"},
-    {"from": "pr-109", "to": "pr-120", "kind": "depends"},
-    {"from": "pr-110", "to": "pr-111", "kind": "depends"},
-    {"from": "pr-110", "to": "pr-113", "kind": "depends"},
-    {"from": "pr-114", "to": "pr-116", "kind": "depends"},
-    {"from": "pr-114", "to": "pr-119", "kind": "depends"},
-    {"from": "pr-105", "to": "pr-115", "kind": "depends"},
-    {"from": "pr-105", "to": "pr-118", "kind": "depends"}
+    {
+      "from": "pr-101",
+      "to": "pr-102",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-101",
+      "to": "pr-104",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-101",
+      "to": "pr-106",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-101",
+      "to": "pr-110",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-102",
+      "to": "pr-103",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-102",
+      "to": "pr-105",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-102",
+      "to": "pr-109",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-103",
+      "to": "pr-105",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-103",
+      "to": "pr-109",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-103",
+      "to": "pr-119",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-104",
+      "to": "pr-105",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-104",
+      "to": "pr-107",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-104",
+      "to": "pr-109",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-104",
+      "to": "pr-114",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-106",
+      "to": "pr-108",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-107",
+      "to": "pr-108",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-107",
+      "to": "pr-109",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-107",
+      "to": "pr-119",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-108",
+      "to": "pr-117",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-108",
+      "to": "pr-118",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-109",
+      "to": "pr-111",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-109",
+      "to": "pr-112",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-109",
+      "to": "pr-115",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-109",
+      "to": "pr-120",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-110",
+      "to": "pr-111",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-110",
+      "to": "pr-113",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-114",
+      "to": "pr-116",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-114",
+      "to": "pr-119",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-105",
+      "to": "pr-115",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-105",
+      "to": "pr-118",
+      "kind": "depends"
+    }
   ],
-  "metadata": {
-    "node-count": 20,
-    "edge-count": 30,
-    "cycles": [],
-    "phase-target": "Phase 3 (implement)",
-    "phase-4-candidates": ["pr-150", "pr-151", "pr-152", "pr-153"]
+  "_legacy": {
+    "validated-by": "Python Kahn check 2026-05-17 (lint pass) \u2014 20 nodes, 30 edges, 0 cycles",
+    "critical-path-hops": 5,
+    "critical-path-note": "Five longest paths of length-5 exist (all ending at pr-117 or pr-118 via pr-108, or at pr-111/112/115/120 via pr-109). Listed one canonical path; structurally equivalent alternatives surface in DAG.md.",
+    "metadata": {
+      "node-count": 20,
+      "edge-count": 30,
+      "cycles": [],
+      "phase-target": "Phase 3 (implement)",
+      "phase-4-candidates": [
+        "pr-150",
+        "pr-151",
+        "pr-152",
+        "pr-153"
+      ]
+    }
   }
 }

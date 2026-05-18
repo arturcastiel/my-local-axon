@@ -1,75 +1,921 @@
 {
-  "schema": "plan-dag-v1",
-  "project": "axon-master",
+  "schema": "axon-dag",
   "generated": "2026-05-16",
-  "source": "**Depends-on**: lines in 03-prs/pr-*.md",
-  "acyclic": true,
   "nodes": [
-    "pr-0",
-    "pr-1", "pr-2", "pr-3", "pr-4", "pr-5", "pr-6", "pr-7", "pr-v1",
-    "pr-8", "pr-9", "pr-9.5", "pr-9.6", "pr-9.7", "pr-10", "pr-11",
-    "pr-12", "pr-13", "pr-14", "pr-15", "pr-16", "pr-16.5", "pr-17", "pr-v2",
-    "pr-15.5", "pr-15.6", "pr-18", "pr-19", "pr-20", "pr-20.5", "pr-20.6",
-    "pr-20.7", "pr-20.8", "pr-21", "pr-22", "pr-23", "pr-24", "pr-25", "pr-25.5", "pr-v3",
-    "pr-26", "pr-27", "pr-28", "pr-28.5", "pr-29", "pr-30", "pr-31", "pr-31.5",
-    "pr-32", "pr-32.5", "pr-33", "pr-34", "pr-34.5", "pr-v4"
+    {
+      "id": "pr-0",
+      "kind": "pr",
+      "name": "pr-0",
+      "label": "pr-0",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-1",
+      "kind": "pr",
+      "name": "pr-1",
+      "label": "pr-1",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-2",
+      "kind": "pr",
+      "name": "pr-2",
+      "label": "pr-2",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-3",
+      "kind": "pr",
+      "name": "pr-3",
+      "label": "pr-3",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-4",
+      "kind": "pr",
+      "name": "pr-4",
+      "label": "pr-4",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-5",
+      "kind": "pr",
+      "name": "pr-5",
+      "label": "pr-5",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-6",
+      "kind": "pr",
+      "name": "pr-6",
+      "label": "pr-6",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-7",
+      "kind": "pr",
+      "name": "pr-7",
+      "label": "pr-7",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-v1",
+      "kind": "pr",
+      "name": "pr-v1",
+      "label": "pr-v1",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-8",
+      "kind": "pr",
+      "name": "pr-8",
+      "label": "pr-8",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-9",
+      "kind": "pr",
+      "name": "pr-9",
+      "label": "pr-9",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-9.5",
+      "kind": "pr",
+      "name": "pr-9.5",
+      "label": "pr-9.5",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-9.6",
+      "kind": "pr",
+      "name": "pr-9.6",
+      "label": "pr-9.6",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-9.7",
+      "kind": "pr",
+      "name": "pr-9.7",
+      "label": "pr-9.7",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-10",
+      "kind": "pr",
+      "name": "pr-10",
+      "label": "pr-10",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-11",
+      "kind": "pr",
+      "name": "pr-11",
+      "label": "pr-11",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-12",
+      "kind": "pr",
+      "name": "pr-12",
+      "label": "pr-12",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-13",
+      "kind": "pr",
+      "name": "pr-13",
+      "label": "pr-13",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-14",
+      "kind": "pr",
+      "name": "pr-14",
+      "label": "pr-14",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-15",
+      "kind": "pr",
+      "name": "pr-15",
+      "label": "pr-15",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-16",
+      "kind": "pr",
+      "name": "pr-16",
+      "label": "pr-16",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-16.5",
+      "kind": "pr",
+      "name": "pr-16.5",
+      "label": "pr-16.5",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-17",
+      "kind": "pr",
+      "name": "pr-17",
+      "label": "pr-17",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-v2",
+      "kind": "pr",
+      "name": "pr-v2",
+      "label": "pr-v2",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-15.5",
+      "kind": "pr",
+      "name": "pr-15.5",
+      "label": "pr-15.5",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-15.6",
+      "kind": "pr",
+      "name": "pr-15.6",
+      "label": "pr-15.6",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-18",
+      "kind": "pr",
+      "name": "pr-18",
+      "label": "pr-18",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-19",
+      "kind": "pr",
+      "name": "pr-19",
+      "label": "pr-19",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-20",
+      "kind": "pr",
+      "name": "pr-20",
+      "label": "pr-20",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-20.5",
+      "kind": "pr",
+      "name": "pr-20.5",
+      "label": "pr-20.5",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-20.6",
+      "kind": "pr",
+      "name": "pr-20.6",
+      "label": "pr-20.6",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-20.7",
+      "kind": "pr",
+      "name": "pr-20.7",
+      "label": "pr-20.7",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-20.8",
+      "kind": "pr",
+      "name": "pr-20.8",
+      "label": "pr-20.8",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-21",
+      "kind": "pr",
+      "name": "pr-21",
+      "label": "pr-21",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-22",
+      "kind": "pr",
+      "name": "pr-22",
+      "label": "pr-22",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-23",
+      "kind": "pr",
+      "name": "pr-23",
+      "label": "pr-23",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-24",
+      "kind": "pr",
+      "name": "pr-24",
+      "label": "pr-24",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-25",
+      "kind": "pr",
+      "name": "pr-25",
+      "label": "pr-25",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-25.5",
+      "kind": "pr",
+      "name": "pr-25.5",
+      "label": "pr-25.5",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-v3",
+      "kind": "pr",
+      "name": "pr-v3",
+      "label": "pr-v3",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-26",
+      "kind": "pr",
+      "name": "pr-26",
+      "label": "pr-26",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-27",
+      "kind": "pr",
+      "name": "pr-27",
+      "label": "pr-27",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-28",
+      "kind": "pr",
+      "name": "pr-28",
+      "label": "pr-28",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-28.5",
+      "kind": "pr",
+      "name": "pr-28.5",
+      "label": "pr-28.5",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-29",
+      "kind": "pr",
+      "name": "pr-29",
+      "label": "pr-29",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-30",
+      "kind": "pr",
+      "name": "pr-30",
+      "label": "pr-30",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-31",
+      "kind": "pr",
+      "name": "pr-31",
+      "label": "pr-31",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-31.5",
+      "kind": "pr",
+      "name": "pr-31.5",
+      "label": "pr-31.5",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-32",
+      "kind": "pr",
+      "name": "pr-32",
+      "label": "pr-32",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-32.5",
+      "kind": "pr",
+      "name": "pr-32.5",
+      "label": "pr-32.5",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-33",
+      "kind": "pr",
+      "name": "pr-33",
+      "label": "pr-33",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-34",
+      "kind": "pr",
+      "name": "pr-34",
+      "label": "pr-34",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-34.5",
+      "kind": "pr",
+      "name": "pr-34.5",
+      "label": "pr-34.5",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "pr-v4",
+      "kind": "pr",
+      "name": "pr-v4",
+      "label": "pr-v4",
+      "status": "pending",
+      "child-dag": null
+    }
   ],
   "edges": [
-    ["pr-1", "pr-3"], ["pr-2", "pr-3"],
-    ["pr-1", "pr-12"],
-    ["pr-3", "pr-8"], ["pr-3", "pr-9"], ["pr-3", "pr-9.5"], ["pr-3", "pr-9.7"], ["pr-3", "pr-17"], ["pr-3", "pr-24"],
-    ["pr-4", "pr-10"], ["pr-4", "pr-11"], ["pr-4", "pr-16"], ["pr-4", "pr-22"], ["pr-4", "pr-24"],
-    ["pr-12", "pr-14"], ["pr-12", "pr-20.8"], ["pr-12", "pr-26"],
-    ["pr-8", "pr-17"], ["pr-8", "pr-16.5"], ["pr-8", "pr-23"], ["pr-8", "pr-30"], ["pr-8", "pr-32"],
-    ["pr-9", "pr-15"], ["pr-9", "pr-15.5"], ["pr-9", "pr-31"],
-    ["pr-11", "pr-16"],
-    ["pr-16", "pr-16.5"], ["pr-16", "pr-23"], ["pr-16", "pr-30"],
-    ["pr-2", "pr-20"], ["pr-2", "pr-20.8"],
-    ["pr-13", "pr-15.5"], ["pr-13", "pr-15.6"], ["pr-13", "pr-19"], ["pr-13", "pr-20.5"], ["pr-13", "pr-20.7"], ["pr-13", "pr-21"], ["pr-13", "pr-32.5"], ["pr-13", "pr-34.5"],
-    ["pr-15.5", "pr-15.6"],
-    ["pr-14", "pr-18"], ["pr-14", "pr-26"], ["pr-14", "pr-28.5"],
-    ["pr-18", "pr-19"], ["pr-18", "pr-25"],
-    ["pr-9.5", "pr-20.6"], ["pr-9.5", "pr-28.5"],
-    ["pr-25", "pr-20.7"],
-    ["pr-20.5", "pr-20.8"], ["pr-20.5", "pr-32.5"],
-    ["pr-20", "pr-21"], ["pr-20", "pr-30"],
-    ["pr-3", "pr-24"], ["pr-4", "pr-24"],
-    ["pr-1", "pr-25"], ["pr-1", "pr-29"], ["pr-1", "pr-31.5"],
-    ["pr-17", "pr-25.5"], ["pr-9.6", "pr-25.5"],
-    ["pr-26", "pr-27"], ["pr-27", "pr-28"],
-    ["pr-20.8", "pr-29"],
-    ["pr-9.7", "pr-31"],
-    ["pr-20.7", "pr-32"],
-    ["pr-15", "pr-33"], ["pr-7", "pr-33"],
-    ["pr-23", "pr-34"], ["pr-33", "pr-34"], ["pr-23", "pr-34.5"]
+    {
+      "from": "pr-1",
+      "to": "pr-3",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-2",
+      "to": "pr-3",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-1",
+      "to": "pr-12",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-3",
+      "to": "pr-8",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-3",
+      "to": "pr-9",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-3",
+      "to": "pr-9.5",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-3",
+      "to": "pr-9.7",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-3",
+      "to": "pr-17",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-3",
+      "to": "pr-24",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-4",
+      "to": "pr-10",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-4",
+      "to": "pr-11",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-4",
+      "to": "pr-16",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-4",
+      "to": "pr-22",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-4",
+      "to": "pr-24",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-12",
+      "to": "pr-14",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-12",
+      "to": "pr-20.8",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-12",
+      "to": "pr-26",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-8",
+      "to": "pr-17",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-8",
+      "to": "pr-16.5",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-8",
+      "to": "pr-23",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-8",
+      "to": "pr-30",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-8",
+      "to": "pr-32",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-9",
+      "to": "pr-15",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-9",
+      "to": "pr-15.5",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-9",
+      "to": "pr-31",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-11",
+      "to": "pr-16",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-16",
+      "to": "pr-16.5",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-16",
+      "to": "pr-23",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-16",
+      "to": "pr-30",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-2",
+      "to": "pr-20",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-2",
+      "to": "pr-20.8",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-13",
+      "to": "pr-15.5",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-13",
+      "to": "pr-15.6",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-13",
+      "to": "pr-19",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-13",
+      "to": "pr-20.5",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-13",
+      "to": "pr-20.7",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-13",
+      "to": "pr-21",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-13",
+      "to": "pr-32.5",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-13",
+      "to": "pr-34.5",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-15.5",
+      "to": "pr-15.6",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-14",
+      "to": "pr-18",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-14",
+      "to": "pr-26",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-14",
+      "to": "pr-28.5",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-18",
+      "to": "pr-19",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-18",
+      "to": "pr-25",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-9.5",
+      "to": "pr-20.6",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-9.5",
+      "to": "pr-28.5",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-25",
+      "to": "pr-20.7",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-20.5",
+      "to": "pr-20.8",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-20.5",
+      "to": "pr-32.5",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-20",
+      "to": "pr-21",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-20",
+      "to": "pr-30",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-3",
+      "to": "pr-24",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-4",
+      "to": "pr-24",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-1",
+      "to": "pr-25",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-1",
+      "to": "pr-29",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-1",
+      "to": "pr-31.5",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-17",
+      "to": "pr-25.5",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-9.6",
+      "to": "pr-25.5",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-26",
+      "to": "pr-27",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-27",
+      "to": "pr-28",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-20.8",
+      "to": "pr-29",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-9.7",
+      "to": "pr-31",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-20.7",
+      "to": "pr-32",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-15",
+      "to": "pr-33",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-7",
+      "to": "pr-33",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-23",
+      "to": "pr-34",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-33",
+      "to": "pr-34",
+      "kind": "depends"
+    },
+    {
+      "from": "pr-23",
+      "to": "pr-34.5",
+      "kind": "depends"
+    }
   ],
-  "topo": [
-    "pr-0",
-    "pr-1", "pr-2", "pr-4", "pr-5", "pr-6", "pr-7", "pr-9.6", "pr-13",
-    "pr-3", "pr-12", "pr-22",
-    "pr-8", "pr-9", "pr-9.5", "pr-9.7", "pr-10", "pr-11", "pr-20", "pr-24",
-    "pr-14", "pr-15", "pr-16", "pr-17", "pr-15.5", "pr-20.5", "pr-21",
-    "pr-16.5", "pr-23", "pr-18", "pr-20.6", "pr-15.6", "pr-31.5",
-    "pr-v1", "pr-v2",
-    "pr-19", "pr-25", "pr-20.8", "pr-20.7", "pr-25.5",
-    "pr-26", "pr-27", "pr-28", "pr-28.5",
-    "pr-29", "pr-30", "pr-31", "pr-32", "pr-32.5",
-    "pr-33", "pr-34", "pr-34.5",
-    "pr-v3", "pr-v4"
-  ],
-  "critical_path": ["pr-1", "pr-2", "pr-3", "pr-9", "pr-15", "pr-33", "pr-34", "pr-v4"],
-  "critical_path_length": 8,
-  "leaves": ["pr-1", "pr-2", "pr-4", "pr-5", "pr-6", "pr-7", "pr-9.6", "pr-13"],
-  "bottleneck_fanout": {
-    "pr-1": ["pr-3", "pr-12", "pr-25", "pr-29", "pr-31.5", "pr-v1"],
-    "pr-3": ["pr-8", "pr-9", "pr-9.5", "pr-9.7", "pr-17", "pr-24", "pr-v1"],
-    "pr-13": ["pr-15.5", "pr-15.6", "pr-19", "pr-20.5", "pr-20.7", "pr-21", "pr-32.5", "pr-34.5"],
-    "pr-4": ["pr-10", "pr-11", "pr-16", "pr-22", "pr-24"],
-    "pr-8": ["pr-17", "pr-16.5", "pr-23", "pr-30", "pr-32"]
-  },
-  "notes": [
-    "Wave-close bumps (pr-v1..v4) carry their full-wave dependencies implicitly; not all enumerated in edges to keep DAG readable.",
-    "Forward-reference narrative comments in PR files (e.g. 'PR-17 will fill _index.md' in pr-8) are not treated as edges; only the **Depends-on**: line counts.",
-    "Manual generation, will be replaced by tools/plan_dag.py output once PR-16.5 ships."
-  ]
+  "schema-version": "v1",
+  "level": "plan",
+  "owner": "my-axon/dev-projects/axon-master/03-prs",
+  "generator": "tools/dag.py (migration)",
+  "validated": true,
+  "critical-path": [],
+  "_legacy": {
+    "project": "axon-master",
+    "source": "**Depends-on**: lines in 03-prs/pr-*.md",
+    "acyclic": true,
+    "topo": [
+      "pr-0",
+      "pr-1",
+      "pr-2",
+      "pr-4",
+      "pr-5",
+      "pr-6",
+      "pr-7",
+      "pr-9.6",
+      "pr-13",
+      "pr-3",
+      "pr-12",
+      "pr-22",
+      "pr-8",
+      "pr-9",
+      "pr-9.5",
+      "pr-9.7",
+      "pr-10",
+      "pr-11",
+      "pr-20",
+      "pr-24",
+      "pr-14",
+      "pr-15",
+      "pr-16",
+      "pr-17",
+      "pr-15.5",
+      "pr-20.5",
+      "pr-21",
+      "pr-16.5",
+      "pr-23",
+      "pr-18",
+      "pr-20.6",
+      "pr-15.6",
+      "pr-31.5",
+      "pr-v1",
+      "pr-v2",
+      "pr-19",
+      "pr-25",
+      "pr-20.8",
+      "pr-20.7",
+      "pr-25.5",
+      "pr-26",
+      "pr-27",
+      "pr-28",
+      "pr-28.5",
+      "pr-29",
+      "pr-30",
+      "pr-31",
+      "pr-32",
+      "pr-32.5",
+      "pr-33",
+      "pr-34",
+      "pr-34.5",
+      "pr-v3",
+      "pr-v4"
+    ],
+    "critical_path": [
+      "pr-1",
+      "pr-2",
+      "pr-3",
+      "pr-9",
+      "pr-15",
+      "pr-33",
+      "pr-34",
+      "pr-v4"
+    ],
+    "critical_path_length": 8,
+    "leaves": [
+      "pr-1",
+      "pr-2",
+      "pr-4",
+      "pr-5",
+      "pr-6",
+      "pr-7",
+      "pr-9.6",
+      "pr-13"
+    ],
+    "bottleneck_fanout": {
+      "pr-1": [
+        "pr-3",
+        "pr-12",
+        "pr-25",
+        "pr-29",
+        "pr-31.5",
+        "pr-v1"
+      ],
+      "pr-3": [
+        "pr-8",
+        "pr-9",
+        "pr-9.5",
+        "pr-9.7",
+        "pr-17",
+        "pr-24",
+        "pr-v1"
+      ],
+      "pr-13": [
+        "pr-15.5",
+        "pr-15.6",
+        "pr-19",
+        "pr-20.5",
+        "pr-20.7",
+        "pr-21",
+        "pr-32.5",
+        "pr-34.5"
+      ],
+      "pr-4": [
+        "pr-10",
+        "pr-11",
+        "pr-16",
+        "pr-22",
+        "pr-24"
+      ],
+      "pr-8": [
+        "pr-17",
+        "pr-16.5",
+        "pr-23",
+        "pr-30",
+        "pr-32"
+      ]
+    },
+    "notes": [
+      "Wave-close bumps (pr-v1..v4) carry their full-wave dependencies implicitly; not all enumerated in edges to keep DAG readable.",
+      "Forward-reference narrative comments in PR files (e.g. 'PR-17 will fill _index.md' in pr-8) are not treated as edges; only the **Depends-on**: line counts.",
+      "Manual generation, will be replaced by tools/plan_dag.py output once PR-16.5 ships."
+    ]
+  }
 }
