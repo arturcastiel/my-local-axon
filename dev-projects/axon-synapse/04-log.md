@@ -585,3 +585,18 @@ workspace/memory/longterm/ to .gitignore, force-pushed branch (NOT main).
 Status: awaiting HUMAN review on branch + pytest run, then merge to main.
 PR URL hint: https://github.com/arturcastiel/axon/pull/new/pr-108-metadata-migration
 
+
+## 2026-05-18 — PR-108 merged + branch deleted
+
+Verified before declaring done:
+- origin/main HEAD = 1aff12d (Merge branch pr-108-metadata-migration)
+- merge parents = [e87fcd5 (PR-107), db55323 (PR-108 branch tip)]
+- db55323 confirmed ancestor of origin/main (merge-base check)
+- local branch deleted only after verification.
+
+HUMAN-reported: tests passed, diff reviewed, merged on GitHub.
+
+pr-108.md Status: implemented → merged.
+Phase cursor advanced pr-108 → pr-117 (critical-path terminus).
+Merged set: {pr-101, pr-104, pr-106, pr-107, pr-108}.
+
