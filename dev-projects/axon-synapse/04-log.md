@@ -540,3 +540,18 @@ Note: tests/test_domain_manifest.py exists but pytest has not been run
 - Phase cursor advanced pr-107 → pr-108 (critical path).
 - Merged set: {pr-101, pr-104, pr-106, pr-107}.
 
+
+## 2026-05-18 — PR-108 spec authored
+
+- Created my-axon/dev-projects/axon-synapse/phases/3-implement/03-prs/pr-108.md
+  (7.2 KB; full template per Wave-1 batch).
+- Title: domain folder scaffold + metadata migration.
+- Scope: additive only. workspace/domains/{code-dev,library-dev}/{programs,workflows}/_index.md
+  scaffolds + bulk-infer # synapse: block insertion into all ~170
+  workspace/programs/*.md files. No filename changes, no body deletions.
+- Acceptance gates: corpus rate ≥ 80 %, full-tree rate ≥ 90 %, pytest green.
+- Risk: medium (touches every program, but reversible single-commit revert).
+- Blast radius: ~6 000 lines across ~170 files + new scaffold + 1 test.
+- Implementation pending HUMAN go-ahead: this PR touches every program
+  header, so AXON is pausing before execution for explicit confirmation.
+
