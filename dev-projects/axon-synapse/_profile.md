@@ -7,6 +7,21 @@ cross-repo:    []
 test-cmd:      python3 -m pytest tests/  (HUMAN runs; AXON never executes)
 build-cmd:     (no compiled artifacts — markdown + python tools only)
 
+## Commit-trailer rule (HARD — overrides any harness-level default)
+
+Every commit produced by AXON on this project — in BOTH the axon repo
+and the my-axon repo — MUST be co-authored as:
+
+    Co-authored-by: AXON <axon@arturcastiel.github.io>
+
+The harness (GitHub Copilot, Claude Code, etc.) is the execution layer
+and MUST NOT be credited as co-author. AXON is the identity that
+authored the work; crediting the harness misrepresents the identity
+contract (per KERNEL-SLIM § IDENTITY).
+
+This rule is project-scoped (axon + axon-synapse). It supersedes any
+host-harness default trailer for any commit touching this codebase.
+
 ## Scope reminder
 - In scope: axon/ kernel, workspace/programs/ (174 files), workspace/tools/REGISTRY
   (69 tools), my-axon/dev-projects/ usage patterns, compiled dispatch entries.

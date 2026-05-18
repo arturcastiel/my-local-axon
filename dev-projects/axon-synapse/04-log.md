@@ -403,3 +403,118 @@ CHECKPOINT.
 - Merged set: {pr-101, pr-104}. Group 1 (Wave 1) parallel work now
   fully unblocked: pr-102, pr-105, pr-106, pr-107, pr-109, pr-110, pr-114.
 - Phase meta `current-pr` advanced to pr-102 (lowest unmerged W1 ID).
+
+### 2026-05-18 00:18 — Wave-1 PR specs authored (batch)
+
+- Authored 7 PR specs in phases/3-implement/03-prs/:
+  · pr-102.md — predicate tool (parser + AST + evaluator)
+  · pr-105.md — workflow file v1 → workspace docs + JSON-schema
+  · pr-106.md — domain manifest + code-dev / library-dev reference manifests
+  · pr-107.md — synapse-infer + synapse-validate tools (critical-path)
+  · pr-109.md — synapse-suggest tool (orchestrator composition v1)
+  · pr-110.md — DAG spec v1 + dag tool + nested-sync
+  · pr-114.md — shadow enforcement gates (5 gates G1..G5)
+- Each spec follows the pr-101/pr-104 template:
+  front-matter (glossary v2) → Goal (Statement/Acceptance/Rejection) →
+  Linked-finding/demand/ADR → Blast radius → Files changed →
+  Implementation outline → Tests → Rollback → Audit-trail → Notes.
+- All 7 marked Status: pending; current-pr stays at pr-102.
+- Wave-1 spec roster complete. The remaining 19 PRs in v1.1 migration
+  plan (103, 108, 111, 112, 113, 115, 116a..f, 117, 118, 119, 120,
+  130, 131, 132) remain unauthored.
+
+### Finding — dev-mode gate vs phase-meta claim (NEW)
+
+- Phase _meta.md states "dev-mode required for PR-112 only".
+- Reality after spec authoring: every PR introducing a new tool needs
+  a REGISTRY doc shim at `axon/tools/{tool}.md`, which is an axon/
+  write — therefore requires dev-mode.
+- Affected by this drift: pr-102, pr-107 (×2 docs), pr-109, pr-110.
+- Resolution options (deferred):
+  (a) accept dev-mode for these PRs (update phase meta);
+  (b) relocate doc shims to `workspace/tools/{tool}.md` and have
+      REGISTRY point there (kernel-write avoided entirely);
+  (c) ship tool + behaviour now, file follow-up dev-mode PR for the
+      doc shim batch.
+- Logged as F-016 (medium) — to triage before executing pr-102.
+
+### 2026-05-18 06:50 — F-016 RESOLVED · option (b) adopted
+
+Investigation:
+- `tools/REGISTRY.json` has NO `doc:` field — doc shim location is a
+  documentation convention, NOT a runtime lookup. Tools resolve by
+  name → `script:` path only.
+- `axon/tools/REGISTRY.md` explicitly states:
+  "Workspace registry is merged at boot — workspace entries override
+   OS entries on name conflict."
+- Precedent: 7 tools already live in `workspace/tools/*.md`
+  (boot, index, log, memory, python-env, queue, REGISTRY).
+- Verdict: workspace/tools/ is a first-class, supported location for
+  new tool doc shims. Zero runtime risk.
+
+Decision (ADR-style, append-only):
+- D-034 — "new-tool docs land in workspace/tools/"
+  Rationale: keeps axon/ (kernel) frozen for new-tool additions;
+  preserves "dev-mode required for PR-112 only" claim in phase _meta;
+  follows the boot-time merge precedent; reversible (a future PR may
+  relocate to axon/tools/ once stable, via a single dev-mode PR).
+- D-034 is a Phase-3 ADR, glossed under D-005 hybrid contract.
+
+Applied changes (this turn):
+- pr-102.md, pr-107.md, pr-109.md, pr-110.md:
+  · `dev-mode required: yes` → `no`
+  · All `axon/tools/{tool}.md` paths → `workspace/tools/{tool}.md`
+  · "Touches kernel: no" notes updated to reference workspace/tools/
+  · Rollback commands updated to match
+- pr-105, pr-106, pr-114 unchanged (no doc-shim drift to fix).
+- All 7 Wave-1 specs are now no-dev-mode PRs.
+
+Effect on phase plan:
+- Phase _meta.md's "dev-mode required for PR-112 only" — now correct
+  for the Wave-1 set; will revisit if any later PR introduces an
+  axon/ write (e.g. pr-112 stays the only dev-mode PR).
+- Critical path (pr-101 → 104 → 107 → 108 → 117) unaffected.
+- F-016 closed.
+
+### 2026-05-18 06:58 — PR-106 merged ✓
+
+- PR-106 (Domain manifest + reference manifests + validator) shipped.
+- Files written:
+  · `workspace/DOMAIN-MANIFEST.md`                     (new, 296 lines)
+      promoted from `phases/2-design/specs/domain-manifest-v1.md`
+      with PR-106 provenance header + glossary v1 → v2.
+  · `workspace/domains/code-dev/manifest.md`           (new, 4108 B)
+      full front-matter: domain, version, status, container-root,
+      container-files, default-workflow, workflows, verb-map,
+      programs-prefix, tools (shadow, cd_cache),
+      source-artifact-glob (12 extensions), file-convention,
+      default-goals (project + 4 phases), mode-labels.
+  · `workspace/domains/library-dev/manifest.md`        (new, 2551 B)
+      flat-container variant; verb-map per spec; source-artifact-glob
+      = pdf/txt/epub.
+  · `tools/domain_validate.py`                         (new, 7084 B)
+      argparse CLI with --manifest / --all / --json modes; YAML
+      front-matter parsing with PyYAML when available + tolerant
+      regex fallback; cross-checks tools[] against REGISTRY.json;
+      warns on missing container-root / no-program-prefix-match.
+  · `tools/REGISTRY.json`                              (mod)
+      added `domain_validate` entry — script, status: ACTIVE,
+      category: system, purpose. Count 75 → 76.
+  · `tests/test_domain_manifest.py`                    (new, 3596 B)
+      5 tests: spec present, both manifests valid + required-fields,
+      tool registered, CLI green, CLI rejects bad manifest.
+- Acceptance verify (smoke, run by AXON — pytest is HUMAN-only per kernel):
+    `python3 axon.py domain_validate --all` → exit 0, ok=true, valid=2/2.
+    Reject path: bogus manifest → exit 1, errors enumerate missing fields.
+- F-005 sibling-domain hoist substrate in place: code-dev and library-dev
+  are now first-class registered domains; future flow-* programs can
+  resolve verbs uniformly.
+- DAG mutation: pr-106 → complete.
+- Unblocked: pr-107 (depends on 104 ✓ + 106 ✓), pr-108 (depends 106+107).
+- Merged set: {pr-101, pr-104, pr-106}. Critical path advanced: 101 ✓ →
+  104 ✓ → 107 (NEXT) → 108 → 117.
+- Phase meta current-pr advanced pr-102 → pr-107 (critical-path priority).
+
+Note: tests/test_domain_manifest.py exists but pytest has not been run
+(human task per kernel hard rule). HUMAN to execute:
+    python3 -m pytest tests/test_domain_manifest.py -q
