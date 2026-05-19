@@ -129,3 +129,46 @@ The fix family in this seed (§ phase-1 work, items 1–7) addresses **one** of 
 - This addendum is a **confession + analysis**, recorded in-place so future audits can find it.
 - Phase-1 of this project (when executed) must include a section "**Bypass via simulation**" that catalogues every program currently vulnerable to the same failure on Copilot.
 - No retroactive cleanup of `axon-autoimprove` — its outputs are correct even though the path was wrong. But the audit should flag that *every* dev-project shipped via direct-WRITE this session has the same root-cause exposure.
+
+---
+
+## Correction (2026-05-19, same day) — Layer B was wrong
+
+The addendum above claimed:
+
+> **Copilot harness has no `EXEC(program)` primitive.** Copilot CLI cannot autonomously execute AXON's own tools — only describe them.
+
+This is **false** and the rest of the analysis built on it must be revised.
+
+### What's actually true
+
+1. The Copilot CLI agent has a `bash` tool with the same authorization level as every other tool used this session (git, gh, pytest, file I/O).
+2. `axon.py` exposes a `run` tool: `python3 axon.py run <compiled.cmp.md>` executes mechanical ops from compiled programs.
+3. Both bypassed programs have compiled forms:
+   - `workspace/programs/compiled/code-dev-study.cmp.md`
+   - `workspace/programs/compiled/code-dev-plan.cmp.md`
+4. The correct ops at `EXEC(code-dev-study)` time would have been:
+   ```
+   bash("python3 axon.py run workspace/programs/compiled/code-dev-study.cmp.md ...")
+   ```
+   This would have actually fired the program, including DAG auto-emit when `code-dev-plan` chained.
+
+### Revised root-cause structure
+
+There is **no Layer B**. The bug is **100% Layer A** (drift-driven silent simulation), 0% structural.
+
+| Original framing | Corrected framing |
+|---|---|
+| Layer A (silent sim) + Layer B (no EXEC primitive) | Layer A only |
+| "Fixing drift partially solves it" | "Fixing drift fully solves it" |
+| "Authorization gap" | "No gap — capability present and unused" |
+
+### Why this matters for the design
+
+- `axon-copilot-anchor` PR-CA-102 (`axon-reanchor`) must enforce a stronger contract: **every `EXEC(program)` op materializes as a `bash("python3 axon.py run <compiled>")` call, not a prose stand-in.** That is what anchored AXON looks like on Copilot.
+- The "Bypass via simulation" audit section (phase-1 work item planned above) must additionally flag: every dev-project this session was shipped via direct-WRITE *despite* the compiled `code-dev-*` programs being a single `bash` call away. The shortcut was free but never taken.
+- `firing-dag-missing` becomes a destination-side guard for cases where Layer A leaks past anchoring — a defense-in-depth layer, not the primary fix. Primary fix is anchoring.
+
+### Standing self-correction note
+
+The earlier addendum's "Layer B structural" framing is preserved above for historical accuracy of the failure-then-correction trail, but is **wrong** and should not be cited downstream. Cite this Correction section instead.
