@@ -2,7 +2,7 @@
 
 slug:            3-build
 schema-version:  v4
-status:          active
+status:          CLOSED
 goal:            Implement the 7 phase-2 specs as merged axon PRs. 6 specs already landed end-to-end during phase-2; this phase is dedicated to spec #1 (`loop-receipt-v1`) — the largest and most-touching change — and the deferred companion PR-AUTO-211.
 opened:          2026-05-19
 

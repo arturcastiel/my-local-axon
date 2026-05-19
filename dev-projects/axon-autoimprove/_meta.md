@@ -3,8 +3,8 @@ slug:            axon-autoimprove
 schema-version:  v4
 status:          active
 legacy:          false
-phase:           3-build
-workflow-step:   build
+phase:           4-validation
+workflow-step:   validate
 branch:          main
 codebase:        /mnt/c/projects/axon
 parent:          axon-synapse
