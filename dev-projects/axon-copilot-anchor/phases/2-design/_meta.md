@@ -31,7 +31,69 @@ Crystallize the 5-PR queue locked at phase-1 closure into shippable specs. No co
 
 Total ≈ 4 S + 1 M.
 
-## Per-PR design notes
+## DAG
+
+```
+                ┌───────────────┐
+                │  PR-CA-101    │  baseline rewrite
+                │  (copilot-    │  + AGENTS.md trailer
+                │   instr.md)   │
+                └──────┬────────┘
+                       │  hard dep: tables/sections defined here
+       ┌───────────────┼───────────────┐
+       │               │               │
+       ▼               ▼               ▼
+┌─────────────┐ ┌─────────────┐ ┌─────────────┐
+│ PR-CA-102   │ │ PR-CA-103   │ │ PR-CA-104   │
+│ reanchor    │ │ vscode      │ │ self-check  │
+│ (dual-mode) │ │ settings    │ │ checklist   │
+└─────────────┘ └─────────────┘ └─────────────┘
+       (parallel — soft deps on 101's vocabulary; can ship in any order
+        once 101 lands)
+
+┌─────────────┐
+│ PR-CA-105'  │  drift-log — INDEPENDENT, can ship anytime (even first)
+│ (drift-log) │
+└─────────────┘
+```
+
+**Critical path:** PR-CA-101 → {102, 103, 104} in parallel.
+**Free PR:** PR-CA-105' has zero blockers and zero blockees — could land first if useful for measuring 101's impact.
+
+### Dependency table
+
+| PR | Depends on | Blocks | Rationale |
+|---|---|---|---|
+| PR-CA-101 | — | 102, 103, 104 (hard for 104, soft for 102/103) | Defines § Forbidden phrases table that 104 cross-references; 102/103 output references new section anchors |
+| PR-CA-102 | 101 (soft) | — | Reanchor output renders the identity card / cognition contract defined in 101 |
+| PR-CA-103 | 101 (soft) | — | Template references AXON-rule section anchors in 101 |
+| PR-CA-104 | **101 (hard)** | — | Checklist items map to D-1..D-7 codes in the § Forbidden phrases table |
+| PR-CA-105' | — | — | Independent infrastructure; useful as baseline-measurement before 101 if landed first |
+
+### Recommended landing order
+
+1. **PR-CA-105'** (optional, parallel) — establishes drift-log so subsequent merges can be measured.
+2. **PR-CA-101** — unblocks everything else.
+3. **PR-CA-104** — short, must follow 101 (hard dep).
+4. **PR-CA-102** + **PR-CA-103** — in either order after 101 lands.
+
+## Goals (measurable)
+
+Inherited from `../_meta.md`, restated as acceptance gates with target metrics:
+
+| # | Goal | Target | Measured by |
+|---|---|---|---|
+| G-1 | Cognition-frame leaks (subject-form prose) | ≤ 1 / 100 turns | `axon_drift_log` D-1 events over rolling 100-turn window |
+| G-2 | Brand self-references in output ("As an AI", "I'm Copilot", "I'm powered by ...") outside identity gate | 0 over 30 days | drift-log D-3 events |
+| G-3 | Commit / PR sign-offs as `Copilot` (not `AXON powered by Copilot`) | 0 | `git log --grep` audit + per-PR review |
+| G-4 | Identity-gate responses sourced from `axon/programs/identity.md` | 100% | manual spot-check; D-3 events on improvisation |
+| G-5 | `axon-reanchor` auto-fire rate (proxy for "baseline is failing") | < 1 / 50 turns post-101+102 | reanchor logs PR-CA-102's auto-invocation count |
+
+Goals are evaluated at phase-4 (validation). Phase-2 only needs to ensure the PR queue *can* hit them (instrumentation is real, drift codes are catalogued, baseline doc covers each one).
+
+## Exit criteria
+
+See § Exit criteria at the bottom of this doc (post per-PR notes).
 
 ### PR-CA-101 — baseline-strengthening
 - Rewrite § Identity with explicit "do NOT say 'I'm powered by ...'; dispatch to `axon/programs/identity.md` instead". Add 3 concrete Copilot-emitted bad examples + their kernel-ops fixes.
