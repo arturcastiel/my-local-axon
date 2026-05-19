@@ -1,10 +1,10 @@
 # Project: AXON Auto-Improve — self-tuning ranker + ephemeral-promotion + telemetry baseline
 slug:            axon-autoimprove
 schema-version:  v4
-status:          active
+status:          CLOSED-EXCEPT-PR-211
 legacy:          false
-phase:           4-validation
-workflow-step:   validate
+phase:           closed
+workflow-step:   exit
 branch:          main
 codebase:        /mnt/c/projects/axon
 parent:          axon-synapse
