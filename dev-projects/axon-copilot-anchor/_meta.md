@@ -3,8 +3,8 @@ slug:            axon-copilot-anchor
 schema-version:  v4
 status:          active
 legacy:          false
-phase:           1-study
-workflow-step:   study
+phase:           2-design
+workflow-step:   design
 branch:          main
 codebase:        /mnt/c/projects/axon
 parent:          axon (root)
