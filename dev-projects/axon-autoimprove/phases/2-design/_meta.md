@@ -2,9 +2,10 @@
 
 slug:            2-design
 schema-version:  v4
-status:          active
+status:          CLOSED
 goal:            Author the 7 specs identified in `../1-study/_closure.md` § "Phase-2 entry brief". Each spec defines a contract — not an implementation. Phase 3 turns specs into PRs.
 opened:          2026-05-19
+closed:          2026-05-19
 
 ## Inputs
 
