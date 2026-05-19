@@ -25,7 +25,7 @@ opened:          2026-05-19
 | 4 | `specs/drift-fail-closed-v1.md`          | FA-14, D-A23                                      | pending |
 | 5 | `specs/predicate-evaluator-wiring-v1.md` | FA-17, D-A26                                      | pending |
 | 6 | `specs/r-tool-call-exists-v1.md`         | FA-16, D-A27, D-AUTO-004                          | pending |
-| 7 | `specs/usage-find-program-v1.md`         | Synapse AC #10, D-DISC-4                          | pending |
+| 7 | `specs/usage-find-program-v1.md`         | Synapse AC #10, D-DISC-4                          | done |
 
 ## Exit criteria
 
