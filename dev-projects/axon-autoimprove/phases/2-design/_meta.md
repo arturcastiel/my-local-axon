@@ -23,7 +23,7 @@ opened:          2026-05-19
 | 2 | `specs/io-chokepoint-v1.md`              | FA-15, D-A21, D-AUTO-003                          | done (+ PR-AUTO-205 merged in axon#18 → 656a987) |
 | 3 | `specs/cron-circuit-breaker-v1.md`       | FA-13, FA-24, D-A22                               | done |
 | 4 | `specs/drift-fail-closed-v1.md`          | FA-14, D-A23                                      | done |
-| 5 | `specs/predicate-evaluator-wiring-v1.md` | FA-17, D-A26                                      | pending |
+| 5 | `specs/predicate-evaluator-wiring-v1.md` | FA-17, D-A26                                      | done |
 | 6 | `specs/r-tool-call-exists-v1.md`         | FA-16, D-A27, D-AUTO-004                          | done |
 | 7 | `specs/usage-find-program-v1.md`         | Synapse AC #10, D-DISC-4                          | done |
 
