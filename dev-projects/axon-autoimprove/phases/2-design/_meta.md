@@ -20,8 +20,8 @@ opened:          2026-05-19
 | # | Spec file                                | Closes                                            | Status |
 |---|------------------------------------------|---------------------------------------------------|--------|
 | 1 | `specs/loop-receipt-v1.md`               | B-04, B-06, B-07, B-14, B-20, FA-12, D-A25        | done |
-| 2 | `specs/io-chokepoint-v1.md`              | FA-15, D-A21, D-AUTO-003                          | done (+ PR-AUTO-205 implementation on axon `feat/io-chokepoint-v1-r9-enforcement`) |
-| 3 | `specs/cron-circuit-breaker-v1.md`       | FA-13, FA-24, D-A22                               | pending |
+| 2 | `specs/io-chokepoint-v1.md`              | FA-15, D-A21, D-AUTO-003                          | done (+ PR-AUTO-205 merged in axon#18 → 656a987) |
+| 3 | `specs/cron-circuit-breaker-v1.md`       | FA-13, FA-24, D-A22                               | done |
 | 4 | `specs/drift-fail-closed-v1.md`          | FA-14, D-A23                                      | pending |
 | 5 | `specs/predicate-evaluator-wiring-v1.md` | FA-17, D-A26                                      | pending |
 | 6 | `specs/r-tool-call-exists-v1.md`         | FA-16, D-A27, D-AUTO-004                          | pending |
