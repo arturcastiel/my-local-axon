@@ -54,3 +54,10 @@
   when CI lower bound > 0.5). No over-claiming on small n. This is the dossier's "confidence
   intervals" requirement. REMAINING: a live run with a real backend (human/API step) to produce
   actual numbers; long-horizon + cross-host goals execution; public report.
+
+## 2026-05-27 — pillar 2 (wedge) v1.2: portability shipped → signal triad complete
+- axiom now scores all three: coherence (v1) + enforcement-gaps (v1.1) + portability (v1.2).
+- Portability = static cross-host directive divergence, delegation-aware (single-source +
+  delegating stubs is NOT penalised; flagged + noted). NOT a runtime behaviour diff — that
+  is pillar 3's dual-agent benchmark. WEDGE is now feature-complete for a v1 product demo.
+  REMAINING wedge polish: a human-readable report/format mode; more instruction-file types.
