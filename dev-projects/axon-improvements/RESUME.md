@@ -26,8 +26,10 @@
 
 ## Next backlog (priority order)
 1. **dont-do-enforce** — infrastructure ✓ DONE (4 PRs). Remaining is lower-leverage: **PR-5 backfill** the 98 prose prohibitions across 14 my-axon files (DATA hygiene, not an OS-repo PR — classify tokenized/semantic, verify `lint-dir`→0, commit via workspace-backup; needed because strict Gate 3 now blocks those active projects' preflight) · **PR-6** review-diff §3 → `match:` (OS-repo loop) + KERNEL note (HUMAN-ONLY).
-2. **dag-consistency** — build `R_DAG_CONSISTENT` (next critical-path mechanical safety gate; OS-repo, proven loop). ← in progress / next.
-   Also see masterplan "🔒 SAFETY FINDING" items: compiled-mirror staleness (`R_COMPILED_FRESH` idea), squash-message PR-N leak (standing `lint_commit_trailer --head`).
+2. **dag-consistency** — ✓ **1-gate DONE** (MR !6): `R_DAG_CONSISTENT` is a fail-closed BLOCK crucible control (`dag-consistent`), verified clean (146 edges/507 neurons). NEXT = **2-cascade** (wire the 7 mutation programs to call `dag.py` ops — substantial) → 3-nest.
+3. **axon-tests** — ✓ enforcement already SATISFIED by crucible (`pytest` BLOCK + `R_NEW_NEEDS_TEST` BLOCK; no separate CI exists). Remaining = doc co-outputs only (lower priority).
+4. **🔒 compiled-mirror subsystem** (NEW workstream, HIGH) — measured 121/187 stale + 13 orphaned + 138 0%-passthroughs; `prefer-compiled` serves stale logic. Needs prune + content-staleness check + `R_COMPILED_FRESH`. **Owner decision:** keep the compiled layer at all (74% give 0 benefit)? See masterplan finding.
+5. Larger remaining: cross-host **X1** (4 projects, some need `~/.claude/` host wiring), **axon-memory** #96, **axon-ascent** eval maturation, dont-do **PR-5 backfill** (98 prose, my-axon data) + **PR-6** (review-diff §3 + human-only KERNEL note), **squash-message PR-N leak** (standing `lint_commit_trailer --head`).
 2. **axon-tests**: confirm green CI on main → flip enforcement.
 3. **X1 cross-host**: claude-code-consistency (Stop hook), copilot-anchor (4 PRs), copilot-consistency (CC-202..206), copilot-deviation-study (run it).
 4. **axon-memory**: #96 load-wire + 4 deferred follow-ups.
