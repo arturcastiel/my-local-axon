@@ -1,7 +1,7 @@
 # Project: AXON Stub Census & Gap Closure
 slug:            axon-gap-closure
 schema-version:  v4
-status:        obsolete
+status:        active
 legacy:          false
 phase:           1-stub-census
 workflow-step:   build
@@ -22,3 +22,5 @@ updated:         2026-05-26
 ---
 > **CONSOLIDATED 2026-05-27** — moved to `obsolete/`; superseded by **axon-improvements**.
 > Remaining scope (if any) is tracked in `axon-improvements/masterplan.md`. Original history preserved here.
+
+> **RE-OPENED 2026-05-27** — audit found OPEN work; restored from `obsolete/` as a workstream under **axon-improvements**. See `axon-improvements/masterplan.md` status board.

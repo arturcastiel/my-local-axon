@@ -1,0 +1,618 @@
+{
+  "generated": "2026-05-27T16:43:24",
+  "node_count": 49,
+  "edge_count": 1,
+  "elements": [
+    {
+      "data": {
+        "id": "finished",
+        "label": "finished/",
+        "kind": "group",
+        "status": "finished"
+      }
+    },
+    {
+      "data": {
+        "id": "obsolete",
+        "label": "obsolete/",
+        "kind": "group",
+        "status": "obsolete"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-improvements",
+        "label": "axon-improvements\n\u00b7 tracking",
+        "status": "umbrella",
+        "phase": "tracking",
+        "title": "AXON Improvements \u2014 the single umbrella for all AXON improvement work",
+        "loc": "umbrella-root",
+        "kind": "umbrella"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-ascent",
+        "label": "axon-ascent\n\u00b7 3-safety-budget",
+        "status": "active",
+        "phase": "3-safety-budget",
+        "title": "AXON Ascent \u2014 substrate \u2192 product maturation (axons-audit follow-up)",
+        "loc": "umbrella",
+        "kind": "project",
+        "parent": "axon-improvements"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-claude-code-consistency",
+        "label": "axon-claude-code-consistency\n\u00b7 2-design",
+        "status": "active",
+        "phase": "2-design",
+        "title": "AXON Claude Code Consistency \u2014 measure + close the gap between assumed and actual AXON adherence on Claude Code",
+        "loc": "umbrella",
+        "kind": "project",
+        "parent": "axon-improvements"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-copilot-anchor",
+        "label": "axon-copilot-anchor\n\u00b7 2-design",
+        "status": "active",
+        "phase": "2-design",
+        "title": "AXON Copilot Anchor \u2014 keep GitHub Copilot CLI in AXON persona",
+        "loc": "umbrella",
+        "kind": "project",
+        "parent": "axon-improvements"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-copilot-consistency",
+        "label": "axon-copilot-consistency\n\u00b7 2-design",
+        "status": "active",
+        "phase": "2-design",
+        "title": "AXON Copilot Consistency \u2014 stable behavior across turns in Copilot CLI/IDE",
+        "loc": "umbrella",
+        "kind": "project",
+        "parent": "axon-improvements"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-gap-closure",
+        "label": "axon-gap-closure\n\u00b7 1-stub-census",
+        "status": "active",
+        "phase": "1-stub-census",
+        "title": "AXON Stub Census & Gap Closure",
+        "loc": "umbrella",
+        "kind": "project",
+        "parent": "axon-improvements"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-memory",
+        "label": "axon-memory\n\u00b7 2-plan",
+        "status": "active",
+        "phase": "2-plan",
+        "title": "AXON Memory \u2014 native, harness-portable memory + reminders subsystem",
+        "loc": "umbrella",
+        "kind": "project",
+        "parent": "axon-improvements"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-tests",
+        "label": "axon-tests\n\u00b7 5-enforce",
+        "status": "active",
+        "phase": "5-enforce",
+        "title": "AXON Test Battery",
+        "loc": "umbrella",
+        "kind": "project",
+        "parent": "axon-improvements"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-viz",
+        "label": "axon-viz\n\u00b7 1-prototype",
+        "status": "active",
+        "phase": "1-prototype",
+        "title": "AXON Viz \u2014 projects / workflows / nested-DAG visualizer",
+        "loc": "umbrella",
+        "kind": "project",
+        "parent": "axon-improvements"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-wiring-gaps",
+        "label": "axon-wiring-gaps\n\u00b7 1-design",
+        "status": "active",
+        "phase": "1-design",
+        "title": "AXON Memory Key Wiring Gaps",
+        "loc": "umbrella",
+        "kind": "project",
+        "parent": "axon-improvements"
+      }
+    },
+    {
+      "data": {
+        "id": "copilot-deviation-study",
+        "label": "copilot-deviation-study\n\u00b7 1-design",
+        "status": "active",
+        "phase": "1-design",
+        "title": "Copilot Deviation Study",
+        "loc": "umbrella",
+        "kind": "project",
+        "parent": "axon-improvements"
+      }
+    },
+    {
+      "data": {
+        "id": "dag-consistency",
+        "label": "dag-consistency\n\u00b7 1-gate",
+        "status": "active",
+        "phase": "1-gate",
+        "title": "DAG Consistency Contract",
+        "loc": "umbrella",
+        "kind": "project",
+        "parent": "axon-improvements"
+      }
+    },
+    {
+      "data": {
+        "id": "dont-do-enforce",
+        "label": "dont-do-enforce\n\u00b7 1-design",
+        "status": "priority",
+        "phase": "1-design",
+        "title": "Dont-Do Enforcement \u2014 hard, fail-closed prohibition gate",
+        "loc": "umbrella",
+        "kind": "project",
+        "parent": "axon-improvements"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-audit-2026",
+        "label": "axon-audit-2026\n\u00b7 5-verdict",
+        "status": "finished",
+        "phase": "5-verdict",
+        "title": "AXON Strategic Audit 2026 \u2014 \"million-dollar idea?\"",
+        "loc": "finished",
+        "kind": "project",
+        "parent": "finished"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-autoimprove",
+        "label": "axon-autoimprove\n\u00b7 closed",
+        "status": "finished",
+        "phase": "closed",
+        "title": "AXON Auto-Improve \u2014 self-tuning ranker + ephemeral-promotion + telemetry baseline",
+        "loc": "finished",
+        "kind": "project",
+        "parent": "finished"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-polish",
+        "label": "axon-polish\n\u00b7 5-validate",
+        "status": "finished",
+        "phase": "5-validate",
+        "title": "AXON Polish \u2014 comprehensive audit + heavy-workflow readiness",
+        "loc": "finished",
+        "kind": "project",
+        "parent": "finished"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-synapse",
+        "label": "axon-synapse\n\u00b7 3-implement",
+        "status": "finished",
+        "phase": "3-implement",
+        "title": "AXON Synapse \u2014 audit + goal-driven orchestration + auto-workflow generator",
+        "loc": "finished",
+        "kind": "project",
+        "parent": "finished"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-artifact-guard",
+        "label": "axon-artifact-guard\n\u00b7 1-guard",
+        "status": "obsolete",
+        "phase": "1-guard",
+        "title": "AXON Artifact Brand-Guard",
+        "loc": "obsolete",
+        "kind": "project",
+        "parent": "obsolete"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-cleanup",
+        "label": "axon-cleanup\n\u00b7 3-implement",
+        "status": "obsolete",
+        "phase": "3-implement",
+        "title": "AXON Cleanup \u2014 testing-error + requirements-bloat study",
+        "loc": "obsolete",
+        "kind": "project",
+        "parent": "obsolete"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-coherence-v2",
+        "label": "axon-coherence-v2\n\u00b7 0-seed",
+        "status": "obsolete",
+        "phase": "0-seed",
+        "title": "AXON Coherence v2 \u2014 structural-coherence validation across program graphs",
+        "loc": "obsolete",
+        "kind": "project",
+        "parent": "obsolete"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-docs",
+        "label": "axon-docs",
+        "status": "obsolete",
+        "phase": "",
+        "title": "axon-docs",
+        "loc": "obsolete",
+        "kind": "project",
+        "parent": "obsolete"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-finish",
+        "label": "axon-finish",
+        "status": "obsolete",
+        "phase": "",
+        "title": "axon-finish",
+        "loc": "obsolete",
+        "kind": "project",
+        "parent": "obsolete"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-master",
+        "label": "axon-master\n\u00b7 2-plan-complete-v5-detailed",
+        "status": "obsolete",
+        "phase": "2-plan-complete-v5-detailed",
+        "title": "AXON Master",
+        "loc": "obsolete",
+        "kind": "project",
+        "parent": "obsolete"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-ranker-v2",
+        "label": "axon-ranker-v2\n\u00b7 0-seed",
+        "status": "obsolete",
+        "phase": "0-seed",
+        "title": "AXON Ranker v2 \u2014 closed-loop ranker with cap/floor/decay",
+        "loc": "obsolete",
+        "kind": "project",
+        "parent": "obsolete"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-user",
+        "label": "axon-user\n\u00b7 0-init",
+        "status": "obsolete",
+        "phase": "0-init",
+        "title": "AXON User Simulation",
+        "loc": "obsolete",
+        "kind": "project",
+        "parent": "obsolete"
+      }
+    },
+    {
+      "data": {
+        "id": "firing-dag-missing",
+        "label": "firing-dag-missing\n\u00b7 1-study",
+        "status": "obsolete",
+        "phase": "1-study",
+        "title": "firing-dag-missing \u2014 find every code-dev path that skips DAG auto-emit",
+        "loc": "obsolete",
+        "kind": "project",
+        "parent": "obsolete"
+      }
+    },
+    {
+      "data": {
+        "id": "lab2-06-axon-tutorial",
+        "label": "lab2-06-axon-tutorial\n\u00b7 1-study",
+        "status": "obsolete",
+        "phase": "1-study",
+        "title": "Lab2 06 \u2014 AXON interactive tutorial program",
+        "loc": "obsolete",
+        "kind": "project",
+        "parent": "obsolete"
+      }
+    },
+    {
+      "data": {
+        "id": "lab2-07-axon-cron-runner",
+        "label": "lab2-07-axon-cron-runner\n\u00b7 1-study",
+        "status": "obsolete",
+        "phase": "1-study",
+        "title": "Lab2 07 \u2014 AXON real cron runner",
+        "loc": "obsolete",
+        "kind": "project",
+        "parent": "obsolete"
+      }
+    },
+    {
+      "data": {
+        "id": "lab2-08-axon-tool-help",
+        "label": "lab2-08-axon-tool-help\n\u00b7 1-study",
+        "status": "obsolete",
+        "phase": "1-study",
+        "title": "Lab2 08 \u2014 AXON unified tool help",
+        "loc": "obsolete",
+        "kind": "project",
+        "parent": "obsolete"
+      }
+    },
+    {
+      "data": {
+        "id": "lab2-09-axon-lint-quiet",
+        "label": "lab2-09-axon-lint-quiet\n\u00b7 1-study",
+        "status": "obsolete",
+        "phase": "1-study",
+        "title": "Lab2 09 \u2014 AXON lint-paths quiet mode",
+        "loc": "obsolete",
+        "kind": "project",
+        "parent": "obsolete"
+      }
+    },
+    {
+      "data": {
+        "id": "lab2-13-axon-progs-index",
+        "label": "lab2-13-axon-progs-index\n\u00b7 1-study",
+        "status": "obsolete",
+        "phase": "1-study",
+        "title": "Lab2 13 \u2014 AXON programs INDEX.md generator",
+        "loc": "obsolete",
+        "kind": "project",
+        "parent": "obsolete"
+      }
+    },
+    {
+      "data": {
+        "id": "lab2-14-axon-prefs-doctor",
+        "label": "lab2-14-axon-prefs-doctor\n\u00b7 1-study",
+        "status": "obsolete",
+        "phase": "1-study",
+        "title": "Lab2 14 \u2014 AXON prefs doctor command",
+        "loc": "obsolete",
+        "kind": "project",
+        "parent": "obsolete"
+      }
+    },
+    {
+      "data": {
+        "id": "lab2-15-axon-onboarding",
+        "label": "lab2-15-axon-onboarding\n\u00b7 1-study",
+        "status": "obsolete",
+        "phase": "1-study",
+        "title": "Lab2 15 \u2014 AXON day-1 onboarding script",
+        "loc": "obsolete",
+        "kind": "project",
+        "parent": "obsolete"
+      }
+    },
+    {
+      "data": {
+        "id": "lab2-17-axon-shadow-boot",
+        "label": "lab2-17-axon-shadow-boot\n\u00b7 1-study",
+        "status": "obsolete",
+        "phase": "1-study",
+        "title": "Lab2 17 \u2014 AXON shadow-index bootstrap",
+        "loc": "obsolete",
+        "kind": "project",
+        "parent": "obsolete"
+      }
+    },
+    {
+      "data": {
+        "id": "lab2-18-axon-demand-goals",
+        "label": "lab2-18-axon-demand-goals\n\u00b7 1-study",
+        "status": "obsolete",
+        "phase": "1-study",
+        "title": "Lab2 18 \u2014 AXON demand-level goal helpers",
+        "loc": "obsolete",
+        "kind": "project",
+        "parent": "obsolete"
+      }
+    },
+    {
+      "data": {
+        "id": "lab2-20-axon-lab-meta",
+        "label": "lab2-20-axon-lab-meta\n\u00b7 1-study",
+        "status": "obsolete",
+        "phase": "1-study",
+        "title": "Lab2 20 \u2014 lab2 retrospective + audit",
+        "loc": "obsolete",
+        "kind": "project",
+        "parent": "obsolete"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-million",
+        "label": "axon-million\n\u00b7 1-theory",
+        "status": "active",
+        "phase": "1-theory",
+        "title": "AXON Million \u2014 foundation of the million-dollar case",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
+        "id": "cpg-to-unstructure",
+        "label": "cpg-to-unstructure\n\u00b7 2-faults",
+        "status": "active",
+        "phase": "2-faults",
+        "title": "CPG to Unstructure Grid Python Generator",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
+        "id": "lab2-01-elifoot-audio",
+        "label": "lab2-01-elifoot-audio\n\u00b7 1-study",
+        "status": "active",
+        "phase": "1-study",
+        "title": "Lab2 Project 01 \u2014 elifoot audio device fallback",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
+        "id": "lab2-02-elifoot-i18n-cover",
+        "label": "lab2-02-elifoot-i18n-cover\n\u00b7 1-study",
+        "status": "active",
+        "phase": "1-study",
+        "title": "Lab2 02 \u2014 elifoot i18n coverage audit",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
+        "id": "lab2-03-elifoot-replay",
+        "label": "lab2-03-elifoot-replay\n\u00b7 1-study",
+        "status": "active",
+        "phase": "1-study",
+        "title": "Lab2 03 \u2014 elifoot match replay system",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
+        "id": "lab2-04-elifoot-saves-ver",
+        "label": "lab2-04-elifoot-saves-ver\n\u00b7 1-study",
+        "status": "active",
+        "phase": "1-study",
+        "title": "Lab2 04 \u2014 elifoot save schema versioning",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
+        "id": "lab2-05-elifoot-ai-diff",
+        "label": "lab2-05-elifoot-ai-diff\n\u00b7 1-study",
+        "status": "active",
+        "phase": "1-study",
+        "title": "Lab2 05 \u2014 elifoot AI difficulty rebalance",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
+        "id": "lab2-10-elifoot-soundtrack",
+        "label": "lab2-10-elifoot-soundtrack\n\u00b7 1-study",
+        "status": "active",
+        "phase": "1-study",
+        "title": "Lab2 10 \u2014 elifoot extended MIDI soundtrack",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
+        "id": "lab2-11-elifoot-tactics",
+        "label": "lab2-11-elifoot-tactics\n\u00b7 1-study",
+        "status": "active",
+        "phase": "1-study",
+        "title": "Lab2 11 \u2014 elifoot tactics screen",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
+        "id": "lab2-12-elifoot-injuries",
+        "label": "lab2-12-elifoot-injuries\n\u00b7 1-study",
+        "status": "active",
+        "phase": "1-study",
+        "title": "Lab2 12 \u2014 elifoot injury + suspension system",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
+        "id": "lab2-16-elifoot-windows",
+        "label": "lab2-16-elifoot-windows\n\u00b7 1-study",
+        "status": "active",
+        "phase": "1-study",
+        "title": "Lab2 16 \u2014 elifoot Windows msi installer",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
+        "id": "lab2-19-elifoot-cloud-sav",
+        "label": "lab2-19-elifoot-cloud-sav\n\u00b7 1-study",
+        "status": "active",
+        "phase": "1-study",
+        "title": "Lab2 19 \u2014 elifoot cloud save sync",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
+        "id": "reservoir-eng",
+        "label": "reservoir-eng\n\u00b7 2-plan",
+        "status": "active",
+        "phase": "2-plan",
+        "title": "Reservoir-Eng \u2014 AXON programs + workflows for petroleum reservoir engineering",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
+        "source": "dag-consistency",
+        "target": "axon-viz",
+        "kind": "blocks"
+      }
+    }
+  ],
+  "gaps": [
+    {
+      "dir": "obsolete/axon-docs",
+      "issue": "missing 'slug'"
+    },
+    {
+      "dir": "obsolete/axon-docs",
+      "issue": "missing 'status'"
+    },
+    {
+      "dir": "obsolete/axon-finish",
+      "issue": "missing 'slug'"
+    }
+  ]
+}

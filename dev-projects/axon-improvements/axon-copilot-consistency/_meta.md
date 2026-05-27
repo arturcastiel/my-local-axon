@@ -1,7 +1,7 @@
 # Project: AXON Copilot Consistency — stable behavior across turns in Copilot CLI/IDE
 slug:            axon-copilot-consistency
 schema-version:  v4
-status:        obsolete
+status:        active
 legacy:          false
 phase:           2-design
 workflow-step:   design
@@ -74,3 +74,5 @@ and the Copilot IDE extension:
 ---
 > **CONSOLIDATED 2026-05-27** — moved to `obsolete/`; superseded by **axon-improvements**.
 > Remaining scope (if any) is tracked in `axon-improvements/masterplan.md`. Original history preserved here.
+
+> **RE-OPENED 2026-05-27** — audit found OPEN work; restored from `obsolete/` as a workstream under **axon-improvements**. See `axon-improvements/masterplan.md` status board.

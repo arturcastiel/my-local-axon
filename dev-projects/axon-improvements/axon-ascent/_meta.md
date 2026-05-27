@@ -1,7 +1,7 @@
 # Project: AXON Ascent — substrate → product maturation (axons-audit follow-up)
 slug:            axon-ascent
 schema-version:  v4
-status:        obsolete
+status:        active
 legacy:          false
 phase:           3-safety-budget
 workflow-step:   implement
@@ -43,3 +43,5 @@ updated:         2026-05-23
 ---
 > **CONSOLIDATED 2026-05-27** — moved to `obsolete/`; superseded by **axon-improvements**.
 > Remaining scope (if any) is tracked in `axon-improvements/masterplan.md`. Original history preserved here.
+
+> **RE-OPENED 2026-05-27** — audit found OPEN work; restored from `obsolete/` as a workstream under **axon-improvements**. See `axon-improvements/masterplan.md` status board.
