@@ -49,3 +49,5 @@ including ones (Copilot) where a model can't gate per turn.
 ---
 > **CONSOLIDATED 2026-05-27** — moved to `obsolete/`; superseded by **axon-improvements**.
 > Remaining scope (if any) is tracked in `axon-improvements/masterplan.md`. Original history preserved here.
+
+> **F6 CLOSED 2026-05-27 (owner decision): OBSOLETE.** Superseded by the shipped `PR-CD-204` (forbid LLM-brand signature trailers) + the commit-msg artifact-identity gate. No separate `R_NO_BRAND_IN_ARTIFACTS` lint will be built.

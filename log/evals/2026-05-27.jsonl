@@ -12,3 +12,11 @@
 {"ts": "2026-05-27T07:58:42+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
 {"ts": "2026-05-27T08:07:26+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
 {"ts": "2026-05-27T08:07:26+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-27T14:12:25+00:00", "name": "doc-counts", "pass": false, "expected": {"ok": true, "drift_count": 0}, "actual": {"ok": false, "action": "check", "scanned": 2, "drift_count": 1, "drifts": [{"file": "my-axon/SESSION-HANDOVER.md", "line": 63, "kind": "programs", "written": 0, "live": 187, "drift": true, "match": "0 programs"}], "live_counts": {"programs": 187, "tools": 136, "rules": 26}}}
+{"ts": "2026-05-27T14:12:25+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-27T14:16:48+00:00", "name": "doc-counts", "pass": false, "expected": {"ok": true, "drift_count": 0}, "actual": {"ok": false, "action": "check", "scanned": 2, "drift_count": 1, "drifts": [{"file": "my-axon/SESSION-HANDOVER.md", "line": 63, "kind": "programs", "written": 0, "live": 187, "drift": true, "match": "0 programs"}], "live_counts": {"programs": 187, "tools": 136, "rules": 26}}}
+{"ts": "2026-05-27T14:16:48+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-27T14:22:17+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-27T14:22:17+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-27T14:43:18+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-27T14:43:18+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}

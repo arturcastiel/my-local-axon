@@ -1,7 +1,7 @@
 # Project: AXON Memory — native, harness-portable memory + reminders subsystem
 slug:            axon-memory
 schema-version:  v4
-status:        obsolete
+status:        active
 legacy:          false
 phase:           2-plan
 workflow-step:   plan
@@ -37,3 +37,5 @@ last-ts:         2026-05-24
 ---
 > **CONSOLIDATED 2026-05-27** — moved to `obsolete/`; superseded by **axon-improvements**.
 > Remaining scope (if any) is tracked in `axon-improvements/masterplan.md`. Original history preserved here.
+
+> **RE-OPENED 2026-05-27** — audit found OPEN work; restored from `obsolete/` as a workstream under **axon-improvements**. See `axon-improvements/masterplan.md` status board.

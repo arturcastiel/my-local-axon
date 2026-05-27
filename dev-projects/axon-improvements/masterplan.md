@@ -2,60 +2,56 @@
 
 > ONE place for all internal AXON improvement work. Open this to follow everything up.
 > **RULE:** new improvement work = a workstream/item HERE — never a new top-level project.
-> Updated 2026-05-27.
+> Updated 2026-05-27 (post evidence-audit + canonical cutover to new-axon).
 
-## ▶ STATUS BOARD  (the follow-up surface)
+## ▶ STATUS BOARD — 12 active workstreams
 
-| Workstream | Status | Phase | Next action | Blocked by |
-|---|---|---|---|---|
-| **dag-consistency/** | ● active | 1-gate | build `R_DAG_CONSISTENT` gate (detect drift everywhere) | — |
-| **axon-viz/** | ● active | 1-proto (a) | `tools/project_graph.py` + `viewer.html` (tolerant) | dag-consistency *(for (b) only)* |
-| Tier 0 gates | ○ queued | — | F0 tree · F1 tests · F3 wiring · F4 triage · F5 cleanup · F6 artifact-guard | — |
-| Tier 1 proof feeders | ○ queued | — | eval maturation · cross-host coherence | — |
-| Tier 2–4 | ○ queued | — | wedge support · memory/docs · distribution | — |
+**⚠ PRIORITY**
+| Workstream | Phase | Next action | Blocked by |
+|---|---|---|---|
+| **dont-do-enforce/** | 1-design | build `R_DONT_DO` (PR-0…6 per `dont-do-enforce/01-study.md`) — fail-closed | — |
 
-**Critical path:** `dag-consistency` (schema) → `axon-viz (b)` ;  Tier 0 → *bug-free* ;  Tiers 1–2 → feed **axon-million** (product, separate).
+**Active build**
+| Workstream | Phase | Next action / open items | Blocked by |
+|---|---|---|---|
+| **dag-consistency/** | 1-gate | build `R_DAG_CONSISTENT` → 2-cascade → 3-nest | — |
+| **axon-viz/** | 1-proto (a) | `tools/project_graph.py` + `viewer.html` (tolerant) | dag-consistency *(for (b))* |
+| **axon-tests/** | enforce | battery shipped; **confirm green CI on main → flip enforcement** | green CI |
+| **axon-ascent/** | 3-safety-budget | eval/benchmark maturation (seeds + CIs + scoring) → feeds axon-million P3 | — |
+| **axon-memory/** | 2-plan | core shipped; **open: #96 load-wire + 4 deferred follow-ups** | — |
+
+**Cross-host coherence (X1 — feeds axon-million P3 goal #4 + Axiom portability)**
+| Workstream | Phase | Open items | 
+|---|---|---|
+| **axon-claude-code-consistency/** | 2-design | CD-202, CD-203 + the Stop-hook (headline goal, unbuilt) |
+| **axon-copilot-anchor/** | 2-design | PR-CA-101/103/104/105 (4 of 5 unshipped) |
+| **axon-copilot-consistency/** | 2-design | CC-202…206 (5 of 6 open); resume at CC-204 |
+| **copilot-deviation-study/** | 1-design | run the study (scaffolded, never executed) |
+
+**Deferred / small**
+| Workstream | Phase | Open item |
+|---|---|---|
+| **axon-gap-closure/** | PR-F | alias cleanup — *needs a rename tool, not regex* (handoff written) |
+| **axon-wiring-gaps/** | 1-design | wire unwired memory keys + zero out broken programs (build never started) |
+
+**Critical path:** `dont-do-enforce` + `dag-consistency` + `axon-tests` → **bug-free** ; `dag-consistency` → `axon-viz(b)` ; `axon-ascent`(E1) + X1 → feed **axon-million** (product, separate).
 
 ---
 
-## Sub-projects (nested here; full detail in each folder)
-- **`dag-consistency/`** — DAG as single structural truth. `1-gate` (R_DAG_CONSISTENT) → `2-cascade` (wire the 7 mutation programs) → `3-nest` (nested project⊃phase⊃PR DAG). Supersedes firing-dag-missing.
-- **`axon-viz/`** — projects/workflows/nested-DAG HTML visualizer. Generator → `graph.json` → cytoscape `viewer.html`. **(a)** tolerant prototype now → **(b)** full nested after dag-consistency.
+## Backlog (inline items — not yet broken into sub-projects)
+- **F0 · canonical tree — LARGELY RESOLVED 2026-05-27.** Canonical = `new-axon/axon` (TNO); persona repointed; `my-axon` symlink-shared. *Remaining:* retire/relocate the stale `/mnt/c` code; reconcile the `axon-development` checkout + its forked `my-axon.git`.
+- **F6 · artifact brand-guard — CLOSED 2026-05-27 (owner): obsolete.** Superseded by the shipped `PR-CD-204` + commit-msg artifact-identity gate; no separate `R_NO_BRAND_IN_ARTIFACTS` lint needed. *(folder stays in ../obsolete/)*
+- **F5 · cleanup — DONE** (`axon-cleanup` shipped + closed, 2880/0 tests). ✓
+- **idea · structural-coherence lint** — promote from parked `coherence-v2`: `R_FSM_TRANSITION` + `R_NEURON_EXISTS` (sibling of `dont-do-enforce`/`dag-consistency`).
+- **idea · bounded ranker controller** — promote from parked `ranker-v2`: cap/floor/decay + per-program accounting + SELF-OBSERVE row.
+- **Tier-4 distribution enablers:** onboarding `[lab2-15]` · prefs-doctor `[lab2-14]` · tool-help `[lab2-08]` · cron-runner `[lab2-07]` · progs-index `[lab2-13]` (ideas captured; stubs disposable).
+- **D1 · docs** — future AXON-DOCS regen (axon-docs project already shipped its sweep).
+- **persona×workflow friction harness** — from `axon-user` (findings stale; harness idea already consumed by axon-polish); optionally fold into E1.
 
 ## Scope
 - **In:** kernel · quality/bug-free gates · tooling · cross-host consistency · memory · docs · distribution.
-- **Out (separate top-level projects):** `axon-million` (product/proof — consumes Tiers 1–2) · `reservoir-eng` (domain) · `cpg-to-unstructure` (external) · `lab2-*` elifoot.
-- **Archives:** `../finished/` (4) · `../obsolete/` (28).
+- **Out (separate top-level projects):** `axon-million` (product/proof — consumes E1 + X1) · `reservoir-eng` · `cpg-to-unstructure` · `lab2-*` elifoot.
 
-## Backlog (DAG-ordered; items not yet broken into sub-projects)
-
-### Tier 0 — Foundation / bug-free gates
-- **F0 · Converge to ONE canonical axon tree** — 3 live trees today; biggest sellability risk. *[NEW]*
-- **F1 · Test battery → enforce.** `[axon-tests · 5-enforce]`
-- **F2 · DAG-as-truth** → now the **`dag-consistency/`** sub-project (see board).
-- **F3 · Wire unwired memory keys.** `[axon-wiring-gaps · 1-design]`
-- **F4 · Stub census + TODO/xfail triage.** `[axon-gap-closure · 1-stub-census]`
-- **F5 · Testing-error + bloat cleanup.** `[axon-cleanup · 3-implement]`
-- **F6 · Artifact brand-guard gate.** `[axon-artifact-guard · 1-guard]`
-
-### Tier 1 — Proof feeders  (→ axon-million P3)
-- **E1 · Eval/benchmark maturation** (seeds + CIs + scoring). `[axon-ascent · 3-safety-budget]`
-- **X1 · Cross-host coherence** → benchmark goal #4 + Axiom portability. `[claude-code-consistency · copilot-anchor · copilot-consistency · copilot-deviation-study]`
-- *(done)* `R_GROUNDED_CLAIMS` → goal #5.
-
-### Tier 2 — Wedge support  (→ axon-million P2 Axiom v1.1)
-- **W1 · Portability + enforcement-gap signal** from X1.
-
-### Tier 3 — Subsystems
-- **M1 · Memory subsystem** (harness-portable memory + reminders; kernel #96). `[axon-memory · 2-plan]`
-- **D1 · Docs** (regenerate AXON-DOCS; PR-S01). `[axon-docs]`
-
-### Tier 4 — Distribution enablers
-- onboarding `[lab2-15]` · prefs-doctor `[lab2-14]` · tool-help `[lab2-08]` · cron-runner `[lab2-07]` · progs-index `[lab2-13]`.
-
-### Parked — low priority / never-started
-- `[axon-coherence-v2]` · `[axon-ranker-v2]` · `[axon-user]` · lab2 axon stubs `[06,09,17,18,20]`.
-
-## Reference
-- Finished (`../finished/`): axon-audit-2026 (verdict ✓) · axon-synapse · axon-polish · axon-autoimprove (PR-211 open).
-- Each sub-project folder holds its own `03-prs/` + `phases/` detail.
+## Archives (verified 2026-05-27)
+- **Finished** (`../finished/`, 4): `axon-audit-2026` (verdict ✓) · `axon-synapse` (20/20 merged) · `axon-polish` · `axon-autoimprove` (1 trailing cron PR-211).
+- **Obsolete** (`../obsolete/`, 19): truly dead/superseded/never-started — `firing-dag-missing` (superseded by dag-consistency) · `axon-master` (delivered + superseded) · `axon-docs`/`axon-cleanup` (shipped, no open work) · `coherence-v2`/`ranker-v2`/`axon-user` (ideas promoted above) · 10 lab2 stubs · `axon-artifact-guard` (F6 closed — superseded by PR-CD-204).

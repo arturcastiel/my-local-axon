@@ -1,7 +1,7 @@
 # Project: AXON Claude Code Consistency — measure + close the gap between assumed and actual AXON adherence on Claude Code
 slug:            axon-claude-code-consistency
 schema-version:  v4
-status:        obsolete
+status:        active
 legacy:          false
 phase:           2-design
 workflow-step:   design
@@ -87,3 +87,5 @@ phase-2 to mitigate.
 ---
 > **CONSOLIDATED 2026-05-27** — moved to `obsolete/`; superseded by **axon-improvements**.
 > Remaining scope (if any) is tracked in `axon-improvements/masterplan.md`. Original history preserved here.
+
+> **RE-OPENED 2026-05-27** — audit found OPEN work; restored from `obsolete/` as a workstream under **axon-improvements**. See `axon-improvements/masterplan.md` status board.

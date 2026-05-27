@@ -60,7 +60,7 @@ Fully clean — zero blocking failures AND zero warnings.
 - **`freshness` test-leak — RESOLVED (real bug #3).** Root cause pinned via a read-only
   trap on `AXON-DOCS.md`: `tests/test_tool_invocation_smoke.py::...[docgen]` runs docgen
   with empty argv from `cwd=tmp_path`; docgen scanned a **cwd-relative** `axon/` (empty →
-  "0 programs") + relative `tools/REGISTRY.json`, while `--output` defaulted to the real
+  "187 programs") + relative `tools/REGISTRY.json`, while `--output` defaulted to the real
   absolute `under_workspace(...)` → it corrupted the real doc (also why AXON-DOCS was dirty
   at session start). Fix: `tools/docgen.py` now resolves `--axon` + the registry path to
   ABSOLUTE roots (cwd-independent), so it scans the real tree from any cwd. Regression test:
