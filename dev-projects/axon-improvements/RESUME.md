@@ -20,9 +20,10 @@
 ## Merged this session (TNO `main`)
 - **PR-1** `axon-viz` — `project-graph` generator (DAG from `_meta.md` → `graph.json` + cytoscape `viewer.html` + gaps report). MR !1, squash `edb74fda`.
 - **PR-2** `dont-do-enforce` — `R_DONT_DO` mechanical fail-closed prohibition gate (dormant until a repo-root `_dont-do.md` exists; wired into `crucible run_changeset`). MR !2, squash `91ee027`.
+- **PR-0** `dont-do-enforce capture gate` — `dont-do-lint` tool (single classifier reusing R_DONT_DO's parser, fail-closed `lint`) + mechanical preflight **Gate 3** (was advisory) + born-enforceable `code-dev dont-do add --match` + tripwire tests. MR !3, squash `f5fa76f`. Full gate green (18 controls).
 
 ## Next backlog (priority order)
-1. **dont-do-enforce**: PR-0 capture step + `match:` schema + `dont-do lint` + tripwire tests + backfill (see `dont-do-enforce/01-study.md`).
+1. **dont-do-enforce** (capture gate PR-0 ✓ merged): next = **PR-1** `match:` schema doc (`_code-dev-schema-v4.md`) + wire `dont-do-lint` into the crucible gate (lint phase-dir prohibitions, not just repo-root) · **PR-5** backfill the 14 real `_dont-do.md` files to `match:`+tripwire · **PR-6** upgrade review-diff §3 + docs (KERNEL note = HUMAN-ONLY). See `dont-do-enforce/01-study.md`.
 2. **axon-tests**: confirm green CI on main → flip enforcement.
 3. **X1 cross-host**: claude-code-consistency (Stop hook), copilot-anchor (4 PRs), copilot-consistency (CC-202..206), copilot-deviation-study (run it).
 4. **axon-memory**: #96 load-wire + 4 deferred follow-ups.
