@@ -32,3 +32,25 @@
 - RUN: pip install anthropic; export ANTHROPIC_API_KEY=...; python3 tools/dual_agent_eval.py run --backend anthropic --fixtures fixtures/dual-agent/goals.json --out reports/dual-agent
 - v1 AXON arm = prompt-level; rigorous = real AXON tools over mcp-client (follow-up todo).
 - Now runnable: only the API key + owner's real goals stand between here and the proof number.
+
+## 2026-05-27 — pillar-status audit (verify-before-build) + wedge v1.1
+- **Pillar 1 (theory):** in progress (phase 1-theory) — thesis/moat docs.
+- **Pillar 2 (wedge) = `tools/axiom.py`** — ALREADY BUILT (v1 coherence: conflicts/
+  duplications/precedence over CLAUDE.md/AGENTS.md/.cursor/copilot-instructions).
+  **v1.1 SHIPPED this session:** enforcement-gap scoring — per-directive "is it
+  mechanically enforced?" (single-artifact co-location of distinctive tokens across
+  hooks/CI/tests/lint; signal, not proof). Generalizes AXON's prose-vs-gate insight to
+  any repo. On AXON itself: 36/38 traced, 2 true-positive gaps. REMAINING: v1.2
+  portability (cross-host behaviour diff); a CLI report/format mode; more file types.
+- **Pillar 3 (proof) = dual-agent eval** — scaffolding exists (recent commits:
+  "no-key demo backend for the dual-agent eval", "axon-bridge mailbox"). NOT yet
+  audited/matured — NEXT after the wedge. benchmark/ dir present.
+- Discipline: axiom (wedge) lives in the canonical new-axon tree; tests green.
+
+## 2026-05-27 — pillar 3 (proof): confidence intervals shipped
+- Dual-agent eval harness was already built (tools/dual_agent_eval.py: two-arm AXON-vs-bare,
+  pluggable backend, 24 tests; benchmark/goals.json real reservoir goals; no-key demo backend).
+- SHIPPED: 95% Wilson CI on the across-goal win-rate + a CONSERVATIVE H1 verdict (supported only
+  when CI lower bound > 0.5). No over-claiming on small n. This is the dossier's "confidence
+  intervals" requirement. REMAINING: a live run with a real backend (human/API step) to produce
+  actual numbers; long-horizon + cross-host goals execution; public report.
