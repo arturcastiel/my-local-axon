@@ -6,7 +6,7 @@ legacy:          false
 phase:           3-safety-budget
 workflow-step:   implement
 branch:          main
-codebase:        /home/arturcastiel/projects/axon-development/axon
+codebase:        /home/arturcastiel/projects/new-axon/axon
 source-audit:    /home/arturcastiel/projects/axons-audit
 parent:          (none)
 sub-projects:    []

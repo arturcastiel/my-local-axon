@@ -6,7 +6,7 @@ legacy:          false
 phase:           5-enforce
 workflow-step:   enforce
 branch:          main
-codebase:        /mnt/c/projects/axon
+codebase:        /home/arturcastiel/projects/new-axon/axon
 parent:          (none)
 sub-projects:    []
 created:         2026-05-16

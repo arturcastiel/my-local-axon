@@ -6,7 +6,7 @@ legacy:          false
 phase:           1-design
 workflow-step:   study
 branch:          main
-codebase:        /mnt/c/projects/axon
+codebase:        /home/arturcastiel/projects/new-axon/axon
 parent:          (none)
 sub-projects:    []
 created:         2026-05-21

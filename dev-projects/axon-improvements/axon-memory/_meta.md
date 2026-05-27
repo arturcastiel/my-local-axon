@@ -6,7 +6,7 @@ legacy:          false
 phase:           2-plan
 workflow-step:   plan
 branch:          main
-codebase:        /home/arturcastiel/projects/axon-development/axon
+codebase:        /home/arturcastiel/projects/new-axon/axon
 parent:          (none)
 sub-projects:    []
 created:         2026-05-24
