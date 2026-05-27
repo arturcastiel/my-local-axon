@@ -6,7 +6,7 @@ legacy:          false
 phase:           2-design
 workflow-step:   design
 branch:          feature/pr-ca-102-axon-reanchor
-codebase:        /mnt/c/projects/axon
+codebase:        /home/arturcastiel/projects/new-axon/axon
 parent:          axon (root)
 sub-projects:    []
 sibling:         axon-copilot-anchor
