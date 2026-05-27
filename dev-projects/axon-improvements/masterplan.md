@@ -9,7 +9,7 @@
 **⚠ PRIORITY**
 | Workstream | Phase | Next action | Blocked by |
 |---|---|---|---|
-| **dont-do-enforce/** | ✓ core MERGED (PR-2) | `R_DONT_DO` fail-closed gate landed (MR !2; dormant w/o repo `_dont-do.md`). Next: PR-0 capture + match-schema/lint/tripwire + backfill | — |
+| **dont-do-enforce/** | ✓ core + capture MERGED (PR-2, PR-0) | `R_DONT_DO` fail-closed gate (MR !2) + capture gate (MR !3): `dont-do-lint` tool, mechanical preflight Gate 3, born-enforceable `dont-do add --match`. Next: PR-1 `match:` schema doc + lint-in-gate · PR-5 backfill 14 files · PR-6 review-diff §3 + docs | — |
 
 **Active build**
 | Workstream | Phase | Next action / open items | Blocked by |
