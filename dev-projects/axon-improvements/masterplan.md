@@ -9,13 +9,13 @@
 **⚠ PRIORITY**
 | Workstream | Phase | Next action | Blocked by |
 |---|---|---|---|
-| **dont-do-enforce/** | 1-design | build `R_DONT_DO` (PR-0…6 per `dont-do-enforce/01-study.md`) — fail-closed | — |
+| **dont-do-enforce/** | ✓ core MERGED (PR-2) | `R_DONT_DO` fail-closed gate landed (MR !2; dormant w/o repo `_dont-do.md`). Next: PR-0 capture + match-schema/lint/tripwire + backfill | — |
 
 **Active build**
 | Workstream | Phase | Next action / open items | Blocked by |
 |---|---|---|---|
 | **dag-consistency/** | 1-gate | build `R_DAG_CONSISTENT` → 2-cascade → 3-nest | — |
-| **axon-viz/** | 1-proto (a) | `tools/project_graph.py` + `viewer.html` (tolerant) | dag-consistency *(for (b))* |
+| **axon-viz/** | ✓ (a) MERGED (PR-1) | `project-graph` generator landed (MR !1). (b) nested view after dag-consistency | dag-consistency *(for (b))* |
 | **axon-tests/** | enforce | battery shipped; **confirm green CI on main → flip enforcement** | green CI |
 | **axon-ascent/** | 3-safety-budget | eval/benchmark maturation (seeds + CIs + scoring) → feeds axon-million P3 | — |
 | **axon-memory/** | 2-plan | core shipped; **open: #96 load-wire + 4 deferred follow-ups** | — |
