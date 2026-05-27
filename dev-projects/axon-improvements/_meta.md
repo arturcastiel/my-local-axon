@@ -1,29 +1,31 @@
-# Project: AXON Improvements — the single consolidated plan
+# Project: AXON Improvements — the single umbrella for all AXON improvement work
 slug:            axon-improvements
 schema-version:  v4
 status:          active
 legacy:          false
-phase:           1-backlog
+phase:           tracking
 workflow-step:   plan
 branch:          main
 codebase:        /home/arturcastiel/projects/new-axon/axon
 parent:          (none)
-sub-projects:    []
+sub-projects:    [dag-consistency, axon-viz]
 created:         2026-05-27
 updated:         2026-05-27
 
 ## Working Context
-- THE single home for all internal AXON improvement work. Consolidates 29 scattered
-  projects (now under `../obsolete/`) and references 4 finished (`../finished/`).
-- Out of scope — kept as separate top-level projects (NOT folded here):
-    axon-million      → the product / proof umbrella (consumes Tiers 1 & 2 below)
-    reservoir-eng     → petroleum domain (also supplies benchmark goals 1 & 2)
-    cpg-to-unstructure→ external repo
-    lab2-* elifoot    → game clone (10 projects)
-- The backlog (masterplan.md) is organized by the cross-project DAG:
-    Foundation/bug-free  →  Proof feeders  →  Wedge support  →  Subsystems  →  Distribution.
-- Each backlog item carries its SOURCE project + last phase, so no scope is lost.
+- THE umbrella. Every internal AXON improvement is tracked HERE — as a nested
+  sub-project (substantial work) or an inline backlog item (smaller work).
+- RULE (anti-proliferation guardrail): new improvement work becomes a workstream or
+  item in masterplan.md — NEVER a new top-level project.
+- Sub-projects (nested folders, full detail preserved):
+    dag-consistency/  — DAG-as-truth: gate → cascade → nested schema (1-gate→2→3-nest)
+    axon-viz/         — projects/workflows/nested-DAG HTML visualizer (a tolerant → b full)
+- Out of scope (separate top-level projects): axon-million (product/proof),
+  reservoir-eng (domain), cpg-to-unstructure (external), lab2-* elifoot.
+- Archives: ../finished/ (4), ../obsolete/ (28).
+
+## Follow it up
+masterplan.md = the single STATUS BOARD (open it first). Each sub-project folder = its detail.
 
 ## Start with
-code-dev load axon-improvements → work Tier 0 (Foundation / bug-free gates) — those
-gate "sellable". The proof (axon-million P3, the rigorous MCP arm) runs in parallel.
+code-dev load axon-improvements → read the STATUS BOARD at the top of masterplan.md.
