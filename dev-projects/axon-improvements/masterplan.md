@@ -9,7 +9,7 @@
 **⚠ PRIORITY**
 | Workstream | Phase | Next action | Blocked by |
 |---|---|---|---|
-| **dont-do-enforce/** | ✓ core + capture MERGED (PR-2, PR-0) | `R_DONT_DO` fail-closed gate (MR !2) + capture gate (MR !3): `dont-do-lint` tool, mechanical preflight Gate 3, born-enforceable `dont-do add --match`. Next: PR-1 `match:` schema doc + lint-in-gate · PR-5 backfill 14 files · PR-6 review-diff §3 + docs | — |
+| **dont-do-enforce/** | ✓ INFRASTRUCTURE COMPLETE (MR !2/!3/!4/!5) | `R_DONT_DO` gate + capture gate + `match:`/`R_DONT_DO_LINT`/`lint-dir` + **semantic class** (`review:` marker → human-review/BLOCK-in-autonomous) all merged. Every prohibition is now tokenized/semantic/prose; only prose fails. **REMAINING (lower-leverage):** (a) **PR-5 backfill** — `lint-dir my-axon/dev-projects` = **98 prose across 14 files** (mostly recurring boilerplate; classify tokenized vs semantic). NOTE: this is my-axon DATA hygiene (NOT an OS-repo gated PR; verify via `lint-dir`→0 prose; commit via workspace-backup). My PR-0 made preflight Gate 3 strict, so active projects' prose now BLOCKs preflight until backfilled. (b) **PR-6** upgrade review-diff §3 to use `match:` (OS-repo, proven loop) + KERNEL note (HUMAN-ONLY). | — |
 
 **Active build**
 | Workstream | Phase | Next action / open items | Blocked by |
@@ -39,6 +39,8 @@
 ---
 
 ## Backlog (inline items — not yet broken into sub-projects)
+- **🔒 SAFETY FINDING · compiled-mirror staleness is ungated (HIGH).** Discovered 2026-05-27: editing a source program does NOT regenerate its `.cmp.md`; with `prefer-compiled: true`, dispatch then runs the STALE compiled logic. PR-0 left `code-dev-safety-preflight.cmp.md` serving the old advisory Gate 3 (fixed in MR !4 by regenerating). **Systemic:** 138/187 compiled mirrors are 0.0%-ratio passthroughs (zero token benefit) — "compiled coverage 187/211" is largely illusory. *Fix idea:* a crucible control `R_COMPILED_FRESH` (mtime/hash of `.cmp.md` vs source → BLOCK if stale) + prune/skip 0%-benefit passthroughs. Sibling of `dont-do-enforce`/`dag-consistency` (mechanical truth).
+- **🔒 SAFETY FINDING · glab squash-message bypasses the commit-trailer hook (MED).** `lint_commit_trailer.py` runs at the local `commit-msg` stage; `glab mr merge --squash --squash-message` is applied SERVER-SIDE, so PR-N / brand leaks in a squash message reach `main` unchecked (e.g. earlier squash commits carry "(PR-N)"). *Fix idea:* wire `lint_commit_trailer --head` as a standing crucible control over the merge-base..HEAD commit messages, or sanitize squash messages mechanically before merge. (The local hook DID correctly block PR-1's local commit — the gap is only the server-side path.)
 - **F0 · canonical tree — LARGELY RESOLVED 2026-05-27.** Canonical = `new-axon/axon` (TNO); persona repointed; `my-axon` symlink-shared. *Remaining:* retire/relocate the stale `/mnt/c` code; reconcile the `axon-development` checkout + its forked `my-axon.git`.
 - **F6 · artifact brand-guard — CLOSED 2026-05-27 (owner): obsolete.** Superseded by the shipped `PR-CD-204` + commit-msg artifact-identity gate; no separate `R_NO_BRAND_IN_ARTIFACTS` lint needed. *(folder stays in ../obsolete/)*
 - **F5 · cleanup — DONE** (`axon-cleanup` shipped + closed, 2880/0 tests). ✓
