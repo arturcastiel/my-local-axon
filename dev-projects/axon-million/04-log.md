@@ -61,3 +61,11 @@
   delegating stubs is NOT penalised; flagged + noted). NOT a runtime behaviour diff — that
   is pillar 3's dual-agent benchmark. WEDGE is now feature-complete for a v1 product demo.
   REMAINING wedge polish: a human-readable report/format mode; more instruction-file types.
+
+## 2026-05-27 — wedge demoable: `axiom report` shipped
+- `axiom report <repo>` renders the audit as a readable "Agent Constitution Audit"
+  (coherence + enforcement-gaps + portability + summary). WEDGE (pillar 2) is now
+  feature-complete AND demoable end-to-end. 4 wedge PRs this session (MR !10/!11/!12/!13).
+- PROOF (pillar 3): CI shipped; live run needs an API key (human/config step) = a WALL for
+  real numbers. THEORY (pillar 1): docs exist (theory/thesis.md). Feeders next: axon-ascent
+  (telemetry/eval) + X1 cross-host (touches ~/.claude, snapshot-first).
