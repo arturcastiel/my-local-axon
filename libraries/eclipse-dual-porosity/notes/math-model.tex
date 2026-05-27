@@ -1,0 +1,620 @@
+% =====================================================================
+%  Eclipse 2025.4 — Dual Porosity / Dual Permeability
+%  1-to-1 Mathematical Model
+%
+%  Every equation in this file maps to a numbered equation in:
+%    EclipseTechnicalDescription.pdf  (TD, chapter "Dual porosity", pp. 100-131)
+%  or:
+%    EclipseReferenceManual.pdf       (RM, keyword pages, e.g. SIGMA, LTOSIGMA, DPKRMOD)
+%
+%  Equation cross-references are given as TD Eq. 2.NN or RM Eq. 3.NNN.
+%
+%  Compile with:  pdflatex math-model.tex   (twice, for refs)
+%
+%  Author: AXON, built 2026-05-22 from the Eclipse 2025.4 documentation
+% =====================================================================
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{bm}
+\usepackage[margin=2.4cm]{geometry}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue!50!black, urlcolor=blue!60!black, citecolor=blue!50!black}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{parskip}
+
+% --- macros -----------------------------------------------------------
+\newcommand{\TDref}[1]{\textit{TD Eq.\,#1}}
+\newcommand{\RMref}[1]{\textit{RM Eq.\,#1}}
+\newcommand{\kw}[1]{\texttt{#1}}
+\newcommand{\note}[1]{\par\smallskip\textit{#1}\par\smallskip}
+
+\DeclareMathOperator{\CDARCY}{CDARCY}
+\DeclareMathOperator{\GMOB}{GMOB}
+\DeclareMathOperator{\OMOB}{OMOB}
+\DeclareMathOperator{\NDIVIZ}{NDIVIZ}
+
+\title{\textbf{Eclipse 2025.4 — Dual Porosity / Dual Permeability}\\
+       \large 1-to-1 mathematical model, every equation traced back to the manual}
+\author{Library: \texttt{my-axon/libraries/eclipse-dual-porosity}}
+\date{Built 2026-05-22 from Eclipse 2025.4 Technical Description and Reference Manual}
+
+\begin{document}
+\maketitle
+
+% =====================================================================
+\section{Notation and scope}
+% =====================================================================
+
+\paragraph{Subscripts.} $m$ = matrix cell. $f$ = fracture cell. $i,j$ = grid indices. $o,g,w$ = oil, gas, water phases.
+
+\paragraph{Symbols.}
+\begin{description}
+  \item[$\sigma$] shape factor, units $1/L^{2}$ (\kw{SIGMA}, \kw{SIGMAV}, \kw{LTOSIGMA})
+  \item[$K$] permeability used in the matrix-fracture coupling (matrix $K_x$ by default, override via \kw{PERMMF})
+  \item[$V$] matrix cell \emph{bulk} volume (no porosity factor)
+  \item[$\CDARCY$] Darcy-unit conversion constant ($\approx 0.00112712$ in FIELD, $\approx 0.0086400$ in METRIC)
+  \item[$\Phi_p$] phase potential $= P + P_{c,p} - \rho_p g D$ for phase $p$
+  \item[$\lambda_p$] mobility $= k_{r,p}/\mu_p$
+  \item[$L_x,L_y,L_z$] physical matrix-block dimensions (\kw{LX}, \kw{LY}, \kw{LZ})
+  \item[$\Delta Z_{\text{mat}}$] typical matrix-block height (\kw{DZMTRX}, \kw{DZMTRXV})
+  \item[$\rho_p$] phase density at reservoir conditions
+  \item[$g$] acceleration of gravity
+\end{description}
+
+\paragraph{Z-doubling rule.} The number of layers $\NDIVIZ$ (\kw{DIMENS} item 3) must be even.
+Layers $1\ldots\NDIVIZ/2$ are matrix; layers $\NDIVIZ/2+1\ldots\NDIVIZ$ are fracture. For multi-porosity
+with $N$ matrix porosities (Eclipse 300), the rule generalises to $\NDIVIZ$ a multiple of $N+1$.
+
+% =====================================================================
+\section{Matrix--fracture transfer function (the core equation)}
+% =====================================================================
+
+For every co-located $(m,f)$ pair Eclipse builds an automatic non-neighbour connection (NNC).
+The matrix--fracture transmissibility is
+\begin{equation}
+T_{mf} \;=\; \CDARCY\,\sigma\,K\,V
+\label{eq:Tmf}
+\tag{TD 2.54}
+\end{equation}
+
+The phase flow rate between matrix and fracture is the upstream-weighted Darcy flux
+\begin{equation}
+q_{p,\,mf} \;=\; T_{mf}\,\lambda_{p}^{\uparrow}\,\bigl(\Phi_{p,f} - \Phi_{p,m}\bigr)
+\label{eq:qp}
+\end{equation}
+where $\lambda_{p}^{\uparrow}$ is the mobility evaluated in the upstream cell (determined by the
+sign of the potential difference, including any gravity head term, see §\ref{sec:gravity}).
+
+\subsection*{Kazemi (1976) shape factor}
+For a matrix block with characteristic dimensions $L_x,L_y,L_z$:
+\begin{equation}
+\sigma \;=\; 4\left(\frac{1}{L_x^{2}} + \frac{1}{L_y^{2}} + \frac{1}{L_z^{2}}\right)
+\label{eq:sigma-kazemi}
+\tag{TD 2.55 ; RM 3.172}
+\end{equation}
+\note{$L_x,L_y,L_z$ are \emph{physical} matrix-block dimensions, not simulation grid sizes.
+Setting $\sigma = 0.12\;\text{ft}^{-2}$ in FIELD units corresponds to a 10\,ft cubic block.}
+
+\subsection*{\kw{LTOSIGMA} form (anisotropic, per-direction permeability)}
+If the user enters $L_x,L_y,L_z$ via \kw{LX}/\kw{LY}/\kw{LZ} and activates \kw{LTOSIGMA} with
+coefficients $f_x,f_y,f_z$ (default $4$, $4$, $4$):
+\begin{equation}
+T_{mf} \;=\; \CDARCY\,V\left(
+  \frac{f_x\,K_x}{L_x^{2}} + \frac{f_y\,K_y}{L_y^{2}} + \frac{f_z\,K_z}{L_z^{2}}
+\right)
+\label{eq:Tmf-lto}
+\tag{TD 2.56 ; RM 3.116}
+\end{equation}
+With the \texttt{XONLY} option (default), only the $K_x$ term applies; with \texttt{ALL}, all three directions contribute.
+\note{If \kw{LTOSIGMA} is present, any explicit \kw{SIGMA(V)} / \kw{SIGMAGD(V)} are \emph{ignored}.}
+
+% =====================================================================
+\section{Gravity imbibition / drainage}\label{sec:gravity}
+% =====================================================================
+
+\subsection*{Gravity head between a matrix and fracture cell (\kw{GRAVDR}, standard)}
+Let $X_f, X_m$ denote the fractional heights of the water front in the fracture and matrix cells respectively.
+Integrating the rock-Pc plus gravity head over the cell volume yields the pseudo capillary pressure:
+\begin{equation}
+\Delta p_{\,\text{grav}} \;=\; \rho_w \, g \, \Delta Z_{\text{mat}}\,(X_f - X_m)
+\label{eq:dpgrav}
+\tag{TD 2.57}
+\end{equation}
+
+The total oil flow from fracture to matrix in a gas--oil system becomes
+\begin{align}
+q_{g} &= T_{mf}\,\GMOB\Bigl[(P_{o,f} - P_{o,m}) + (P_{c,g,f} - P_{c,g,m})
+        + \tfrac{1}{2}\,\Delta Z_{\text{mat}}\,(X_f-X_m)(\rho_g - \rho_o)\,g\Bigr]
+\label{eq:qg}
+\tag{TD 2.58}\\[4pt]
+q_{o} &= T_{mf}\,\OMOB\Bigl[(P_{o,f} - P_{o,m})
+        - \tfrac{1}{2}\,\Delta Z_{\text{mat}}\,(X_f-X_m)(\rho_g - \rho_o)\,g\Bigr]
+\label{eq:qo}
+\tag{TD 2.59}
+\end{align}
+The gravity drainage head is split between phases; the factor $\tfrac{1}{2}$ comes from the symmetric vertical-equilibrium argument.
+
+% --- E300 sigma interpolation -----------------------------------------
+\subsection*{Eclipse 300: smooth interpolation of \kw{SIGMA} and \kw{SIGMAGD}}
+When \kw{SIGMAGD} is supplied, Eclipse 300 uses a per-phase effective sigma:
+\begin{equation}
+\sigma^{\text{eff}}_p \;=\; \omega_p\,\sigma \;+\; (1-\omega_p)\,\sigma_{\text{gd}}
+\label{eq:sigma-eff}
+\tag{TD 2.60}
+\end{equation}
+\begin{equation}
+\omega_p \;=\; \frac{\Delta \theta_{\text{gd}}}{\Delta\theta_{\text{gd}} + \Delta\Phi_{ij}}
+\label{eq:omega-p}
+\tag{TD 2.61}
+\end{equation}
+where
+\begin{equation}
+\Delta\Phi_{ij} \;=\; (P_i - P_j) + (P_{c,i} - P_{c,j}) - \rho_p\,g\,\Delta D
+\label{eq:dPhi}
+\tag{TD 2.62}
+\end{equation}
+The gravity-drainage potential $\Delta\theta_{\text{gd}}$ is phase-specific:
+\begin{align}
+\Delta\theta_o &= -\tfrac{1}{2}\bigl(\Delta\theta_{g}^{m} + \Delta\theta_{w}^{m}\bigr)
+\label{eq:dtheta-o}\tag{TD 2.63}\\
+\Delta\theta_g &= \tfrac{1}{2}\,\Delta\theta_{g}^{m}
+\label{eq:dtheta-g}\tag{TD 2.64}\\
+\Delta\theta_w &= \tfrac{1}{2}\,\Delta\theta_{w}^{m}
+\label{eq:dtheta-w}\tag{TD 2.65}
+\end{align}
+with phase-vs-oil gravity-head differences
+\begin{align}
+\Delta\theta_{g}^{m} &= g \, (Y_{f,g} - Y_{m,g}) \, (\rho_g - \rho_o)
+\label{eq:dthetag-cell}\tag{TD 2.66}\\
+\Delta\theta_{w}^{m} &= g \, (Y_{f,w} - Y_{m,w}) \, (\rho_w - \rho_o)
+\label{eq:dthetaw-cell}\tag{TD 2.67}
+\end{align}
+$Y_{f,g},Y_{m,g}$ are the fractions of the cell containing mobile gas (water); estimated by a vertical-equilibrium model.
+\note{Limit cases: gravity-dominant $\Rightarrow \omega_p \to 0 \Rightarrow \sigma^{\text{eff}}_p \to \sigma_{\text{gd}}$.
+Capillary-dominant $\Rightarrow \omega_p \to 1 \Rightarrow \sigma^{\text{eff}}_p \to \sigma$.}
+
+% --- GRAVDRM ---------------------------------------------------------
+\subsection*{Alternative model (\kw{GRAVDRM}, Quandalle--Sabathier 1989)}
+Matrix-fracture flow decomposed into three components:
+\begin{equation}
+q \;=\; q_h + q_{\text{up}} + q_{\text{down}}
+\label{eq:q-qsab}
+\tag{TD 2.68}
+\end{equation}
+\begin{align}
+q_h &= T_{\sigma}\,\lambda^{\uparrow}_h\,(P_f + P_{c,f} - P_m - P_{c,m})
+\label{eq:qh}\tag{TD 2.69}\\
+q_{\text{up}} &= T_{\sigma_{\text{gd}}}\,\lambda^{\uparrow}_{\text{up}}\,
+   \bigl[(P_f + P_{c,f} - P_m - P_{c,m}) + (\rho_p - \rho^{\text{mat}}_p)\,g\,\Delta Z_{\text{mat}}/2\bigr]
+\label{eq:qup}\tag{TD 2.70}\\
+q_{\text{down}} &= T_{\sigma_{\text{gd}}}\,\lambda^{\uparrow}_{\text{down}}\,
+   \bigl[(P_f + P_{c,f} - P_m - P_{c,m}) - (\rho_p - \rho^{\text{mat}}_p)\,g\,\Delta Z_{\text{mat}}/2\bigr]
+\label{eq:qdown}\tag{TD 2.71}
+\end{align}
+where the saturation-weighted matrix density is
+\[
+\rho^{\text{mat}}_p \;=\; \rho_o\,S_o + \rho_g\,S_g + \rho_w\,S_w .
+\]
+$T_\sigma$ is the matrix-fracture transmissibility built from \kw{SIGMA}; $T_{\sigma_{\text{gd}}}$ from \kw{SIGMAGD}.
+\note{Re-infiltration toggle (\kw{GRAVDRM} item 1, \texttt{YES}/\texttt{NO}) controls whether oil may flow back into the matrix.
+With \texttt{YES}, final recovery depends on transmissibility (non-physical); \texttt{NO} yields a transmissibility-independent equilibrium.}
+
+% =====================================================================
+\section{Viscous displacement (\kw{VISCD}, Gilman--Kazemi 1988)}
+% =====================================================================
+Consider a matrix block at pressure $P_m$ surrounded by a fracture with pressure varying from $P_1$ (upstream) to $P_2$ (downstream). Three regimes:
+
+\paragraph{(a) $P_m > P_1, P_2$ — pure matrix$\to$fracture flow:}
+\begin{equation}
+q \;=\; \tfrac{T}{2}\,\lambda_m\,(P_m - P_1) + \tfrac{T}{2}\,\lambda_m\,(P_m - P_2) \;=\; T\,\lambda_m\,(P_m - \bar P_f)
+\label{eq:visc-a}
+\tag{TD 2.72--2.73}
+\end{equation}
+where $\bar P_f = (P_1+P_2)/2$ is the average fracture pressure.
+
+\paragraph{(b) $P_m < P_1, P_2$ — pure fracture$\to$matrix flow:}
+\begin{equation}
+q \;=\; T\,\lambda_f\,(\bar P_f - P_m)
+\label{eq:visc-b}
+\tag{TD 2.74}
+\end{equation}
+
+\paragraph{(c) Mixed: $P_1 > P_m > P_2$ — flow in at one end, out at the other:}
+\begin{equation}
+q \;=\; \tfrac{T}{2}\,\lambda_f\,(P_1 - P_m) \;-\; \tfrac{T}{2}\,\lambda_m\,(P_m - P_2)
+\label{eq:visc-c1}
+\tag{TD 2.75}
+\end{equation}
+After algebraic rearrangement using $P_{1,2} = \bar P_f \pm (P_1-P_2)/2$:
+\begin{equation}
+q \;=\; \tfrac{T}{2}\,\lambda_f\Bigl[\bar P_f + \tfrac{P_1-P_2}{2} - P_m\Bigr]
+       - \tfrac{T}{2}\,\lambda_m\Bigl[P_m - \bar P_f + \tfrac{P_1-P_2}{2}\Bigr]
+\label{eq:visc-c2}
+\tag{TD 2.76}
+\end{equation}
+Define the fracture potential gradient $G$ via $P_1 - P_2 = G\,L$ (where $L$ is the matrix-block dimension in the relevant direction from \kw{LX}/\kw{LY}/\kw{LZ}):
+\begin{equation}
+\boxed{
+q \;=\; \tfrac{T}{2}\,\lambda_f\,(\bar P_f - P_m)
+       - \tfrac{T}{2}\,\lambda_m\,(P_m - \bar P_f)
+       + \tfrac{L}{4}\,T\,(\lambda_f - \lambda_m)\,G
+}
+\label{eq:visc-final}
+\tag{TD 2.77}
+\end{equation}
+The last term is the explicit viscous-displacement contribution — proportional to the matrix block dimension $L$ and the fracture pressure gradient $G$.
+
+\paragraph{Estimating $G$ from neighbour cells.}
+Let $\phi_{p-}$ and $\phi_{p+}$ be the absolute values of the potential differences to the upstream and downstream adjacent cells, and $D_l, D_r$ the centre-to-centre distances:
+\begin{equation}
+G \;=\; \frac{\phi_{p-}}{2\,D_l} \;+\; \frac{\phi_{p+}}{2\,D_r}
+\label{eq:G-grad}
+\tag{TD 2.78}
+\end{equation}
+Computed from previous-timestep potentials.
+
+% =====================================================================
+\section{\kw{DPKRMOD}: matrix oil-Kr modification}
+% =====================================================================
+
+For $m_w > 0$, the matrix oil-in-water relative permeability is bent toward the midpoint:
+\begin{equation}
+k_{r,o}(S) \;=\; k_{r,T}(S) \;+\; g(S)\,\bigl[k_M - k_{r,T}(S)\bigr]
+\label{eq:dpkr-pos}
+\tag{TD 2.79 ; RM 3.59}
+\end{equation}
+where
+\begin{itemize}
+  \item $k_{r,T}(S)$ is the looked-up rock $k_r$;
+  \item $k_M = k_{r,T}\bigl(S^\star\bigr)$ at the midpoint $S^\star = (S_{owcr} + (1 - S_{wco}))/2$;
+  \item $g(S) \;=\; 4 m_w S^{2} - 4 m_w S + 1$.
+\end{itemize}
+End-points and the midpoint value are preserved by construction.
+
+For $m_w < 0$, the implicit (X-Y swapped) version is used: given $S$, solve
+\begin{equation}
+S + g(S')\,(S' - S) = S^\star
+\label{eq:dpkr-neg}
+\tag{TD 2.80 ; RM 3.60}
+\end{equation}
+with $g(S') = 4 m_w S'^{2} - 4 m_w S' + 1$, then take $k_r = k_{r,T}(S')$.
+
+\subsection*{Fracture--matrix $k_r$ scaling (\kw{DPKRMOD} item 3 = YES)}
+The fracture $k_r$ used \emph{only} for fracture-to-matrix flow is scaled so the maximum equals the matrix $k_r$ at the displaced-phase residual:
+\begin{equation}
+k_{r,w}^{\,F\to M} \;=\; k_{r,w}^{\text{tab,frac}}(S_w)\cdot\frac{k_{r,w}^{\text{mat,max}}}{k_{r,w}^{\text{frac,max}}}
+\label{eq:frac-kr-scale}
+\tag{TD 2.81 ; RM 3.61}
+\end{equation}
+with $k_{r,w}^{\text{mat,max}} = k_{r,w}^{\text{mat}}(S_w = 1 - S_{owcr})$. Analogous expressions apply to gas and oil.
+
+% =====================================================================
+\section{Linear system structure (Schur reduction)}
+% =====================================================================
+
+The Jacobian system for DP / DK in residual form is
+\begin{equation}
+\begin{pmatrix} A & C \\ D & B \end{pmatrix}
+\begin{pmatrix} \mathbf{x} \\ \mathbf{y} \end{pmatrix}
+\;=\;
+\begin{pmatrix} \mathbf{r}_m \\ \mathbf{r}_f \end{pmatrix}
+\label{eq:jac-block}
+\end{equation}
+where $\mathbf{x}$ collects matrix unknowns, $\mathbf{y}$ collects fracture unknowns; $A,B$ are intra-cell Jacobians and $C,D$ are diagonal coupling matrices (each matrix cell connects to exactly one fracture cell).
+
+\subsection*{\kw{DUALPORO} (A diagonal): exact Schur reduction}
+Eliminate $\mathbf{x}$ algebraically:
+\begin{equation}
+\bigl(B - D\,A^{-1}\,C\bigr)\,\mathbf{y} \;=\; \mathbf{r}_f - D\,A^{-1}\,\mathbf{r}_m
+\label{eq:schur}
+\tag{TD 2.82}
+\end{equation}
+\begin{equation}
+\mathbf{x} \;=\; A^{-1}\bigl(\mathbf{r}_m - C\,\mathbf{y}\bigr)
+\label{eq:backsub}
+\tag{TD 2.83}
+\end{equation}
+Because $A$ is diagonal, $D\,A^{-1}\,C$ is also diagonal and the band structure of $B$ is preserved.
+Effective problem size: same as a single-porosity simulation of the fracture grid.
+
+\subsection*{\kw{DUALPERM} (A banded): simultaneous solve via nested factorisation}
+Each cell-pair Jacobian block is
+\begin{equation}
+J_{\text{pair}} \;=\;
+\begin{pmatrix} A_m & D \\[1pt] C & B_f \end{pmatrix}
+\label{eq:dk-jac}
+\tag{TD 2.84}
+\end{equation}
+($A_m,B_f$ are $3\times3$ in three-phase). The full Jacobian along $x,y,z$ has 7 bands:
+\begin{equation}
+J \;=\; D \;+\; L_1 + U_1 \;+\; L_2 + U_2 \;+\; L_3 + U_3
+\label{eq:dk-bands}
+\tag{TD 2.85}
+\end{equation}
+Nested factorisation builds an approximation $\tilde J$ through four levels:
+\begin{align}
+T &= D + L_3 \, S^{-1}\, U_3 \notag\\
+S &= T + L_2 \, R^{-1}\, U_2 \notag\\
+R &= S + L_1 \, Q^{-1}\, U_1 \notag\\
+Q &= \Gamma + L\,\Gamma^{-1}\,U
+\label{eq:dk-nf}
+\tag{TD 2.86}
+\end{align}
+where $\Gamma$ is diagonal and $L,U$ inherit the band structure of $J$. The fourth nesting level (innermost) accounts for the matrix-vs-fracture coupling. \kw{OPTIONS} item 60 $>0$ reverts to the pre-97A solver.
+
+% =====================================================================
+\section{Initialisation: fractional volumes for gravity drainage}
+% =====================================================================
+
+\subsection*{Initial fractional volume of water below the water contact}
+\begin{equation}
+X_{w,i} \;=\; \frac{S_{w,i} - S_{w,co}}{1 - S_{coh y} - S_{w,co}}
+\label{eq:Xwi}
+\tag{TD 2.87}
+\end{equation}
+with
+\[
+S_{coh y} \;=\;
+\begin{cases}
+S_{ocow} & \text{(oil/water)}\\
+S_{ocow} + S_{gco} & \text{(oil/water/gas)}\\
+S_{gco} & \text{(gas/water)}
+\end{cases}
+\]
+and saturation conditions
+\begin{align*}
+X_w &= 1, & S_w &= S_{w,\max} = S_{w,i}(1 - S_{coh y}) + (1 - S_{w,i})(1 - S_{coh y}) \\[1pt]
+X_w &= 0, & S_w &= S_{w,\min} = S_{w,i}\,S_{w,cr} + (1 - S_{w,i})\,S_{w,cr}
+\end{align*}
+For $S_w$ in $(S_{w,\min}, S_{w,\max})$, $X_w$ varies linearly between 0 and 1.
+
+\subsection*{Initial fractional volume of gas above the gas contact}
+\begin{equation}
+X_{g,i} \;=\; \frac{S_{g,i} - S_{g,co}}{1 - S_{l,co} - S_{g,co}}
+\label{eq:Xgi}
+\tag{TD 2.88}
+\end{equation}
+with $S_{l,co}$ defined analogously to $S_{coh y}$ for the connate liquid combination.
+
+% =====================================================================
+\section{Integrated capillary pressure (\kw{INTPC})}
+% =====================================================================
+For a piecewise-linear input table $(S_g \mapsto P_c)$, the average gas saturation in a matrix block of height $h$ up to the height where $P_c = P$ is
+\begin{equation}
+\bar S_g \;=\; \frac{1}{P}\int_{0}^{P} S_g^{-1}\!\bigl(P_c\bigr)\,dP_c
+\label{eq:Sg-bar}
+\tag{TD 2.89}
+\end{equation}
+where $S_g^{-1}$ is the inverse capillary-pressure function.
+
+The gravity-drainage head as a function of the mobile oil saturation, with the fracture full of gas (standard \kw{GRAVDR} model):
+\begin{equation}
+P_{\text{cgr}} \;=\; \frac{S_o - S_{o,r}}{S_{op}}\,\Delta\rho\,g\,h
+\label{eq:Pcgr}
+\tag{TD 2.90}
+\end{equation}
+with $S_{op} = 1 - S_{wco} - S_{ogcr}$ and $\Delta\rho = \rho_o - \rho_g$.
+
+The constructed (\emph{integrated}) capillary pressure satisfies $P'_c(\bar S_g) = P_{\text{cgr}}$, so the matrix equilibrium saturation matches the continuous-matrix-medium final recovery:
+\begin{equation}
+P'_c(\bar S_g) \;=\; \frac{S_o - S_{o,r}}{S_{op}}\,P
+\label{eq:Pc-prime}
+\tag{TD 2.91}
+\end{equation}
+where $P$ is the true capillary pressure at the top of the block when the equilibrium saturation is $\bar S_g$. Implemented as a tabulated function $\bar S_g \leftrightarrow P$ derived from \eqref{eq:Sg-bar}.
+
+% =====================================================================
+\section{Discretized matrix (\kw{NMATRIX} / \kw{NMATOPTS})}
+% =====================================================================
+
+The matrix block is partitioned into $N$ nested sub-cells (innermost $n=1$ near the fracture). Let $V_n$ be the volume of the $n$-th sub-cell. Total matrix volume:
+\begin{equation}
+V_T \;=\; \sum_{n=1}^{N} V_n
+\label{eq:VT}
+\end{equation}
+Outer sub-cell volume $V_1$ is a fraction of the fracture pore volume (\kw{NMATOPTS} item 2, default $0.1$). The remaining sub-cells grow geometrically with factor
+\begin{equation}
+f \;=\; \left(\frac{X}{X_1}\right)^{\frac{1}{N-1}}
+\label{eq:f-growth}
+\end{equation}
+where $X$ is the centre-to-fracture distance for the whole matrix and $X_1$ is the outermost sub-cell width. The distance to the inner face of sub-cell $n$ is
+\begin{equation}
+X_n \;=\; f^{\,n-1}\,X_1
+\label{eq:Xn}
+\end{equation}
+
+\paragraph{Geometry-dependent volumes.}
+\begin{itemize}
+  \item \texttt{LINEAR} ($D=1$): sub-cells are slabs; volume $\propto$ distance.
+  \item \texttt{RADIAL} ($D=2$): sub-cells are cylindrical shells; volume from shell formulae.
+  \item \texttt{SPHERICAL} ($D=3$): sub-cells are spherical shells.
+\end{itemize}
+For any geometry, the centre of sub-cell $n$ (for $n>1$) is
+\begin{equation}
+X^c_n \;=\; \tfrac{1}{2}(X_{n-1} + X_n)
+\label{eq:Xnc}
+\end{equation}
+and the interface area between sub-cells $n$ and $n+1$ scales with the dimensionality:
+\begin{equation}
+A_n \;=\; Z\,(X - X_n)^{D-1}
+\label{eq:An}
+\end{equation}
+($Z$ is a geometry constant: outer-face area for LINEAR; $2\pi\cdot h$ for RADIAL; $4\pi$ for SPHERICAL). The original matrix-fracture transmissibility scales to a sub-cell-to-sub-cell transmissibility as
+\begin{equation}
+T_n \;=\; T \;\cdot\; \frac{A_n}{A_T}\;\cdot\;\frac{2X}{X_n - X_{n-1}}
+\label{eq:Tn}
+\end{equation}
+For the outer sub-cell-to-fracture connection, the scale factor is $2X/X_1$. The dimensionality constant $Z$ cancels in any ratio of $A_n$.
+
+% =====================================================================
+\section{Rock-volume sharing in multi-porosity cells}
+% =====================================================================
+In a multi-porosity cell, each porosity receives a pore volume from input data and a share of the
+rock volume. Default sharing (TD p.\,122):
+\begin{equation}
+V^{\text{rock}}_p \;=\; V^{\text{pore}}_p
+\quad\text{(if total pore volume } \le \text{ available rock volume)}
+\label{eq:rock-share}
+\end{equation}
+Any rock-volume surplus goes to the matrix; deficit is shared proportionally to pore volume.
+The keyword \kw{ROCKSPLV} overrides this rule per cell. With $\kw{ACTNUM}=2$ (rock-only) or $3$ (pore-only), special rules apply — see RM \kw{ACTNUM}.
+
+% =====================================================================
+\section{Block-to-block (\kw{BTOBALFA}) connection}
+% =====================================================================
+A non-co-located matrix--fracture transmissibility is added between the lower matrix cell and the upper fracture cell.
+The transmissibility is computed as a standard spatial Darcy connection between cells $i$ and $j$:
+\begin{equation}
+T^{\,b2b}_{ij} \;=\; \alpha\,\CDARCY\,\frac{2\,A_{ij}}{\dfrac{\Delta D_i}{K_i} + \dfrac{\Delta D_j}{K_j}}
+\label{eq:btob}
+\end{equation}
+multiplied by the contact-area factor $\alpha$ (\kw{BTOBALFA} for grid-wide; \kw{BTOBALFV} for per-cell).
+Setting $\alpha$ activates the connection; otherwise it does not exist.
+\note{Not compatible with multi-porosity (\kw{NMATRIX}$>1$ or \kw{TRPLPORO}).}
+
+% =====================================================================
+\section{Summary: full system of equations a DP/DK run solves}
+% =====================================================================
+
+For each phase $p \in \{o,g,w\}$ and each cell pair $(m,f)$:
+\begin{align}
+\frac{\partial(\phi\,S_p)_m}{\partial t}
+  + \nabla\!\cdot\!(\rho_p\,\mathbf{v}_{p,m}) - q_{p,mf} &= 0
+\qquad\text{(matrix balance)} \label{eq:mass-m}\\[2pt]
+\frac{\partial(\phi\,S_p)_f}{\partial t}
+  + \nabla\!\cdot\!(\rho_p\,\mathbf{v}_{p,f}) + q_{p,mf} - q_{\text{well}} &= 0
+\qquad\text{(fracture balance)} \label{eq:mass-f}
+\end{align}
+with
+\begin{itemize}
+  \item $\mathbf{v}_{p,m} = 0$ in DUALPORO (no matrix-matrix flow); $\mathbf{v}_{p,m}$ from Darcy in DUALPERM.
+  \item $q_{p,mf}$ from \eqref{eq:qp} (basic) or \eqref{eq:qh}--\eqref{eq:qdown} (GRAVDRM) or \eqref{eq:visc-final} (VISCD).
+  \item Phase potential $\Phi_p = P_o + P_{c,p,o} - \rho_p\,g\,D$ with $P_{c,p,o}$ optionally modified by INTPC \eqref{eq:Pc-prime}.
+  \item Relative permeabilities $k_{r,p}$ optionally modified by DPKRMOD \eqref{eq:dpkr-pos}--\eqref{eq:frac-kr-scale}.
+  \item Sigma $\sigma$ optionally interpolated between \kw{SIGMA} and \kw{SIGMAGD} per \eqref{eq:sigma-eff}.
+\end{itemize}
+plus saturation closure $\sum_p S_p = 1$ and equation-of-state / PVT closure for compositional / black-oil runs.
+
+The Jacobian of this nonlinear system is solved per Newton iteration via \eqref{eq:schur}--\eqref{eq:backsub}
+in DUALPORO (Schur reduction) or via \eqref{eq:dk-jac}--\eqref{eq:dk-nf} in DUALPERM (4-level nested factorisation).
+
+% =====================================================================
+\section{Equation $\to$ keyword cross-reference}
+% =====================================================================
+
+\begin{center}\small
+\begin{tabular}{lll}
+\toprule
+Equation & Concept & Controlling keyword(s) \\
+\midrule
+\eqref{eq:Tmf}            & Matrix-fracture transmissibility            & \kw{SIGMA}, \kw{SIGMAV}, \kw{MULTSIG(V)}, \kw{PERMMF}, \kw{MULTMF}  \\
+\eqref{eq:sigma-kazemi}   & Kazemi $\sigma$                              & implicit in \kw{SIGMA}                 \\
+\eqref{eq:Tmf-lto}        & $\sigma$ from block dimensions               & \kw{LTOSIGMA}, \kw{LX}, \kw{LY}, \kw{LZ} \\
+\eqref{eq:dpgrav}--\eqref{eq:qo} & Standard gravity drainage          & \kw{GRAVDR}, \kw{DZMTRX(V)}              \\
+\eqref{eq:sigma-eff}--\eqref{eq:dthetaw-cell} & E300 $\sigma$ interp.   & \kw{SIGMA}+\kw{SIGMAGD} on E300         \\
+\eqref{eq:q-qsab}--\eqref{eq:qdown}           & Quandalle--Sabathier   & \kw{GRAVDRM}, \kw{SIGMA}, \kw{SIGMAGD}, \kw{DZMTRX} \\
+\eqref{eq:visc-a}--\eqref{eq:G-grad}          & Viscous displacement   & \kw{VISCD}, \kw{LX}, \kw{LY}, \kw{LZ}, \kw{LTOSIGMA} \\
+\eqref{eq:dpkr-pos}--\eqref{eq:frac-kr-scale} & $k_r$ modification     & \kw{DPKRMOD}, \kw{KRNUMMF}, \kw{IMBNUMMF}\\
+\eqref{eq:schur}--\eqref{eq:backsub}          & DP Schur reduction     & automatic under \kw{DUALPORO}            \\
+\eqref{eq:dk-jac}--\eqref{eq:dk-nf}           & DK nested factorisation & automatic under \kw{DUALPERM}; \kw{OPTIONS}(60) to revert \\
+\eqref{eq:Xwi}--\eqref{eq:Xgi}                & Initialisation         & \kw{EQUIL}, \kw{OPTIONS}(11) for steady-state init \\
+\eqref{eq:Sg-bar}--\eqref{eq:Pc-prime}        & Integrated $P_c$        & \kw{INTPC}                               \\
+\eqref{eq:VT}--\eqref{eq:Tn}                  & Discretized matrix      & \kw{NMATRIX}, \kw{NMATOPTS}, \kw{GRAVDRB} (vertical) \\
+\eqref{eq:rock-share}                          & Multi-porosity rock vol. & \kw{ROCKSPLV} (override)                \\
+\eqref{eq:btob}                                & Block-to-block          & \kw{BTOBALFA}, \kw{BTOBALFV}             \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% =====================================================================
+\section{Provenance and deviation notes}
+% =====================================================================
+
+\begin{description}
+  \item[\eqref{eq:sigma-kazemi}] Coefficient $4$ comes from Kazemi et al.\ (1976), SPE-5719-PA.
+    Warren \& Root (1963) used $\pi^2 \approx 9.87$ for a 1D slab (late-time analytical solution).
+    Lim \& Aziz (1995) argue the analytical value should be $\pi^2(n_x/L_x^2 + n_y/L_y^2 + n_z/L_z^2)$
+    where $n_k$ counts fracture sets per direction; for fully-bounded blocks this gives a coefficient $\pi^2 \approx 9.87$ vs Kazemi's $4$.
+    Eclipse uses Kazemi's $4$.
+  \item[\eqref{eq:qh}--\eqref{eq:qdown}] From Quandalle \& Sabathier (1989), SPE Reservoir Engineering 4(4):475--480.
+    \kw{GRAVDRM} re-infiltration $=$ NO mimics Quandalle--Sabathier's preferred deployment.
+  \item[\eqref{eq:visc-a}--\eqref{eq:visc-final}] Gilman \& Kazemi (1988), JPT 40(1):60--70, SPE-16010-PA.
+  \item[\eqref{eq:VT}--\eqref{eq:Tn}] Discretized matrix is Eclipse's implementation inspired by
+    the MINC framework of Pruess \& Narasimhan (1985), SPE-10509-PA, but using the Kazemi $\sigma$-based
+    transmissibility (not MINC's integral finite difference). Geometrically similar; mathematically distinct in the coupling derivation.
+  \item[\eqref{eq:Sg-bar}--\eqref{eq:Pc-prime}] The integration step \eqref{eq:Sg-bar} produces a table that is
+    pseudoised differently between \kw{GRAVDR} and \kw{GRAVDRM} (2007.1+); see RM \kw{INTPC} for version notes.
+\end{description}
+
+\paragraph{Default values to be aware of.}
+\begin{itemize}
+  \item \kw{SIGMA} / \kw{SIGMAV} default $0$ $\Rightarrow$ no matrix-fracture coupling unless \kw{LTOSIGMA}.
+  \item \kw{SIGMAGD} / \kw{SIGMAGDV} default $\to$ fall back to \kw{SIGMA} values.
+  \item \kw{DZMTRX} default $0$ $\Rightarrow$ no gravity drainage even when \kw{GRAVDR} is active.
+  \item Fracture permeability is multiplied by fracture porosity unless \kw{NODPPM} is set:
+        $K_f^{\text{eff}} = K_f^{\text{input}}\cdot\phi_f$ (without \kw{NODPPM});
+        $K_f^{\text{eff}} = K_f^{\text{input}}$ (with \kw{NODPPM}).
+\end{itemize}
+
+% =====================================================================
+\appendix
+\section{Equation index (by TD equation number)}
+% =====================================================================
+\begin{center}\small
+\begin{tabular}{ll}
+\toprule
+TD Eq. & Label in this document \\
+\midrule
+2.54 & \eqref{eq:Tmf} \\
+2.55 & \eqref{eq:sigma-kazemi} \\
+2.56 & \eqref{eq:Tmf-lto} \\
+2.57 & \eqref{eq:dpgrav} \\
+2.58 & \eqref{eq:qg} \\
+2.59 & \eqref{eq:qo} \\
+2.60 & \eqref{eq:sigma-eff} \\
+2.61 & \eqref{eq:omega-p} \\
+2.62 & \eqref{eq:dPhi} \\
+2.63 & \eqref{eq:dtheta-o} \\
+2.64 & \eqref{eq:dtheta-g} \\
+2.65 & \eqref{eq:dtheta-w} \\
+2.66 & \eqref{eq:dthetag-cell} \\
+2.67 & \eqref{eq:dthetaw-cell} \\
+2.68 & \eqref{eq:q-qsab} \\
+2.69 & \eqref{eq:qh} \\
+2.70 & \eqref{eq:qup} \\
+2.71 & \eqref{eq:qdown} \\
+2.72--2.73 & \eqref{eq:visc-a} \\
+2.74 & \eqref{eq:visc-b} \\
+2.75 & \eqref{eq:visc-c1} \\
+2.76 & \eqref{eq:visc-c2} \\
+2.77 & \eqref{eq:visc-final} \\
+2.78 & \eqref{eq:G-grad} \\
+2.79 & \eqref{eq:dpkr-pos} \\
+2.80 & \eqref{eq:dpkr-neg} \\
+2.81 & \eqref{eq:frac-kr-scale} \\
+2.82 & \eqref{eq:schur} \\
+2.83 & \eqref{eq:backsub} \\
+2.84 & \eqref{eq:dk-jac} \\
+2.85 & \eqref{eq:dk-bands} \\
+2.86 & \eqref{eq:dk-nf} \\
+2.87 & \eqref{eq:Xwi} \\
+2.88 & \eqref{eq:Xgi} \\
+2.89 & \eqref{eq:Sg-bar} \\
+2.90 & \eqref{eq:Pcgr} \\
+2.91 & \eqref{eq:Pc-prime} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\bigskip\noindent
+\emph{End of mathematical model.}
+
+\end{document}

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "ccc8e2b0",
+    "text": "Study human-handoff-banner drift: gated human actions (build/test/commit/push/merge/PR) rendered as prose instead of TOOL(human-handoff). Design a mechanical check (R_HANDOFF_SURFACED verifier rule or coherence-lint extension) that flags prose-handoff phrases not wrapped in a handoff render. Same root-cause family as artifact-identity + DAG drift: convention not enforced.",
+    "due": "",
+    "status": "open",
+    "bindings": [],
+    "created": "2026-05-26",
+    "done_ts": ""
+  },
+  {
+    "id": "116bf0af",
+    "text": "Strengthen artifact-identity enforcement: lint-commit-trailer must scan the commit-message BODY (not just trailers) for brand self-references (Claude/Copilot/GPT/'Claude Code') + 'PR-N'; wire it as a REAL pre-push/pre-commit gate that BLOCKS (the manual grep && echo guard is cosmetic \u2014 it doesn't halt the push). Root incident: commit 9de380f leaked 'Claude Code' into the body 2026-05-26.",
+    "due": "",
+    "status": "open",
+    "bindings": [],
+    "created": "2026-05-26",
+    "done_ts": ""
+  },
+  {
+    "id": "ec1f912f",
+    "text": "Fix lint_paths.py to skip gitignored files (workspace/memory/working|longterm session state with /mnt/c paths) so the pre-commit pre-commit-stage hook can be re-activated without false-positive-blocking every commit. Then re-enable: pre-commit install --hook-type pre-commit.",
+    "due": "",
+    "status": "open",
+    "bindings": [],
+    "created": "2026-05-26",
+    "done_ts": ""
+  },
+  {
+    "id": "43b4bf4b",
+    "text": "Dual-agent benchmark: wire the rigorous AXON arm \u2014 Agent-A calls real AXON tools over mcp-client (not just the AXON-discipline system prompt). Then re-run to get the true H1 number.",
+    "due": "",
+    "status": "open",
+    "bindings": [],
+    "created": "2026-05-26",
+    "done_ts": ""
+  }
+]

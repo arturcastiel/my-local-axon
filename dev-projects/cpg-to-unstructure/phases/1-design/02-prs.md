@@ -2,6 +2,11 @@
 
 > 13 PRs across 6 waves. Each row: `[PR-N] title — files — acceptance one-liner`.
 > Detailed specs land via `code-dev pr [N]`.
+>
+> **Naming note (D-04, 2026-05-21).** All future PR specs MUST use the
+> renamed package `cpg2unstructured` (trailing `d`) — not `cpg2unstructure`.
+> Filenames below kept as-is for diff brevity; rename is applied when each
+> PR is specced.
 
 ## Wave 1 — Skeleton + smoke
 
@@ -11,9 +16,9 @@
 - Acceptance: `pip install -e .[dev]` works; `pytest` runs (zero tests yet, exit 0); `import cpg2unstructure` works.
 - LOC budget: ~50
 
-### PR-2 — Toy cartesian smoke pipeline
+### PR-2 — Toy cartesian smoke pipeline ✓ MERGED
 - Files: `cpg2unstructure/_toy.py`, `tests/test_toy.py`
-- Hand-build a 2×2×2 cartesian CPG in numpy (synthetic COORD/ZCORN). Build nodes, faces, cells, neighbours via the simplest possible numpy code (~80 LOC). Assert: 27 nodes, 36 faces (8 inner + 28 boundary), 8 cells, each inner cell has 6 face-neighbours.
+- Hand-build a 2×2×2 cartesian CPG in numpy (synthetic COORD/ZCORN). Build nodes, faces, cells, neighbours via the simplest possible numpy code (~80 LOC). Assert: 27 nodes, 36 faces (12 inner + 24 boundary), 8 cells, each cell has 3 face-neighbours (no strictly-interior cell exists at N=2; the "inner cell has 6 neighbours" property is exercised once we generalise to N≥3 in PR-7). Corrected from earlier draft (was: "8 inner + 28 boundary", "each inner cell has 6 face-neighbours") — see decision D-07.
 - Acceptance: `test_toy.py` passes; serves as integration target for later PRs.
 - LOC budget: ~150
 
