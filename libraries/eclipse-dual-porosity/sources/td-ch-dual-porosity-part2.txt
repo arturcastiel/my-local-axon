@@ -1,0 +1,313 @@
+
+
+===== PAGE 125 =====
+Discretized matrix model (Eclipse 100)
+Traditional dual porosity models assume that the matrix to fracture flow is in steady state, and thus the
+matrix cell can be regarded as a single cell. In some cases, however, for example a well test in a dual
+porosity system, the transient nature of the matrix to fracture flow can be important. To model these
+systems a discretized matrix model is available, which subdivides each matrix cell into a series of nested
+sub-cells, allowing the simulator to predict the transient behavior.
+The matrix cells are still only connected to their corresponding fracture cell, but flow to the matrix surface
+is supplied from a one dimensional grid system. Each matrix grid cell could be regarded as a “Russian
+Doll” of nested matrix sub-cells.
+Matrix sub-grid
+The matrix subdivision is set up automatically by Eclipse once you have specified the number of sub-cells
+to split each matrix cell into, using the NMATRIX keyword in the RUNSPEC section. The differing
+properties across the field are specified in the usual way by using the standard GRID section keywords
+including SIGMAV to specify the matrix-fracture transmissibility.
+The generated grid is logarithmic away from the fracture wall and can represent a linear (1D), radial (2D)
+or spherical (3D) geometry. You can control the size of the outer matrix sub-cell (as a fraction of the
+corresponding fracture cell) and the geometry type using the NMATOPTS keyword. Once the outer sub-cell
+size and the number of sub-cells required are known, the growth factor for each individual matrix cell can
+be calculated. The maximum and minimum growth factors across the field are reported in the PRINT file.
+If NMATOPTS is omitted, then provided NMATRIX is present, the default values from NMATOPTS will be
+assumed.
+First an overview of the discretization is given for the linear and non-linear geometry types, and then a
+more detailed view of the volume and transmissibility calculations will be provided.
+Overview of Linear geometry
+If the geometry is assumed to be 1D then the SIGMA factor and hence the matrix-fracture transmissibility
+are assumed to represent 1D flow.
+Figure 2.27. Nested matrix sub-cells in linear geometry
+The matrix-fracture transmissibility is assumed to be the transmissibility associated with flow over the
+distance d, through area A. The sub-cell transmissibilities are then calculated assuming a 1D logarithmic
+grid over the same matrix volume.
+Overview of cylindrical and spherical geometries
+In the 2D (Cylindrical) and 3D (Spherical) flow options the geometry is taken to be Cartesian to enable
+simple mapping from the input matrix-fracture transmissibility.
+Eclipse technical description
+Grid and reservoir modeling
+125
+SLB – Private
+
+
+===== PAGE 126 =====
+Figure 2.28. Nested matrix sub-cells in cylindrical and spherical geometry
+In the 2D case the diagram represents a square cylinder with the matrix-fracture transmissibility assumed
+to represent four times the flow over the distance d through area A. In the 3D case the diagram represents a
+cube with the transmissibility taken as sum of six flows out of the six faces.
+In each case the sub-cell transmissibilities are calculated assuming a logarithmic distribution of sub-cell
+sizes away from the fracture walls.
+Volume and transmissibility calculations details
+Let the nth sub-matrix cell have volume ��, where n=1 is the sub-cell nearest the fracture, and �� is the
+sub-cell furthest away. N is the value input by keyword NMATRIX. Then:
+��= Σ
+�
+��
+where �� is the volume of the whole matrix region.
+The outermost sub-cell volume �1 is determined by the fraction of the fracture pore volume specified by
+item 2 of the NMATOPTS keyword. The sizes of the remaining sub-cells are then functions of the factor
+�=
+�
+�1
+1
+�−1
+where
+X
+is the distance of the center of the matrix from the fracture surface, and
+�1 is the width of the outermost sub-cell.
+For a LINEAR assumed geometry (NMATOPTS item 1), the distances X and �1 are assumed proportional to
+the volumes �� and �1 respectively. For CYLINDRICAL or SPHERICAL geometries, these distances are
+calculated from the geometry of a cylindrical or spherical shell with inner and outer radii X and X- �1,
+using the known volumes �� and �1 for the whole cylinder/sphere and the shell.
+Eclipse technical description
+Grid and reservoir modeling
+126
+SLB – Private
+
+
+===== PAGE 127 =====
+The factor f gives the distance �� from the matrix-fracture surface to the inner surface of the remaining
+(n>1) interior sub-cells by
+��= ��−1�1
+that is, the logarithms of the �� scale linearly.
+As with �1, when the assumed geometry is CYLINDRICAL or SPHERICAL, the sub-cells are cylindrical
+or spherical shells around the center of the matrix, and �−�� is the inner radius of the shell. The shell
+volume is determined from the inner and outer radii, with the same constant of proportionality as used to
+determine X and �1 in the first place. For a LINEAR assumed geometry the sub-cells are assumed to be
+slabs parallel to the matrix-fracture surface, arranged from the surface to the center of the matrix, and the
+volumes are assumed proportional to the distances. The overall effect of this is to obey the relationship
+��−�−�1
+�
+��
+=
+�1
+��
+The transmissibilities between the sub-cells are then determined by the area of the surface between them
+and the distance between the sub-cell centers (where for CYLINDRICAL and SPHERICAL geometries,
+cell center means the radius halfway between the cell’s two surfaces, and for LINEAR geometries, the
+position halfway between the cell’s two surfaces). Thus for any geometry, the center of cell n (n>1) is at
+��= 1
+2 ��−1 + ��
+and the area of the interface between cells n and n+1 is
+��= ��−��
+�−1
+where D is the dimensionality (LINEAR=1, CYLINDRICAL=2, SPHERICAL=3) and Z is a constant for
+all the sub-cells n. For LINEAR this is the constant area equivalent to the outer area of the matrix; for
+CYLINDRICAL it is 2π times the height of the matrix cylinder and for SPHERICAL it is 4π.
+Then the transmissibility of the original matrix-fracture connection is scaled to the sub-cell to sub-cell
+connection by the factor
+��=
+��
+��
+2�
+��−��−1
+where ��= ���−1 is the outer area associated with overall matrix size X. Note that the factor Z cancels
+out in the expression as only ratios of the A factors are used.
+For the transmissibility between the outer matrix sub-cell and the fracture, the factor �1 is 2�/�1
+Initialization, solution method and efficiency
+The internal sub-matrix cells cannot be explicitly initialized in the way that the normal matrix cells can,
+and so the EQUIL keyword must be used to perform an initialization.
+The matrix sub-grid forms a series of separate 1D flow systems connected through the outer sub-cells only
+to the corresponding fracture cells. In the solution matrix structure these flows lead to a set of tri-diagonals
+connected to the fracture system. This structure is used in the pre-conditioning step by eliminating the tri-
+diagonals before the fracture system is solved, effectively reducing the problem to a set of flow equations
+for the fracture only. Once the fracture equations have been solved a back substitution gives the matrix
+sub-grid solution.
+Eclipse technical description
+Grid and reservoir modeling
+127
+SLB – Private
+
+
+===== PAGE 128 =====
+Clearly, discretizing the matrix increases the total number of cells in the model. However, the efficiency of
+the above procedure ensures that increasing the number matrix sub-cells will have a significantly smaller
+effect on the run time than a similar increase in the number of simulation grid blocks.
+Reporting the matrix solution
+The solution for separate sub-cells (or rings) of the matrix can be output as arrays over the simulation grid
+by setting any of the first 5 data items in RPTSCHED to 2. If an individual sub-cell solution is required as a
+function of time, the following summary keywords are available:
+BPR, BRS, BRV, BOSAT and BWSAT.
+The matrix sub-cell is specified by appending its ring number to the end of the keyword, for example:
+BOSAT7
+ 1 1 2 /
+/
+The ring number starts from 1 for the outer sub-cell and increases towards the center of the matrix cell.
+Note that ring 1 is equivalent to the keyword without a ring number and represents the matrix sub-cell
+adjacent to the fracture.
+Restrictions
+The option cannot at present be used with the following:
+•
+gravity drainage models (GRAVDR, GRAVDRM)
+•
+Local grid refinement option
+•
+Dual permeability model
+•
+Parallel option
+and must use the following to initialize the sub-matrix cells
+•
+EQUIL
+Discretized matrix model (Eclipse 300)
+The discretized matrix model can be invoked in Eclipse 300 in a similar way to Eclipse 100. However
+there are some differences in the setup as the Eclipse 300 model is based on the multi-porosity options
+described in "Multi porosity". The DIMENS keyword needs to include all porosities in the Z-direction.
+The model generates new SIGMAV values for the connections between the matrix sub-grid cells, following
+the geometric partitioning as described for Eclipse 100. The input primary (outer) matrix block volumes,
+pore volumes and rock volumes, are partitioned between the matrix sub-grid cells. Both transmissibilities
+and diffusivities are then generated from the new SIGMA values, the block volumes, pore volumes and
+rock volumes (the rock volumes are only used if the rock contains adsorbed gas). Permeabilities, for the
+transmissibilities as given by PERMX or PERMMF, are by default copied from the primary matrix grid cells
+if unspecified.
+The geometrical partitioning is done in the same way as for Eclipse 100 for LINEAR, RADIAL and
+SPHERICAL discretization methods. In addition the UNIFORM and VERTICAL methods are available in
+Eclipse 300. For information, see the NMATOPTS keyword.
+The volumes of the partitioned outer matrix grid cells, that connect to the fracture grid cells, can be set
+either
+Eclipse technical description
+Grid and reservoir modeling
+128
+SLB – Private
+
+
+===== PAGE 129 =====
+•
+to match a fraction of the fracture pore volume using NMATOPTS item 3 set to FPORV, or
+•
+to match a fraction of the matrix bulk volume using NMATOPTS item 3 set to MBLKV.
+When the feature is used with coal or shale gas, the definition of volumes with adsorbed gas needs to be
+considered. For information on this, see "Shale Gas". It is recommended that the keyword ROCKFRAC is
+used to set the input rock fractions and that the PORO keyword is used to set the input porosity fractions.
+This makes it easier to switch between the instant adsorption model and the time-dependent sorption
+model, since the inputs for setting rock and pore volumes are compatible. Only the input from the primary
+matrix grid cells are used to generate the partitioned matrix volumes.
+Further information about the Eclipse 300 matrix discretization model can be found in "Multi porosity".
+Single medium conductive fractures (Eclipse 300)
+An alternative dual porosity formulation in Eclipse 300 is the Single Medium Conductive Fractures
+development. This is based on a generalization of the technique described in van Lingen et al (2001).
+The technique allows the incorporation of the effects of conductive fractures into a single medium model
+(that is not explicitly using a dual system of porosities or permeabilities) by modification of grid properties
+and the generation of pseudo tables. It is focused on modeling fractures on scales that are too large to be
+homogenized using the traditional approach.
+For further details of the technique, please refer to van Lingen et al (2001). The sections below assume that
+the reader has familiarity with the paper, and outline the approach taken in Eclipse 300, including
+extensions and generalizations on the technique described in the paper, and how to use the Eclipse 300
+development.
+The single medium approach
+For a given input fracture swarm distribution map, and associated fracture properties, there are three
+subsequent main areas of implementation:
+•
+Grid property modifications
+•
+Pseudo generation
+•
+Well PI modifications
+The implementation of the technique in these areas is described in the following paragraphs.
+Grid property modifications
+Firstly grid block properties are modified to take account of the physical void introduced by the fractures.
+The porosities are increased by proportional volume averaging, and permeabilities flow-averaged using
+Darcy's Law, either arithmetically (parallel to fracture) or harmonically (perpendicular to the fracture).
+The approach taken in Eclipse 300 differed to that in the paper in
+•
+the full use of all cell dimensions (rather than assuming square cells)
+•
+the calculation of directional permeability enhancements (parallel and perpendicular components)
+•
+allowing for vertical permeability enhancement
+•
+allowing for fracture volumes in porosity modifications.
+One further modification is to recognize fractures being defined in a zigzag rasterized format. When the
+path of a fracture changes direction by 90 degrees within one cell, the effective length of the fracture is
+Eclipse technical description
+Grid and reservoir modeling
+129
+SLB – Private
+
+
+===== PAGE 130 =====
+halved. This attempts to model the intention that the fracture does not traverse the cell in question twice,
+but rather somehow ‘turns a corner’.
+Pseudo generation
+The saturation curves of the fractures and affected grid blocks are combined under the assumption that oil
+is displaced from fractures by either gas or water before any oil is displaced from the matrix volume of a
+grid block, which requires that any capillary imbibition is dominated by viscous and gravity effects. Under
+this assumption, the saturation tables are averaged by determining end point saturations from mass
+conservation, and end point relative permeabilities by Darcy's Law arithmetic averaging of effective phase
+flows. The original fracture tables are then used in a scaled form during the fracture invasion by gas or
+water, and scaled matrix tables are used for matrix invasion. Notice that (as in the paper) the fracture tables
+are assumed straight lines; no attempt is made to combine the full shape of the curve with that of the
+matrix.
+Since the permeabilities and saturation tables used potentially vary on a grid block basis, the above could
+feasibly result in one set of pseudo tables for each affected cell. To reduce the dimensionality, a grouping
+technique is used that averages the pseudo end points used over cells with common attributes, these being
+saturation region, permeability value, and the number of contained fractures. This extended the paper’s
+treatment which assumed that layers represented the saturation regions.
+If velocity dependent relative permeability effects are being modeled, the values used for the internally
+generated tables for the VDKRG, VDKRO and VDKRGC keywords will be taken from the associated input
+matrix tables. For example, if input saturation function table sets 1 and 2 correspond to the input matrix
+and fracture properties respectively of a grid block required to model a single medium conductive fracture
+using the internally generated table set 3, the VDKRG, VDKRO and VDKRGC properties for table 3 will be
+taken from those specified for table 1. The VDKRG, VDKRO and VDKRGC properties assigned to the
+internal tables can be reported using the RPTPROPS keyword. Prior to 2016.1, these values were not
+defined for the internally generated tables. Pre-2016.1 behavior can be restored by setting item 342 of the
+OPTIONS3 keyword to 1.
+Note: Capillary curves are not included in this treatment, and are merely extrapolated at constant value
+from the matrix end-point values.
+Well PI
+By default, wells completed in grid blocks containing conductive fractures will experience enhanced flows
+due to the increased effective permeability, due to both the permeability and relative permeability changes.
+Van Lingen et al (2001) argues that this only arises if the fracture actually cuts the well bore in a
+connection cell. Because of this, you are required to specify whether or not a well connection cell is to be
+modified by this treatment by indicating whether it is cut by fractures or not. If not, then the well PI is
+modified so as to reverse the changes in permeability, and the connection cell saturation table reverts to
+that of the original matrix block. You are also given the chance to enter a PI multiplier to indicate perhaps
+some degree of connection with conductive faults.
+Using the conductive fractures model
+The conductive fractures model is activated by specification of the SCFDIMS keyword in the RUNSPEC
+section, which also sets up dimensioning defaults for reading in the fracture details, and also defaults for
+the pseudo grouping algorithms used.
+The conductive fractures themselves should be specified using the CONDFRAC keyword, one for each
+fracture being modeled. This specifies the path of fracture planar segments through the grid blocks, the
+Eclipse technical description
+Grid and reservoir modeling
+130
+SLB – Private
+
+
+===== PAGE 131 =====
+effective aperture, fracture permeability, and saturation table number to use. The format is similar to the
+FAULTS keyword, but note that the fractures are assumed to pass through a block, whereas faults run
+alongside blocks. For this reason, when a ‘corner’ is detected in the fracture, the contribution from the two
+intersecting segments is halved, to reflect the fact that the corner is formed notionally at the center of the
+cell, rather than around the edges.
+The well intersection behavior is controlled using the WELLCF keyword.
+Compatibility
+The feature has been made explicitly compatible with the restart mechanism, and will run in parallel mode.
+It is currently restricted to family (ii) saturation table keywords - SWFN, SGFN and SOF2/SOF3.
+The development is known not to be compatible with the following options:
+•
+radial grids
+•
+analytic saturation functions
+•
+MPFA
+•
+Up-front memory
+•
+LGRs
+•
+The Leverett J-function option per saturation function JFUNCR
+Eclipse technical description
+Grid and reservoir modeling
+131
+SLB – Private

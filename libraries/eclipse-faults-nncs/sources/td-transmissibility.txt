@@ -1,0 +1,909 @@
+
+=== PAGE 33 ===
+Transmissibility calculations
+This chapter describes the expressions used by Eclipse to calculate transmissibility values, between cells in
+the grid, and between cells and numerical aquifers.
+The transmissibility calculations for each type of geometry are detailed in the next section. In the corner
+point case, transmissibility values between cells that are not neighbors in the basic indexing grid may be
+calculated on the same basis as those for neighboring cells. In both cases, the mutual interface area is
+calculated, and this may be non-zero for non-neighboring cells at faults.
+Cell ordering and geometry
+The basic grid indexing system is by natural order. Cells may be identified by their (i ,j, k) indices in the
+Cartesian indexing grid, and in natural ordering, the i index changes most quickly, the k index most slowly.
+Internally, cells are held by active order, with any inactive cells (that is, those with zero pore volume) not
+requiring any storage.
+Details of cell geometry may be entered using keywords such as DX, DY and DZ to specify cell sizes. This
+is a block center description, and cells are assumed to have a simple, regular shape.
+For example, the pore volume of each cell is then DX ⋅DY ⋅DZ ⋅�⋅RNTG
+where
+�
+is the porosity
+RNTG
+the net to gross ratio, and
+DX, DY and DZ the cell dimensions.
+An alternative is the entry of cell corner points using the COORD and ZCORN keywords. The data
+associated with these keywords is usually prepared using a pre-processor such as Petrel, and entered from
+an included file. The cell is assumed to have edges defined as straight lines between the corner points, and
+the cell faces may be bilinear surfaces. Pore volumes may be calculated exactly for such a shape.
+It is possible to have more than one set of COORD data, using the NUMRES keyword in the RUNSPEC
+section, and COORDSYS to assign layers to these sets.
+Transmissibility calculations
+There are at most three types of transmissibility calculation available in Eclipse.
+The first is the traditional block centered form, based upon the distances between the cell centers only. This
+is the default calculation when DX, DY, DZ are specified.
+Note: For Eclipse 100, this corresponds to the use of the OLDTRAN keyword in the GRID section.
+The second form also assumes a traditional block centered geometry but involves a different combination
+of cell cross-sectional areas and permeabilities from that assumed in the OLDTRAN formulation. The
+second form of transmissibility calculation is activated using the OLDTRANR keyword in the GRID
+section.
+x Eclipse 100
+x Eclipse 300
+Eclipse 100
+Eclipse technical description
+Grid and reservoir modeling
+33
+SLB – Private
+
+=== PAGE 34 ===
+The third form is based upon the use of cell corner points, which are available to Eclipse when the COORD/
+ZCORN form of grid definition is used. In this case, it is possible to distinguish unambiguously between
+cell dip and fault displacement, and this option allows fault transmissibilities to be generated automatically.
+Note: For Eclipse 100 use, this third type of transmissibility calculation is specified by the use of the
+NEWTRAN keyword in the GRID section. This is the default calculation when COORD/ZCORN are
+specified.
+Although it is normal to use OLDTRAN with DX, DY, DZ, TOPS etc. input, and NEWTRAN with COORD/
+ZCORN, all types of transmissibility calculation are available with both types of grid specification, as
+Eclipse holds grid data internally in both forms. Corner points are obtained from DX/DY/DZ/TOPS data by
+assuming flat blocks, and DX/DY/DZ values are obtained from corner points by evaluation of the distances
+between cell face center points. However, use of NEWTRAN with DX/DY/DZ/TOPS input may well produce
+large numbers of spurious fault connections, as the assumed flat grid blocks in neighboring columns will
+generally overlap, and this combination of options is not recommended.
+Note: If the grid has shales modeled as gaps in the grid, the keyword MULTZ- must be specified.
+Cartesian transmissibility calculations
+Block center transmissibility calculations
+In this case, X- and Y-direction transmissibility values in the Cartesian case are obtained using cell center
+separations and cross sectional areas obtained from DX, DY and DZ, with a dip correction.
+Note: For Eclipse 100, this type of calculation is also referred to as OLDTRAN.
+X- transmissibility
+TRANX�=
+CDARCY ⋅TMLTX�⋅�⋅DIPC
+�
+Eq. 2.1
+where
+TRANXi
+Transmissibility between cell i and cell j, its neighbor in the positive X-direction
+CDARCY Darcy’s constant
+= 0.00852702 (E300); 0.008527 (Eclipse 100) (METRIC)
+= 0.00112712 (E300); 0.001127 (Eclipse 100) (FIELD)
+= 3.6 (LAB)
+= 0.00864 (PVT-M)
+TMLTXi
+Transmissibility multiplier for cell i
+A
+Interface area between cell i and j
+DIPC
+Dip correction.
+A, DIPC and B are given by the expressions:
+�=
+DX�⋅DY�⋅DZ�⋅RNTG�+ DX�⋅DY�⋅DZ�⋅RNTG�
+DX�+ DX�
+Eq. 2.2
+Eclipse 100
+Eclipse 100
+Eclipse technical description
+Grid and reservoir modeling
+34
+SLB – Private
+
+=== PAGE 35 ===
+�=
+DX�
+PERMX�
++
+DX�
+PERMX�
+2
+Eq. 2.3
+DIPC =
+DHS
+DHS+DVS
+Eq. 2.4
+with
+DHS =
+DX�+ DX�
+2
+2
+and
+DVS = DEPTH�−DEPTH�
+2.
+RNTG is the net to gross ratio, which appears in the X- and Y- transmissibilities but not in the Z-
+transmissibility.
+Y- transmissibility
+The expression for the Y-transmissibility value is entirely analogous to the above, with the appropriate
+permutations of X, Y and Z.
+Z- transmissibility
+The Z-transmissibility is given by:
+TRANZ�=
+CDARCY ⋅TMLTZ�⋅�
+�
+Eq. 2.5
+where
+TRANZi Transmissibility between cell i and cell j, its neighbor in the positive Z-direction (that is below
+cell i)
+TMLTZi The Z-transmissibility multiplier for cell i
+and
+�=
+DZ�⋅DX�⋅DY�+ DZ�⋅DX�⋅DY�
+DZ�+ DZ�
+Eq. 2.6
+�=
+DZ�
+PERMZ�
++
+DZ�
+PERMZ�
+2
+Eq. 2.7
+Note that there is no dip correction in the Z-transmissibility case.
+OLDTRANR transmissibility calculations
+In this case, X- and Y-direction transmissibility values in the Cartesian case are also calculated using cell
+center separations and cross-sectional areas obtained from DX, DY and DZ, with a dip correction.
+The expressions for the Cartesian case are given below:
+Eclipse 100
+Eclipse technical description
+Grid and reservoir modeling
+35
+SLB – Private
+
+=== PAGE 36 ===
+X- transmissibility
+TRANX�=
+CDARCY ⋅TMLTX�⋅DIPC
+�
+Eq. 2.8
+where
+TRANXi
+Transmissibility between cell i and cell j, its neighbor in the positive X-direction
+CDARCY Darcy’s constant (in the appropriate units)
+TMLTXi
+Transmissibility multiplier for cell i
+DIPC
+Dip correction.
+B and DIPC are given by the expressions:
+�=
+DX�
+��⋅PERMX�
++
+DX�
+��⋅PERMX�
+2
+Eq. 2.9
+where
+��= DY�⋅DZ�⋅NTG�
+and
+with
+DIPC =
+DHS
+DHS+DVS
+Eq. 2.10
+DHS =
+DX�+ DX�
+2
+2
+and
+DVS = DEPTH�−DEPTH�
+2.
+RNTG is the net to gross ratio, which appears in the X- and Y-transmissibilities but not in the Z-
+transmissibility.
+Y- transmissibility
+The expression for the Y-transmissibility value is entirely analogous to the above, with the appropriate
+permutations of X,Y and Z.
+Z- transmissibility
+The Z-transmissibility is given by:
+TRANZ�=
+CDARCY ⋅TMLTZ�
+�
+Eq. 2.11
+where
+TRANZi Transmissibility between cell i and cell j, its neighbor in the positive Z-direction (that is below
+cell i)
+Eclipse technical description
+Grid and reservoir modeling
+36
+SLB – Private
+
+=== PAGE 37 ===
+TMLTZi The Z-transmissibility multiplier for cell i
+�=
+DZ�
+��⋅PERMZ�
++
+DZ�
+��⋅PERMZ�
+2
+Eq. 2.12
+with
+��= DX�⋅DY�
+��= DX�⋅DY�
+Note that there is no dip correction in the Z-transmissibility case.
+Corner point transmissibility calculations
+In this case, the transmissibility values are calculated from the X-,Y- and Z-projections of the mutual
+interface area of the two cells.
+An inner product is then taken with the vector distance from the cell center to the center of the cell face, so
+that a dip correction is automatically incorporated.
+Note: For Eclipse 100, this type of calculation is also referred to as NEWTRAN.
+X- transmissibility
+The X-transmissibility is given by the expression:
+TRANX�=
+CDARCY⋅TMLTX�
+1
+��
++ 1
+��
+Eq. 2.13
+where
+��= PERMX�⋅RNTG�⋅
+�⋅��
+��⋅��
+with
+�⋅��= ��⋅���+ ��⋅���+ ��⋅���
+and
+��⋅��= ���
+2 + ���
+2 + ���
+2 .
+��, �� and ��
+are the X-,Y- and Z- projections of the mutual interface area of cell i and cell j (which
+need not be neighbors in the Cartesian indexing grid), and
+���, ��� and
+���
+are the X-, Y- and Z-components of the distance between the center of cell i and the
+center of the relevant face of cell i, these centers being obtained as the appropriate
+average.
+The expression for �� is analogous.
+Eclipse technical description
+Grid and reservoir modeling
+37
+SLB – Private
+
+=== PAGE 38 ===
+Y- and Z- transmissibility
+The Y- and Z-transmissibility expressions are similar, the net to gross ratio being absent from the Z
+expression.
+The calculation is illustrated by the following figure (where PERMX is represented by Kx):
+Figure 2.1. Y- and Z- transmissibility expressions
+HALFTRAN transmissibility calculations (Eclipse 100)
+By observing that the transmissibility between cells i and j in the NEWTRAN formulation is composed of a
+harmonic average between half block transmissibilities �� and ��, we have rather more freedom than just
+using a single permeability value for each cell.
+In fact, there are six possible permeability values associated with each cell in the half block
+transmissibilities. For instance, in cell i, half block x-direction permeabilities Kxil, Kxir contribute to the
+two x-direction transmissibilities affecting cell i. Similarly in the Y- and Z-directions we can use Kyil, Kyir
+and Kzil, Kzir.
+The use of extra half block permeabilities provides a more accurate upscaling of permeability while
+retaining the same computational grid.
+Within Eclipse 100, the HALFTRAN keyword activates the half block transmissibility calculation.
+By writing the half block transmissibilities as
+���= ����⋅�����⋅
+�⋅��
+��⋅��
+Eq. 2.14
+and
+���= ����⋅�����⋅
+�⋅��
+��⋅��
+Eq. 2.15
+it is apparent that in terms of the normal NEWTRAN calculation, then
+���= �����
+and
+���= �����
+with
+Eclipse technical description
+Grid and reservoir modeling
+38
+SLB – Private
+
+=== PAGE 39 ===
+���= ����/��� and ���= ����/���.
+When HALFTRAN is used, Eclipse 100 requires the MULTX and MULTX- values to be supplied equal to ���
+and ���.
+At present, the FloGrid program carries out the half-block upscaling and present the modified MULTX and
+MULTX- data to the simulator in order to effect the half block transmissibility calculation. The PERMX etc.
+values should be entered as normal. The half block permeabilities are then obtained by multiplying PERMX
+by MULTX or MULTX- etc. The connection factors are calculated as usual using Peaceman’s formula for
+the block center permeability PERMX etc.
+Radial transmissibility calculations
+There is no distinction between the method used to calculate radial transmissibility values whether grid
+data is supplied in DR/DTHETA/DZ/INRAD/TOPS form or COORD/ZCORN form.
+The expressions used are based upon true radial flow between the pressure equivalent radii, with a dip
+correction.
+R-transmissibility
+TRANR�=
+CDARCY ⋅TMLTR�⋅DIPC
+1
+��
++ 1
+��
+Eq. 2.16
+with
+��=
+PERMR�⋅RNTG�⋅���⋅DZ�
+�1�
+�1�=
+�1
+2
+�2
+2 −�1
+2 ln �1/�2 + 1
+2
+and
+��=
+PERMR�⋅RNTG�⋅D��⋅DZ�
+�2�
+�2�=
+�3
+2
+�3
+2 −�2
+2 ln �3/�2 −1
+2
+where
+�1 is the inner radius of cell i,
+�2 is the outer radius of cell i,
+�3 is the outer radius of cell j.
+Dip correction
+The dip correction is given by:
+Eclipse technical description
+Grid and reservoir modeling
+39
+SLB – Private
+
+=== PAGE 40 ===
+����=
+���
+���+ ���
+where
+���=
+1
+2 �3−�1
+2
+and
+���= DEPTH�−DEPTH�
+2.
+Azimuthal transmissibility
+The azimuthal transmissibility is given by:
+TRANT�=
+������⋅������⋅����
+1
+��
++ 1
+��
+Eq. 2.17
+with
+��=
+2 ⋅PERMT�⋅RNTG�⋅DZ�⋅ln �2/�1
+D��
+where
+�1 is the inner radius,
+�2 is the outer radius.
+��is similar.
+It should be noted that ln() implies the natural logarithm throughout. This expression is also used in
+completing the circle in radial geometry.
+Dip correction
+The dip correction is given by:
+����=
+���
+���+ ���
+where
+���=
+1
+2 ���+ ���⋅Rmean
+2
+and
+���= DEPTH�−DEPTH�
+2.
+For Eclipse 100, Rmean takes a value of one, and for Eclipse 300, Rmean represents an average of the inner
+and outer radius.
+Vertical transmissibility
+The vertical transmissibility is given by:
+Eclipse technical description
+Grid and reservoir modeling
+40
+SLB – Private
+
+=== PAGE 41 ===
+TRANZ�=
+CDARCY ⋅TMLTZ�
+1
+��
++ 1
+��
+Eq. 2.18
+with
+��=
+PERMZ�⋅D��⋅�2
+2−�1
+2
+DZ�
+where
+�1 is the inner radius,
+�2 is the outer radius.
+��is similar.
+Note that the positions of the cells in a radial run may be entered by using COORD/ZCORN or INRAD/DR/
+DTHETA/DZ.
+In both cases the transmissibility expressions above may be used. There are some restrictions that exist on
+corner point positions for the above expressions to be sensible. Cells with the same j index should have a
+common DTHETA, and cells with the same i index should have a common DR. If COORD/ZCORN input is
+used, four corners of each cell should have a common inner radius, and four a common outer radius.
+Similarly, there should be a single upper and lower theta value. (This implies vertical coordinate lines in
+the radial case). The depths of cell corners are, however, arbitrary, and may be used to obtain dipping radial
+geometry.
+Variations on the transmissibility calculation (Eclipse 100)
+The transmissibility calculation using OLDTRAN, OLDTRANR or NEWTRAN employs an effective average
+permeability for the face between two adjacent blocks, which Eclipse 100 calculates from the
+permeabilities and dimensions of these blocks.
+Options are available, however, that allow you more control over the average permeability employed in
+these calculations. You may input the average permeabilities directly (see keyword LINKPERM), or request
+alternative averaging formulations (see keyword PERMAVE).
+The options LINKPERM and PERMAVE may be useful for comparison with other simulators. It is also
+possible to override the transmissibilities calculated by Eclipse 100 by supplying transmissibilities directly
+in the EDIT section, for comparison with other simulators.
+Use of linking permeabilities in the transmissibility calculation
+The LINKPERM keyword may optionally be used to instruct Eclipse 100 to treat the grid block
+permeabilities (input with PERMX and related keywords) as applying to the cell faces instead of cell
+centers.
+Eclipse 100 then uses the face permeabilities directly as the “linking permeabilities” in the transmissibility
+calculation, instead of calculating the linking permeabilities as an average of the adjacent grid block
+permeabilities.
+Eclipse technical description
+Grid and reservoir modeling
+41
+SLB – Private
+
+=== PAGE 42 ===
+For example, if PERMX� is chosen to represent the linking permeability in the X- direction between
+connecting cells I and J, then PERMX� simply replaces both PERMX� and PERMX� in the above expressions
+for the transmissibility in each of the OLDTRAN, OLDTRANR and NEWTRAN cases. The PERMX� values
+will be input as either PERMX� or PERMX� according to the option selected in LINKPERM.
+Note: The grid block values of PERMX, PERMY and PERMZ are required to calculate well connection
+factors (see "The connection transmissibility factor"). If linking permeabilities are used to apply PERMX
+etc. to block faces, the input values may be inappropriate for calculating connection factors. In this case,
+connection factors could be set explicitly in COMPDAT or connection factor multipliers could be applied
+using WPIMULT.
+Alternative permeability averaging schemes
+The PERMAVE keyword may optionally be used to select alternative formulations for calculating the
+average permeability for the cell faces in the transmissibility calculation. The different formulations can
+best be compared by considering the formulae employed above in the default cases (when neither
+LINKPERM nor PERMAVE is specified).
+Firstly, consider the OLDTRAN case. The X-transmissibility calculation outlined above can be expressed
+equivalently as:
+TRANX�=
+CDARCY ⋅TMLTX�⋅�⋅DIPC
+�
+Eq. 2.19
+with � rewritten as:
+�=
+DX�+ DX�
+2 ⋅PERMXav
+Eq. 2.20
+and the average permeability is given by a harmonic average:
+PERMXav =
+��+ ��
+��
+PERMX�
++
+��
+PERMX�
+Eq. 2.21
+with weights
+��= DX�
+��= DX�
+Eq. 2.22
+This is just a special case of the power law average given by:
+PERMXav =
+��⋅PERMX�
+POW + ��⋅PERMX�
+POW
+��+ ��
+1
+POW
+Eq. 2.23
+where POW = −1.
+Other forms of average may be obtained by varying the value of POW. A weighted arithmetic average is
+obtained if POW = 1, and a geometric average results in the limit as POW
+0, that is
+PERMXav = PERMX�
+��⋅PERMX�
+��1/ ��+ ��
+Eq. 2.24
+Eclipse technical description
+Grid and reservoir modeling
+42
+SLB – Private
+
+=== PAGE 43 ===
+Secondly, consider the OLDTRANR case. The formulation for OLDTRANR is analogous with OLDTRAN,
+but now the weights are given by
+��=
+DX�
+��
+=
+DX�
+DY�⋅DZ�⋅RNTG�
+��=
+DX�
+��
+=
+DX�
+DY�⋅DZ�⋅RNTG�
+Eq. 2.25
+Finally, consider the NEWTRAN case. The weights corresponding to the default harmonic average of block
+permeabilities are given by:
+1
+��
+= RNTG�⋅
+�⋅��
+��⋅��
+1
+��
+= RNTG�⋅
+�⋅��
+��⋅��
+Eq. 2.26
+and the alternative permeability averages are readily expressed in the same manner as above.
+Nine-point schemes
+The default discretization in Eclipse employs a five-point discretization in two dimensions or a seven point
+discretization in three dimensions. However, when the grid is non-orthogonal, or the flow is not aligned
+with the principal directions of the grid, then the solution accuracy may be compromised by this
+discretization. Eclipse uses a nine-point scheme to address this issue.
+There are two nine-point schemes in Eclipse that address grid non-orthogonality errors and grid orientation
+effects only.
+The NINEPOIN scheme reduces the effect of grid orientation effects for flows not aligned with the
+principal grid directions (such as diagonally across the grid), but does not account for non-orthogonality
+errors.
+The Multi Point Flux Approximation (MPFA) scheme is a rigorous treatment of grid non-orthogonality and
+tensor permeability. This leads to a nine-point scheme when the grid is non-orthogonal or the permeability
+tensor is not aligned with the coordinate directions. The MPFA nine-point scheme is activated by the MPFA
+keyword. Refer to "Tensor permeability" for more details. The two nine-point schemes should not be used
+together.
+The nine-point scheme based on diagonal NNC transmissibilities
+The NINEPOIN keyword in the RUNSPEC section activates a nine-point scheme based on adding diagonal
+transmissibilities in the areal (XY) direction in order to reduce grid orientation effects when the flow is not
+aligned with the grid. Additional non-neighbor connections are added between diagonal neighbors. The
+flows between each cell and its eight neighboring cells (in the areal dimension) are each computed using a
+two-point approximation to the pressure gradient. The scheme is a modified version of that given in
+Yanosik and McCracken (1979). The standard five-point transmissibilities are first obtained from data
+entered in the GRID and EDIT sections, and these are then modified to obtain the nine-point
+transmissibilities.
+Deriving the nine-point scheme starts by splitting each transmissibility in the usual five-point scheme into
+two half-transmissibilities:
+Eclipse 300
+Eclipse technical description
+Grid and reservoir modeling
+43
+SLB – Private
+
+=== PAGE 44 ===
+Figure 2.2. Splitting each five-point transmissibility into two half-transmissibilities
+Considering just the transmissibility values (�12 �24 �13 �34), replace these by the equivalent system
+(�12 �13 �23 �24 �34 �14). This introduces a diagonal coupling between cells 1 and 4 and cells 2 and 3.
+Figure 2.3. Deriving the nine-point transmissibilities using diagonal coupling between cells
+The values of (�12 �13 �23 �24 �34 �14) must preserve the total x and y transmissibilities for the pattern,
+so that
+�13 + �24 = �13 + �24 + �23 + �14
+�12 + �34 = �12 + �34 + �23 + �14
+Tensor effects must be avoided, so that a pressure gradient in the x-direction does not produce a flow in the
+y-direction. This implies
+�14 = �23
+A choice for �14 may now be made. This should not be so large that one of the other transmissibility
+values is forced to be negative. Following Shiralkar and Stephenson (1991), use
+�14 = �23 = 1
+3
+�13 + �24
+�12 + �34
+�13 + �24 + �12 + �34
+The total x and y transmissibility conditions above then define the values of the combinations
+��= �13 + �24 and ��= �12 + �34, for example
+Eclipse technical description
+Grid and reservoir modeling
+44
+SLB – Private
+
+=== PAGE 45 ===
+��= �13 + �24 = �13 + �24 −2
+3
+�13 + �24
+�12 + �34
+�13 + �24 + �12 + �34
+Finally, the ratio of �13 and �24 is chosen to be the same as the ratio of the original values �13 and �24,
+�13 =
+���13
+�13 + �24
+�24 =
+���24
+�13 + �24
+A similar relation defines �12 and �34. This then defines all the new transmissibilities. This is repeated for
+each quadrant of active cells. The result is a set of nine-point transmissibilities that preserves the original
+total x- and y-direction flows but allows diagonal coupling between cells.
+Within the code, the transmissibilities that fall outside the normal pattern are stored as non-neighbor
+connections. There is an extra cost associated with these terms, and the nine-point option is best used only
+for injection of highly adverse mobility fluids where the grid orientation effect can be a problem.
+The option is invoked by using the NINEPOIN keyword in the RUNSPEC section. The nine-point
+transmissibilities will then by default be calculated across the entire grid. In Eclipse 100, by using the
+NINENUM keyword in the GRID section, you can choose to apply the scheme only in nominated regions of
+the reservoir. Note that the NINENUM keyword is not compatible with the Local Grid Refinement option.
+It should be noted that the NINEPOIN option is specifically designed to account for grid orientation effects
+only and is not designed to deal with discretization errors arising from grid non-orthogonality.
+This nine-point scheme based on diagonal NNC transmissibilities is invoked in the RUNSPEC section, as
+follows:
+RUNSPEC
+..
+NINEPOIN
+The run time will be increased due to the large number of additional NNCs created between diagonal
+neighbors.
+The nine-point transmissibilities can be obtained from the 'TRANX', 'TRANY', 'TRANZ' and 'ALLNNC'
+switches in the RPTGRID keyword.
+It is possible to apply the NINEPOIN scheme only in the XZ or YZ planes with the NINEXZ and NINEYZ
+keywords.
+Eclipse technical description
+Grid and reservoir modeling
+45
+SLB – Private
+
+=== PAGE 46 ===
+Tensor permeability (Eclipse 300)
+Full tensor permeabilities are often required to describe complex reservoirs. Given a detailed
+heterogeneous reservoir description at the geological scale, upscaling is normally carried out to reduce the
+model size to one suitable for reservoir simulation. These upscaling procedures will generally create full
+tensor permeabilities, even if the permeabilities in the fine geological grid are not represented as tensors.
+Full tensor permeabilities also arise in complex crossbedded systems where the dip directions will not in
+general coincide with a local coordinate direction. A further case for full tensor permeabilities is in the
+modeling of fractured systems.
+Conventionally, reservoir simulators ignore the full tensor nature of the absolute permeability and assume
+the permeability can be represented by a diagonal tensor whose principal axes coincide with the local
+coordinate axes. This allows the construction of the usual 5 point discretization in 2D or 7 point in 3D
+which can be solved efficiently in the simulator. Introduction of a full tensor permeability extends the
+stencil of the discretization scheme to 9 points in 2D and either 19 or 27 points in 3D.
+Eclipse 300 allows a full tensor description of the absolute permeability. The permeability tensor may
+either be supplied by a pre-processor by upscaling the properties on the geological model, or else it may be
+entered by keywords PERMXX, PERMYY, PERMZZ (which describe the diagonal components) and
+PERMXY, PERMYZ, PERMZX to describe the off-diagonal components.
+Only positive definite symmetric tensors are allowed in the simulator. The principal directions of the tensor
+must also be supplied. At present, the options are
+•
+the directions for the components of the tensor are aligned with the Cartesian axes;
+•
+aligned with the axes joining the midpoints of each pair of opposite faces in corner point cells; and
+•
+aligned with the two axes formed by joining the midpoints of pairs of opposite faces in the I and J
+directions and with the third axis normal to the bedding plane.
+The frame representing these directions is specified either by the TBASIS keyword or by the MPFA
+keyword.
+The permeability tensor can be expressed as
+�̲ =
+���������
+���������
+���������
+Eq. 2.27
+where by symmetry
+���= ���, ���= ���, ���= ���.
+Eq. 2.28
+In Eclipse, the coefficients are entered as
+��� =PERMXX, ��� =PERMYY, ��� =PERMZZ, ��� =PERMXY, ��� =PERMYZ and ��� =PERMZX.
+The flow equations arising from the permeability tensor description are constructed using a Multipoint
+Flux Approximation (MPFA). The transmissibilities are calculated by the control volume discretization
+due to Aavatsmark et al (1998). The MPFA can only be used in corner point geometry, not block centered
+geometry.
+The discretization scheme is selected by the MPFA keyword. The MPFA is a rigorous treatment of both cell
+non-orthogonality and tensor permeability. Even for a diagonal isotropic tensor, the MPFA will generally
+lead to a 9 point discretization in 2D in order to remove the bias of grid non-orthogonality and grid
+orientation effects.
+Eclipse technical description
+Grid and reservoir modeling
+46
+SLB – Private
+
+=== PAGE 47 ===
+The MPFA discretization is applied by default across the entire grid. However, it can be applied in selected
+regions by using the MPFANUM keyword. The MPFA is only applied where the MPFANUM array equals 1.
+Further control may be achieved by applying the discretization only within nominated local grids using the
+MPFA keyword within a CARFIN and ENDFIN pair.
+The MPFA can also be used on unstructured grids generated by FloGrid. The multipoint flux non-neighbor
+connections are exported to Eclipse through the MPFNNC keyword. Further details can be found in
+Gunasekera et al (1998).
+The use of the MPFA option is not allowed with the WARP solver. Please use the pre-2002A solver
+(ECLSOL) instead by setting item 66 of the OPTIONS3 keyword to a non-zero value.
+Discretization
+Figure 2.4. Stencil for MPFA flow in 2D between cells (i, j) and (i + 1, j)
+Referring to "Formulation of the equations", the standard two-point flow between cells A = (i, j) and B = (i
++ 1, j) for the corner point grid in figure 2.4 can be written for a component � embedded in a phase � (p =
+o, w, g) as
+����
+�
+= �������
+�
+�����
+Eq. 2.29
+where
+���
+is the two-point transmissibility between cells A and B
+����
+�
+ is the generalized mobility of component � in phase �, and is given by equation 10.37
+����� is the potential difference of phase � between cells A and B, given by
+�����= ��−��+ ����−����−�������−��
+Eq. 2.30
+and where
+Eclipse technical description
+Grid and reservoir modeling
+47
+SLB – Private
+
+=== PAGE 48 ===
+��� is the capillary pressure for phase �
+��
+is the mass density of phase �
+�
+is the acceleration due to gravity
+�
+ is the cell center depth.
+Alternatively, the MPFA constructs the flow ����
+�
+ which depends on steering terms from the neighboring
+cells C, D, E and F in figure 2.4 as
+����
+�
+= ����
+�
+��������+ Σ
+�
+�������
+Eq. 2.31
+where the summation is over steering transmissibilities S between cells AC, AD, AE and SF.
+The mobility ����
+�
+ is evaluated in the upstream cell (A or B) according to the direction of flow in equation
+2.31.
+The steering potential differences ���� are evaluated using pressures and capillary pressures for cells A
+and S but using the density term ��� for the primary flow coefficient obtained from equation 10.47, so that
+�����= ��−��+ ����−����−�������−��
+Eq. 2.32
+The transmissibilities ��� and ��� are calculated following the procedure described in Aavatsmark et al
+(1997) when the permeability �̲  is a full tensor.
+Note that the flows between adjacent cells depend on steering terms from adjacent cells, but there are no
+flows created between cells which are diagonal neighbors as in the NINEPOIN scheme (see "Nine-point
+schemes").
+Similarly in 3D, the flow between any two cells may depend on up to 16 steering transmissibilities and this
+leads to a 19 or 27 point scheme.
+In the present version of Eclipse 300, the MPFA transmissibilities are not calculated across faults, but the
+two-point connections given by the NEWTRAN transmissibility calculation are used instead (see
+"Transmissibility calculations").
+If the MPFA keyword is used without supplying off diagonal tensor permeabilities PERMXY, PERMYZ and
+PERMZX, these terms are taken to be zero and the MPFA scheme is applied with the diagonal tensor �̲
+=diag (PERMX, PERMY, PERMZ) in the specified basis.
+Orthogonality error
+The MPFA or nine point discretization reduces to a standard two point flux scheme (that is, a five-point
+scheme in 2D or a seven-point scheme in 3D) if the grid is sufficiently orthogonal.
+For example, the MPFA discretization reduces to 5- or 7-points when both
+•
+the grid system is orthogonal and
+•
+the permeability tensor �̲ is diagonal
+In general, when the grid is either non-orthogonal or �̲  is a full tensor then a 9-point (2D) or 27-point (3D)
+discretization results. It is possible to control the application of the MPFA scheme based on a cell
+orthogonality error indicator. Essentially for grids which are nearly orthogonal it is desirable to apply the
+Eclipse technical description
+Grid and reservoir modeling
+48
+SLB – Private
+
+=== PAGE 49 ===
+MPFA discretization only in regions of high non-orthogonality to reduce the CPU cost. In the context of a
+full tensor permeability, an orthogonality indicator can be defined as follows:
+Figure 2.5. K-orthogonality error indicator
+Consider an interface PQ between two cells 1 and 2. The permeabilities in each cells are �̲ 1 and �̲ 2. The
+directed area normal on the interface is denoted by �̲. Let �̲1 and �̲2 be the vectors joining the midpoints of
+opposite faces of the cells. We call �̲1 and �̲2 the covariant basis vectors. Define the contravariant basis
+vectors �̲1 and �̲2 with the condition that
+�̲�∙�̲ �= ���
+where ��� is the Kronecker delta.
+Now consider a potential gradient in cell 1,
+∇̲�=
+Σ
+�= 1
+2
+���̲ �
+The flux through PQ from cell 1 is therefore
+�= �⋅�̲ ∙�̲ ∙∇�= �Σ
+�= 1
+2
+���̲ ∙�̲ ∙�̲ �
+where � accounts for the mobility.
+Since this expression can be used for arbitrary values of ��, it follows that if �̲ ∙�̲  is parallel to �̲1, such
+that �̲ ∙�̲ ∙�̲2 = 0, then the flux depends only on the gradient in the covariant direction �̲1 and implies that
+a two point discretization can be employed.
+The grid is said to be K-orthogonal (see Gunasekera et al (1998) and Aavatsmark et al (1998)) when �̲ ∙�̲
+is parallel to �̲1.
+A convenient measure of orthogonality error for an interface is therefore
+�=
+�̲ ∙�̲ −
+�̲ ∙�̲
+∙�̲1 �̲1
+�̲1 ∙�̲1
+/ �̲ ∙�̲
+This is evaluated separately for each of the two cells adjoining the interface �̲. The maximum of these two
+values provides a measure of the departure from orthogonality for the interface, that is, the departure from
+a two point flux approximation for this interface.
+Keyword ORTHERRO may be used to specify two point fluxes for all interfaces with �< ��������.
+The familiar 5-point (2D) or 7-point (3D) scheme then applies in regions when all interfaces have
+Eclipse technical description
+Grid and reservoir modeling
+49
+SLB – Private
+
+=== PAGE 50 ===
+negligible orthogonality error. Alternatively using ORTHERRX, ORTHERRY and ORTHERRZ controls
+calculation of MPF fluxes for interfaces in the grid I, J and K directions.
+Application of MPFA can also be controlled by a minimum pore volume limit using the MINPORV9
+keyword, so that cells with ����< �������9 use the familiar 5- point or 9-point discretization. The 5-
+or 9-point discretization (using NEWTRAN transmissibilities) is also used in regions for which MPFANUM is
+set equal to 0.
+The keywords ORTHERRO, ORTHERRX, ORTHERRZ and MINPORV9 can be individually applied to local
+grids if they are specified between the corresponding CARFIN and ENDFIN pairs.
+Restrictions
+The MPFA discretizations cannot at present be used with:
+•
+The parallel option (keyword PARALLEL)
+•
+Velocity dependent relative permeabilities (keyword VELDEP)
+•
+Cell coarsening (keyword COARSEN)
+•
+The Diffusion option (keyword DIFFUSE)
+•
+The Thermal option (keyword THERMAL)
+•
+Radial geometry (keyword RADIAL)
+•
+The WARP solver (keyword WARP)
+Eclipse technical description
+Grid and reservoir modeling
+50
+SLB – Private
+
+=== PAGE 51 ===
+Local grid refinement and coarsening
+The local grid refinement option allows enhanced grid definition near wells. The local models may be 2D
+radial, 3D radial or 3D Cartesian. Local models may have more layers than the global model.
+Transmissibilities between the local models and the global model are computed automatically by Eclipse.
+The properties of the cells in the local grid can be inherited from the global grid or specified explicitly for
+the refined cells.
+Grid coarsening may be used to amalgamate cells in regions of the reservoir where accuracy is
+unimportant.
+The auto-refinement facility may be used to refine an existing global model as the reverse process to grid
+coarsening.
+Local grid refinement
+Radial local grid refinements may be defined either in a single column of cells with the RADFIN keyword,
+or in a box of four columns with the RADFIN4 keyword.
+Radial refinement in a single column
+To refine column (I=7, J=8) in layers 3 to 5 inclusive with a 3D radial grid with 6 radial segments, 4
+angular segments and 18 vertical segments use:
+RADFIN
+-- NAME    I J K1 K2 NR NTHETA NZ  NWMAX
+ 'SOUTH'   7 8  3  5  6   4    18 /
+INRAD
+ 0.2 /
+ENDFIN
+in the GRID section. This inserts a local grid with 6*4*18 = 432 cells. The INRAD keyword specifies the
+inner radius of the innermost block of the radial refinement.
+This creates a refinement that looks like the following figure.
+Figure 2.6. Single column radial grid refinement
+Alternatively it is possible to use a two-dimensional model with NTHETA=1 that looks like the following
+figure.
+x Eclipse 100
+x Eclipse 300
+Eclipse 100
+Eclipse technical description
+Grid and reservoir modeling
+51
+SLB – Private

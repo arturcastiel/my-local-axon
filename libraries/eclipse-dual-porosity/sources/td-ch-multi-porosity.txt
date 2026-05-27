@@ -1,0 +1,276 @@
+
+
+===== PAGE 132 =====
+Multi porosity
+In Eclipse 300 you can define a multi porosity model as an extension to the dual porosity model to model
+the fracture system and a number of matrix pore systems.
+There are two ways to supply the grid properties for the matrix sub cells:
+•
+Using the keyword NMATOPTS the matrix sub cells are assigned pore volumes as described in the
+"Discretized matrix model (Eclipse 100)". The grid is geometrically partitioned as a “Russian Doll” of
+nested matrix sub-cells. This enables grid data to be supplied only for the dual porosity part of the grid
+and the nested matrix sub-grid cells data are generated automatically. New SIGMAV factors are
+automatically generated from the input SIGMA/SIGMAV factors from the primary matrix. You can still
+set other data such as permeabilities, although this is not recommended. By default, if these are not
+specified, the input primary matrix values are used to populate the sub-cell values.
+•
+Input over the grid. The data is supplied for the entire simulation grid, similarly to the dual porosity
+model, but with grid data such as permeabilities also for the matrix-matrix connections.
+In either case the number of pore systems is input using the NMATRIX keyword. This general setup gives a
+variety of possibilities for studying the transient behavior in the matrix. In particular the option can be used
+for.
+•
+Shale gas reservoirs. See "Shale gas".
+•
+Coal bed methane. See "Adsorption models in Eclipse 300"
+The special case of triple porosity systems to represent vuggy carbonates uses the same underlying multi
+porosity model, but restricts the number of porosities to 3 (fracture, matrix, vugs with fracture and matrix
+connections) or 4 (with additional “isolated” vugs connected only to the matrix). This model is activated
+using the TRPLPORO keyword, which also specifies if isolated vugs are to be used. The data are supplied
+for the entire simulation grid, as with the multi porosity option (2) above. This model is described in more
+detail in the Triple Porosity section below. Triple porosity is also available in Eclipse 100 but the general
+multi-porosity feature is not available.
+Using the multi porosity option
+RUNSPEC section
+The number of simulation cells in the Z-direction, as specified by the DIMENS keyword, needs to be
+a multiple of the number of pore systems. The number of pore systems is equal to the number of
+matrix pore systems, set by the NMATRIX keyword, increased by one to account for the fracture
+system (NPOROS =NMATRIX+1).
+The DUALPORO keyword is also required. If a dual permeability calculation is to be made where
+matrix to matrix connections are also used, then the DUALPERM keyword is also required. For multi-
+porosity, this will create a multi-permeability model - the sub-matrices will also be connected
+together. In most cases, this may not be the required solution, as the primary job of the sub-matrices
+is usually to model transients in the matrix-to-fracture flow.
+Note: It is important to note that the Eclipse 300 model requires the full grid dimensions to be set by
+DIMENS, unlike the discretized matrix model in Eclipse 100.
+x Eclipse 100
+x Eclipse 300
+Eclipse technical description
+Grid and reservoir modeling
+132
+SLB – Private
+
+
+===== PAGE 133 =====
+GRID section
+In order to be compatible with standard dual porosity input, the first NDIVIZ / NPOROS layers are
+associated with the outermost matrix cells connecting to the fractures. The next layers are associated
+with the fracture cells. Thereafter the matrix sub cells follow as illustrated in the figure below.
+Figure 2.29. Multi porosity example having three pore systems.
+The connections between the porosity systems are automatically generated. It is possible to supply
+the grid for the outermost primary matrix grid cells only, and using the keyword DPGRID the
+fracture and sub matrix grid are copied from the outermost matrix grid if they are not specified.
+Please note that SIGMAV values should be specified for all the matrix subgrid cells, including when
+DPGRID is used.
+By default, properties such as porosities and permeabilities together with SIGMAV should be input
+for the sub-matrix grid-cells. In a multi-permeability model, it is possible to alter the transmissibility
+between the sub-grid cells using the MULTX, MULTY and MULTZ multipliers. This can, for example,
+be useful in order to disable communication between some of the matrix sub-grid cells.
+Matrix-matrix transmissibility and diffusivity
+Each pore system is connected as described above.
+The transmissibilities between the sub-grid cells are then calculated similar to the matrix-fracture
+transmissibilities as described in "Dual Porosity". Note that the innermost matrix grid cell properties are
+used to set up the transmissibilities and diffusivities.
+The permeability factor used between the subgrid porosities can be set, similarly to dual porosity, by the
+keyword PERMMF.
+For two grid cells where inner matrix cell I connects to the outer grid cell J (which could be matrix or
+fracture), the transmissibility is given as
+TR��= CDARCY ⋅��⋅���⋅��
+Eclipse technical description
+Grid and reservoir modeling
+133
+SLB – Private
+
+
+===== PAGE 134 =====
+where
+��
+is taken as the X-direction permeability of the matrix blocks (unless PERMMF is also specified),
+���is the matrix cell bulk volume (note that this is not the pore volume, having no porosity factor), and
+��
+is a factor of dimensionality LENGTH−2, to account for the matrix-matrix interface area per unit
+volume.
+Note that the cell index for �� has been written as K rather than I. When I and J are both matrix cells, then
+K is the outer matrix cell J. However, when outer cell J is the fracture, then K is the inner cell: that is, K is
+the outermost matrix. The result of this is to have all the sigma values in contiguous locations in the first
+N-1 porosity locations in the SIGMAV keyword input. The innermost SIGMAV porosity (porosity N=
+NMATRIX+1) is not used.
+The diffusivity is similarly given as
+DIFF��= DIFFMMF�⋅VOL�⋅��
+where
+��������is the diffusivity multiplier, and
+����
+is the matrix cell pore volume or coal volume (coal bed methane option)
+Matrix discretization (NMATOPTS)
+When the NMATOPTS option is invoked, the matrix sub-grid cell properties are copied from the outer
+primary matrix grid-cells. Only the bulk volume, porosities and/or rock fraction of the primary matrix grid
+cells are used to generate the matrix sub-grid cells’ new volumes. The pore volume and transmissibility/
+diffusivity follow what is described in the "Discretized matrix model (Eclipse 100)". However Eclipse 300
+does not generate the transmissibilities directly, but generates new sigma (SIGMAV) values following the
+geometric partitioning of the matrix block, and updates the block volumes, pore volumes and rock volumes
+of the matrix grid cells. In addition, the Eclipse 300 model can be used with UNIFORM partitioning. The
+pore volumes are evenly distributed between the matrix sub-grid cells and the transmissibilities are
+calculated following a 1D computation where the distance DX of the matrix cells is assumed to be
+partitioned as DX / NMATRIX.
+Eclipse technical description
+Grid and reservoir modeling
+134
+SLB – Private
+
+
+===== PAGE 135 =====
+Figure 2.30. Structure of the matrix discretization and nomenclature
+In the figure above, the uniform partitioning is used with NMATRIX=4. Each block is partitioned
+uniformly and sigma values generated for the connections. The pore volume of the primary matrix cell is
+divided into ��1 = ��2 = ��3 = ��4 = ���
+4 . The assumptions for the UNIFORM partitioning is the
+same as for the LINEAR except that each matrix block is uniformly partitioned. The available methods
+with NMATOPTS are:
+Table 2.2. Available methods with NMATOPTS
+NMATOPS
+Assumption for initial matrix- fracture
+transmissibility/diffusivity
+Partitioning method
+UNIFORM
+1D flow over the distance d and through area A
+Partitions the distance d
+uniformly
+LINEAR
+1D flow over the distance d and through area A
+Logarithmic growth factor of
+the distances
+RADIAL
+2D flow, four times flow, over a distance d and through
+area A
+Logarithmic growth factor of
+the distances
+SPHERICAL 3D flow, six times flow, over a distance d the and through
+area A
+Logarithmic growth factor of
+the distances
+VERTICAL
+For gravity drainage. A depth assigned to the sub-matrix
+grid cells.
+Partitioned uniformly
+(vertically)
+Based on the method, a new internal grid is generated, representing the initial matrix-fracture connection.
+The distance “d” is partitioned resulting in new bulk volumes, pore volumes and rock volumes. Based on
+the initial sigma factor assigned to the primary matrix grid, new sigma factors are calculated and populated
+in the matrix grid.
+As an example consider the UNIFORM partitioning above and then how to calculate new sigma values.
+For a unit m3 cube, BV=1m3. The distance d =1m and the area A=1 m2. Partitioning d into 1/4m gives the
+flow over 1/4m for each connection through an area A. Since “d” and “A” are already embedded in the
+initial sigma value, multiplication gives (sigma*4) for the connection. This needs to be scaled to apply to
+Eclipse technical description
+Grid and reservoir modeling
+135
+SLB – Private
+
+
+===== PAGE 136 =====
+the new block volumes of the cells and so this gives the factor (sigma*4)*BV/(BV/4) for the new sigmas,
+that is (sigma*16).
+For more information about the discretization, see the "Discretized matrix model (Eclipse 100)".
+Coal in multi porosity
+When using the NMATOPTS matrix discretization feature with coal or shale gas, the definition of coal
+volumes needs to be considered. See "Coal bed methane model" and for the partitioning into the matrix
+subgrid cells see "Shale gas". Only the input of the primary matrix sub-grid cells is needed when
+generating the sub-cells’ coal and pore volumes.
+In general it is recommended to have all sub-grid cells defined as coal and/or use the instant sorption
+method when doing a matrix discretization. Having nonhomogeneous properties means that the number of
+matrix cells and the placement of pore, coal volume becomes important when considering the response
+from the matrix. For specialized models, the general multi-porosity option can be used with user-defined
+sigma values within the sub-matrix grid.
+Triple porosity
+When the TRPLPORO keyword is used, only 3 or 4 porosities are allowed. The matrix and fracture
+porosities are specified as porosities 1 and 2 as usual. Porosity 3 is used to represent vugs (larger voids in
+the rock which are not part of the fracture system) which are connected to the matrix in the same way as
+the fracture is connected to the matrix, and additionally to the fracture through micro fracture connections.
+If used, porosity 4 represents additional vugs with connection to the matrix only (isolated vugs).
+Unlike the standard multi porosity connections, a porosity in triple porosity may be connected to more than
+2 other porosities, as the matrix can be connected to the fracture and two different vug porosities (isolated
+and connected). There is also a cyclic path in the porosity system, formed by the matrix, fracture and
+connected vug porosities. These relationships are illustrated in the figure below. Note that the logical order,
+with the fracture as the outer porosity, is shown, but in the grid description the fracture is still the second
+porosity.
+As for the multi porosity model, the DUALPORO and, where needed, the DUALPERM, keywords are
+required. The input allows for the possibility of a triple permeability model, where the vug porosities form
+a connected continuum. However, in most if not all cases, only a dual permeability model will be required
+for triple porosity. To make the vug cells connected only to the local matrix and, for connected vugs, to the
+local fracture, you should zero the permeability or add permeability multipliers of size zero to the
+appropriate permeability for the other vug-matrix, vug-fracture or vug-vug connection. The convention for
+assigning cell permeabilities to triple porosity connections is noted in the Transmissibilities section below.
+Figure 2.31. Triple porosity connectivity
+Eclipse technical description
+Grid and reservoir modeling
+136
+SLB – Private
+
+
+===== PAGE 137 =====
+Note: NMATRIX and NMATOPTS should not be used with TRPLPORO
+Transmissibilities
+In the current version of the input for this model, transmissibilities between vugs porosities and the matrix
+and fracture porosities are still described by Kazemi-type multipliers using the SIGMA and SIGMAV
+keywords. However, the LTOSIGMA keyword cannot be used and the interpretation of the SIGMA
+multiplier as an inverse squared matrix length is not applicable. In particular the connection between
+fracture and connected vugs is through micro fractures, and the connection between the matrix and vugs is
+through the typical inter-vug distance in the matrix and the size of the vugs. The SIGMA values used for all
+connections to vugs, whether through micro fractures from the fracture, or through matrix rock from the
+matrix, should honor this difference from standard matrix-fracture connection values.
+An exact Kazemi-type equivalent to the LTOSIGMA input cannot be provided. However, for matrix-vug
+sigmas, a useful rule of thumb is that the product Vσ can be replaced by β A/L where A is the cross-
+sectional area of the vug, L is half the distance between two vugs, and β is the fraction of total volume
+occupied by the vugs. There is no simple formula to represent the connected-vug/fracture sigma, and you
+should consider general transmissibility theory for the micro fractures characterizing this connection.
+Input values for SIGMAV are applied to porosities in the following way:
+•
+matrix/fracture connection sigma values are input through the matrix cells;
+•
+fracture/connected-vug sigma values are input through the fracture cells;
+•
+matrix/connected-vug sigma values are input through the connected-vug cells (third porosity);
+•
+matrix/isolated-vug sigma values are input through the isolated-vug cells (fourth porosity, if present).
+PROPS, REGION and SOLUTION sections
+This follows the input as for a standard single or dual porosity model. However, simulation grid cell data
+must be specified on a cell-by-cell basis, regardless of the use of NMATOPTS.
+An exception is the regional data such as SATNUM, EQLNUM and FIPNUM. If no value is supplied these
+are copied from the primary matrix grid cell.
+Output
+Summary output follows the usual syntax, where block solutions can be obtained by specifying a cell index
+corresponding to the matrix sub-cell.
+On the restart file the sub-cell matrix solutions are only output if a flexible restart file is requested.
+Output to the PRT file using the RPTGRID, RPTSOL and RPTSCHED keywords will output the requested
+quantity for all cells.
+Examples
+The following data sets come with the Eclipse installation:
+Table 2.3. Multi porosity example files
+File
+Description
+MPORO.DATA
+Multi porosity example, gas-water case
+SHALEGAS1.DATA Shale gas
+Eclipse technical description
+Grid and reservoir modeling
+137
+SLB – Private
+
+
+===== PAGE 138 =====
+Limitations
+The multi porosity option cannot currently be used with:
+•
+Coarsening
+•
+Block to block connections (BTOBALFA or BTOBALFV)
+•
+The triple porosity option cannot currently be used with parallel in Eclipse 100.
+•
+Local grid refinements when using the discretized matrix model.
+Eclipse 100
+Eclipse 100
+Eclipse technical description
+Grid and reservoir modeling
+138
+SLB – Private

@@ -1,0 +1,1512 @@
+
+
+===== PAGE 100 =====
+Dual porosity
+In a naturally fractured (for example carbonate) reservoir, fluids exist in two interconnected systems:
+•
+The rock matrix, which usually provides the bulk of the reservoir volume
+•
+The highly permeable rock fractures.
+To model such systems in Eclipse, two simulation cells are associated with each block in the geometric
+grid, representing the matrix and fracture volumes of the cell. In Eclipse, the porosity, permeability, depth
+etc. of these may be independently defined. A matrix-fracture coupling transmissibility is constructed
+automatically by Eclipse to simulate flow between the two systems due to fluid expansion, gravity
+drainage, capillary pressure etc. This procedure is referred to as “dual porosity” modeling.
+If the matrix blocks are linked only through the fracture system, this is considered to be a dual-porosity,
+single-permeability system, since fluid flow through the reservoir takes place only in the fracture network,
+with the matrix blocks acting as sources. However, if there is the possibility of flow directly between
+neighboring matrix blocks, this is conventionally considered to be a dual-porosity, dual-permeability
+system. Dual porosity runs are specified by the keyword DUALPORO in RUNSPEC, while dual
+permeability requires the DUALPERM keyword. It should be noted that dual porosity, dual permeability
+runs are computationally more expensive than dual-porosity, single-permeability runs.
+In a dual porosity or dual permeability run of Eclipse, the number of layers in the Z-direction should be
+doubled. Eclipse associates the first half of the grid (the first NDIVIZ/2 layers) with the matrix blocks, and
+the second half with the fractures. In such runs NDIVIZ must therefore be even; Eclipse checks that this is
+the case.
+For local grid refinements, the NDIVIZ/2 rule is applied to the number of refined cells (item 10 in
+CARFIN) in the LGR. The position of the LGR in the host grid (CARFIN items 6 and 7) is specified by its
+location in the matrix; it will automatically be duplicated in the fracture.
+Note that for Eclipse 300, if the multiporosity option is used (see "Multi porosity" and keyword NMATRIX)
+then the first NDIVIZ/N layers will be the matrix blocks, where N is the number of porosities. References
+to NDIVIZ/2 in this chapter should be checked against the multi porosity documentation if there is more
+than one matrix porosity.
+However, for the "Discretized matrix model (Eclipse 100)" (“Russian Doll model”) the additional blocks
+are all internal to the Eclipse calculation, and the matrix in the grid is always NDIVIZ/2 layers regardless
+of the number of matrix subdivisions. This is because the properties of the matrix sub-cells cannot be
+specified independently, but are all copies of the same matrix cell data.
+Transmissibility calculations
+The matrix-fracture coupling transmissibility terms that exist between each cell of the matrix grid and the
+corresponding cell in the fracture grid are proportional to the cell bulk volume, being of the form:
+TR = CDARCY ⋅�⋅�⋅�
+Eq. 2.54
+where by default:
+� is taken as the X-direction permeability of the matrix blocks (unless PERMMF is also specified; see
+below),
+� is the matrix cell bulk volume (note that this is not the pore volume, having no porosity factor), and
+� is a factor of dimensionality LENGTH−2, to account for the matrix/fracture interface area per unit
+volume, that is the size of the blocks in the matrix volume.
+x Eclipse 100
+x Eclipse 300
+Eclipse 300
+Eclipse 100
+Eclipse technical description
+Grid and reservoir modeling
+100
+SLB – Private
+
+
+===== PAGE 101 =====
+The default use of the X-direction permeability can be overridden by using the matrix-fracture
+permeability specified by the PERMMF keyword. Note that for one-dimensional (Y- or Z-direction) cases in
+the global grid with X-direction extension in an LGR, the X-direction permeability will be set to zero in all
+grids and PERMMF must be used to enable dual porosity NNCs to be generated. (This is unlikely in real
+simulations, but many test problems are affected by this.)
+Kazemi (1976) has proposed the following form for �:
+�= 4
+1
+��
+2 + 1
+��
+2 + 1
+��
+2
+Eq. 2.55
+where lx, ly and lz are typical X, Y and Z dimensions of the blocks of material making up the matrix
+volume. (��, �� and �� are thus not related to the simulation grid dimensions). Alternatively, as � acts as a
+multiplier on the matrix-fracture coupling, it may simply be treated as a history matching parameter.
+� can be specified as a single value for the whole field using the keyword SIGMA or on a cell by cell basis
+using the keyword SIGMAV. If � is defined on a cell by cell basis then the values corresponding to the first
+NDIVIZ/2 layers are used. If � is printed out (RPTGRID keyword) then the values in the first NDIVIZ/2
+layers are copied in to the lower NDIVIZ/2 layers.
+The specified values of the permeabilities of cells in the fracture system are multiplied by the fracture
+porosities to yield effective fracture permeabilities. If the NODPPM keyword is used then the specified
+permeability is used directly, rather than the effective permeability.
+That is, when NODPPM is not specified, then within the fracture cells, the input PERMX, PERMY and
+PERMZ are modified using �������= �������× ������.
+An alternative form of the above transmissibility is available using the LTOSIGMA keyword if the matrix
+block dimensions are input explicitly using the LX, LY and LZ keywords. In this case the transmissibility is
+given by:
+TR = CDARCY ⋅�⋅
+��⋅��
+��
+2
++
+��⋅��
+��
+2
++
+��⋅��
+��
+2
+Eq. 2.56
+where:
+������ are input in LTOSIGMA
+������ are the matrix permeability values
+������ are the matrix block dimensions input using LX, LY and LZ.
+If the dual porosity but not the dual permeability option is selected, the matrix blocks have no
+transmissibilities between them. If dual porosity and dual permeability is chosen, the matrix blocks have
+their normal transmissibilities.
+Eclipse 100
+Eclipse technical description
+Grid and reservoir modeling
+101
+SLB – Private
+
+
+===== PAGE 102 =====
+Figure 2.15. A simple, dual porosity, dual permeability system.
+Block to block transmissibility calculations
+It is now also possible to represent re-imbibition from a fracture cell by the matrix cell below it. In this
+case the transmissibility between the matrix and fracture cells is a conventional spatial one, since the two
+cells are not superimposed on one another, and the properties of the two cells contribute to the
+transmissibility in exactly the same way as for the transmissibility between two neighboring fracture cells,
+or two neighboring matrix cells. See "Transmissibility calculations" for the details of this calculation. This
+modeling is most appropriate when the physical matrix block size (�� as used in the Kazemi formula for the
+usual matrix-fracture transmissibility multiplier represented by the SIGMA and SIGMAV keywords) is
+comparable to the size of the grid cell rather than significantly different from it, so that the environment of
+a lower matrix physical block also comprises neighboring fracture cells rather than just its own fracture
+cell.
+Figure 2.16. Physical view of the matrix and fracture cells for the block to block connection
+Eclipse technical description
+Grid and reservoir modeling
+102
+SLB – Private
+
+
+===== PAGE 103 =====
+Figure 2.16 shows this new transmissibility on a picture of the two physical cells (that is the matrix and
+fracture cells occupy the same physical location.) This figure appears to show the lower matrix
+disconnected from the upper fracture by its own surrounding fracture, but this is only for presentation
+purposes: there will always be some contact between the upper fracture and lower matrix. This is
+schematically represented in figure 2.17, where the lower matrix and fracture are shown as single adjacent
+blocks, but the upper matrix is split in two, one half abutting the lower matrix (a disconnection in dual
+porosity but a connection in dual permeability) and one half abutting the lower fracture (not represented in
+the model, but conceptually possible). The upper fracture contacts both lower fracture and lower matrix.
+Figure 2.17. Schematic view of the contacts between the upper and lower cells of the two porosity
+systems
+The extent of the contact between the upper fracture and lower matrix is a variable of the model, and hence
+a new multiplier is applied to the transmissibility between these cells, to represent this effective contact
+area between the matrix and the fracture, which will be different from the contact area between the two
+vertically neighboring fracture cells, or two vertically neighboring matrix cells. This contact area multiplier
+is specified by the keywords BTOBALFA or BTOBALFV; the former specifies a single value for the whole
+grid, while the latter specifies it cell by cell. The presence of these keywords also activates these additional
+transmissibilities, which will otherwise not be present.
+In Eclipse 100, block-to-block connections between LGRs and their parents or adjacent LGRS are only
+supported for in-place LGRs.
+Note: Block to block connections cannot be made when a multi porosity model is specified (NMATRIX or
+TRPLPORO).
+Recovery mechanisms
+In a dual porosity system the majority of the oil is contained in the matrix system, but the production of oil
+to the wells is through the high permeability fracture system. In such a system an injected fluid does not
+sweep out oil from the matrix block. Production from the matrix blocks can be associated with various
+physical mechanisms including:
+•
+Oil expansion
+•
+Imbibition
+•
+Gravity imbibition/drainage
+•
+Diffusion
+Eclipse 100
+Eclipse technical description
+Grid and reservoir modeling
+103
+SLB – Private
+
+
+===== PAGE 104 =====
+•
+Viscous displacement.
+Oil expansion
+As the pressure drops in the fracture system, oil flows from the matrix to equilibrate the matrix pressure
+with the surrounding fracture pressure. This production mechanism can be thought of as expansion of the
+oil within the matrix block, either above the bubble point or by solution gas drive below the bubble point.
+Imbibition
+In a typical water wet system the matrix rock has a positive water-oil capillary pressure. If water is
+introduced into the fracture, the water flows under capillary forces into the matrix system, displacing oil.
+Note that if the gravity drainage model (see below) is not active, then the production continues until the oil
+saturation in the matrix has reached residual oil.
+The water imbibition process is modeled in Eclipse by specifying different saturation table numbers for the
+matrix and fracture cells respectively. The matrix cells typically have a water-oil capillary pressure, while
+the fracture cells usually have zero capillary pressure.
+In gas-oil systems the oil is the wetting phase and tends to imbibe into the matrix. In practice this means
+that if the gravity drainage model is not active then no oil production occurs from a matrix block when the
+associated fracture block is full of gas.
+Gravity imbibition/drainage
+Fluid exchange between the fracture and matrix due to gravity is modeled in one of two ways. One method
+is to consider each of the matrix and fracture cells as separately in vertical equilibrium, and then to
+calculate additional potential due to differences in contact heights between the matrix and fracture. There
+are two options for this, which are activated by including either of the keywords GRAVDR or GRAVDRM
+(described in the next two sections) in the RUNSPEC section. This method leaves the number of porosities
+in the grid as 2.
+The other method (described in the section following) uses a modification of the Discrete Matrix model
+(Eclipse 100) or multi porosity model (Eclipse 300), and uses N matrix porosities, where N is user-defined,
+to create a vertical stack of finely spaced matrix cells which describe the distribution of properties within a
+single block of matrix material (with height as defined by the DZMTRX keyword). This option is not
+available with dual permeability runs, which should use a more detailed discretization of the whole grid;
+the advantage of discretizing only the matrix is that its equations can be eliminated from the solution
+before the linear solution is performed, so that no additional time is spent in that part of the code.
+The DZMTRX keyword is also required for the GRAVDR or GRAVDRM models, and a non-zero value should
+be given for it in the GRID section in all gravity drainage cases.
+Standard gravity drainage model (GRAVDR)
+The illustration shows a typical block of matrix material containing oil and water. The fractional height of
+the water table in the fracture is �� and the fractional height of the water displacement front in the block
+of matrix material is ��.
+Eclipse technical description
+Grid and reservoir modeling
+104
+SLB – Private
+
+
+===== PAGE 105 =====
+Figure 2.18. A typical block of matrix material containing oil and water
+The pressure difference due to gravity alone is
+��= �������−��
+��−���
+Eq. 2.57
+where
+��is the density of water
+��is the density of oil at reservoir conditions.
+DZmat is the same as lz in Kazemi's formula.
+Integrating �� over all blocks of matrix material within a reservoir simulation cell leads to the same
+formula for ��, except that it now represents the gravitational pressure difference between reservoir
+simulation fracture and matrix cells, and �� and �� are the partial volumes of mobile water in the
+simulation fracture and matrix cells. In Eclipse, the effect is modeled by introducing additional pseudo
+capillary pressures, ��
+�����= DZ���⋅����−���(fracture cells)
+�����= DZ���⋅����−���(matrix cells)
+�����= DZ���⋅����−��� (fracture cells)
+�����= DZ���⋅����−��� (matrix cells)
+�����= DZ���⋅����−��� (fracture cells)
+�����= DZ���⋅����−��� (matrix cells)
+Thus, the flow of oil and gas from a fracture to a matrix cell in a gas oil system is computed as
+Eclipse technical description
+Grid and reservoir modeling
+105
+SLB – Private
+
+
+===== PAGE 106 =====
+��= TR ⋅GMOB × ���−���+ ������+ �����−�����+
+DZ�����−��
+��−���
+2
+Eq. 2.58
+��= TR ⋅OMOB ���−���+ ������−
+DZ�����−��
+��−���
+2
+Eq. 2.59
+where
+TR
+is the transmissibility between the fracture and matrix cells,
+GMOB is the gas mobility in the (upstream) fracture cell,
+OMOB is the oil mobility in the (upstream) fracture cell,
+���
+is the oil phase pressure in the fracture cell,
+���
+is the oil phase pressure in the matrix cell,
+���
+is the difference in depth between the fracture and matrix cells (usually zero),
+��
+is the density of gas at reservoir conditions,
+��
+is the density of oil at reservoir conditions,
+�
+is the acceleration due to gravity,
+�����
+is the capillary pressure of gas in the fracture cell (normally zero)
+�����
+is the capillary pressure of gas in the matrix cell.
+Note: The gravity drainage head DZ�����−��
+��−��� has been split between the two phases.
+In dual porosity / dual permeability models in which the gravity imbibition / drainage mechanism is active,
+the calculation of the initial reservoir state (see "Initializing the study") occurs independently of the value
+of ����� that is the reservoir is initialized without regard for the gravity imbibition / drainage forces
+acting between the matrix and fracture cells. When the simulation begins, the gravity imbibition / drainage
+forces may cause fluid movement between matrix cells and their corresponding fracture cells due to the
+different fluid levels in the matrix / fracture cells. If the redistribution of fluids causes a significant
+transient when the simulation is started, you can overcome this by activating item 11 of the OPTIONS
+keyword. If this switch is activated, the effect is to cause modifications to the phase pressures to make the
+initial solution a true steady state. These phase pressure modifications are applied for the duration of the
+run.
+In Eclipse 300, a different value of the � coupling may be specified for gravity drainage by using the
+SIGMAGD keyword. If the values entered with SIGMA and SIGMAGD, [denoted � and ��� respectively]
+differ, the program uses an interpolated � value for each phase which depends on the relative strengths of
+the capillary pressure and gravity drainage terms:
+��
+eff = ��⋅�+ 1−��⋅���
+Eq. 2.60
+Eclipse 300
+Eclipse technical description
+Grid and reservoir modeling
+106
+SLB – Private
+
+
+===== PAGE 107 =====
+where � =oil, gas, water, and
+��=
+Δ ��
+Δ ��+
+Δ ����
+Eq. 2.61
+Δ ���� is the usual potential difference term between two cells � and �:
+Δ����= ���−���+ ����−����−���Δ�
+Eq. 2.62
+where
+���, ���
+are the cell pressures,
+����, ����
+are the cell capillary pressures,
+��
+is the height difference between the cells,
+�
+is the acceleration due to gravity
+��
+is the saturation weighted average density of phase �
+Δ ���
+is the gravity drainage term, which depends on the phase:
+Δ��= −1
+2
+Δ ���
+��+ Δ ���
+��
+Eq. 2.63
+Δ��= 1
+2 Δ ���
+��
+Eq. 2.64
+Δ��= 1
+2 Δ ���
+��
+Eq. 2.65
+Δ���
+��= �× ������−
+�−�−
+�
+���−���
+Eq. 2.66
+Δ���
+��= �× ������−
+�−�−
+�
+���−���
+Eq. 2.67
+where �� and �� are the fractions of the cell containing mobile gas and water respectively. These are
+estimated from the cell saturation using a vertical equilibrium model. If the gravity drainage term is
+dominant, ��
+0 and �eff
+���.
+Note that in Eclipse 100, the SIGMAGD keyword has a different function, and is used to differentiate oil-
+gas and oil-water mechanisms. See "Variation of the sigma factor with drainage process".
+Alternative gravity drainage model (GRAVDRM)
+An alternative gravity drainage model is available based on the formulation proposed by Quandalle and
+Sabathier (1989).
+The matrix-fracture flow is taken to be the sum of three flows from the center of the matrix to the fracture
+system: one horizontal, one vertically upwards and one vertically downwards. This formulation allows for
+different flow paths and hence transmissibilities in the vertical and horizontal directions. In some
+circumstances, typically in mixed wettability systems, the two transmissibilities give a better match to a
+finely gridded matrix block model.
+The matrix fracture flow is given by:
+Eclipse 100
+Eclipse technical description
+Grid and reservoir modeling
+107
+SLB – Private
+
+
+===== PAGE 108 =====
+�= �ℎ+ ���+ �����
+Eq. 2.68
+as shown in the following figure:
+Figure 2.19. Flows and potentials in the GRAVDRM model
+The horizontal flow is:
+�ℎ= �������⋅���ℎ⋅��+ ���−��−���
+Eq. 2.69
+where:
+�������
+is the transmissibility based on the SIGMA keyword (that is defined by equation 2.54 with �
+values from the SIGMA keyword, and K described as in the text following equation 2.54). Note
+that there is no switching between the SIGMA and SIGMAGD keywords in this model: there is
+no effective � as in equation 2.60 for Eclipse 300, or switching between SIGMA and
+SIGMAGD as described for Eclipse 100 in the SIGMAGD keyword description.
+Eclipse technical description
+Grid and reservoir modeling
+108
+SLB – Private
+
+
+===== PAGE 109 =====
+���ℎ
+is the phase (upstream) mobility. See ���� below for the definition of upstream.
+��, ��
+are the oil phase pressures in the fracture and matrix cells
+���, ���are the capillary pressures.
+The vertical flows are:
+�����= ���������⋅�������⋅��+ ���−��−���+ ��−��
+����⋅�⋅��mat /2
+Eq. 2.70
+���= ���������⋅�����⋅��+ ���−��−���−��−��
+����⋅�⋅��mat /2
+Eq. 2.71
+where:
+���������
+is the transmissibility based on the SIGMAGD keyword
+���� (where v =
+up or down)
+is the mobility of the fluid in the upstream cell for the relevant phase. The upstream
+cell is determined from the sign of the potential difference (which is the whole
+parenthesized expression in either equation 2.69, equation 2.70 or equation 2.71: this
+includes the gravitational potential energy term. The upstream cell has the higher
+total potential).
+DZmat
+is the matrix block height given in the DZMATRIX keyword
+�
+is the acceleration due to gravity
+��
+is the phase density in the matrix
+��
+����
+is given by ��
+����= ��⋅��+ ��⋅��+ ��⋅��
+One drawback with this formulation is that the final recovery from a block can become a function of the
+transmissibility in the case when the final recovery is given by �= 0 when the vertical flows balance the
+horizontal �ℎ= −���−�����. This effect can be avoided (in the case of oil) by invoking an option to
+prevent the re-infiltration of oil; see the GRAVDRM keyword in the RUNSPEC section.
+Note that the SIGMA and SIGMAGD values can be calculated from the block dimensions by using the
+LTOSIGMA keyword in conjunction with the LX, LY and LZ keywords.
+Vertical discrete matrix gravity drainage model
+The third alternative gravity drainage model uses the discrete matrix model (Eclipse 100) or multi porosity
+model (Eclipse 300), both of which provide a number of matrix porosities connected together in a chain,
+with the outermost connected to the fracture. If the NMATOPTS keyword is set to the value VERTICAL,
+then this chain of matrix porosities will be interpreted as a vertical stack of matrix cells connected within a
+single block of matrix material of height DZMATRIX. This value of the keyword will also connect all
+submatrix porosities to the fracture. The number of porosities used will still be defined by the NMATRIX
+keyword.
+When these options are activated, the physical picture of the fracture cell and its associated matrix cells is
+as shown in figure 2.20. Each matrix cell sees the same fracture cell conditions. To prevent this limitation
+reducing the accuracy of the solution unacceptably, the properties of the fracture cell are altered for each
+Eclipse 100
+Eclipse technical description
+Grid and reservoir modeling
+109
+SLB – Private
+
+
+===== PAGE 110 =====
+NNC describing the matrix-fracture links to agree better with the property variations with height which
+would be experienced if the fracture were similarly discretized. This alteration takes into account the
+change with height of gravitational potential and any phase discontinuities (which are described in the
+same way as for the GRAVDR model).
+Figure 2.20. The discretized matrix material block within a fracture cell
+Note: The connections to the fracture are shown explicitly; the discrete matrix model connections are
+shown as a single arrow.
+In Eclipse 300, the input requirements for multi porosity give greater flexibility in the variation of
+properties at different heights of the matrix, but it is recommended that all the porosities are given the same
+property values.
+Diffusion
+Molecular diffusion of gas and oil between the matrix and fracture may be a significant production
+mechanism from the matrix. The Eclipse diffusion option is described in "Diffusion".
+Viscous displacement (Eclipse 100)
+Viscous displacement of a fluid is simply the movement of that fluid when a pressure differential is
+applied. In a dual porosity system there is a pressure gradient in the fracture system moving the fluid
+through the fracture, towards the production wells. In many cases this pressure gradient is small as the
+fracture system has a very high effective permeability. In these cases it is reasonable to ignore the viscous
+displacement of fluids from the matrix by the fracture pressure gradient. However, if the fracture system
+has a more moderate permeability then flow to and from the matrix caused by the fracture pressure
+gradient may be expected to act as a significant production mechanism.
+The viscous displacement option that models this effect is activated using the VISCD keyword in the
+RUNSPEC section. The representative matrix block sizes are input using the LX, LY and LZ keywords in
+the GRID section.
+Provided that the representative matrix block sizes have been input using the LX, LY and LZ keywords, it
+is possible to calculate the SIGMA factor from these matrix block dimensions using the LTOSIGMA
+keyword. Note that if SIGMA is calculated in this way then any input SIGMA data will be ignored.
+The Eclipse viscous displacement model is based on a technique described by Gilman and Kazemi (1988).
+Eclipse 300
+Eclipse technical description
+Grid and reservoir modeling
+110
+SLB – Private
+
+
+===== PAGE 111 =====
+Figure 2.21. A representative matrix block in a fracture potential gradient
+Consider a representative matrix block in a fracture potential gradient. The average fracture potential is
+given by Pf, with an effective pressure drop across the block of �1−�2.
+If the matrix pressure is ��1, which is greater than both �1 and �2 then clearly the flow will be from
+matrix to fracture,
+�= �
+2 ⋅����1−�1 + �
+2 ⋅����1−�2
+Eq. 2.72
+where:
+�
+is the matrix-fracture transmissibility
+��is the matrix mobility.
+Hence
+�= �⋅����1−��
+Eq. 2.73
+that is the usual matrix-fracture flow since ��= �1 + �2 /2.
+If the matrix pressure is lower than both P1 and P2 (for example Pm3) then the flow is from fracture to
+matrix, and as above can be expressed as:
+�= �⋅����−��3
+Eq. 2.74
+where:
+�� is the fracture mobility.
+But in the case where the matrix pressure is Pm2, where �1 > ��2 > �2, flow will occur from fracture to
+matrix at one end and from matrix to fracture at the other. In this case the flow is given by
+�= �
+2 ⋅��⋅�1−��2 −�
+2 ⋅��⋅��2−�2
+Eq. 2.75
+This can be written as
+�= �
+2 ⋅��⋅��+
+�1−�2
+2
+−��2 −�
+2 ⋅��⋅��2−��+
+�1−�2
+2
+Eq. 2.76
+P1 and P2 are not known directly in the simulator, but an estimate of the fracture potential gradient can be
+made from the adjacent cell pressures. Now
+�1−�2 = �⋅�
+Eclipse technical description
+Grid and reservoir modeling
+111
+SLB – Private
+
+
+===== PAGE 112 =====
+where:
+�is the fracture pressure gradient
+�is the representative dimension of the matrix block in the appropriate direction, input using the LX, LY
+and LZ keywords.
+Equation 2.76 can be written as a standard matrix-fracture flow with modified up-winding and an extra
+term associated with the viscous displacement
+�= �
+2 ⋅��⋅��−��2 −�
+2 ⋅��⋅��2−��+ �
+4 ⋅�⋅�⋅��−��
+Eq. 2.77
+The matrix-fracture flows are modified in a similar manner for all three directions.
+The fracture potential gradient, G, is estimated from the potential differences to the surrounding cells.
+Figure 2.22. Estimating the potential differences to the surrounding cells
+�=
+��−�
+2��
++
+�−��
+2��
+Eq. 2.78
+where:
+��−� and �−��are the absolute values of the potential difference to adjacent cells
+Dl and Dr are the distance between the cell centers.
+In this version of Eclipse the fracture potential gradients are calculated from the potential differences at the
+previous timestep.
+Facilities specific to dual porosity runs
+Fracture permeabilities
+It is necessary to be clear about what the input fracture permeability represents. By default Eclipse
+multiplies the input fracture permeabilities by the fracture porosity to generate an effective permeability. If
+the input fracture permeabilities themselves represent the effective value, then the NODPPM keyword
+should be used in the GRID section.
+Matrix-fracture relative permeabilities
+Usually two sets of saturation functions (relative permeabilities and capillary pressures) are supplied, one
+for the matrix cells and one for the fracture cells. The SATNUM keyword in the REGIONS section is used
+to associate the tables with the appropriate grid blocks. As Eclipse ‘upwinds’ the flows, a phase flow from
+matrix to fracture takes the relative permeability calculated from the phase saturation in the matrix using
+the matrix table. Flow from the fracture to the matrix uses the fracture saturation and table.
+Eclipse technical description
+Grid and reservoir modeling
+112
+SLB – Private
+
+
+===== PAGE 113 =====
+If a separate relative permeability table is required for the matrix/fracture flow, this can be specified using
+the KRNUMMF keyword in the REGIONS section. If the Hysteresis option is active, then a corresponding
+keyword IMBNUMMF can be used to specify the imbibition relative permeability table.
+When flow occurs from fracture to matrix it may be more reasonable to regard the maximum relative
+permeability as the matrix relative permeability at the residual saturation of the displaced phase. This effect
+can be easily achieved without specifying separate matrix-fracture tables (KRNUMMF), by scaling the
+fracture relative permeability. This scaling can be activated by using the third data item in the DPKRMOD
+keyword.
+Simplified grid input
+The keyword DPGRID may be used to simplify the construction of grids for dual porosity runs. This
+keyword enables grid data to be entered for the matrix cells only (the first NDIVIZ/2 layers), the missing
+values for the remaining fracture layers being obtained from the corresponding matrix cell.
+Note: Only certain keywords can be copied to the fracture in this way. Check the DPGRID keyword for the
+complete list
+Use of FLUXNUM or MULTNUM or OPERNUM
+The use of these keywords differs between Eclipse 100 and Eclipse 300.
+Only the matrix cells need to be input. Eclipse 100 will copy these values to the fracture cells
+automatically. If both matrix and fracture cells are given, a warning message would be output complaining
+about too much data. If you want to specify matrix cells and fracture cells separately, then set item 117 of
+the OPTIONS keyword to be greater than 1.
+Both matrix and fracture cells should be provided. FLUXNUM and MULTNUM use with MULTREGT or
+MULTREGP, will automatically copy all matrix cells to the corresponding fracture cells, so dummy fracture
+values could be input. For OPERNUM use, and other FLUXNUM and MULTNUM uses, there is no copying of
+data from the matrix to fracture cells.
+Partially fractured reservoirs
+In a dual-porosity single-permeability run, the simulation model may be specified to be dual porosity only
+in part of the reservoir, using the keyword DPNUM. Eclipse treats the rest of the reservoir as in a
+conventional single porosity run. In this case, the single porosity cells are taken to be matrix cells for input
+purposes, and any data input for fracture cells in the single porosity region is ignored.
+Diffusion
+The Molecular Diffusion option can be limited to calculate only the matrix/fracture diffusive terms, by
+using the DIFFDP keyword. The assumption is that diffusion in the fracture system is negligible compared
+to the fracture flows. The matrix/fracture diffusivity can be modified using the DIFFMMF keyword in the
+GRID and SCHEDULE sections.
+Modifying the recovery versus time response
+The shape of the recovery versus time response can be modified by changing the matrix relative
+permeability curves. Eclipse provides a simplified method of changing the input relative permeabilities
+using only a single parameter. Typically this is useful when matching a dual porosity cell to a finely
+Eclipse 100
+Eclipse 100
+Eclipse 300
+Eclipse 100
+Eclipse technical description
+Grid and reservoir modeling
+113
+SLB – Private
+
+
+===== PAGE 114 =====
+gridded single porosity model. The facility is described in more detail in a subsequent section and is
+activated with the DPKRMOD keyword.
+Integrated capillary pressure option
+This option automatically generates a modified capillary pressure function with the aim of improving the
+prediction of final recovery from a matrix cell. The option is described in detail in a subsequent section and
+is activated with the INTPC keyword.
+Calculating SIGMA from the matrix dimensions
+If the Viscous Displacement option has been used, the representative matrix block sizes will have to be
+entered using the LX, LY and LZ keywords. It is possible to calculate the SIGMA value from these block
+dimensions by specifying the LTOSIGMA keyword. Note that if this keyword is used then any input
+SIGMA values are ignored.
+Restrictions on dual porosity runs
+The following restrictions apply to dual porosity (DUALPORO) runs (except in single porosity regions
+specified using DPNUM), but not to dual porosity, dual permeability (DUALPERM) runs.
+•
+Wells connect only to fracture cells - not to matrix cells.
+•
+Non-neighbor connections (keyword NNC) may not be used with matrix cells. The internal connection
+of each matrix cell to its appropriate fracture cell is made automatically by Eclipse.
+•
+Each active matrix cell must connect with an active fracture cell.
+In single porosity regions, there are no active fracture cells. Within these regions, data is only required for
+the matrix cells; any data for the fracture cells are ignored. Wells should connect to matrix blocks within
+single porosity regions.
+For a coal bed methane model, the DUALPERM option should only be used if the instant adsorption model
+in Eclipse 300 is activated (CBMOPTS) or if the time-dependent adsorption model is used with Multi-
+Porosity. With the time-dependent sorption model, one of the submatrix porosities will then represent the
+pore volume of the matrix having conductivity to neighbor matrix grid blocks, while grid cells assigned to
+be coal will get a zero transmissibility.
+Keyword summary
+Table 2.1. Summary of dual porosity keywords
+Restriction
+Keyword
+Description
+GRID keyword
+BTOBALFA Initiates block to block connections and specifies a single
+contact area multiplier.
+GRID keyword
+BTOBALFV Initiates block to block connections and specifies contact
+area multipliers.
+Switch in RUNSPEC
+DUALPORO Initiates the dual porosity model.
+Switch in RUNSPEC
+DUALPERM Initiates the dual permeability model.
+Switch in RUNSPEC
+GRAVDR
+Requests alternative gravity drainage model
+Switch in RUNSPEC
+GRAVDRM
+Requests alternative gravity drainage model
+Eclipse 100
+Eclipse technical description
+Grid and reservoir modeling
+114
+SLB – Private
+
+
+===== PAGE 115 =====
+Restriction
+Keyword
+Description
+RUNSPEC keyword
+NMATRIX
+In Eclipse 100, requests the discretized matrix model.
+In Eclipse 300, requests the equivalent discretized matrix
+if the NMATOPTS option is used - otherwise see "Multi
+porosity".
+SIGMA or SIGMAV required
+SIGMA
+Matrix-to-fracture coupling factor for the entire grid.
+SIGMA or SIGMAV required
+SIGMAV
+Matrix-to-fracture coupling factor for the current box.
+SIGMA or SIGMAV required
+MULTSIG
+Matrix-to-fracture coupling multiplier for the entire grid.
+SIGMA or SIGMAV required
+MULTSIGV Matrix-to-fracture coupling multiplier for the current
+box.
+DZMTRX or DZMTRXV required
+if gravity drainage is active.
+DZMTRX
+Specifies the typical block height for gravity drainage for
+the entire grid.
+DZMTRX or DZMTRXV required
+if gravity drainage is active
+DZMTRXV
+Specifies the typical block height for gravity drainage for
+the current box.
+Eclipse 100
+Optional when the viscous
+displacement option is active
+LX
+Specifies the representative X dimension of the matrix
+block.
+Eclipse 100
+Optional when the viscous
+displacement option is active
+LY
+Specifies the representative Y dimension of the matrix
+block.
+Eclipse 100
+Optional when the viscous
+displacement option is active
+LZ
+Specifies the representative Z dimension of the matrix
+block.
+Eclipse 100
+Optional when the viscous
+displacement option is active
+DIFFDP
+Restricts the molecular diffusion calculation to just the
+matrix-fracture flows.
+Optional
+DPGRID
+Enables you to enter grid data for the matrix cells only.
+Optional
+DPNUM
+Identifies the extent of the regions in which the single
+porosity model may be applied in a dual porosity run.
+Eclipse 100
+Optional if the hysteresis option
+is active
+IMBNUMMF Imbibition table region for matrix-fracture flows.
+Eclipse 100
+Optional
+KRNUMMF
+Kr region for matrix-fracture flows.
+Optional
+NODPPM
+Specifies that permeabilities in the fracture cells are not
+to be multiplied by the fracture porosity.
+Recommended
+SATNUM
+To specify different saturation region to the matrix and
+fracture cells.
+Optional
+SIGMAGD
+In Eclipse 100: Matrix-to-fracture coupling for oil-gas
+gravity drainage, for the entire grid. If this is used,
+SIGMA is the coupling for oil-water gravity drainage
+In Eclipse 300: Alternative matrix-fracture coupling for
+all phases for gravity-drainage dominated potentials.
+Eclipse technical description
+Grid and reservoir modeling
+115
+SLB – Private
+
+
+===== PAGE 116 =====
+Restriction
+Keyword
+Description
+Optional
+SIGMAGDV SIGMAGD by cell for the current box.
+Optional
+MULSGGD
+Matrix-to-fracture multiplier for SIGMAGD, for the entire
+grid.
+Optional
+MULSGGDV Matrix-to-fracture multiplier for SIGMAGD by cell, for
+the current box.
+Optional
+INTPC
+Invokes the integrated capillary pressure option
+Eclipse 100
+Optional
+DPKRMOD
+Modifies oil Kr curve for matching fine grid single
+porosity recovery vs. time, and allows scaling of the
+fracture relative permeability.
+Eclipse 100
+Optional if the viscous
+displacement option is active
+LTOSIGMA Requests that the SIGMA value is to be calculated from
+the LX, LY and LZ data.
+Optional if the discretized
+matrix option is active
+NMATOPTS Specifies the geometry type of the matrix and the size of
+the outer matrix cell.
+Eclipse 300
+Optional
+PERMMF
+Permeability for Matrix-Fracture Coupling.
+Eclipse 300
+Optional
+MULTMF
+Multiplier for Matrix-Fracture Permeability.
+Optional
+DIFFMMF
+Multiplier for Matrix-Fracture Diffusivities.
+Transfer functions
+Transfer functions are curves representing the oil expelled from a matrix element as a function of time. To
+simulate a gas/oil transfer function, set up a reservoir grid as shown below. Make the bottom matrix cell
+inactive using keyword ACTNUM. Fill the fracture cells, F1 and F2, with gas and the matrix cell, M1, with
+oil and connate water using the appropriate keywords in the SOLUTION section. Include keyword
+GRAVDR in the RUNSPEC section. Record the oil saturation in cell F2 using BOSAT in the SUMMARY
+section. Run the simulation for a few years. Display the transfer function using post-processing software.
+Adjust DZMTRX and/or Pcogm to match the observed data or match to a finely gridded single porosity
+model.
+Figure 2.23. A simple reservoir grid used to simulate a gas/oil transfer function
+Modifying the recovery versus time response (Eclipse 100)
+The eventual recovery of oil from a matrix block is governed by the final balance between the gravity head
+and the capillary pressure. The initial rate of drainage is governed by the transmissibility between the
+Eclipse technical description
+Grid and reservoir modeling
+116
+SLB – Private
+
+
+===== PAGE 117 =====
+matrix and fracture, which in turn is controlled by the shape factor SIGMA. The ‘shape’ of the recovery
+curve between the end points can be modified by changing the relative permeability function for the
+matrix-fracture flow.
+This can be done by modifying the relative permeability curves directly. However, when matching a finely
+gridded single porosity model or experimental results it is often simpler to modify a single parameter to
+change the ‘shape’ of the recovery versus time response. The DPKRMOD keyword applies a quadratic
+modification to the oil relative permeability to achieve this aim.
+The modification factor is not a physical quantity and should be regarded only as a tuning parameter to
+match a dual porosity block with a finely gridded single porosity model.
+The scaling for oil-in-water relative permeability is as follows.
+For the case where mw (the modification factor set in DPKRMOD) is greater than 0.0:
+��= ��+ ����−��
+Eq. 2.79
+where
+��
+is the relative permeability at �= SOWCR + 1.0 −SWCO /2
+���
+is the input table relative permeability
+SOWCR is the critical oil to water saturation
+SWCO
+is the connate water saturation
+�
+is the modification function, which is given by �= 4.0�����2 −4.0�����+ 1
+For the case where �� is less than 0.0, then the same scaling is applied but with the X and Y axes
+�, ���
+ reversed.
+Given a saturation �, a new saturation �′ is calculated such that:
+�+ ��′−�= �
+Eq. 2.80
+where
+�
+is SOWCR + 1.0 −SWCO /2
+�is the modification function, which is given by �= 4.0�����′ 2 −4.0�����′ + 1
+��is then taken as ���′ .
+Scaling the fracture relative permeability (Eclipse 100)
+By default, both the fracture-to-fracture flow and the fracture-to-matrix flow uses the fracture relative
+permeability table. Typically this will have a maximum relative permeability to water of 1.0, whereas the
+water relative permeability in the matrix at residual oil saturation is likely to be lower than 1.0. In some
+cases the matrix relative permeability may provide a better description of the fracture-to-matrix flow.
+The fracture scaling option in the DPKRMOD keyword modifies the fracture relative permeability for the
+fracture-to-matrix flow while leaving the fracture-to-fracture relative permeability alone.
+Eclipse technical description
+Grid and reservoir modeling
+117
+SLB – Private
+
+
+===== PAGE 118 =====
+For the water phase the fracture relative permeability is scaled as follows:
+�����= ���
+tab ��⋅���max/���max
+Eq. 2.81
+where
+���
+tab ��
+is the fracture relative permeability looked up using the input table
+���max is the matrix relative permeability at ��= 1.0−�����
+���max
+is the maximum fracture relative permeability
+�����
+is the critical oil saturation to water.
+The other phases are treated in an analogous manner. In the gas case the relative permeability is scaled to
+the matrix value at ��= 1.0−����� and in the oil case at ��= 1.0−max ����, ����.
+Solution of the linear equations
+The linear equations associated with dual porosity/permeability simulations can be written in the form
+��+ ��= ��
+��+ ��= ��
+where
+�
+is the usual banded matrix for the matrix cells
+�
+is the banded matrix for the fracture cells
+��
+is the matrix residual
+��
+is the fracture residual
+� and �are diagonal matrices coupling the fracture and matrix systems
+� and �are the solutions (pressure and saturation changes) in the matrix and fracture cells respectively.
+In the dual-porosity, single-permeability case, there is no direct communication between neighboring
+matrix cells and the matrix A is diagonal. This greatly enhances the efficiency of the solution procedure
+used by Eclipse because the equations can now be simplified to the form
+�−�⋅�−1��= ��−�⋅�−1��
+Eq. 2.82
+�= �−1 ��−��
+Eq. 2.83
+where �−1 is the inverse of A.
+Because �⋅�−1� is diagonal it does not alter the banded structure of �. The problem size is effectively
+halved because the equation for y only involves fracture cells. The equations are solved sequentially, first
+Eclipse technical description
+Grid and reservoir modeling
+118
+SLB – Private
+
+
+===== PAGE 119 =====
+for the fracture solution, y, and then for the matrix solution, x. In the more expensive dual porosity/dual
+permeability case above simplification does not apply and the equations are solved simultaneously.
+Data for single porosity regions in a dual porosity run is copied internally to the fracture cells, so that the
+above simplification still applies.
+In dual permeability simulations, the linear equations can be solved more efficiently by pairing together the
+corresponding matrix and fracture cells. For a three-phase run, the diagonal entries of the Jacobian matrix
+are then 6 × 6 matrices of the form.
+�=
+���
+�
+��
+Eq. 2.84
+where �� and �� are the diagonal terms of the matrix and fracture Jacobian matrices. To account for the
+extra dimension, a fourth nesting has been used in the Nested Factorization preconditioner (see "Solution
+of the linear equations"). Using the notation of that chapter, an approximation, B, is constructed to the full
+Jacobian matrix.
+�= �+ �1 + �1 + �2 + �2 + �3 + �3
+Eq. 2.85
+where the band terms �1 and �1 and so on represent flows between matrix or fracture cells. The following
+nested sequence of factorizations is used
+�=
+�+ �3 �−1 �+ �3
+�=
+�+ �2 �−1 �+ �2
+�=
+�+ �1 �−1 �+ �1
+�=
+Γ + �Γ−1 Γ + �
+Eq. 2.86
+where � is a diagonal matrix (whose elements are all 3 × 3 matrices in the three-phase case), and � has the
+same structure as �.
+If item 60 of the OPTIONS keyword is set greater than zero, the less efficient dual permeability solver for
+pre-97A versions of Eclipse is restored. If you encounter problems with your simulation run you may also
+wish to use this option.
+Calculation of fractional volumes for gravity drainage
+The initial fractional volume of water below the water contact, ���, is
+���=
+���−����
+1−���ℎ�−����
+Eq. 2.87
+Eclipse 100
+Eclipse 100
+Eclipse technical description
+Grid and reservoir modeling
+119
+SLB – Private
+
+
+===== PAGE 120 =====
+Figure 2.24. Initial fractional volume of water below the water contact
+where
+Swi
+is the initial water saturation
+Swcr
+is the critical water saturation
+Swco is the connate water saturation
+Scohy is the connate hydrocarbon saturation
+= Socow (oil/water systems)
+= Socow + Sgco (oil/water/gas systems)
+= Sgco (gas/water systems)
+Scrhy is the critical hydrocarbon saturation.
+If ��> ��� then
+��= 1 when
+��= �� max = ���1−���ℎ�+ 1−���
+1−���ℎ�
+��= ��−������ℎ�−���ℎ�−����/ 1−���ℎ�−���� when ��< �� max
+If ��< ��� then
+��= 0 when ��= �� min = �������+ 1−�������
+��= ��−�������−����−����/ 1−���ℎ�−���� when ��> �� min
+The initial fractional volume of gas above the gas contact, Xgi, is
+���=
+���−����
+1−����−����
+Eq. 2.88
+Eclipse technical description
+Grid and reservoir modeling
+120
+SLB – Private
+
+
+===== PAGE 121 =====
+Figure 2.25. Initial fractional volume of gas above the gas contact
+where
+Sgi
+is the initial gas saturation
+Sgco is the connate gas saturation
+Sgcr is the critical gas saturation
+Slco is the connate liquid saturation
+= Sogow (oil/gas systems)
+= Sogow + Swco (oil/water/gas systems)
+= Swco (gas/water systems)
+Slcr is the critical liquid saturation
+If ��> ��� then
+��= 1 when ��= �� max = ���1−����+ 1−���
+1−����
+��= ��−�������−����−����/ 1−����−���� when ��< �� max
+If ��< ��� then
+��= 0 when ��= �� min = �������+ 1−�������
+��= ��−�������−����−����/ 1−����−���� when ��> �� min
+Variation of the sigma factor with drainage process
+In a typical water-wet system, production of oil from the matrix will be dominated by two different
+processes in different regions of the reservoir, depending on the displacing fluid. In the water invaded zone
+the production will be by water imbibition (assisted by gravity drainage), and in the gas invaded zone by
+gravity drainage (retarded by capillary effects).
+A single sigma factor may not be sufficient to model both these cases. Typically, gravity drainage is a
+slower process than imbibition because the displaced fluid flows mainly in one direction (vertically).
+Eclipse technical description
+Grid and reservoir modeling
+121
+SLB – Private
+
+
+===== PAGE 122 =====
+The SIGMAGD keyword is available in three-phase dual-porosity runs to input a second sigma value for
+gas-oil recovery processes. The matrix-fracture transmissibility based on SIGMAGD will be used to
+calculate the oil flow when the following conditions are satisfied:
+•
+The gravity drainage model is active,
+•
+Oil flow is from the matrix to the fracture,
+•
+The gravity drainage head associated with gas in the fracture is greater than the head associated with
+water.
+Note that in Eclipse 300, the SIGMAGD keyword has a different function, as described in "Calculation of
+fractional volumes for gravity drainage".
+Rock volume and cell activation in dual porosity thermal
+calculations
+Rock volume
+In single porosity calculations, the rock volume is simply the cell volume less the pore volume. In dual
+porosity calculations, this leads to a double counting of rock volume, as the cell volume is in reality
+common to all the cells of different porosity sharing the same location. To prevent this, the rock volume,
+defined as the average cell volume for all porosities less the total pore volume in all cells in that location, is
+shared between the porosities. Each cell receives the same rock volume as its pore volume. Any remaining
+rock volume is given to the matrix. If there is not enough rock volume to achieve this, the rock volume is
+shared in proportion to the cell pore volume.
+As a special case, if a cell in one porosity has ACTNUM=2(see below), meaning that the cell is rock only,
+then the remaining rock is shared equally among all the porosities for that cell location.
+As a special case, if a cell in one porosity has ACTNUM=3(see below), meaning that the cell is pore-volume
+only, then the pore volume assumed is the physical volume divided by the number of porosities. If an
+asymmetric pore volume distribution is required, the net-to-gross value can be adjusted as a weighting
+factor.
+If this option does not achieve the desired rock distribution, you can override it with the ROCKSPLV
+keyword.
+ACTNUM
+The ACTNUM keyword allows you to deactivate cells. In thermal calculations, you can also deactivate
+either the fluids or the rock to give an energy-only or flow-only calculation in that cell.
+In dual porosity, total deactivation of the matrix causes deactivation of the fracture, and the other way
+round. But rock-only or flow-only deactivation only affects the porosity specified. The specification of
+rock-only or flow-only cells does not affect the distribution of rock among the porosities, as described
+above; however, the rock or pore volume calculated may be set to zero by the ACTNUM flag.
+There is no automatic default for synchronizing ACTNUM rock-only or flow-only deactivations with the
+rock distribution. It is suggested that you take advantage of the possibility to deactivate using porosity
+(keyword PORO) or pore volume (keyword PORV) and ROCKSPLV to control deactivation through the
+volume sizes on a per cell, per porosity basis.
+If a cell is rock-only (ACTNUM=2) then the rules for apportioning rock volume are modified; see above. If
+a cell is pore-volume only (ACTNUM=3) then the rules for apportioning pore volume are modified; see
+above.
+Eclipse 100
+Eclipse 300
+Eclipse technical description
+Grid and reservoir modeling
+122
+SLB – Private
+
+
+===== PAGE 123 =====
+Integrated capillary pressure option
+When a gravity drainage option is in use, the final recovery from the matrix is determined by the balance
+between the capillary pressure and gravity forces. The final saturation distribution in the matrix block can
+be thought of as a transition zone where at each height the capillary pressure is ��= Δ �⋅�⋅ℎ.
+Within the dual porosity matrix representation, it is desirable that the final recovery should be equal to the
+final recovery from the continuous matrix medium. This can be achieved by modifying the capillary
+pressure curves in the matrix to take account of the fact that the rock Pc curves need to be integrated over
+the matrix block height to calculate the average saturation.
+The integrated Pc option is activated by using the INTPC keyword in the PROPS section. The appropriate
+modified capillary pressure curves are written to the PRINT file for inspection if either the SWFN or SGFN
+mnemonics are used in the RPTPROPS keyword.
+The integration procedure for the gas-oil capillary pressure is as follows, starting with a piecewise linear
+table:
+��= ���� and ��= ��
+−1 ��
+where ��
+−1 is the inverse capillary pressure function.
+Now consider a matrix block of height h with a contact ��= 0  at the bottom of the block and a capillary
+pressure � at the top.
+Figure 2.26. Integrated capillary pressure
+The average gas saturation �� in the matrix block up to the height h equivalent to ��= � is given by
+��= 1
+�⋅
+0
+���
+−1 ���
+Eq. 2.89
+This can be used to set up a modified capillary pressure function such that the capillary pressure at a
+saturation �� is equal to the gravity drainage head for a block of height h and saturation ��.
+The gravity drainage model accounts for the gravity head within a grid block, by assuming vertical
+equilibrium. (Note that if the gravity drainage option is not used the gravity head within a grid block is
+ignored.)
+Eclipse technical description
+Grid and reservoir modeling
+123
+SLB – Private
+
+
+===== PAGE 124 =====
+For the gravity drainage model selected by GRAVDR, the gravity head ���� is proportional to the mobile
+oil saturation, assuming the fracture is filled with gas:
+����=
+��−��
+��
+⋅Δ�⋅�⋅ℎ
+Eq. 2.90
+where
+��
+is 1−SWCO −SOGCR
+SWCO
+is the connate water saturation
+SOGCR is the critical oil-in-gas saturation
+Δ�
+is the difference between the gas and oil densities
+�
+is the acceleration due to gravity
+ℎ
+is the block height.
+Now the pressure at the top of the matrix block � is given by
+�= Δ�⋅�⋅ℎ
+From this a new capillary pressure function can be constructed, such that at a saturation �� the capillary
+pressure is exactly equal to ���� and hence the equilibrium saturation will be at (and only at) ��= ��.
+The constructed capillary pressure function ��′ should have ��′ ��= ����, and thus
+��′ ��=
+��−��
+��
+⋅�
+Eq. 2.91
+where � is the true capillary pressure at the top of the block when the equilibrium saturation is ��. This can
+be calculated by looking up the table of �� versus � given by Equation 2.89, which is stored in Eclipse as a
+table.
+For the alternative gravity drainage model selected by GRAVDRM, the gravity head ���� is proportional to
+P/2, assuming the fracture is filled with gas. This condition requires that oil is not re-infiltrating into the
+matrix, and this possibility should be excluded using the GRAVDRM keyword.
+Notes
+•
+By construction, for any block height h the ‘correct’ final saturation is achieved by running the
+simulator to a stable state when:
+�′�� = gravity drainage head,
+�= �− for that block height.
+•
+At other saturations (�≠�−) a potential difference generates the usual flow to and from the block.
+•
+During equilibration the modified capillary pressure is accounted for. Note however that the
+equilibrium saturation is not the same as in the equivalent drained block, as the fluids above the contact
+are assumed to be only connate water + gas, where a drained block includes the residual oil
+Eclipse technical description
+Grid and reservoir modeling
+124
+SLB – Private
+
+
+===== PAGE 125 =====
+Discretized matrix model (Eclipse 100)
+Traditional dual porosity models assume that the matrix to fracture flow is in steady state, and thus the
+matrix cell can be regarded as a single cell. In some cases, however, for example a well test in a dual
+porosity system, the transient nature of the matrix to fracture flow can be important. To model these
+systems a discretized matrix model is available, which subdivides each matrix cell into a series of nested
+sub-cells, allowing the simulator to predict the transient behavior.
+The matrix cells are still only connected to their corresponding fracture cell, but flow to the matrix surface
+is supplied from a one dimensional grid system. Each matrix grid cell could be regarded as a “Russian
+Doll” of nested matrix sub-cells.
+Matrix sub-grid
+The matrix subdivision is set up automatically by Eclipse once you have specified the number of sub-cells
+to split each matrix cell into, using the NMATRIX keyword in the RUNSPEC section. The differing
+properties across the field are specified in the usual way by using the standard GRID section keywords
+including SIGMAV to specify the matrix-fracture transmissibility.
+The generated grid is logarithmic away from the fracture wall and can represent a linear (1D), radial (2D)
+or spherical (3D) geometry. You can control the size of the outer matrix sub-cell (as a fraction of the
+corresponding fracture cell) and the geometry type using the NMATOPTS keyword. Once the outer sub-cell
+size and the number of sub-cells required are known, the growth factor for each individual matrix cell can
+be calculated. The maximum and minimum growth factors across the field are reported in the PRINT file.
+If NMATOPTS is omitted, then provided NMATRIX is present, the default values from NMATOPTS will be
+assumed.
+First an overview of the discretization is given for the linear and non-linear geometry types, and then a
+more detailed view of the volume and transmissibility calculations will be provided.
+Overview of Linear geometry
+If the geometry is assumed to be 1D then the SIGMA factor and hence the matrix-fracture transmissibility
+are assumed to represent 1D flow.
+Figure 2.27. Nested matrix sub-cells in linear geometry
+The matrix-fracture transmissibility is assumed to be the transmissibility associated with flow over the
+distance d, through area A. The sub-cell transmissibilities are then calculated assuming a 1D logarithmic
+grid over the same matrix volume.
+Overview of cylindrical and spherical geometries
+In the 2D (Cylindrical) and 3D (Spherical) flow options the geometry is taken to be Cartesian to enable
+simple mapping from the input matrix-fracture transmissibility.
+Eclipse technical description
+Grid and reservoir modeling
+125
+SLB – Private
+
+
+===== PAGE 126 =====
+Figure 2.28. Nested matrix sub-cells in cylindrical and spherical geometry
+In the 2D case the diagram represents a square cylinder with the matrix-fracture transmissibility assumed
+to represent four times the flow over the distance d through area A. In the 3D case the diagram represents a
+cube with the transmissibility taken as sum of six flows out of the six faces.
+In each case the sub-cell transmissibilities are calculated assuming a logarithmic distribution of sub-cell
+sizes away from the fracture walls.
+Volume and transmissibility calculations details
+Let the nth sub-matrix cell have volume ��, where n=1 is the sub-cell nearest the fracture, and �� is the
+sub-cell furthest away. N is the value input by keyword NMATRIX. Then:
+��= Σ
+�
+��
+where �� is the volume of the whole matrix region.
+The outermost sub-cell volume �1 is determined by the fraction of the fracture pore volume specified by
+item 2 of the NMATOPTS keyword. The sizes of the remaining sub-cells are then functions of the factor
+�=
+�
+�1
+1
+�−1
+where
+X
+is the distance of the center of the matrix from the fracture surface, and
+�1 is the width of the outermost sub-cell.
+For a LINEAR assumed geometry (NMATOPTS item 1), the distances X and �1 are assumed proportional to
+the volumes �� and �1 respectively. For CYLINDRICAL or SPHERICAL geometries, these distances are
+calculated from the geometry of a cylindrical or spherical shell with inner and outer radii X and X- �1,
+using the known volumes �� and �1 for the whole cylinder/sphere and the shell.
+Eclipse technical description
+Grid and reservoir modeling
+126
+SLB – Private
+
+
+===== PAGE 127 =====
+The factor f gives the distance �� from the matrix-fracture surface to the inner surface of the remaining
+(n>1) interior sub-cells by
+��= ��−1�1
+that is, the logarithms of the �� scale linearly.
+As with �1, when the assumed geometry is CYLINDRICAL or SPHERICAL, the sub-cells are cylindrical
+or spherical shells around the center of the matrix, and �−�� is the inner radius of the shell. The shell
+volume is determined from the inner and outer radii, with the same constant of proportionality as used to
+determine X and �1 in the first place. For a LINEAR assumed geometry the sub-cells are assumed to be
+slabs parallel to the matrix-fracture surface, arranged from the surface to the center of the matrix, and the
+volumes are assumed proportional to the distances. The overall effect of this is to obey the relationship
+��−�−�1
+�
+��
+=
+�1
+��
+The transmissibilities between the sub-cells are then determined by the area of the surface between them
+and the distance between the sub-cell centers (where for CYLINDRICAL and SPHERICAL geometries,
+cell center means the radius halfway between the cell’s two surfaces, and for LINEAR geometries, the
+position halfway between the cell’s two surfaces). Thus for any geometry, the center of cell n (n>1) is at
+��= 1
+2 ��−1 + ��
+and the area of the interface between cells n and n+1 is
+��= ��−��
+�−1
+where D is the dimensionality (LINEAR=1, CYLINDRICAL=2, SPHERICAL=3) and Z is a constant for
+all the sub-cells n. For LINEAR this is the constant area equivalent to the outer area of the matrix; for
+CYLINDRICAL it is 2π times the height of the matrix cylinder and for SPHERICAL it is 4π.
+Then the transmissibility of the original matrix-fracture connection is scaled to the sub-cell to sub-cell
+connection by the factor
+��=
+��
+��
+2�
+��−��−1
+where ��= ���−1 is the outer area associated with overall matrix size X. Note that the factor Z cancels
+out in the expression as only ratios of the A factors are used.
+For the transmissibility between the outer matrix sub-cell and the fracture, the factor �1 is 2�/�1
+Initialization, solution method and efficiency
+The internal sub-matrix cells cannot be explicitly initialized in the way that the normal matrix cells can,
+and so the EQUIL keyword must be used to perform an initialization.
+The matrix sub-grid forms a series of separate 1D flow systems connected through the outer sub-cells only
+to the corresponding fracture cells. In the solution matrix structure these flows lead to a set of tri-diagonals
+connected to the fracture system. This structure is used in the pre-conditioning step by eliminating the tri-
+diagonals before the fracture system is solved, effectively reducing the problem to a set of flow equations
+for the fracture only. Once the fracture equations have been solved a back substitution gives the matrix
+sub-grid solution.
+Eclipse technical description
+Grid and reservoir modeling
+127
+SLB – Private
+
+
+===== PAGE 128 =====
+Clearly, discretizing the matrix increases the total number of cells in the model. However, the efficiency of
+the above procedure ensures that increasing the number matrix sub-cells will have a significantly smaller
+effect on the run time than a similar increase in the number of simulation grid blocks.
+Reporting the matrix solution
+The solution for separate sub-cells (or rings) of the matrix can be output as arrays over the simulation grid
+by setting any of the first 5 data items in RPTSCHED to 2. If an individual sub-cell solution is required as a
+function of time, the following summary keywords are available:
+BPR, BRS, BRV, BOSAT and BWSAT.
+The matrix sub-cell is specified by appending its ring number to the end of the keyword, for example:
+BOSAT7
+ 1 1 2 /
+/
+The ring number starts from 1 for the outer sub-cell and increases towards the center of the matrix cell.
+Note that ring 1 is equivalent to the keyword without a ring number and represents the matrix sub-cell
+adjacent to the fracture.
+Restrictions
+The option cannot at present be used with the following:
+•
+gravity drainage models (GRAVDR, GRAVDRM)
+•
+Local grid refinement option
+•
+Dual permeability model
+•
+Parallel option
+and must use the following to initialize the sub-matrix cells
+•
+EQUIL
+Discretized matrix model (Eclipse 300)
+The discretized matrix model can be invoked in Eclipse 300 in a similar way to Eclipse 100. However
+there are some differences in the setup as the Eclipse 300 model is based on the multi-porosity options
+described in "Multi porosity". The DIMENS keyword needs to include all porosities in the Z-direction.
+The model generates new SIGMAV values for the connections between the matrix sub-grid cells, following
+the geometric partitioning as described for Eclipse 100. The input primary (outer) matrix block volumes,
+pore volumes and rock volumes, are partitioned between the matrix sub-grid cells. Both transmissibilities
+and diffusivities are then generated from the new SIGMA values, the block volumes, pore volumes and
+rock volumes (the rock volumes are only used if the rock contains adsorbed gas). Permeabilities, for the
+transmissibilities as given by PERMX or PERMMF, are by default copied from the primary matrix grid cells
+if unspecified.
+The geometrical partitioning is done in the same way as for Eclipse 100 for LINEAR, RADIAL and
+SPHERICAL discretization methods. In addition the UNIFORM and VERTICAL methods are available in
+Eclipse 300. For information, see the NMATOPTS keyword.
+The volumes of the partitioned outer matrix grid cells, that connect to the fracture grid cells, can be set
+either
+Eclipse technical description
+Grid and reservoir modeling
+128
+SLB – Private
+
+
+===== PAGE 129 =====
+•
+to match a fraction of the fracture pore volume using NMATOPTS item 3 set to FPORV, or
+•
+to match a fraction of the matrix bulk volume using NMATOPTS item 3 set to MBLKV.
+When the feature is used with coal or shale gas, the definition of volumes with adsorbed gas needs to be
+considered. For information on this, see "Shale Gas". It is recommended that the keyword ROCKFRAC is
+used to set the input rock fractions and that the PORO keyword is used to set the input porosity fractions.
+This makes it easier to switch between the instant adsorption model and the time-dependent sorption
+model, since the inputs for setting rock and pore volumes are compatible. Only the input from the primary
+matrix grid cells are used to generate the partitioned matrix volumes.
+Further information about the Eclipse 300 matrix discretization model can be found in "Multi porosity".
+Single medium conductive fractures (Eclipse 300)
+An alternative dual porosity formulation in Eclipse 300 is the Single Medium Conductive Fractures
+development. This is based on a generalization of the technique described in van Lingen et al (2001).
+The technique allows the incorporation of the effects of conductive fractures into a single medium model
+(that is not explicitly using a dual system of porosities or permeabilities) by modification of grid properties
+and the generation of pseudo tables. It is focused on modeling fractures on scales that are too large to be
+homogenized using the traditional approach.
+For further details of the technique, please refer to van Lingen et al (2001). The sections below assume that
+the reader has familiarity with the paper, and outline the approach taken in Eclipse 300, including
+extensions and generalizations on the technique described in the paper, and how to use the Eclipse 300
+development.
+The single medium approach
+For a given input fracture swarm distribution map, and associated fracture properties, there are three
+subsequent main areas of implementation:
+•
+Grid property modifications
+•
+Pseudo generation
+•
+Well PI modifications
+The implementation of the technique in these areas is described in the following paragraphs.
+Grid property modifications
+Firstly grid block properties are modified to take account of the physical void introduced by the fractures.
+The porosities are increased by proportional volume averaging, and permeabilities flow-averaged using
+Darcy's Law, either arithmetically (parallel to fracture) or harmonically (perpendicular to the fracture).
+The approach taken in Eclipse 300 differed to that in the paper in
+•
+the full use of all cell dimensions (rather than assuming square cells)
+•
+the calculation of directional permeability enhancements (parallel and perpendicular components)
+•
+allowing for vertical permeability enhancement
+•
+allowing for fracture volumes in porosity modifications.
+One further modification is to recognize fractures being defined in a zigzag rasterized format. When the
+path of a fracture changes direction by 90 degrees within one cell, the effective length of the fracture is
+Eclipse technical description
+Grid and reservoir modeling
+129
+SLB – Private
+
+
+===== PAGE 130 =====
+halved. This attempts to model the intention that the fracture does not traverse the cell in question twice,
+but rather somehow ‘turns a corner’.
+Pseudo generation
+The saturation curves of the fractures and affected grid blocks are combined under the assumption that oil
+is displaced from fractures by either gas or water before any oil is displaced from the matrix volume of a
+grid block, which requires that any capillary imbibition is dominated by viscous and gravity effects. Under
+this assumption, the saturation tables are averaged by determining end point saturations from mass
+conservation, and end point relative permeabilities by Darcy's Law arithmetic averaging of effective phase
+flows. The original fracture tables are then used in a scaled form during the fracture invasion by gas or
+water, and scaled matrix tables are used for matrix invasion. Notice that (as in the paper) the fracture tables
+are assumed straight lines; no attempt is made to combine the full shape of the curve with that of the
+matrix.
+Since the permeabilities and saturation tables used potentially vary on a grid block basis, the above could
+feasibly result in one set of pseudo tables for each affected cell. To reduce the dimensionality, a grouping
+technique is used that averages the pseudo end points used over cells with common attributes, these being
+saturation region, permeability value, and the number of contained fractures. This extended the paper’s
+treatment which assumed that layers represented the saturation regions.
+If velocity dependent relative permeability effects are being modeled, the values used for the internally
+generated tables for the VDKRG, VDKRO and VDKRGC keywords will be taken from the associated input
+matrix tables. For example, if input saturation function table sets 1 and 2 correspond to the input matrix
+and fracture properties respectively of a grid block required to model a single medium conductive fracture
+using the internally generated table set 3, the VDKRG, VDKRO and VDKRGC properties for table 3 will be
+taken from those specified for table 1. The VDKRG, VDKRO and VDKRGC properties assigned to the
+internal tables can be reported using the RPTPROPS keyword. Prior to 2016.1, these values were not
+defined for the internally generated tables. Pre-2016.1 behavior can be restored by setting item 342 of the
+OPTIONS3 keyword to 1.
+Note: Capillary curves are not included in this treatment, and are merely extrapolated at constant value
+from the matrix end-point values.
+Well PI
+By default, wells completed in grid blocks containing conductive fractures will experience enhanced flows
+due to the increased effective permeability, due to both the permeability and relative permeability changes.
+Van Lingen et al (2001) argues that this only arises if the fracture actually cuts the well bore in a
+connection cell. Because of this, you are required to specify whether or not a well connection cell is to be
+modified by this treatment by indicating whether it is cut by fractures or not. If not, then the well PI is
+modified so as to reverse the changes in permeability, and the connection cell saturation table reverts to
+that of the original matrix block. You are also given the chance to enter a PI multiplier to indicate perhaps
+some degree of connection with conductive faults.
+Using the conductive fractures model
+The conductive fractures model is activated by specification of the SCFDIMS keyword in the RUNSPEC
+section, which also sets up dimensioning defaults for reading in the fracture details, and also defaults for
+the pseudo grouping algorithms used.
+The conductive fractures themselves should be specified using the CONDFRAC keyword, one for each
+fracture being modeled. This specifies the path of fracture planar segments through the grid blocks, the
+Eclipse technical description
+Grid and reservoir modeling
+130
+SLB – Private
+
+
+===== PAGE 131 =====
+effective aperture, fracture permeability, and saturation table number to use. The format is similar to the
+FAULTS keyword, but note that the fractures are assumed to pass through a block, whereas faults run
+alongside blocks. For this reason, when a ‘corner’ is detected in the fracture, the contribution from the two
+intersecting segments is halved, to reflect the fact that the corner is formed notionally at the center of the
+cell, rather than around the edges.
+The well intersection behavior is controlled using the WELLCF keyword.
+Compatibility
+The feature has been made explicitly compatible with the restart mechanism, and will run in parallel mode.
+It is currently restricted to family (ii) saturation table keywords - SWFN, SGFN and SOF2/SOF3.
+The development is known not to be compatible with the following options:
+•
+radial grids
+•
+analytic saturation functions
+•
+MPFA
+•
+Up-front memory
+•
+LGRs
+•
+The Leverett J-function option per saturation function JFUNCR
+Eclipse technical description
+Grid and reservoir modeling
+131
+SLB – Private

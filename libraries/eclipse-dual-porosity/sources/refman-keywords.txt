@@ -1,0 +1,3512 @@
+
+
+
+############ KEYWORD: DUALPORO  (Ref. Manual pp.699-700) ############
+
+--- p.699 ---
+DUALPORO
+Run is to use dual porosity
+This requests that the dual porosity option is used in the run.
+If either DUALPORO or dual permeability (DUALPERM) are used, the number of layers entered in item 3 of
+the DIMENS keyword must be even. Eclipse interprets the first half of the grid layers as matrix cells, and
+the remainder as fracture cells. The non-neighbor connections representing matrix-fracture flow
+transmissibilities are automatically constructed.
+See "Dual porosity" in the Eclipse Technical Description for further information.
+The keyword has no associated data.
+x
+Eclipse 100
+x
+Eclipse 300
+x
+RUNSPEC
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+699
+DUALPORO
+SLB – Private
+
+--- p.700 ---
+DUMPCUPL
+Tells master run to write a reservoir coupling file
+The DUMPCUPL keyword may be used in a Reservoir Coupling master run if you wish it to write the flows
+and applied constraints of the master groups to the output Reservoir Coupling file (see "Reservoir coupling
+files" in the Eclipse Technical Description).
+The file may then be used for two purposes:
+•
+In the master run, it can take the place of one or more of the slave reservoirs. Their slave runs are not
+activated, and instead the associated master groups take their production and injection rates from this
+file.
+•
+A slave run may be performed on its own, instead of being activated by the master run. It will read
+from this file the constraints that the master run originally applied to its slave groups over the course of
+the simulation, and apply them again in the same sequence.
+Runs using the Reservoir Coupling file must have the keyword USECUPL entered.
+The DUMPCUPL keyword is followed by a record containing a single character, terminated with a slash (/).
+The character dictates the type of file to be written. The choices are:
+U Write an unformatted file
+F Write a formatted file.
+Formatted files occupy much more disk space than unformatted files, but should be chosen if the Reservoir
+Coupling file is going to be used on a system that does not have binary compatibility with the one on
+which it was created. Note that the formatted/unformatted status of the Reservoir Coupling file can be
+chosen independently of keyword FMTOUT in the RUNSPEC section.
+The Reservoir Coupling file created has the same root name as the Master Run’s data file. The filename’s
+extension is .CPL for an unformatted file, and .FCP for a formatted file.
+Note that the DUMPCUPL instruction is not carried over on the Restart file. If you wish to restart the
+Master Run and continue writing a Reservoir Coupling file (which is a new file having the restart run’s
+root name), you must include the DUMPCUPL keyword in the restart run’s SCHEDULE section. A suitable
+place for the keyword is at the beginning of the SCHEDULE section, or next to the SLAVES keyword.
+Example
+DUMPCUPL
+ U /
+x
+Eclipse 100
+Eclipse 300
+RUNSPEC
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+x
+SCHEDULE
+Eclipse reference manual
+Keywords
+700
+DUMPCUPL
+SLB – Private
+
+
+
+############ KEYWORD: DUALPERM  (Ref. Manual pp.698-699) ############
+
+--- p.698 ---
+DUALPERM
+Run is to use dual permeability
+This requests that the dual permeability option is used in the run.
+This extends the dual porosity option to allow flow directly between matrix cells. It is not necessary to
+specify the DUALPORO keyword as well as DUALPERM, as the DUALPERM keyword will also enable the
+dual porosity option.
+See "Dual porosity" in the Eclipse Technical Description for further information.
+The keyword has no associated data.
+Note: A faster linear solver was introduced in 97A for the solution of dual permeability problems. With
+some problems the pre-97A solver may prove to be more robust: it can be turned on by using item 60 of
+the OPTIONS keyword in RUNSPEC.
+x
+Eclipse 100
+x
+Eclipse 300
+x
+RUNSPEC
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+698
+DUALPERM
+SLB – Private
+
+--- p.699 ---
+DUALPORO
+Run is to use dual porosity
+This requests that the dual porosity option is used in the run.
+If either DUALPORO or dual permeability (DUALPERM) are used, the number of layers entered in item 3 of
+the DIMENS keyword must be even. Eclipse interprets the first half of the grid layers as matrix cells, and
+the remainder as fracture cells. The non-neighbor connections representing matrix-fracture flow
+transmissibilities are automatically constructed.
+See "Dual porosity" in the Eclipse Technical Description for further information.
+The keyword has no associated data.
+x
+Eclipse 100
+x
+Eclipse 300
+x
+RUNSPEC
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+699
+DUALPORO
+SLB – Private
+
+
+
+############ KEYWORD: SIGMA  (Ref. Manual pp.2119-2121) ############
+
+--- p.2119 ---
+SIGMA
+Dual porosity matrix-fracture coupling
+If the dual porosity or dual permeability options are being used (by specifying the DUALPORO or
+DUALPERM keyword in the RUNSPEC section), this keyword can be used to specify a multiplier to be used
+in the construction of the matrix-fracture coupling transmissibilities.
+If this keyword is used, the sigma factor is applied to the entire grid.
+This ‘sigma factor’ may be related to the matrix block size by the expression:
+�= 4
+1
+��
+2 + 1
+��
+2 + 1
+��
+2
+Eq. 3.172
+where ��, �� and �� are typical X, Y and Z dimensions of the matrix blocks.
+The relationship was proposed by Kazemi (1976).
+The dimensions of the matrix blocks used above are not the dimensions of the simulation grid, but of the
+elements of matrix material in the reservoir.
+UNITS: m-2 (METRIC), ft-2 (FIELD), cm-2 (LAB), m-2 (PVT-M)
+Alternatively, sigma may be treated as a simple history matching factor.
+If neither SIGMA nor SIGMAV are specified then the default sigma factor is 0.0 throughout the grid, unless
+LTOSIGMA is specified in runs using the viscous displacement option.
+The dual porosity and dual permeability options are discussed in more detail in "Dual porosity" in the
+Eclipse Technical Description.
+Example
+SIGMA
+0.12 /
+Using Kazemi's expression, in FIELD units, a value of 0.12 would correspond to 10 ft. matrix blocks.
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse 100
+Eclipse 100
+Eclipse reference manual
+Keywords
+2119
+SIGMA
+SLB – Private
+
+--- p.2120 ---
+SIGMAGD
+Matrix-fracture coupling for oil-gas gravity
+drainage
+This keyword can be used to specify an alternative matrix-fracture coupling for matrix cells in which the
+production mechanism is gravity drainage due to the presence of gas in the fractures.
+If this keyword is used, the sigmagd factor is applied to the entire grid.
+Different sigmagd values can be specified on a cell by cell basis using the SIGMAGDV keyword.
+The particular formula used to prescribe the alternative is different between Eclipse 100 and Eclipse 300.
+In Eclipse 100 this keyword is used to provide a different sigma factor for regions swept by gas, while the
+standard sigma factor is used for regions swept by water. In Eclipse 300 however, the keyword is used to
+provide an alternative sigma factor value when the gravity drainage potential is the dominant pressure
+term, while allowing smooth variation of sigma as the pressure increases. The next paragraphs provide
+details on these two formulas.
+In Eclipse 100 the matrix-fracture transmissibility based on SIGMAGD will be used to calculate the oil flow
+when the following conditions are satisfied:
+•
+The gravity drainage model is active.
+•
+Oil flow is from the matrix to the fracture.
+•
+The gravity drainage head associated with gas in the fracture is greater than the head associated with
+water.
+Hence regions in which the fractures are swept by gas will drain through a transmissibility based on
+SIGMAGD, and regions swept by water will be produced through a transmissibility based on SIGMA.
+The SIGMAGD keyword is only available in three-phase dual porosity runs (keyword DUALPORO in the
+RUNSPEC section).
+This sigma factor may be related to the matrix block size by the expression:
+�= 4
+1
+��
+ 2 + 1
+��
+ 2 + 1
+��
+ 2
+Eq. 3.173
+where ��, �� and �� are typical X, Y and Z dimensions of the matrix blocks.
+The relationship was proposed by Kazemi (1976).
+The dimensions of the matrix blocks used above are not the dimensions of the simulation grid, but of the
+elements of matrix material in the reservoir.
+Alternatively sigma may be treated as a simple history matching factor.
+When calculating the matrix-fracture transmissibility for gravity drainage, the matrix Z-permeabilities are
+used by default, rather than the X-permeabilities. The pre-99A treatment (using the X-permeabilities) may
+be restored using item 70 in the OPTIONS keyword.
+In Eclipse 300, if SIGMA and SIGMAGD are both entered, the program uses an interpolated value,
+depending on the relative sizes of the capillary pressure and gravity drainage pressure terms. Thus if
+capillary pressures dominates, SIGMA values are used, whilst if gravity drainage dominates SIGMAGD
+values are used.
+If neither SIGMAGD nor SIGMAGDV are specified, the transmissibilities are based on the sigma value
+supplied by the SIGMA or SIGMAV keywords, unless LTOSIGMA is specified.
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+2120
+SIGMAGD
+SLB – Private
+
+--- p.2121 ---
+Refer to "Gravity imbibition/drainage" in the Eclipse Technical Description for more details.
+Examples
+Example 1
+SIGMA
+ 0.12 /
+Using Kazemi's expression, in FIELD units, a value of 0.12 would correspond to 10 ft matrix blocks.
+Example 2
+Smaller SIGMAGD as the gravity drainage is assumed to be dominated by flow only in the z-direction.
+SIGMAGD
+ 0.02 /
+Eclipse reference manual
+Keywords
+2121
+SIGMAGD
+SLB – Private
+
+
+
+############ KEYWORD: SIGMAV  (Ref. Manual pp.2125-2127) ############
+
+--- p.2125 ---
+SIGMAV
+Dual porosity matrix-fracture coupling
+If the dual porosity option is being used (keyword DUALPORO in the RUNSPEC section), this keyword can
+be used to specify a multiplier to be applied in the construction of the matrix-fracture coupling
+transmissibilities.
+The keyword should be followed by one positive real number for every grid block in the current box within
+the top NDIVIZ/2 layers of the grid (that is, the matrix cells). Any values input in the bottom half of the
+grid (the lower NDIVIZ/2 layers) will be ignored.
+This sigma factor may be related to the matrix block size by the expression:
+�= 4
+1
+��
+ 2 + 1
+��
+ 2 + 1
+��
+ 2
+Eq. 3.175
+where ��, �� and �� are typical X, Y and Z dimensions of the matrix blocks.
+The relationship was proposed by Kazemi (1976) as described in "Matrix-matrix transmissibility and
+diffusivity" in the Eclipse Technical Description.
+The dimensions of the matrix blocks used above are not the dimensions of the simulation grid.
+UNITS: m-2 (METRIC), ft-2 (FIELD), cm-2 (LAB), m-2 (PVT-M)
+Alternatively sigma may be treated as a simple history matching factor.
+If neither SIGMA nor SIGMAV are specified then the default sigma factor is 0.0 throughout the grid, unless
+LTOSIGMA is specified in runs using the Viscous Displacement option.
+When the SIGMA values are output (mnemonic SIGMAV in the RPTGRID keyword) the first NDIVIZ/2
+layers are copied into the lower half of the grid.
+When the multi-porosity option is in use (NMATRIX>1) and the grid properties for each porosity are
+specified separately (NMATOPTS is not used), then each porosity in the grid now has NDIVIZ/(NMATRIX
++1) layers. Most of the properties entering the multi-porosity transmissibility or diffusivity between
+porosities are associated with the corresponding inner matrix layer. However, for SIGMAV this is only true
+for the matrix-fracture connection as in dual porosity. For multi-porosity connections between matrix cells,
+the SIGMAV value of the outer matrix is used (see "Matrix-matrix transmissibility and diffusivity" in the
+Eclipse Technical Description). This forces SIGMAV to have NMATRIX contiguous porosities of data,
+leaving the last porosity unused and preventing the need to fill a porosity with unused default values, as the
+last porosity can be defaulted by omission.
+When SIGMA values are output, values are not copied into parts of the grid corresponding to other
+porosities. They are not output to the PRT file, and are set to zero in the restart file.
+Example
+--------- IX1-IX2 JY1-JY2 KZ1-KZ2
+BOX
+            1   8   1   1   1   2   /
+SIGMAV
+ 0.12 0.12 0.12 0.12 0.12 0.12 0.12 0.12
+ 1.0  1.0  1.0  1.0  1.0  1.0  1.0  1.0   /
+Using Kazemi’s expression, in FIELD units, a value of 0.12 would correspond to 10 ft matrix blocks.
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse 100
+Eclipse 300
+Eclipse reference manual
+Keywords
+2125
+SIGMAV
+SLB – Private
+
+--- p.2126 ---
+SIMULATE
+Turn on simulation
+This keyword counteracts a NOSIM keyword in the SCHEDULE section and turns on the timestep
+simulation.
+The keyword has no associated data.
+Eclipse 100 - Note that this keyword cannot counteract a RUNSPEC section NOSIM keyword or NOSIM in
+item 3 of the LOAD keyword during a restart run.
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+x
+SCHEDULE
+Eclipse reference manual
+Keywords
+2126
+SIMULATE
+SLB – Private
+
+--- p.2127 ---
+SKIP
+Skip reading of keywords
+This keyword causes all subsequent keywords to be ignored, up to the next ENDSKIP keyword.
+The skipping of keywords is terminated by the ENDSKIP keyword.
+The keywords SKIP, SKIP100 and SKIP300 can be nested provided each instance is matched with an
+ENDSKIP keyword.
+Example
+----GRID section
+SKIP
+CARFIN
+'HUGE' 1 20 1 20 1 20 100 100 100 /
+ENDFIN
+ENDSKIP
+x
+Eclipse 100
+x
+Eclipse 300
+x
+RUNSPEC
+x
+GRID
+x
+EDIT
+x
+PROPS
+x
+REGIONS
+x
+SOLUTION
+x
+SUMMARY
+x
+SCHEDULE
+Eclipse reference manual
+Keywords
+2127
+SKIP
+SLB – Private
+
+
+
+############ KEYWORD: SIGMAGD  (Ref. Manual pp.2120-2122) ############
+
+--- p.2120 ---
+SIGMAGD
+Matrix-fracture coupling for oil-gas gravity
+drainage
+This keyword can be used to specify an alternative matrix-fracture coupling for matrix cells in which the
+production mechanism is gravity drainage due to the presence of gas in the fractures.
+If this keyword is used, the sigmagd factor is applied to the entire grid.
+Different sigmagd values can be specified on a cell by cell basis using the SIGMAGDV keyword.
+The particular formula used to prescribe the alternative is different between Eclipse 100 and Eclipse 300.
+In Eclipse 100 this keyword is used to provide a different sigma factor for regions swept by gas, while the
+standard sigma factor is used for regions swept by water. In Eclipse 300 however, the keyword is used to
+provide an alternative sigma factor value when the gravity drainage potential is the dominant pressure
+term, while allowing smooth variation of sigma as the pressure increases. The next paragraphs provide
+details on these two formulas.
+In Eclipse 100 the matrix-fracture transmissibility based on SIGMAGD will be used to calculate the oil flow
+when the following conditions are satisfied:
+•
+The gravity drainage model is active.
+•
+Oil flow is from the matrix to the fracture.
+•
+The gravity drainage head associated with gas in the fracture is greater than the head associated with
+water.
+Hence regions in which the fractures are swept by gas will drain through a transmissibility based on
+SIGMAGD, and regions swept by water will be produced through a transmissibility based on SIGMA.
+The SIGMAGD keyword is only available in three-phase dual porosity runs (keyword DUALPORO in the
+RUNSPEC section).
+This sigma factor may be related to the matrix block size by the expression:
+�= 4
+1
+��
+ 2 + 1
+��
+ 2 + 1
+��
+ 2
+Eq. 3.173
+where ��, �� and �� are typical X, Y and Z dimensions of the matrix blocks.
+The relationship was proposed by Kazemi (1976).
+The dimensions of the matrix blocks used above are not the dimensions of the simulation grid, but of the
+elements of matrix material in the reservoir.
+Alternatively sigma may be treated as a simple history matching factor.
+When calculating the matrix-fracture transmissibility for gravity drainage, the matrix Z-permeabilities are
+used by default, rather than the X-permeabilities. The pre-99A treatment (using the X-permeabilities) may
+be restored using item 70 in the OPTIONS keyword.
+In Eclipse 300, if SIGMA and SIGMAGD are both entered, the program uses an interpolated value,
+depending on the relative sizes of the capillary pressure and gravity drainage pressure terms. Thus if
+capillary pressures dominates, SIGMA values are used, whilst if gravity drainage dominates SIGMAGD
+values are used.
+If neither SIGMAGD nor SIGMAGDV are specified, the transmissibilities are based on the sigma value
+supplied by the SIGMA or SIGMAV keywords, unless LTOSIGMA is specified.
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+2120
+SIGMAGD
+SLB – Private
+
+--- p.2121 ---
+Refer to "Gravity imbibition/drainage" in the Eclipse Technical Description for more details.
+Examples
+Example 1
+SIGMA
+ 0.12 /
+Using Kazemi's expression, in FIELD units, a value of 0.12 would correspond to 10 ft matrix blocks.
+Example 2
+Smaller SIGMAGD as the gravity drainage is assumed to be dominated by flow only in the z-direction.
+SIGMAGD
+ 0.02 /
+Eclipse reference manual
+Keywords
+2121
+SIGMAGD
+SLB – Private
+
+--- p.2122 ---
+SIGMAGDV
+Matrix-fracture coupling for oil-gas gravity
+drainage
+This keyword can be used to specify an alternative matrix-fracture coupling for matrix cells in which the
+production mechanism is gravity drainage due to the presence of gas in the fractures.
+The keyword should be followed by one positive real number for every grid block in the current box within
+the top NDIVIZ/2 layers of the grid (that is, the matrix cells). Any values input in the bottom half of the
+grid (the lower NDIVIZ/2 layers) will be ignored.
+The particular formula used to prescribe the alternative is different between Eclipse 100 and Eclipse 300.
+In Eclipse 100 this keyword is used to provide a different sigma factor for regions swept by gas, while the
+standard sigma factor is used for regions swept by water. In Eclipse 300 however, the keyword is used to
+provide an alternative sigma factor value when the gravity drainage potential is the dominant pressure
+term, while allowing smooth variation of sigma as the pressure increases. The next paragraphs provide
+details on these two formulas.
+In Eclipse 100, the matrix-fracture transmissibility based on SIGMAGD will be used to calculate the oil
+flow when the following conditions are satisfied:
+•
+The Gravity Drainage Model is active.
+•
+Oil flow is from the matrix to the fracture.
+•
+The gravity drainage head associated with gas in the fracture is greater than the head associated with
+water.
+Hence regions in which the fractures are swept by gas will drain through a transmissibility based on
+SIGMAGD and regions swept by water will be produced through a transmissibility based on SIGMA.
+The SIGMAGDV keyword is only available in three-phase dual porosity runs (keyword DUALPORO in the
+RUNSPEC section).
+This sigma factor may be related to the matrix block size by the expression:
+�= 4
+1
+��
+ 2 + 1
+��
+ 2 + 1
+��
+ 2
+Eq. 3.174
+where ��, �� and �� are typical X, Y and Z dimensions of the matrix blocks.
+The relationship was proposed by Kazemi (1976).
+The dimensions of the matrix blocks used above are not the dimensions of the simulation grid.
+UNITS: m-2 (METRIC), ft-2 (FIELD), cm-2 (LAB), m-2 (PVT-M)
+Alternatively sigma may be treated as a simple history matching factor.
+When calculating the matrix-fracture transmissibility for gravity drainage, the matrix Z-permeabilities are
+used by default, rather than the X-permeabilities. The pre-99A treatment (using the X-permeabilities) may
+be restored using switch 70 in the OPTIONS keyword.
+In Eclipse 300, if SIGMA and SIGMAGD are both entered, the program uses an interpolated value,
+depending on the relative sizes of the capillary pressure and gravity drainage pressure terms. Thus if
+capillary pressures dominates, SIGMA values are used, whilst if gravity drainage dominates SIGMAGD
+values are used.
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+2122
+SIGMAGDV
+SLB – Private
+
+
+
+############ KEYWORD: SIGMAGDV  (Ref. Manual pp.2122-2124) ############
+
+--- p.2122 ---
+SIGMAGDV
+Matrix-fracture coupling for oil-gas gravity
+drainage
+This keyword can be used to specify an alternative matrix-fracture coupling for matrix cells in which the
+production mechanism is gravity drainage due to the presence of gas in the fractures.
+The keyword should be followed by one positive real number for every grid block in the current box within
+the top NDIVIZ/2 layers of the grid (that is, the matrix cells). Any values input in the bottom half of the
+grid (the lower NDIVIZ/2 layers) will be ignored.
+The particular formula used to prescribe the alternative is different between Eclipse 100 and Eclipse 300.
+In Eclipse 100 this keyword is used to provide a different sigma factor for regions swept by gas, while the
+standard sigma factor is used for regions swept by water. In Eclipse 300 however, the keyword is used to
+provide an alternative sigma factor value when the gravity drainage potential is the dominant pressure
+term, while allowing smooth variation of sigma as the pressure increases. The next paragraphs provide
+details on these two formulas.
+In Eclipse 100, the matrix-fracture transmissibility based on SIGMAGD will be used to calculate the oil
+flow when the following conditions are satisfied:
+•
+The Gravity Drainage Model is active.
+•
+Oil flow is from the matrix to the fracture.
+•
+The gravity drainage head associated with gas in the fracture is greater than the head associated with
+water.
+Hence regions in which the fractures are swept by gas will drain through a transmissibility based on
+SIGMAGD and regions swept by water will be produced through a transmissibility based on SIGMA.
+The SIGMAGDV keyword is only available in three-phase dual porosity runs (keyword DUALPORO in the
+RUNSPEC section).
+This sigma factor may be related to the matrix block size by the expression:
+�= 4
+1
+��
+ 2 + 1
+��
+ 2 + 1
+��
+ 2
+Eq. 3.174
+where ��, �� and �� are typical X, Y and Z dimensions of the matrix blocks.
+The relationship was proposed by Kazemi (1976).
+The dimensions of the matrix blocks used above are not the dimensions of the simulation grid.
+UNITS: m-2 (METRIC), ft-2 (FIELD), cm-2 (LAB), m-2 (PVT-M)
+Alternatively sigma may be treated as a simple history matching factor.
+When calculating the matrix-fracture transmissibility for gravity drainage, the matrix Z-permeabilities are
+used by default, rather than the X-permeabilities. The pre-99A treatment (using the X-permeabilities) may
+be restored using switch 70 in the OPTIONS keyword.
+In Eclipse 300, if SIGMA and SIGMAGD are both entered, the program uses an interpolated value,
+depending on the relative sizes of the capillary pressure and gravity drainage pressure terms. Thus if
+capillary pressures dominates, SIGMA values are used, whilst if gravity drainage dominates SIGMAGD
+values are used.
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+2122
+SIGMAGDV
+SLB – Private
+
+--- p.2123 ---
+If neither SIGMAGD nor SIGMAGDV are specified, the transmissibilities will be based on the sigma value
+supplied by the SIGMA or SIGMAV keywords, unless LTOSIGMA is specified.
+When the SIGMAGD values are output (mnemonic SIGMAGDV in the RPTGRID keyword) the first
+NDIVIZ/2 layers are copied into the lower half of the grid.
+Refer to "Gravity imbibition/drainage" in the Eclipse Technical Description for more details.
+Examples
+Example 1
+SIGMAV
+ 0.12 0.12 0.12 0.12 0.12 0.12 0.12 0.12
+ 0.06 0.06 0.06 0.06 0.06 0.06 0.06 0.06 /
+Example 2
+Set SIGMAGDV to SIGMAV
+COPY
+ SIGMAV SIGMAGDV   1  8  1  1  1  2  /
+/
+Example 3
+Divide the SIGMAGDV by 4.
+MULTIPLY
+ SIGMAGDV   0.25      1  8  1  1  1  2  /
+/
+Eclipse reference manual
+Keywords
+2123
+SIGMAGDV
+SLB – Private
+
+--- p.2124 ---
+SIGMATH
+Dual porosity matrix-fracture conductivity
+coupling
+This keyword can only be used with the THERMAL option (keyword THERMAL in the RUNSPEC section).
+If the dual porosity or dual permeability options are being used (keyword DUALPORO or DUALPERM in the
+RUNSPEC section), this keyword can specify an overall multiplier to be used in the construction of the
+matrix-fracture thermal conductivity coupling transmissibilities.
+The SIGMATH keyword is followed by a value for each matrix cell. Thus ������/2 values are required
+in all, in normal grid order with the X-index changing fastest.
+The dual porosity and dual permeability options are discussed in more detail in "Dual porosity" in the
+Eclipse Technical Description.
+The Thermal option is described in "Thermal option" in the Eclipse Technical Description.
+Example
+SIGMATH
+350*0.12 /
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+2124
+SIGMATH
+SLB – Private
+
+
+
+############ KEYWORD: GRAVDR  (Ref. Manual pp.995-997) ############
+
+--- p.995 ---
+GRAVDR
+Use gravity drainage for dual porosity runs
+This requests that gravity drainage and imbibition are modeled between the matrix and fracture cells in a
+dual porosity run.
+If this option is used, then the vertical dimensions for blocks of matrix material should be entered with
+keywords DZMTRX or DZMTRXV in the GRID section.
+See "Dual porosity" in the Eclipse Technical Description for further information. See also keyword
+GRAVDRM.
+The keyword has no associated data.
+x
+Eclipse 100
+x
+Eclipse 300
+x
+RUNSPEC
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+995
+GRAVDR
+SLB – Private
+
+--- p.996 ---
+GRAVDRB
+Use the vertical discretized gravity drainage
+model for dual porosity runs
+This keyword requests that the vertical discretized gravity drainage and imbibition model should be used.
+If this option is used, then the geometry of the matrix sub-cell specified by keyword NMATOPTS must be
+vertical.
+See "Dual porosity" in the Eclipse Technical Description for further information.
+The keyword has no associated data.
+In Eclipse 100, with this model, the minimum value for the number of global cells in the X direction
+(keyword DIMENS) is 2.
+x
+Eclipse 100
+x
+Eclipse 300
+x
+RUNSPEC
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+996
+GRAVDRB
+SLB – Private
+
+--- p.997 ---
+GRAVDRM
+Use the alternative gravity drainage model for
+dual porosity runs
+This keyword requests that the alternative gravity drainage and imbibition model should be used. (The
+GRAVDRM keyword may be used instead of the GRAVDR keyword; if both are present the GRAVDRM
+keyword supersedes GRAVDR.)
+The keyword has one data item, terminated with a slash(/):
+1. Allow re-infiltration
+YES Oil flow is allowed both out of and into the matrix block.
+NO
+Oil flow is only allowed out of the matrix block. With no re-infiltration the final recovery from
+the matrix is more predictable.
+DEFAULT: YES
+2. See "Dual porosity" in the Eclipse Technical Description for further information.
+x
+Eclipse 100
+x
+Eclipse 300
+x
+RUNSPEC
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+997
+GRAVDRM
+SLB – Private
+
+
+
+############ KEYWORD: GRAVDRM  (Ref. Manual pp.997-1000) ############
+
+--- p.997 ---
+GRAVDRM
+Use the alternative gravity drainage model for
+dual porosity runs
+This keyword requests that the alternative gravity drainage and imbibition model should be used. (The
+GRAVDRM keyword may be used instead of the GRAVDR keyword; if both are present the GRAVDRM
+keyword supersedes GRAVDR.)
+The keyword has one data item, terminated with a slash(/):
+1. Allow re-infiltration
+YES Oil flow is allowed both out of and into the matrix block.
+NO
+Oil flow is only allowed out of the matrix block. With no re-infiltration the final recovery from
+the matrix is more predictable.
+DEFAULT: YES
+2. See "Dual porosity" in the Eclipse Technical Description for further information.
+x
+Eclipse 100
+x
+Eclipse 300
+x
+RUNSPEC
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+997
+GRAVDRM
+SLB – Private
+
+--- p.998 ---
+GRAVITY
+Fluid gravities at surface conditions
+The data comprises NTPVT (set in the TABDIMS keyword) records, each terminated by a slash (/).
+Each record consists of the following items of data:
+1. Oil API gravity.
+DEFAULT: 45.5
+UNITS: °API
+2. Water specific gravity (with reference to pure water).
+DEFAULT: 1.0
+3. Gas gravity (with reference to air).
+DEFAULT: 0.7773
+In compositional runs the oil and gas surface densities are obtained from the equation of state and the
+values entered under the GRAVITY keyword are not used. A dummy value may be entered in this case.
+The water specific gravity is always required. Note that GRAVITY always contains three items, even if not
+all three phases are present in the run.
+Note: When using the API tracking option (keyword API in the RUNSPEC section), the set of records
+must be entered in decreasing order of oil API gravity.
+Keyword DENSITY can be used as an alternative to GRAVITY.
+See "Units" of the Eclipse Technical Description for conversion formulae between gravity and density.
+Example
+With two PVT tables:
+GRAVITY
+ 40.1 1.16 0.852 /
+ 36.5 1.16 0.852 /
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+GRID
+EDIT
+x
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse 300
+Eclipse 100
+Eclipse reference manual
+Keywords
+998
+GRAVITY
+SLB – Private
+
+--- p.999 ---
+GRDREACH
+Defines location of grid blocks connecting to a
+river-bed
+This keyword defines the location of the grid blocks connecting to a river and instructs Eclipse to allocate
+each ‘completion’ to a river reach. The river’s reach structure must previously have been defined with the
+REACHES keyword. The location of each connected grid block is defined within the river by the branch
+name and the distance down the river to the start and end of the grid-block. This information must be
+supplied for all the grid-blocks connecting to the river that have been specified with the COMPRIV
+keyword. Eclipse allocates each grid block connection to the reach whose nodal point lies nearest to the
+center of the grid block. It is also possible to specify which reach a grid block belongs to.
+The keyword can only be used on one river at a time, thus it must be specified more than once if there is
+more than one river.
+The keyword is followed by a number of data records to define the location of all the grid block
+connections in the river. Each record is terminated with a slash (/), and the set of records must end with an
+additional blank record containing just a slash.
+The data items in each record are:
+Record 1
+The first record consists of a single item of data that identifies the river.
+1. Name of the river
+End the data record with a slash (/).
+Each subsequent record
+The subsequent records set the start and end of each grid block in terms of distance along the river from the
+river’s zero reference point, and the branch number. The zero length reference point is defined relative to
+item 5 of the first record of keyword REACHES. The grid blocks must previously have been defined with
+keyword COMPRIV.
+The grid blocks may either be specified individually, or in one or more “ranges”. A “range” is a contiguous
+row or column of grid blocks that are connected to the same branch of the river. The river is assumed to go
+through each grid block in the specified direction. The distance along the river to the start and end of each
+grid block in the range is determined by summing the DX, DY or DZ thicknesses of the grid blocks in the
+range. All grid blocks in the river must have their distances set, either individually or within a range,
+working outwards along the main stem and each branch towards its source.
+1. I - location of the individual grid block, or the grid block at the start of the range (nearest the river
+mouth)
+2. J – location of the individual grid block, or the grid block at the start of the range (nearest the river
+mouth).
+3. K - location of the individual grid block, or the grid block at the start of the range (nearest the mouth).
+This item will usually be 1.
+4. Branch name on which this grid block (or range of grid blocks) is located.
+5. Distance down the river from the river’s zero reference point to the start of this grid block.
+UNITS: m (METRIC), ft (FIELD), cm (LAB)
+x
+Eclipse 100
+Eclipse 300
+RUNSPEC
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+x
+SCHEDULE
+Eclipse reference manual
+Keywords
+999
+GRDREACH
+SLB – Private
+
+--- p.1000 ---
+DEFAULT: Zero, for the first of these records, or the distance to the end of the previous grid block or
+range, for subsequent records
+6. Distance down the river from the river’s zero reference point to the end of this grid block.
+This item, if set, must be greater than item 5.
+UNITS: m (METRIC), ft (FIELD), cm (LAB)
+DEFAULT: Value of item 5 + thickness of the grid block in the direction of penetration
+7. Reach number the grid blocks connect to
+Optional: If entered this value will override any value calculated by Eclipse. It is a particularly good
+idea to use this keywords if the grid blocks are dead grid blocks.
+8. Direction of penetration through the grid block or the range.
+X or I for horizontal penetration in the x-direction
+Y or J for horizontal penetration in the y-direction
+Z or K for vertical penetration
+This item is used for calculating the distance to the end of the grid block (or the grid blocks in the
+range), where it defines which component of the grid block size to add (DX, DY or DZ). The item must
+be set if item 6 is defaulted, or if a range is specified in item 9. Otherwise it may be defaulted as it is
+not required.
+9. Grid block I, J, or K coordinate at the end of the range, depending on the direction of penetration set in
+item 7. (For example the I-coordinate of the grid block at the end of the range, if the branch penetrates
+in the I-direction.)
+This may be greater than, or less than, the corresponding grid block coordinate in item 1, 2 or 3,
+depending on whether the branch penetrates out towards the positive or negative I, J or K direction.
+If this item is set, the lengths are calculated for all the river’s grid blocks that lie within the range.
+Should the range pass through an inactive grid block Eclipse prints a warning message and a thickness
+must be set.
+If this item is defaulted, this record sets the data for the single grid block identified by items 1, 2 and 3.
+10. Contact area of this grid block with the river (See item 17)
+UNITS: m2 (METRIC), ft2 (FIELD), cm2 (LAB)
+11. Table number describing contact areas as a function of the depth of water in the river. (See RBEDCONT)
+One of items 10 or 11 must not be defaulted. If both are entered the table number will be ignored.
+12. Productivity index of grid block with river (See item 17)
+UNITS: m/day/bars (METRIC), ft/day/psi (FIELD), cm/hr/atm (LAB)
+DEFAULT: 0.0
+13. The length of a dead grid block in the penetration direction
+UNITS: m (METRIC), ft (FIELD), cm (LAB)
+14. Option to connect a REACH either to the cell center (default) or to cell top. A value of 1 connects this
+REACH to cell top, and a value of 0 connects this REACH to cell center.
+Eclipse reference manual
+Keywords
+1000
+GRDREACH
+SLB – Private
+
+
+
+############ KEYWORD: LTOSIGMA  (Ref. Manual pp.1302-1303) ############
+
+--- p.1302 ---
+LTOSIGMA
+Calculate Sigma from Lx, Ly, Lz
+This keyword is optional in dual porosity runs with the viscous displacement option active (keyword
+VISCD in the RUNSPEC section). It enables Eclipse to calculate the sigma factor from the input matrix
+block dimensions Lx, Ly and Lz.
+The keyword should be followed by some or all of the following items, to allow SIGMA to be calculated
+from Lx, Ly, Lz. Item 4 is used to calculate SIGMAGD from Lz if the gravity drainage option is active.
+The data must be terminated by a slash (/).
+Items 1 to 3: ��, ��, �� factors in the Sigma calculation. DEFAULT: 4.0
+item 4: ��� factor in the Sigmagd calculation.   DEFAULT: 0.0
+item 5:   Specify the transmissibility option to use
+XONLY Use the X-permeability only (see below)
+ALL
+Use all three directional permeabilities
+DEFAULT: XONLY
+This sigma factor is calculated from the matrix block size using the expression:
+�=
+��
+��
+ 2 +
+��
+��
+ 2 +
+��
+��
+ 2
+Eq. 3.113
+where
+��, �� and �� are x, y and z dimensions of the matrix blocks entered using the LX, LY and LZ keywords.
+(Any zero (defaulted) values of ��, �� or �� do not contribute to this sum.)
+The Sigmagd factor is calculated from the matrix block height the using the expression:
+���=
+���
+��
+ 2
+Eq. 3.114
+or zero when ��= 0.0 (defaulted).
+If item 5 is defaulted (XONLY), the Sigma factor is used directly in the matrix-to-fracture transmissibility
+calculations. In this case the transmissibility is given by
+TR = CDARCY ∙�∙�∙�
+Eq. 3.115
+where K is taken as the X-permeability in the matrix.
+Setting item 5 to ALL modifies the calculation of the transmissibility to utilize the matrix permeability in
+all three directions:
+TR = CDARCY ⋅�⋅
+��⋅��
+��
+ 2
++
+��⋅��
+��
+ 2
++
+��⋅��
+��
+ 2
+Eq. 3.116
+Note: Any values of SIGMA(V) and SIGMAGD(V) entered in the GRID section are ignored if the
+keyword is used.
+x
+Eclipse 100
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+1302
+LTOSIGMA
+SLB – Private
+
+--- p.1303 ---
+See also the LX, LY, LZ, SIGMA and SIGMAGD keywords.
+Example
+LTOSIGMA
+ 4.0 4.0 0.0 /
+Eclipse reference manual
+Keywords
+1303
+LTOSIGMA
+SLB – Private
+
+
+
+############ KEYWORD: NMATRIX  (Ref. Manual pp.1465-1466) ############
+
+--- p.1465 ---
+NMATRIX
+Use the discretized matrix or multi-porosity model
+Defines the number of matrix pore systems.
+In Eclipse 100 this keyword activates the discretized matrix dual porosity model, in which the matrix is
+subdivided into smaller cells to allow the modeling of transient effects within the matrix cells (without
+NMATOPTS, or with the first 3 (Eclipse 100) or 4 (Eclipse 300) NMATOPTS options), or to create a more
+detailed representation of gravity drainage (NMATOPTS keyword, VERTICAL option). See the NMATOPTS
+keyword in the GRID section and "Dual porosity" in the Eclipse Technical Description for more details.
+In Eclipse 300 this keyword activates the multi-porosity option. See "Multi porosity" in the Eclipse
+Technical Description.
+Note: In Eclipse 100, explicit initialization of the internal sub-matrix cells is not possible, and the EQUIL
+keyword must be used with NMATRIX so that the sub-matrix cells are properly initialized.
+With this keyword in Eclipse 100, the minimum number of global cells in the X direction (keyword
+DIMENS) is 2.
+With this keyword in Eclipse 100, the additional Z-planes for the matrix sub-cells are stored internally and
+are not part of the deck as described in the DIMENS or CARFIN keywords. For this simulator, these
+keywords should only describe the dual porosity model size.
+By contrast, with this keyword in Eclipse 300, the additional Z-planes for the matrix sub-cells are
+explicitly represented in the DIMENS or CARFIN keywords. For this simulator, the NZ values in these
+keywords should be multiples of the number of porosities, that is (NMATRIX+1).
+This model is not compatible with the use of block to block connections (BTOBALFA or BTOBALFV) or
+with the use of DPNUM to create a single porosity region in a dual porosity run.
+This keyword should not be used for triple-porosity modeling. The TRPLPORO keyword should be used
+instead.
+The keyword should be followed by one data item, defining the number of sub-cells required within each
+original matrix cell. The data item should be followed by a slash (/).
+Example
+NMATRIX
+ 6 /
+x
+Eclipse 100
+x
+Eclipse 300
+x
+RUNSPEC
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+1465
+NMATRIX
+SLB – Private
+
+--- p.1466 ---
+NNC
+Set non-neighbor connection values explicitly
+Non-neighbor connections are usually generated from within the program by faults when corner point
+geometry is used; from the dual porosity or dual permeability options; or from numerical aquifer options.
+This keyword enables a specified transmissibility to be set up between any two cells in the grid.
+The keyword consists of a line of data for each required non-neighbor connection, specifying the cells to
+be linked and the required transmissibility value. The cell coordinates are specified in natural order.
+Each line of data must be terminated by a slash (/). After the last non-neighbor connection is defined, an
+additional slash on a new line terminates the list. It is possible to specify this keyword more than once in
+the grid data.
+The values in each data record are:
+1. I-index of first cell joined to the non-neighbor connection (IX)
+2. J-index of first cell joined to the non-neighbor connection (IY)
+3. K-index of first cell joined to the non-neighbor connection (IZ)
+4. I-index of second cell joined to the non-neighbor connection (JX)
+5. J-index of second cell joined to the non-neighbor connection (JY)
+6. K-index of second cell joined to the non-neighbor connection (JZ)
+7. Transmissibility value of the non-neighbor connection (TRAN)
+UNITS: cP.rm3/day/bars (METRIC), cP.rb/day/psi (FIELD), cP.rcc/hr/atm (LAB), cP.rm3/day/atm
+(PVT-M)
+DEFAULT: 0.0
+8. This item depends on which simulator is being used:
+Eclipse 100 Saturation table number to be associated with flow from the first to the second cell
+(IST1)
+Eclipse 300 Usage deprecated. Enter diffusivity value using item 14 of this keyword. For back
+compatibility purposes, if item 14 is not specified, this value will be used instead.
+DEFAULT: 0.0
+9. This item depends on which simulator is being used:
+Eclipse 100 Saturation table number to be associated with flow from the second to the first cell
+(IST2)
+Eclipse 300 Usage deprecated. Enter thermal conduction transmissibility value using item 15 of this
+keyword. For back compatibility purposes, if item 15 is not specified, this value will be
+used instead.
+10. Pressure table number to be associated with flow from the first to the second cell (IPT1)
+11. Pressure table number to be associated with flow from the second to the first cell (IPT2)
+12. The face associated with flow from the first to the second cell (ZF1)
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse 100
+Eclipse 100
+Eclipse 100
+Eclipse reference manual
+Keywords
+1466
+NNC
+SLB – Private
+
+
+
+############ KEYWORD: NMATOPTS  (Ref. Manual pp.1463-1465) ############
+
+--- p.1463 ---
+NMATOPTS
+Options for the discretized matrix (Eclipse 100) or
+multi porosity (Eclipse 300) models
+For Eclipse 100 the keyword is used to control options associated with the discretized matrix dual porosity
+model. The model must be activated by including the NMATRIX keyword in the RUNSPEC section.
+For Eclipse 300 the keyword means that the model (see "Multi porosity" in the Eclipse Technical
+Description), activated with NMATRIX, is assigned grid data automatically (similar to the discretized
+matrix Dual Porosity Model of Eclipse 100). This means that grid data only needs to be supplied as for a
+standard dual porosity case.
+The NMATOPTS keyword is optional and should be followed by some or all of the following data items,
+terminated by a slash (/).
+1. The assumed geometry of the matrix sub-cells.
+Either LINEAR, RADIAL or SPHERICAL
+In Eclipse 300 there is an additional possibility - UNIFORM. This produces a uniform grid within the
+matrix cells.
+A further alternative possibility is VERTICAL, which is used to model gravity drainage, whereas the
+previous options model transient effects in the flow from matrix to fracture. VERTICAL uses the
+matrix cells as a vertical discretization of an individual block of matrix and connects them all to the
+fracture. See "Vertical discrete matrix gravity drainage model" in the Eclipse Technical Description. If
+this option is used then the keyword GRAVDRB must have been specified in the RUNSPEC section.
+In Eclipse 100, for any discretized matrix option, the minimum number of global cells in the X
+direction (keyword DIMENS) is 2.
+In all cases except VERTICAL, the matrix sub-cells only communicate with the fracture system
+through the outer sub-cell. However, the pressure (and saturation) response from the matrix depends on
+the assumed geometry of the system. In the case of VERTICAL geometry, all matrix sub-cells also
+connect directly with the fracture, and the physical response from the matrix depends on all
+connections. In this case, the geometry is uniform as described in the Technical Description.
+DEFAULT: LINEAR
+2. The fraction of the fracture pore volume (or matrix block volume with Eclipse 300 - see item 3) is to be
+used for the size of the outermost matrix sub-cell. It is not used if UNIFORM or VERTICAL is selected.
+VERTICAL assumes uniform distribution of the matrix volume in the same way as UNIFORM.
+Once the size of the outermost sub-cell and the number of sub-cells in each matrix cell have been
+defined, Eclipse automatically generates a logarithmic grid within the matrix cells. The maximum and
+minimum growth factors over the entire model are reported as a message.
+To model accurately the initial pressure transient response of the matrix cells, the outermost matrix sub-
+cell needs to be reasonably small compared to the fracture system.
+DEFAULT: 0.1
+3. Method for controlling the partitioning (Eclipse 300).
+Either FPORV or MBLKV
+FPORV the fractional value in item 2 is used to construct the size of the first partitioned block from
+the fracture pore volume.
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+1463
+NMATOPTS
+SLB – Private
+
+--- p.1464 ---
+MBLKV the fractional value in item 2 is used to construct the size of the first partitioned block from
+the matrix block volume.
+Using the time-dependent sorption model in Eclipse 300 with the COAL option, the first pore volume of
+the matrix sub-grid might be different from the given fractional value since only some of the sub-grid
+cells might have a pore volume. When there is no pore volume in the matrix (only coal volume) the
+MBLKV method will be used instead.
+DEFAULT: FPORV
+For further information see "Discretized matrix model (Eclipse 100)" in the Eclipse Technical Description.
+Example
+NMATOPTS
+  RADIAL    0.05   /
+Eclipse reference manual
+Keywords
+1464
+NMATOPTS
+SLB – Private
+
+--- p.1465 ---
+NMATRIX
+Use the discretized matrix or multi-porosity model
+Defines the number of matrix pore systems.
+In Eclipse 100 this keyword activates the discretized matrix dual porosity model, in which the matrix is
+subdivided into smaller cells to allow the modeling of transient effects within the matrix cells (without
+NMATOPTS, or with the first 3 (Eclipse 100) or 4 (Eclipse 300) NMATOPTS options), or to create a more
+detailed representation of gravity drainage (NMATOPTS keyword, VERTICAL option). See the NMATOPTS
+keyword in the GRID section and "Dual porosity" in the Eclipse Technical Description for more details.
+In Eclipse 300 this keyword activates the multi-porosity option. See "Multi porosity" in the Eclipse
+Technical Description.
+Note: In Eclipse 100, explicit initialization of the internal sub-matrix cells is not possible, and the EQUIL
+keyword must be used with NMATRIX so that the sub-matrix cells are properly initialized.
+With this keyword in Eclipse 100, the minimum number of global cells in the X direction (keyword
+DIMENS) is 2.
+With this keyword in Eclipse 100, the additional Z-planes for the matrix sub-cells are stored internally and
+are not part of the deck as described in the DIMENS or CARFIN keywords. For this simulator, these
+keywords should only describe the dual porosity model size.
+By contrast, with this keyword in Eclipse 300, the additional Z-planes for the matrix sub-cells are
+explicitly represented in the DIMENS or CARFIN keywords. For this simulator, the NZ values in these
+keywords should be multiples of the number of porosities, that is (NMATRIX+1).
+This model is not compatible with the use of block to block connections (BTOBALFA or BTOBALFV) or
+with the use of DPNUM to create a single porosity region in a dual porosity run.
+This keyword should not be used for triple-porosity modeling. The TRPLPORO keyword should be used
+instead.
+The keyword should be followed by one data item, defining the number of sub-cells required within each
+original matrix cell. The data item should be followed by a slash (/).
+Example
+NMATRIX
+ 6 /
+x
+Eclipse 100
+x
+Eclipse 300
+x
+RUNSPEC
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+1465
+NMATRIX
+SLB – Private
+
+
+
+############ KEYWORD: DZMTRX  (Ref. Manual pp.715-716) ############
+
+--- p.715 ---
+DZMTRX
+The vertical dimension of a block of matrix
+material
+If the dual porosity gravity imbibition option is being used (keywords DUALPORO and GRAVDR or
+GRAVDRM, or the VERTICAL option of NMATOPTS, in the RUNSPEC section), this keyword should be
+used to specify the vertical dimension of a typical block of matrix material (see also lz in keyword
+SIGMA).
+The strength of the gravity imbibition effect is directly proportional to DZMTRX. The effect is usually very
+small. However, in the absence of capillary pressure, there is no other mechanism to equalize the fluid
+levels in matrix and corresponding fracture cells. For further details, see "Dual porosity" in the Eclipse
+Technical Description.
+This keyword specifies the DZMTRX factor for the entire grid. However the DZMTRX factor can be
+specified on a cell by cell basis using the DZMTRXV keyword.
+UNITS: m (METRIC), ft (FIELD), cm (LAB), m (PVT-M)
+DEFAULT: 0.0 (Throughout the grid.)
+Note: This is typically much smaller than the vertical dimension of a simulation matrix cell, DZ.
+Example
+In the following example, the vertical dimension of a block of matrix material is 2ft.
+DZMTRX
+ 2.0 /
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+715
+DZMTRX
+SLB – Private
+
+--- p.716 ---
+DZMTRXV
+The vertical dimension of a block of matrix
+material
+If the dual porosity gravity imbibition option is being used (keywords DUALPORO and GRAVDR,
+GRAVDRM, or the VERTICAL option of NMATOPTS, in the RUNSPEC section), either this keyword or
+keyword DZMTRX should be used to specify the vertical dimension of a typical block of matrix material.
+This keyword allows the DZMTRX values to be specified on a cell by cell basis.
+The strength of the gravity imbibition effect is directly proportional to DZMTRX. The effect is usually very
+small. However, in the absence of capillary pressure, there is no other mechanism to equalize the fluid
+levels in matrix and corresponding fracture cells. For further details, see "Dual porosity" in the Eclipse
+Technical Description.
+The keyword should be followed by one positive real number for every grid block in the current box within
+the top NDIVIZ/2 layers of the grid. Any values input in the bottom half of the grid (the lower NDIVIZ/2
+layers) are ignored. When the DZMTRX values are output (mnemonic DZMTRXV in the RPTGRID
+keyword) the first NDIVIZ/2 layers are copied into the lower half of the grid.
+UNITS: m (METRIC), ft (FIELD), cm (LAB), m (PVT-M)
+DEFAULT: 0.0 (throughout the grid.)
+Note: This is typically much smaller than the vertical dimension of a simulation matrix cell, DZ.
+Example
+In the following example, the vertical dimension of a block of matrix material is 2ft.
+--------- IX1-IX2 JY1-JY2 KZ1-KZ2
+BOX
+            1   4   1   2   1   1   /
+DZMTRXV
+ 8*2.0 /
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+716
+DZMTRXV
+SLB – Private
+
+
+
+############ KEYWORD: DZMTRXV  (Ref. Manual pp.716-717) ############
+
+--- p.716 ---
+DZMTRXV
+The vertical dimension of a block of matrix
+material
+If the dual porosity gravity imbibition option is being used (keywords DUALPORO and GRAVDR,
+GRAVDRM, or the VERTICAL option of NMATOPTS, in the RUNSPEC section), either this keyword or
+keyword DZMTRX should be used to specify the vertical dimension of a typical block of matrix material.
+This keyword allows the DZMTRX values to be specified on a cell by cell basis.
+The strength of the gravity imbibition effect is directly proportional to DZMTRX. The effect is usually very
+small. However, in the absence of capillary pressure, there is no other mechanism to equalize the fluid
+levels in matrix and corresponding fracture cells. For further details, see "Dual porosity" in the Eclipse
+Technical Description.
+The keyword should be followed by one positive real number for every grid block in the current box within
+the top NDIVIZ/2 layers of the grid. Any values input in the bottom half of the grid (the lower NDIVIZ/2
+layers) are ignored. When the DZMTRX values are output (mnemonic DZMTRXV in the RPTGRID
+keyword) the first NDIVIZ/2 layers are copied into the lower half of the grid.
+UNITS: m (METRIC), ft (FIELD), cm (LAB), m (PVT-M)
+DEFAULT: 0.0 (throughout the grid.)
+Note: This is typically much smaller than the vertical dimension of a simulation matrix cell, DZ.
+Example
+In the following example, the vertical dimension of a block of matrix material is 2ft.
+--------- IX1-IX2 JY1-JY2 KZ1-KZ2
+BOX
+            1   4   1   2   1   1   /
+DZMTRXV
+ 8*2.0 /
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+716
+DZMTRXV
+SLB – Private
+
+--- p.717 ---
+DZNET
+Specifies the cell net DZ values
+This keyword specifies the net thickness value for each grid block.
+These values are used in the calculation of grid block pore volumes and transmissibilities in the X and Y
+(or R and theta) directions.
+If DZNET is used, the net to gross ratio is calculated as follows:
+NTG�=
+DZNET�
+DZ�
+Eq. 3.64
+UNITS: m (METRIC), ft (FIELD), cm (LAB), m (PVT-M)
+Any DZNET values which are not specified when the end of the GRID section is reached default to the
+gross grid block thickness (entered using DZ).
+Grid blocks are ordered with the X axis index cycling fastest, followed by the Y and Z axis indices. Repeat
+counts may be used for repeated values (for example 115*0). Note that spaces must not be inserted on
+either side of the asterisk.
+The keyword should be followed by one non-negative real number for every grid block in the current input
+box.
+The data must be terminated with a slash (/).
+CAUTION: The use of both DZNET and NTG keywords in the same run is not allowed.
+Note: In Eclipse 300, cells with a DZNET value of less than 0.000001 will be deactivated. This value can
+be changed with the MINDZNET keyword.
+Example
+-- IX1-IX2 JY1-JY2 KZ1-KZ2
+BOX
+    6  11   4   9   2   3   /
+DZNET
+ 6*8 6*8 6*9.6 6*10.2 6*14 6*14.2
+ 6*8 6*8 6*9.6 6*10.2 6*14 6*14.2 /
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+717
+DZNET
+SLB – Private
+
+
+
+############ KEYWORD: DPGRID  (Ref. Manual pp.673-674) ############
+
+--- p.673 ---
+DPGRID
+Use matrix cell grid data for fracture cells
+This keyword may be used to simplify the input of data for dual porosity runs. It enables grid data to be
+entered for the matrix cells only (the first NDIVIZ/2 layers), the missing values for the remaining fracture
+layers being obtained from the corresponding matrix cell.
+This operation will be performed for the DX, DY, DZ, PERMX, PERMY, PERMZ, PORO, TOPS, MIDS, NTG,
+DZNET, ZCORN, PERMXY, PERMYZ and PERMZX keywords. The copying of the matrix cell value into the
+fracture cell value will only occur if the fracture cell value is not user-defined.
+In the case of the ZCORN keyword, only half the normal set of corner point depths need be supplied (and
+generated by Petrel). This is useful when preparing faulted dual porosity runs. As in the case of the other
+keywords, the BOX keyword may be used to specify values for the cells required.
+When using an unstructured grid supplied by FloGrid, the DEPTHs entered in the EDIT section are also
+copied from matrix to fracture.
+When using the Temperature Option, the thermal conductivity THCONR is also copied from the matrix to
+the fracture.
+When using the Thermal Option, the thermal conductivity THCONR, and the rock heat capacity data
+HEATCR and HEATCRT are copied from the matrix to the fracture.
+When using the Thermal Option, the rock thermal conductivity THCROCK, and the phase thermal
+conductivities THCOIL, THCGAS, THCWATER or THCSOLID are also copied from the matrix to the
+fracture.
+Note: Matrix-fracture copying takes place after reading of the GRID section keywords is completed. It is
+therefore not possible to perform data manipulation on values in the fracture cells within the GRID section.
+If this type of manipulation is required, values must be specified for the fracture cells explicitly.
+This keyword contains no items.
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+673
+DPGRID
+SLB – Private
+
+--- p.674 ---
+DPKRMOD
+Modifies the matrix oil relative permeability in
+dual porosity cases
+This keyword is optional in dual porosity runs, and gives you control of the matrix relative permeability.
+The keyword provides a simple way of modifying the oil relative permeability to help match a single
+porosity model of a single matrix block, and optionally allows the fracture to matrix flow to reflect the
+maximum relative permeability in the matrix.
+The keyword should be followed by NTSFUN (set in the TABDIMS keyword) records, each consisting of
+three items of data terminated by a slash (/):
+1. The modification parameter (mw) for oil-in-water relative permeability.
+The value should be between -1.0 and 1.0.
+DEFAULT: 0.0
+2. The modification parameter (mg) for oil-in-gas relative permeability.
+The value should be between -1.0 and 1.0
+DEFAULT: 0.0
+3. Scale the relative permeabilities for fracture-to-matrix flow, to reflect the maximum relative
+permeability at the residual saturation of the displaced phase?
+YES Modify the fracture relative permeabilities for fracture-matrix flow.
+NO
+No modification to the fracture relative permeabilities.
+DEFAULT: NO
+The relative permeability curves are modified by applying a quadratic multiplier function, such that the
+end-points (SOCR, 1-SWCO) are preserved and the relative permeability at a saturation half way between the
+end-points is invariant.
+The modification parameter is not a physical quantity and should be regarded only as a tuning parameter to
+match a dual porosity block with a finely gridded single porosity model.
+If the modification parameter = 0.0, then no modification occurs.
+If the modification parameter > 0.0, then the Kr at low oil saturation is boosted and the Kr at high oil
+saturation is reduced relative to the original curve.
+If the modification parameter < 0.0, then the Kr at low oil saturation is reduced and the Kr at high oil
+saturation is increased relative to the original curve.
+The scaling for oil-in-water relative permeability is as follows for the case where mw is greater than 0.0:
+��= ��+ ����−��
+Eq. 3.59
+where
+��
+is the relative permeability at �= SOWCR + 1.0 −SWCO /2
+���
+is the input table relative permeability
+SOWCR is the critical oil to water saturation
+x
+Eclipse 100
+Eclipse 300
+RUNSPEC
+GRID
+EDIT
+x
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+674
+DPKRMOD
+SLB – Private
+
+
+
+############ KEYWORD: DPNUM  (Ref. Manual pp.676-678) ############
+
+--- p.676 ---
+DPNUM
+Identifies extent of dual porosity region
+The DPNUM keyword may be used for a dual porosity, single permeability run to specify regions within the
+reservoir to be treated as single porosity only.
+The keyword should be followed by the integer 0 or 1 for each grid block in the first NDIVIZ/2 layers, to
+indicate whether the grid block should be modeled as single porosity (0) or dual porosity (1). Any grid
+blocks that do not have a DPNUM value entered default to dual porosity (1).
+Grid blocks are ordered with the X axis index cycling fastest, followed by the Y and Z axis indices. Repeat
+counts may be used for repeated values (for example 115*0). Note that spaces must not be inserted on
+either side of the asterisk.
+Note: Grid data for single porosity cells is only required in the first NDIVIZ/2 layers. That is the grid
+block properties are only required for the matrix cells; the fracture cells are made inactive and ignored.
+Within single porosity regions, flow is between matrix blocks. Wells may only connect with the matrix
+blocks in single porosity regions.
+The keyword is ignored unless dual porosity, single permeability is enabled in the RUNSPEC section using
+keyword DUALPORO. Single porosity regions specified by the keyword DPNUM are not allowed in a dual
+permeability run, so the keyword DUALPERM must not be specified in this case.
+This keyword is not permitted if multi porosity is specified, either as a general multi porosity run using
+NMATRIX with value greater than 1, or as a triple porosity run using TRPLPORO.
+There are technical problems if all the DPNUM values in the grid are set to zero, so this is prohibited; it is
+not possible to use DPNUM in this way to switch between single and dual porosity.
+For LGRs all the DPNUM values in the local grid must be the same, so that the LGR is either single or dual
+porosity. The values are specified for the region of the global grid occupied by the LGR, not in the
+CARFIN or RADFIN block.
+DPNUM cannot be used when alternative transmissibility multipliers are used, that is, when the first item of
+the GRIDOPTS keyword is set to ‘YES’.
+Example
+To specify an 8 x 4 x 4 run as dual porosity in half of the reservoir, specify DUALPORO in RUNSPEC, and
+add the following in the GRID section:
+DPNUM
+ 4*0 4*1 4*0 4*1
+ 4*0 4*1 4*0 4*1
+ 4*0 4*1 4*0 4*1
+ 4*0 4*1 4*0 4*1 /
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse 300
+Eclipse 100
+Eclipse 100
+Eclipse 300
+Eclipse reference manual
+Keywords
+676
+DPNUM
+SLB – Private
+
+--- p.677 ---
+DR
+R direction grid block sizes
+The keyword should be followed by one positive real number for every grid block in the current input box
+specifying its size in the R direction. The data must be terminated by a slash (/).
+Grid blocks are ordered with the R axis index cycling fastest, followed by the theta and Z axis indices.
+Repeat counts may be used for repeated values (for example 115*208.4). Note that spaces must not be
+inserted on either side of the asterisk.
+Note: The inner radius of the innermost (I = 1) grid blocks should be set using keyword INRAD. The outer
+radius of these blocks is equal to the sum of the inner radius and DR.
+UNITS: m (METRIC), ft (FIELD), cm (LAB), m (PVT-M)
+In Eclipse 100, every DR value in the top plane (K = 1) must be specified in one way or another by the end
+of the GRID section. Values in lower planes (K > 1) that are not specified default to the value in the plane
+above.
+Example
+-------- IR1-IR2 JT1-JT2 KZ1-KZ2
+BOX
+           1  12   1   6   1   1   /
+INRAD
+ 1 /
+DR
+ 1 2 4 8 16 32 64 128 256 512 1000 2000
+ 1 2 4 8 16 32 64 128 256 512 1000 2000
+ 1 2 4 8 16 32 64 128 256 512 1000 2000
+ 1 2 4 8 16 32 64 128 256 512 1000 2000
+ 1 2 4 8 16 32 64 128 256 512 1000 2000
+ 1 2 4 8 16 32 64 128 256 512 1000 2000 /
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+677
+DR
+SLB – Private
+
+--- p.678 ---
+DRAINAGE
+Request drainage option in hysteresis
+This option restricts �� values obtained in the hysteresis option to lie on or below drainage curve. This is
+not always obtained in the Killough relative permeability hysteresis option
+This is not a problem with the Jargon hysteresis option. HYSTK or HYST is used to enable the Killough
+relative permeability hysteresis option. HYSTJ is used to enable the Jargon option.
+If the ODD3P relative permeability and capillary pressure hysteresis model has been selected this keyword
+will be ignored.
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+GRID
+EDIT
+x
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+678
+DRAINAGE
+SLB – Private
+
+
+
+############ KEYWORD: DPKRMOD  (Ref. Manual pp.674-676) ############
+
+--- p.674 ---
+DPKRMOD
+Modifies the matrix oil relative permeability in
+dual porosity cases
+This keyword is optional in dual porosity runs, and gives you control of the matrix relative permeability.
+The keyword provides a simple way of modifying the oil relative permeability to help match a single
+porosity model of a single matrix block, and optionally allows the fracture to matrix flow to reflect the
+maximum relative permeability in the matrix.
+The keyword should be followed by NTSFUN (set in the TABDIMS keyword) records, each consisting of
+three items of data terminated by a slash (/):
+1. The modification parameter (mw) for oil-in-water relative permeability.
+The value should be between -1.0 and 1.0.
+DEFAULT: 0.0
+2. The modification parameter (mg) for oil-in-gas relative permeability.
+The value should be between -1.0 and 1.0
+DEFAULT: 0.0
+3. Scale the relative permeabilities for fracture-to-matrix flow, to reflect the maximum relative
+permeability at the residual saturation of the displaced phase?
+YES Modify the fracture relative permeabilities for fracture-matrix flow.
+NO
+No modification to the fracture relative permeabilities.
+DEFAULT: NO
+The relative permeability curves are modified by applying a quadratic multiplier function, such that the
+end-points (SOCR, 1-SWCO) are preserved and the relative permeability at a saturation half way between the
+end-points is invariant.
+The modification parameter is not a physical quantity and should be regarded only as a tuning parameter to
+match a dual porosity block with a finely gridded single porosity model.
+If the modification parameter = 0.0, then no modification occurs.
+If the modification parameter > 0.0, then the Kr at low oil saturation is boosted and the Kr at high oil
+saturation is reduced relative to the original curve.
+If the modification parameter < 0.0, then the Kr at low oil saturation is reduced and the Kr at high oil
+saturation is increased relative to the original curve.
+The scaling for oil-in-water relative permeability is as follows for the case where mw is greater than 0.0:
+��= ��+ ����−��
+Eq. 3.59
+where
+��
+is the relative permeability at �= SOWCR + 1.0 −SWCO /2
+���
+is the input table relative permeability
+SOWCR is the critical oil to water saturation
+x
+Eclipse 100
+Eclipse 300
+RUNSPEC
+GRID
+EDIT
+x
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+674
+DPKRMOD
+SLB – Private
+
+--- p.675 ---
+SWCO
+is the connate water saturation
+�
+is the modification function, which is given by �= 4.0�����2 −4.0�����+ 1
+If mw is less than 0.0, then the same scaling is applied but with the X and Y axes �, ���
+ reversed:
+For a given saturation �, a new saturation s′ is calculated such that:
+�+ �s′−�= �
+Eq. 3.60
+where
+�
+is SOWCR + 1.0 −SWCO /2
+�is the modification function, which is given by �= 4.0����s′ 2 −4.0����s′ + 1
+��is then taken as ��s′ .
+The third data item initiates scaling of the fracture relative permeability curves when calculating the
+fracture to matrix flow only. The fracture relative permeability is scaled such that the maximum relative
+permeability is that of the matrix at the residual saturation of the displaced phase. For example in the water
+case:
+�����= ������
+����⋅������/������
+Eq. 3.61
+where
+������
+����
+is the relative permeability looked up using the input table
+������
+is the matrix relative permeability at ��= 1.0−�����
+������
+is the maximum fracture relative permeability
+�����
+is the critical oil saturation to water.
+See "Dual porosity" in the Eclipse Technical Description.
+Example
+DPKRMOD 
+ 0.0  0.9 /       Table 1 Matrix
+    /             Table 2 Fracture (default)
+-- Request the modified fracture/matrix relative permeability
+DPKRMOD 
+ 2*  YES /
+ 2*  YES /
+Eclipse reference manual
+Keywords
+675
+DPKRMOD
+SLB – Private
+
+--- p.676 ---
+DPNUM
+Identifies extent of dual porosity region
+The DPNUM keyword may be used for a dual porosity, single permeability run to specify regions within the
+reservoir to be treated as single porosity only.
+The keyword should be followed by the integer 0 or 1 for each grid block in the first NDIVIZ/2 layers, to
+indicate whether the grid block should be modeled as single porosity (0) or dual porosity (1). Any grid
+blocks that do not have a DPNUM value entered default to dual porosity (1).
+Grid blocks are ordered with the X axis index cycling fastest, followed by the Y and Z axis indices. Repeat
+counts may be used for repeated values (for example 115*0). Note that spaces must not be inserted on
+either side of the asterisk.
+Note: Grid data for single porosity cells is only required in the first NDIVIZ/2 layers. That is the grid
+block properties are only required for the matrix cells; the fracture cells are made inactive and ignored.
+Within single porosity regions, flow is between matrix blocks. Wells may only connect with the matrix
+blocks in single porosity regions.
+The keyword is ignored unless dual porosity, single permeability is enabled in the RUNSPEC section using
+keyword DUALPORO. Single porosity regions specified by the keyword DPNUM are not allowed in a dual
+permeability run, so the keyword DUALPERM must not be specified in this case.
+This keyword is not permitted if multi porosity is specified, either as a general multi porosity run using
+NMATRIX with value greater than 1, or as a triple porosity run using TRPLPORO.
+There are technical problems if all the DPNUM values in the grid are set to zero, so this is prohibited; it is
+not possible to use DPNUM in this way to switch between single and dual porosity.
+For LGRs all the DPNUM values in the local grid must be the same, so that the LGR is either single or dual
+porosity. The values are specified for the region of the global grid occupied by the LGR, not in the
+CARFIN or RADFIN block.
+DPNUM cannot be used when alternative transmissibility multipliers are used, that is, when the first item of
+the GRIDOPTS keyword is set to ‘YES’.
+Example
+To specify an 8 x 4 x 4 run as dual porosity in half of the reservoir, specify DUALPORO in RUNSPEC, and
+add the following in the GRID section:
+DPNUM
+ 4*0 4*1 4*0 4*1
+ 4*0 4*1 4*0 4*1
+ 4*0 4*1 4*0 4*1
+ 4*0 4*1 4*0 4*1 /
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse 300
+Eclipse 100
+Eclipse 100
+Eclipse 300
+Eclipse reference manual
+Keywords
+676
+DPNUM
+SLB – Private
+
+
+
+############ KEYWORD: INTPC  (Ref. Manual pp.1190-1191) ############
+
+--- p.1190 ---
+INTPC
+Invokes the Integrated Pc curve option for dual
+porosity
+This keyword can be used to activate the integrated capillary pressure option in dual porosity runs. The
+keyword should only be used in dual porosity runs with the gravity drainage option active (keywords
+DUALPORO and GRAVDR or GRAVDRM in the RUNSPEC section). The integrated Pc option modifies the
+input capillary pressure curves to improve the prediction of final oil recovery from a matrix block.
+The keyword should be followed by one item of data terminated by a slash (/).
+1. Phase flag:
+WATER requests that the water-oil capillary pressure curves should be modified.
+GAS
+requests that the gas-oil capillary pressure curves should be modified.
+BOTH
+requests that both the water-oil and gas-oil capillary pressure curves should be modified.
+DEFAULT: BOTH
+If the INTPC keyword is not present, the curves are not modified.
+See "Dual porosity" in the Eclipse Technical Description for a description of the integrated capillary
+pressure option.
+Note: The INTPC option may now be used with the alternative gravity drainage model (GRAVDRM in the
+RUNSPEC section), as a new pseudoization specific to the GRAVDRM model is now automatically provided
+if that model is used. In previous versions this use was not advised as the new pseudoization was not
+available. In the event that unadvised use of INTPC with GRAVDRM was made with pre-2007.1 versions,
+its behavior can be restored with item 107 in OPTIONS (Eclipse 100) or item 126 in OPTIONS3 (Eclipse
+300).
+Example
+INTPC 
+ BOTH / 
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+GRID
+EDIT
+x
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+1190
+INTPC
+SLB – Private
+
+--- p.1191 ---
+IONROCK
+Rock ion exchange capacity
+This keyword may only be used when the Eclipse 100 multi-component brine model (keyword BRINE in
+conjunction with keyword ECLMC in the RUNSPEC section) is active.
+The IONROCK keyword defines the ion exchange capacity of the rock. This will be used in the cation
+exchange calculation. Refer also to keywords IONXSURF and IONXROCK.
+See "Brine tracking" in the Eclipse Technical Description for details of this option.
+The keyword should be followed by one non-negative real number for every grid block in the current input
+box, specifying the rock ion exchange capacities. The data must be terminated by a slash (/).
+The ion exchange capacity is entered in moles per unit pore volume.
+UNITS: kg-M/rm3 (METRIC), lb-M/rb (FIELD), gm-M/rcc (LAB)
+Grid blocks are ordered with the X axis index cycling fastest, followed by the Y and Z axis indices. Repeat
+counts may be used for repeated values (for example 115*0.02). Note that spaces must not be inserted on
+either side of the asterisk.
+Example
+IONROCK
+ 200*0.05 /
+x
+Eclipse 100
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+1191
+IONROCK
+SLB – Private
+
+
+
+############ KEYWORD: NODPPM  (Ref. Manual pp.1480-1481) ############
+
+--- p.1480 ---
+NODPPM
+No dual porosity permeability multiplier
+In a dual porosity or dual permeability run (keywords DUALPORO or DUALPERM in the RUNSPEC section)
+the permeability values for the fracture cells are normally multiplied by the fracture porosity to yield a net
+bulk fracture permeability.
+If the NODPPM keyword is used this operation is suppressed, so that you must enter net bulk permeability
+values directly.
+This keyword has no associated data.
+x
+Eclipse 100
+x
+Eclipse 300
+x
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+1480
+NODPPM
+SLB – Private
+
+--- p.1481 ---
+NOECHO
+Disable echoing of the input file
+The keyword causes the echo of the data input that is produced at the start of each run to be switched off
+from the next keyword until a subsequent ECHO keyword is encountered (or until the end of the data).
+NOECHO may be used to reduce the amount of print-out from a run, or to avoid the output of large included
+files.
+ECHO and NOECHO may be specified in any section, and any number of times in an input file.
+The NOECHO keyword has no associated data.
+x
+Eclipse 100
+x
+Eclipse 300
+x
+RUNSPEC
+x
+GRID
+x
+EDIT
+x
+PROPS
+x
+REGIONS
+x
+SOLUTION
+x
+SUMMARY
+x
+SCHEDULE
+Eclipse reference manual
+Keywords
+1481
+NOECHO
+SLB – Private
+
+
+
+############ KEYWORD: PERMMF  (Ref. Manual pp.1710-1711) ############
+
+--- p.1710 ---
+PERMMF
+Permeability for matrix-fracture coupling
+The PERMMF keyword is followed by a value for each matrix cell. ��⋅��⋅��/2 values are required in
+all, in normal grid order with the X-index changing fastest.
+UNITS: mD (METRIC), mD (FIELD), mD (LAB), mD (PVT-M)
+Example
+-------- IX1-IX2 JY1-JY2 KZ1-KZ2
+BOX
+          11  14   3   8   6   6   /
+PERMMF
+ 8*0.5 16*0.66 /
+ENDBOX
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+1710
+PERMMF
+SLB – Private
+
+--- p.1711 ---
+PERMR
+Specifies radial permeability values
+This keyword specifies permeability values in the radial direction for a radial run.
+The keyword should be followed by one non-negative real number for every grid block in the current input
+box specifying the R-direction permeability. The data must be terminated by a slash (/).
+UNITS: mD (METRIC), mD (FIELD), mD (LAB), mD (PVT-M)
+Grid blocks are ordered with the R axis index cycling fastest, followed by the theta- and Z-axis indices.
+Repeat counts may be used for repeated values (for example  115*208.4). Note that spaces must not be
+inserted on either side of the asterisk.
+In Eclipse 100, every PERMR value in the top plane (K = 1) must be specified in one way or another by the
+end of the GRID section. Values in lower planes (K > 1) that are not specified default to the value in the
+plane above.
+Example
+-- IR1-IR2 JT1-JT2 KZ1-KZ2
+BOX
+    5  16   3   8   1   1   /
+PERMR
+ 12*100
+ 12*8
+ 12*2300
+ 12*100
+ 12*20
+ 12*38    /
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+1711
+PERMR
+SLB – Private
+
+
+
+############ KEYWORD: MULTSIG  (Ref. Manual pp.1418-1419) ############
+
+--- p.1418 ---
+MULTSIG
+Dual porosity matrix-fracture coupling multiplier
+If the dual porosity option is being used (keyword DUALPORO in the RUNSPEC section), and the matrix-
+fracture coupling transmissibilities have been specified in the grid section through the SIGMA or SIGMAV
+keywords, then this keyword can be used to specify a multiplier in the SCHEDULE section which will
+modify further these matrix-fracture coupling transmissibilities.
+If this keyword is used, a single multiplier is applied to the entire current grid. To specify values for
+individual cells, use the MULTSIGV keyword.
+If this keyword is used multiple times or it is used in combination with MULTSIGV then the effect of the
+multipliers will be cumulative.
+The keyword should be followed by one single positive real number, which will be applied to every cell in
+the current grid.
+UNITS: dimensionless
+Example
+MULTSIG
+ 0.5  /
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+x
+SCHEDULE
+Eclipse reference manual
+Keywords
+1418
+MULTSIG
+SLB – Private
+
+--- p.1419 ---
+MULTSIGV
+Dual porosity matrix-fracture coupling multiplier
+If the dual porosity option is being used (keyword DUALPORO in the RUNSPEC section), and the matrix-
+fracture coupling transmissibilities have been specified in the grid section through the SIGMA or SIGMAV
+keywords, then this keyword can be used to specify a multiplier in the SCHEDULE section which will
+modify further these matrix-fracture coupling transmissibilities.
+The keyword should be followed by one positive real number for every grid block in the current box within
+the top NDIVIZ/2 layers of the grid (that is, the matrix cells). Any values input in the bottom half of the
+grid (the lower NDIVIZ/2 layers) will be ignored.
+To specify a single value for all cells, use the MULTSIG keyword.
+If this keyword is used multiple times or it is used in combination with MULTSIG then the effect of the
+multipliers will be cumulative.
+UNITS: dimensionless
+Example
+--------- IX1-IX2 JY1-JY2 KZ1-KZ2
+BOX
+            1   8   1   1   1   2   /
+MULTSIGV
+ 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5  
+ 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3  /
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+x
+SCHEDULE
+Eclipse reference manual
+Keywords
+1419
+MULTSIGV
+SLB – Private
+
+
+
+############ KEYWORD: MULTSIGV  (Ref. Manual pp.1419-1420) ############
+
+--- p.1419 ---
+MULTSIGV
+Dual porosity matrix-fracture coupling multiplier
+If the dual porosity option is being used (keyword DUALPORO in the RUNSPEC section), and the matrix-
+fracture coupling transmissibilities have been specified in the grid section through the SIGMA or SIGMAV
+keywords, then this keyword can be used to specify a multiplier in the SCHEDULE section which will
+modify further these matrix-fracture coupling transmissibilities.
+The keyword should be followed by one positive real number for every grid block in the current box within
+the top NDIVIZ/2 layers of the grid (that is, the matrix cells). Any values input in the bottom half of the
+grid (the lower NDIVIZ/2 layers) will be ignored.
+To specify a single value for all cells, use the MULTSIG keyword.
+If this keyword is used multiple times or it is used in combination with MULTSIG then the effect of the
+multipliers will be cumulative.
+UNITS: dimensionless
+Example
+--------- IX1-IX2 JY1-JY2 KZ1-KZ2
+BOX
+            1   8   1   1   1   2   /
+MULTSIGV
+ 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5  
+ 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3  /
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+x
+SCHEDULE
+Eclipse reference manual
+Keywords
+1419
+MULTSIGV
+SLB – Private
+
+--- p.1420 ---
+MULTTHT
+Transmissibility multipliers in the theta direction
+The keyword is used in radial geometry and is analogous to MULTY in Cartesian geometry.
+The keyword should be followed by one non-negative real number for every grid block in the current input
+box. The data must be terminated by a slash (/).
+The values specified act as multipliers on the transmissibilities calculated by the program for the +Theta
+faces of each grid block.
+Thus, a value of MULTTHT specified for block (I, J, K) multiplies the transmissibility between blocks
+(I, J, K) and (I, J+1, K).
+Any MULTTHT values that are not specified when the end of the GRID section is reached, default to 1.0.
+Grid blocks are ordered with the R axis index cycling fastest, followed by the theta and Z axis indices.
+Repeat counts may be used for repeated values (for example 115*0). Note that spaces must not be inserted
+on either side of the asterisk.
+In Eclipse 100, MULTTHT can also be used in the EDIT section.
+Note: For Eclipse 100 compatibility when using Eclipse 300, the SCHEDULE section keyword MULTTTHT
+has been aliased to MULTTHT. However, MULTTTHT can still be used in the SCHEDULE section as
+documented in previous releases.
+See also keyword MULTTHT-.
+Example
+-------- IR1-IR2 JT1-JT2 KZ1-KZ2
+BOX
+           4   6   3   3   4   6   /
+MULTTHT
+ 9*0.01 /
+ENDBOX
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+x
+SCHEDULE
+Eclipse reference manual
+Keywords
+1420
+MULTTHT
+SLB – Private
+
+
+
+############ KEYWORD: BTOBALFA  (Ref. Manual pp.443-444) ############
+
+--- p.443 ---
+BTOBALFA
+Dual porosity block to block matrix-fracture
+coupling multiplier
+If the Dual Porosity option is being used (keyword DUALPORO in the RUNSPEC section), and the matrix-
+fracture coupling transmissibilities have been specified in the grid section through the SIGMA or SIGMAV
+keywords, then this keyword activates additional matrix fracture connections between every active fracture
+grid block and an active matrix grid block immediately below it. The value specified with this keyword is
+the multiplier for all these new vertical block-to-block connections equivalent to the value specified by the
+SIGMA keyword for the conventional dual porosity connections, and represents the fractional contact
+between the upper fracture and the lower matrix. However, because it is multiplying a directional
+transmissibility, unlike SIGMA, it is dimensionless.
+For further information, see the section on "Block to block transmissibility calculations" in the Eclipse
+Technical Description.
+Note that block-to-block connections cannot be made if a multi porosity gridding is specified (using
+NMATRIX for multi porosity or TRPLPORO for triple porosity).
+The keyword should be followed by a single positive real number which will be applied to every grid block
+in the current grid.
+To specify different values for different cells, use the BTOBALFV keyword.
+UNITS: dimensionless
+Example
+BTOBALFA
+ 0.01  /
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+X GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+443
+BTOBALFA
+SLB – Private
+
+--- p.444 ---
+BTOBALFV
+Dual porosity block to block matrix-fracture
+coupling multiplier
+If the dual porosity option is being used (keyword DUALPORO in the RUNSPEC section), and the matrix-
+fracture coupling transmissibilities have been specified in the grid section through the SIGMA or SIGMAV
+keywords, then this keyword activates additional matrix fracture connections between every active fracture
+grid block and an active matrix grid block immediately below it. The values specified with this keyword
+are the multipliers for these new vertical block-to-block connections equivalent to the values specified by
+the SIGMAV keyword for the conventional dual porosity connections, and represent the fractional contact
+between the upper fracture and the lower matrix. However, because it is multiplying a directional
+transmissibility, it is dimensionless.
+For further information, see the section on "Block to block transmissibility calculations" in the Eclipse
+Technical Description.
+Note that block-to-block connections cannot be made if a multi porosity gridding is specified (using
+NMATRIX for multi porosity or TRPLPORO for triple porosity).
+The keyword should be followed by one positive real number for every grid block in the current box within
+the top NDIVIZ/2 layers of the grid (that is, the matrix cells). Any values input in the bottom half of the
+grid (the lower NDIVIZ/2 layers) will be ignored.
+To specify a single value for all cells, use the BTOBALFA keyword.
+UNITS: dimensionless
+Example
+--------- IX1-IX2 JY1-JY2 KZ1-KZ2
+BOX
+            1   8   1   1   1   2   /
+BTOBALFV
+ 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5  /
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+444
+BTOBALFV
+SLB – Private
+
+
+
+############ KEYWORD: BTOBALFV  (Ref. Manual pp.444-445) ############
+
+--- p.444 ---
+BTOBALFV
+Dual porosity block to block matrix-fracture
+coupling multiplier
+If the dual porosity option is being used (keyword DUALPORO in the RUNSPEC section), and the matrix-
+fracture coupling transmissibilities have been specified in the grid section through the SIGMA or SIGMAV
+keywords, then this keyword activates additional matrix fracture connections between every active fracture
+grid block and an active matrix grid block immediately below it. The values specified with this keyword
+are the multipliers for these new vertical block-to-block connections equivalent to the values specified by
+the SIGMAV keyword for the conventional dual porosity connections, and represent the fractional contact
+between the upper fracture and the lower matrix. However, because it is multiplying a directional
+transmissibility, it is dimensionless.
+For further information, see the section on "Block to block transmissibility calculations" in the Eclipse
+Technical Description.
+Note that block-to-block connections cannot be made if a multi porosity gridding is specified (using
+NMATRIX for multi porosity or TRPLPORO for triple porosity).
+The keyword should be followed by one positive real number for every grid block in the current box within
+the top NDIVIZ/2 layers of the grid (that is, the matrix cells). Any values input in the bottom half of the
+grid (the lower NDIVIZ/2 layers) will be ignored.
+To specify a single value for all cells, use the BTOBALFA keyword.
+UNITS: dimensionless
+Example
+--------- IX1-IX2 JY1-JY2 KZ1-KZ2
+BOX
+            1   8   1   1   1   2   /
+BTOBALFV
+ 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5  /
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+444
+BTOBALFV
+SLB – Private
+
+--- p.445 ---
+C
+This section contains an alphabetic listing of keywords starting with the letter C.
+Data file keyword usage
+For an overview of where to use these keywords in an Eclipse data set, see Data File Overview.
+Eclipse reference manual
+Keywords
+445
+SLB – Private
+
+
+
+############ KEYWORD: LX  (Ref. Manual pp.1321-1322) ############
+
+--- p.1321 ---
+LX
+X direction matrix block sizes for the viscous
+displacement option
+The keyword is optional in dual porosity runs with the viscous displacement option active (keyword
+VISCD in the RUNSPEC section). The keyword defines the representative matrix block size in the X
+direction.
+The keyword should be followed by one positive real number for every grid block in the current input box.
+The data must be terminated by a slash (/).
+Grid blocks are ordered with the X axis index cycling fastest, followed by the Y and Z axis indices. Repeat
+counts may be used for repeated values (for example 115*208.4). Note that spaces must not be inserted on
+either side of the asterisk.
+If this keyword is not present when the viscous displacement option is active, the matrix block size in the
+X direction is taken as zero in the calculation of the viscous displacement term and does not contribute
+towards the calculation of SIGMAV when the LTOSIGMA keyword is present.
+UNITS: m (METRIC), ft (FIELD), cm (LAB)
+See also keywords LY, LZ and LTOSIGMA.
+Example
+-------- IX1-IX2 JY1-JY2 KZ1-KZ2
+BOX
+           3  16   3   8   1   1   /
+LX
+ 98*10.0 /
+x
+Eclipse 100
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+1321
+LX
+SLB – Private
+
+--- p.1322 ---
+LXFIN
+Number of local cells in each global cell of an
+LGR in X direction
+The LXFIN keyword can be used to generate a logarithmic assignment of the number of LGR cells
+between the host global grid cells, and logarithmic sizing of the LGR cells within each global grid host
+cell, in the x-direction. The resulting LGR will have a minimum cell size at its centre with symmetrically
+increasing cell sizes towards either side, and similarly the central global host cell will have the maximum
+number of LGR cells within it, with a symmetrically decreasing number of LGR cells towards either side.
+The keyword should be placed after the keyword CARFIN introducing the local grid, and before the local
+grid data is terminated with ENDFIN.
+The keyword should be followed by some or all of the following items, which define the central cell
+(fracture) thickness in the x-direction and the method used to calculate relative cell sizes for LGR cells in
+each global host cell. The data record should be terminated by a slash (/).
+1. Central cell thickness.
+UNITS: m (METRIC), ft (FIELD), cm (LAB), m (PVT-M)
+DEFAULT: 1.0 (all unit sets)
+2. Option controlling relative sizes of LGR cells within each global host cell.
+LINEAR
+The LGR cell sizes are calculated to increase logarithmically, with the scale factor
+determined by the central cell thickness and the number of LGR cells in the central global
+host cell.
+UNIFORM The LGR cell sizes are the same within each global host cell, with the exception of the
+central LGR cell which has thickness determined by item 1.
+DEFAULT: LINEAR
+LXFIN can only be used in local grids with an odd number of cells in the x-direction. In addition, the
+algorithm requires that the central global host cell contains at least three LGR cells and all other global
+host cells contain at least one LGR cell. The minimum number of LGR cells in the x-direction is therefore
+I2-I1+3. To generate an LGR which doesn't have outer cells where global host cells contain only one LGR
+cell in the x-direction, it is 2*(I2-I1)+3.
+If it is possible to generate a grid where no global grid host cell only contains one LGR cell (i.e. at least
+2*(I2-I1)+3), the number of LGR cells in the outer host cells is set to 2. If it is not possible, the same
+algorithm is used but with the number of LGR cells in the outer global host cells set to 1.
+In Eclipse, it is not possible to have an LGR cell which overlaps a boundary between global grid cells. The
+algorithm for assigning the number of LGR cells in each global grid host cell is therefore an integer
+algorithm and, especially for small numbers of LGR cells per host cell, it may not produce smoothly
+increasing LGR cell sizes. The relative sizes of the global grid host cells are not considered in determining
+how many LGR cells each will contain.
+To determine the logarithmic growth factor, the specified central cell thickness is compared with DX for
+the central global host cell. This factor is then used for the entire LGR. The global grid geometry must
+therefore be defined before a local grid using LXFIN is specified.
+LXFIN does not apply to radial refinements introduced with RADFIN, and cannot be used in a nested
+LGR, an LGR which spans an even number of global grid cells in the x-direction, or in the same LGR as
+either NXFIN or HXFIN.
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+1322
+LXFIN
+SLB – Private
+
+
+
+############ KEYWORD: LY  (Ref. Manual pp.1324-1325) ############
+
+--- p.1324 ---
+LY
+Y direction matrix block sizes for the viscous
+displacement option
+The keyword is optional in dual porosity runs with the viscous displacement option active (keyword
+VISCD in the RUNSPEC section). The keyword defines the representative matrix block size in the Y
+direction.
+The keyword should be followed by one positive real number for every grid block in the current input box.
+The data must be terminated by a slash (/).
+Grid blocks are ordered with the X axis index cycling fastest, followed by the Y and Z axis indices. Repeat
+counts may be used for repeated values (for example 115*208.4). Note that spaces must not be inserted on
+either side of the asterisk.
+If this keyword is not present when the viscous displacement option is active, the matrix block size in the
+Y direction is taken as zero in the calculation of the viscous displacement term and does not contribute
+towards the calculation of SIGMAV when the LTOSIGMA keyword is present.
+UNITS: m (METRIC), ft (FIELD), cm (LAB)
+See also keywords LX, LZ and LTOSIGMA.
+Example
+-------- IX1-IX2 JY1-JY2 KZ1-KZ2
+BOX
+           1 100   1  100   1   3   /
+LY
+ 10000*10.0 
+ 10000*20.0
+ 10000*30.0 / 
+x
+Eclipse 100
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+1324
+LY
+SLB – Private
+
+--- p.1325 ---
+LYFIN
+Number of local cells in each global cell of an
+LGR in Y direction
+The LYFIN keyword can be used to generate a logarithmic assignment of the number of LGR cells
+between the host global grid cells, and logarithmic sizing of the LGR cells within each global grid host
+cell, in the y-direction. The keyword should be placed after the keyword CARFIN introducing the local
+grid, and before the local grid data is terminated with ENDFIN.
+The keyword should be followed by some or all of the following items, which define the central cell
+(fracture) thickness in the y-direction and the method used to calculate relative cell sizes for LGR cells in
+each global host cell. The data record should be terminated by a slash (/).
+1. Central cell thickness.
+UNITS: m (METRIC), ft (FIELD), cm (LAB), m (PVT-M)
+DEFAULT: 1.0 (all unit sets)
+2. Option controlling relative sizes of LGR cells within each global host cell.
+LINEAR
+The LGR cell sizes are calculated to increase logarithmically, with the scale factor
+determined by the central cell thickness and the number of LGR cells in the central global
+host cell.
+UNIFORM The LGR cell sizes are the same within each global host cell, with the exception of the
+central LGR cell which has thickness determined by item 1.
+DEFAULT: LINEAR
+LYFIN can only be used in local grids with an odd number of cells in the y-direction. In addition, the
+algorithm requires that the central global host cell contains at least three LGR cells and all other global
+host cells contain at least one LGR cell. The minimum number of LGR cells in the y-direction is therefore
+J2-J1+3. In order to generate an LGR which doesn't have outer cells where global host cells contain only
+one LGR cell in the y-direction, it is 2*(J2-J1)+3.
+If it is possible to generate a grid where no global grid host cell only contains one LGR cell (i.e. at least
+2*(J2-J1)+3), this is done. If it is not possible, the same algorithm is used but with the number of LGR
+cells in the outer global host cells set to 1.
+In Eclipse, it is not possible to have an LGR cell which overlaps a boundary between global grid cells. The
+algorithm for assigning the number of LGR cells in each global grid host cell is therefore an integer
+algorithm and, especially for small numbers of LGR cells per host cell, it may not produce smoothly
+increasing LGR cell sizes. The relative sizes of the global grid host cells is not considered in determining
+how many LGR cells each will contain.
+To determine the logarithmic growth factor, the specified central cell thickness is compared with DY for
+the central global host cell. This factor is then used for the entire LGR. The global grid geometry must
+therefore be defined before a local grid using LYFIN is specified.
+LYFIN does not apply to radial refinements introduced with RADFIN, and cannot be used in a nested
+LGR, an LGR which spans an even number of global grid cells in the y-direction, or in the same LGR as
+either NYFIN or HYFIN.
+Eclipse will output its internally calculated values for equivalent NYFIN and HYFIN keywords in the PRT
+file. To make minor adjustments to the cell sizes, edit the values and use the modified keywords to replace
+LYFIN in the data file.
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+1325
+LYFIN
+SLB – Private
+
+
+
+############ KEYWORD: LZ  (Ref. Manual pp.1327-1328) ############
+
+--- p.1327 ---
+LZ
+Z direction matrix block sizes for the viscous
+displacement option
+The keyword is optional in dual porosity runs with the viscous displacement option active (keyword
+VISCD in the RUNSPEC section). The keyword defines the representative matrix block size in the Z
+direction.
+The keyword should be followed by one positive real number for every grid block in the current input box.
+The data must be terminated by a slash (/).
+Grid blocks are ordered with the X axis index cycling fastest, followed by the Y and Z axis indices. Repeat
+counts may be used for repeated values (for example 115*208.4). Note that spaces must not be inserted on
+either side of the asterisk.
+If this keyword is not present when the viscous displacement option is active, the matrix block size in the Z
+direction is taken as zero in the calculation of the viscous displacement term and does not contribute
+towards the calculation of SIGMAV or SIGMAGDV when the LTOSIGMA keyword is present.
+UNITS: m (METRIC), ft (FIELD), cm (LAB)
+See also keywords LX, LY and LTOSIGMA.
+Example
+-------- IX1-IX2 JY1-JY2 KZ1-KZ2
+BOX
+           1  5   1  5   1   1   /
+LZ
+ 5*40.0 5*1.5 15*40.0 / 
+x
+Eclipse 100
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+1327
+LZ
+SLB – Private
+
+--- p.1328 ---
+LZFIN
+Number of local cells in each global cell of an
+LGR in X direction
+The LZFIN keyword can be used to generate a logarithmic assignment of the number of LGR cells
+between the host global grid cells, and logarithmic sizing of the LGR cells within each global grid host
+cell, in the z-direction. The keyword should be placed after the keyword CARFIN introducing the local
+grid, and before the local grid data is terminated with ENDFIN.
+The keyword should be followed by some or all of the following items, which define the central cell
+(fracture) thickness in the z-direction and the method used to calculate relative cell sizes for LGR cells in
+each global host cell. The data record should be terminated by a slash (/).
+1. Central cell thickness.
+UNITS: m (METRIC), ft (FIELD), cm (LAB), m (PVT-M)
+DEFAULT: 1.0 (all unit sets)
+2. Option controlling relative sizes of LGR cells within each global host cell.
+LINEAR
+The LGR cell sizes are calculated to increase logarithmically, with the scale factor
+determined by the central cell thickness and the number of LGR cells in the central global
+host cell.
+UNIFORM The LGR cell sizes are the same within each global host cell, with the exception of the
+central LGR cell which has thickness determined by item 1.
+DEFAULT: LINEAR
+LZFIN can only be used in local grids with an odd number of cells in the z-direction. In addition, the
+algorithm requires that the central global host cell contains at least three LGR cells and all other global
+host cells contain at least one LGR cell. The minimum number of LGR cells in the z-direction is therefore
+K2-K1+3. In order to generate an LGR which doesn't have outer cells where global host cells contain only
+one LGR cell in the z-direction, it is 2*(K2-K1)+3.
+If it is possible to generate a grid where no global grid host cell only contains one LGR cell (i.e. at least
+2*(K2-K1)+3), this is done. If it is not possible, the same algorithm is used but with the number of LGR
+cells in the outer global host cells set to 1.
+In Eclipse, it is not possible to have an LGR cell which overlaps a boundary between global grid cells. The
+algorithm for assigning the number of LGR cells in each global grid host cell is therefore an integer
+algorithm and, especially for small numbers of LGR cells per host cell, it may not produce smoothly
+increasing LGR cell sizes. The relative sizes of the global grid host cells is not considered in determining
+how many LGR cells each will contain.
+To determine the logarithmic growth factor, the specified central cell thickness is compared with DZ for
+the central global host cell. This factor is then used for the entire LGR. The global grid geometry must
+therefore be defined before a local grid using LZFIN is specified.
+LZFIN does not apply to radial refinements introduced with RADFIN, and cannot be used in a nested
+LGR, an LGR which spans an even number of global grid cells in the z-direction, or in the same LGR as
+either NZFIN or HZFIN.
+Eclipse will output its internally calculated values for equivalent NZFIN and HZFIN keywords in the PRT
+file. To make minor adjustments to the cell sizes, edit the values and use the modified keywords to replace
+LZFIN in the data file.
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+1328
+LZFIN
+SLB – Private
+
+
+
+############ KEYWORD: KRNUMMF  (Ref. Manual pp.1219-1220) ############
+
+--- p.1219 ---
+KRNUMMF
+Matrix-fracture flow saturation tables numbers
+This keyword is optional and allows the independent specification of the matrix-fracture saturation tables
+in dual porosity or dual porosity/dual permeability runs. Eclipse uses the upstream mobilities to calculate
+the flows, so
+•
+flow from the matrix to the fracture reflects the saturation table specified for the matrix (top half of the
+grid)
+and
+•
+flow from the fracture to the matrix reflects the saturation table specified for the fracture (bottom half
+of the grid).
+If a table number is defaulted for any grid cell, the table number is filled in using the data entered under the
+SATNUM keyword.
+The keyword should be followed by one integer for every grid block in the current input box, specifying
+the saturation table region number for matrix-fracture flow. The region number should not be less than 1 or
+greater than NTSFUN (set in the TABDIMS keyword). The data must be terminated by a slash (/).
+Grid blocks are ordered with the X axis index cycling fastest, followed by the Y and Z axis indices. Repeat
+counts may be used for repeated values (for example 115*2). Note that spaces must not be inserted on
+either side of the asterisk.
+See "Dual porosity" in the Eclipse Technical Description for further information.
+Example
+-- In the RUNSPEC section:
+DUALPORO
+TABDIMS
+ 3 /
+-- In the REGIONS section:
+-------- IX1-IX2 JY1-JY2 KZ1-KZ2
+BOX
+          12  19   4   9   1   2   /
+KRNUMMF
+ 48*3
+ 48*1
+/
+x
+Eclipse 100
+Eclipse 300
+RUNSPEC
+GRID
+EDIT
+PROPS
+x
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+1219
+KRNUMMF
+SLB – Private
+
+--- p.1220 ---
+KRODI
+Oil relative permeability damage initiation
+The KRODI keyword specifies the molar density of individual components at which damage initiates, see
+the KRODM.
+The data comprises NTSFUN (set in the TABDIMS keyword) rows of data, each terminated by a slash (/).
+Each row consists of N entries, where N = number of hydrocarbon components + the number of water
+components.
+UNITS: kg-M/rm3 (METRIC), lb-M/rb (FIELD), gm-M/rcc (LAB), kg-M/rm3 (PVT-M)
+Example
+With NTSFUN = 2, 6 hydrocarbon components and 1 water component. Damage occurring due to the
+presence of the sixth hydrocarbon component at concentrations greater than 0.5.
+KRODI
+ 5*0.0 0.5 0.0 /
+ 5*0.0 0.5 0.0 /
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+GRID
+EDIT
+x
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+1220
+KRODI
+SLB – Private
+
+
+
+############ KEYWORD: IMBNUMMF  (Ref. Manual pp.1174-1175) ############
+
+--- p.1174 ---
+IMBNUMMF
+Matrix-fracture imbibition region numbers
+This keyword is optional, and only concerns dual porosity runs (keyword DUALPORO in RUNSPEC) using
+the hysteresis option (item HYSTER in keyword SATOPTS).
+The keyword allows the independent specification of the matrix-fracture imbibition saturation tables.
+Eclipse uses the upstream mobilities to calculate the flows, so
+•
+flow from the matrix to the fracture reflects the imbibition table specified for the matrix (top half of the
+grid), and
+•
+flow from the fracture to the matrix reflects the imbibition table specified for the fracture (bottom half
+of the grid).
+If a table number is defaulted for any grid cell, the table number is filled in using the data entered under the
+IMBNUM keyword.
+The keyword should be followed by one integer for every grid block in the current input box, specifying its
+imbibition table region number for matrix- fracture flow. The region number should not be less than 1 or
+greater than NTSFUN (set in the TABDIMS keyword). The data must be terminated by a slash (/).
+In all cases blocks are ordered with the X axis index cycling fastest, followed by the Y and Z axis indices.
+Repeat counts may be used for repeated values (for example 115*2). Note that spaces must not be inserted
+on either side of the asterisk.
+See "Dual porosity" and "Hysteresis" in the Eclipse Technical Description for further information.
+Example
+-- In the RUNSPEC section:
+DUALPORO
+SATOPTS
+ 'HYSTER' /
+TABDIMS
+ 3 /
+-- In the REGIONS section:
+-------- IX1-IX2 JY1-JY2 KZ1-KZ2
+BOX
+          1  10   2   6   1   4   /
+IMBNUMMF
+ 100*3 100*1 /
+x
+Eclipse 100
+Eclipse 300
+RUNSPEC
+GRID
+EDIT
+PROPS
+x
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+1174
+IMBNUMMF
+SLB – Private
+
+--- p.1175 ---
+IMKRVD
+Imbibition relative permeability end-point versus
+depth tables
+The different forms of this keyword specify the depth variation of the relative permeability for the
+imbibition saturation tables. The corresponding drainage relative permeabilities can be set by using the
+ENKRVD keyword.
+Seven keywords are provided to allow the relative permeability end-points within each grid cell to be
+scaled independently. These keywords are:
+IMKRVD
+Relative permeability end-points for the non-directional saturation function tables
+IMKRVDX
+Relative permeability end-points for the +X face of each grid cell
+IMKRVDX- Relative permeability end-points for the -X face of each grid cell
+IMKRVDY
+Relative permeability end-points for the +Y face of each grid cell
+IMKRVDY- Relative permeability end-points for the -Y face of each grid cell
+IMKRVDZ
+Relative permeability end-points for the +Z face of each grid cell
+IMKRVDZ- Relative permeability end-points for the -Z face of each grid cell
+In radial grids the same directional keywords should be used to represent the relative permeability end-
+points for flows in the +R,-R,+T,-T,+Z,-Z directions respectively.
+The keywords can only be used when both the End Point Scaling and Hysteresis options are in use (see
+keywords ENDSCALE and SATOPTS in the RUNSPEC section).
+The data comprises NTENDP (item 3 of keyword ENDSCALE) tables of relative permeability end-points
+versus depth, one for each end-point scaling region. Each table consists of 8 columns of data, and must be
+terminated by a slash (/).
+1. Depth values.
+The values should increase monotonically down the column.
+UNITS: m (METRIC), ft (FIELD), cm (LAB)
+2. The corresponding values of the maximum water relative permeabilities.
+3. The corresponding values of the maximum gas relative permeabilities.
+4. The corresponding values of the maximum oil relative permeabilities.
+5. Water relative permeability at the critical oil (or gas) saturation.
+6. Gas relative permeability at the critical oil (or water) saturation.
+7. Oil relative permeability at the critical gas saturation.
+8. Oil relative permeability at the critical water saturation.
+There must be the same number of entries in each column of a given table. This number should not be less
+than 2 or greater than NSENDP (item 4 of keyword ENDSCALE). If an end-point is defaulted for all depth
+values, in a problem where a value could correctly be defined, then the end-point for each cell in the same
+scaling region is the value in the appropriate saturation function table. However if an end-point is defaulted
+x
+Eclipse 100
+Eclipse 300
+RUNSPEC
+GRID
+EDIT
+x
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+1175
+IMKRVD
+SLB – Private
+
+
+
+############ KEYWORD: DIFFDP  (Ref. Manual pp.642-643) ############
+
+--- p.642 ---
+DIFFDP
+Restricts molecular diffusion in dual porosity
+runs
+This keyword is relevant only in dual porosity runs (keyword DUALPORO in RUNSPEC) that use the
+molecular diffusion option (keyword DIFFUSE in RUNSPEC).
+If this keyword is present, the molecular diffusion calculation is only performed for the matrix-fracture
+flows.
+This can be useful to minimize the computer cost in dual porosity cases where the diffusive flows have
+been shown to be negligible except in the matrix-fracture flow, where diffusion may be the dominant
+recovery mechanism.
+The keyword has no associated data.
+x
+Eclipse 100
+Eclipse 300
+RUNSPEC
+GRID
+EDIT
+x
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+642
+DIFFDP
+SLB – Private
+
+--- p.643 ---
+DIFFMMF
+Matrix-fracture diffusivity multipliers
+This keyword is relevant only in dual porosity runs (keyword DUALPORO in the RUNSPEC section) which
+use either the molecular diffusion option (keyword DIFFUSE in the RUNSPEC section) or the coal bed
+methane option (keyword COAL in the RUNSPEC section).
+The keyword should be followed by one non-negative real number for every grid block in the current input
+box. The values specified act as multipliers on the diffusivities calculated by Eclipse for the non-neighbor
+connections (NNCs) that represents the matrix-to-fracture flows in dual porosity runs. The DIFFMMF
+values from the upper half of the model (matrix cells) are used to modify the diffusivities; any values
+entered in the lower half (fracture cells) will be ignored. The data must be terminated by a slash (/).
+Any DIFFMMF values that are not specified when the end of the GRID section is reached default to 1.0. If
+the keyword is specified in the SCHEDULE section then its effect will be cumulative on all values already
+specified or defaulted.
+Grid blocks are ordered with the X axis index cycling fastest, followed by the Y and Z axis indices. Repeat
+counts may be used for repeated values (for example 115*0). Note that spaces must not be inserted on
+either side of the asterisk.
+Example
+-------- IX1-IX2 JY1-JY2 KZ1-KZ2
+BOX
+           1  10   1  10   1   2   /
+DIFFMMF
+ 200*0.80 /
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+X SCHEDULE
+Eclipse reference manual
+Keywords
+643
+DIFFMMF
+SLB – Private
+
+
+
+############ KEYWORD: DIFFMMF  (Ref. Manual pp.643-644) ############
+
+--- p.643 ---
+DIFFMMF
+Matrix-fracture diffusivity multipliers
+This keyword is relevant only in dual porosity runs (keyword DUALPORO in the RUNSPEC section) which
+use either the molecular diffusion option (keyword DIFFUSE in the RUNSPEC section) or the coal bed
+methane option (keyword COAL in the RUNSPEC section).
+The keyword should be followed by one non-negative real number for every grid block in the current input
+box. The values specified act as multipliers on the diffusivities calculated by Eclipse for the non-neighbor
+connections (NNCs) that represents the matrix-to-fracture flows in dual porosity runs. The DIFFMMF
+values from the upper half of the model (matrix cells) are used to modify the diffusivities; any values
+entered in the lower half (fracture cells) will be ignored. The data must be terminated by a slash (/).
+Any DIFFMMF values that are not specified when the end of the GRID section is reached default to 1.0. If
+the keyword is specified in the SCHEDULE section then its effect will be cumulative on all values already
+specified or defaulted.
+Grid blocks are ordered with the X axis index cycling fastest, followed by the Y and Z axis indices. Repeat
+counts may be used for repeated values (for example 115*0). Note that spaces must not be inserted on
+either side of the asterisk.
+Example
+-------- IX1-IX2 JY1-JY2 KZ1-KZ2
+BOX
+           1  10   1  10   1   2   /
+DIFFMMF
+ 200*0.80 /
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+X SCHEDULE
+Eclipse reference manual
+Keywords
+643
+DIFFMMF
+SLB – Private
+
+--- p.644 ---
+DIFFMR
+Diffusivity multipliers in the radial direction
+The keyword is used in radial geometry and is analogous to DIFFMX in Cartesian geometry.
+It may only be used when the Molecular Diffusion option is activated (using the DIFFUSE keyword in the
+RUNSPEC section).
+The keyword should be followed by one non-negative real number for every grid block in the current input
+box. The data must be terminated by a slash (/).
+The values specified act as multipliers on the diffusivities calculated by the program for the +R faces of
+each grid block.
+Thus, a value of DIFFMR specified for block (I, J, K) multiplies the diffusivity between blocks (I, J, K)
+and (I+1, J, K).
+Any DIFFMR values that are not specified when the end of the GRID section is reached, default to 1.0.
+Grid blocks are ordered with the R axis index cycling fastest, followed by the theta and Z axis indices.
+Repeat counts may be used for repeated values (for example 115*0). Note that spaces must not be inserted
+on either side of the asterisk.
+Diffusivity multipliers are analogous to transmissibility multipliers for diffusive flow, and are described in
+"Diffusion" in the Eclipse Technical Description.
+See also keyword DIFFMR-.
+Example
+-------- IR1-IR2 JT1-JT2 KZ1-KZ2
+BOX
+           3   5   1  10   2   4   /
+DIFFMR
+ 90*2.0 /
+ENDBOX
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse 100
+Eclipse reference manual
+Keywords
+644
+DIFFMR
+SLB – Private
+
+
+
+############ KEYWORD: MULTMF  (Ref. Manual pp.1399-1400) ############
+
+--- p.1399 ---
+MULTMF
+Transmissibility multipliers for matrix-fracture
+coupling
+This keyword specifies a transmissibility multiplier for flow between fractures and matrix in a dual
+porosity run (keyword DUALPORO in the RUNSPEC section).
+The MULTMF keyword is followed by a value for each matrix cell, in normal grid order with the X-index
+changing fastest.
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+1399
+MULTMF
+SLB – Private
+
+--- p.1400 ---
+MULTNUM
+Defines regions for applying inter-region
+transmissibility multipliers
+This keyword provides an alternative region definition for applying inter-region multipliers, instead of
+applying them to flux regions defined by FLUXNUM. The MULTNUM keyword can be used to work with
+transmissibility multipliers using the keyword MULTREGT, or with the MULTREGP keyword (which sets a
+pore volume multiplier for a specific region).
+To use this keyword, the maximum number of MULTNUM regions must first be defined. To do this, the 2nd
+item in the GRIDOPTS keyword in the RUNSPEC section must be set greater than zero.
+The MULTNUM keyword should be followed by one integer for each grid cell, specifying the region number
+to which it belongs. The data must be terminated by a slash (/).
+Any cells not explicitly assigned a value of MULTNUM will be taken to be in region 1.
+Note: In Eclipse 100, 0 is a valid value for MULTNUM similarly to FLUXNUM. In Eclipse 300, 0 is an
+invalid value for MULTNUM.
+In Eclipse 100, the MULTNUM array can be copied into the REGIONS section arrays (FIPNUM and
+PVTNUM for example) using the COPY keyword.
+The MULTNUM array can be used with keywords MULTIREG, ADDREG and EQUALREG in the GRID
+section.
+In Eclipse 100, the MULTNUM keyword cannot be used inside a CARFIN/RADFIN...ENDFIN bracket.
+For use with the Dual Porosity option, only the matrix cells or the fracture cells need to be input in Eclipse
+100. The cell values in the other porosity will be copied automatically. If you want to specify matrix cells
+and fracture cells separately, then set item 117 in OPTIONS to be greater than 0.
+For use with Dual Porosity option, both matrix and fracture cells should be provided for Eclipse 300.
+MULTNUM use with MULTREGT or MULTREGP, will automatically copy all matrix cells to the
+corresponding fracture cells, so dummy fracture values could be input. For other MULTNUM uses, there is
+no copying of data from the matrix to fracture cells.
+The regions for inter-region transmissibility multipliers can be output to the Print file by using the
+mnemonic MULTNUM in the RPTGRID keyword.
+Example
+To define 9 separate regions in a 4*4*3 field (with the maximum number of MULTNUM regions set equal to
+9):
+MULTNUM
+ 1 1 2 2
+ 1 1 2 2
+ 3 3 3 3
+ 4 4 4 4
+ 5 5 5 5
+ 6 7 8 8
+ 6 7 8 8
+ 6 7 8 8
+ 16*9 /
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+1400
+MULTNUM
+SLB – Private
+
+
+
+############ KEYWORD: MULSGGD  (Ref. Manual pp.1385-1386) ############
+
+--- p.1385 ---
+MULSGGD
+Dual porosity matrix-fracture coupling multiplier
+for oil-gas gravity drainage
+If the dual porosity option is being used (keyword DUALPORO in the RUNSPEC section), and the
+alternative matrix-fracture coupling transmissibilities for oil-gas gravity drainage have been specified in
+the grid section through the SIGMAGD or SIGMAGDV keywords, then this keyword can be used to specify
+a multiplier in the SCHEDULE section which will modify further these matrix-fracture coupling
+transmissibilities.
+If this keyword is used, a single multiplier is applied to the entire current grid. To specify values for
+individual cells, use the MULSGGDV keyword.
+The keyword should be followed by one single positive real number, which will be applied to every cell in
+the current grid.
+UNITS: dimensionless
+Example
+MULSGGD
+ 0.5  /
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+x
+SCHEDULE
+Eclipse reference manual
+Keywords
+1385
+MULSGGD
+SLB – Private
+
+--- p.1386 ---
+MULSGGDV
+Dual porosity matrix-fracture coupling multiplier
+for oil-gas gravity drainage
+If the dual porosity option is being used (keyword DUALPORO in the RUNSPEC section), and the
+alternative matrix-fracture coupling transmissibilities for oil-gas gravity drainage have been specified in
+the grid section through the SIGMAGD or SIGMAGDV keywords, then this keyword can be used to specify
+a multiplier in the SCHEDULE section which will modify further these matrix-fracture coupling
+transmissibilities.
+The keyword should be followed by one positive real number for every grid block in the current box within
+the top NDIVIZ/2 layers of the grid (that is, the matrix cells). Any values input in the bottom half of the
+grid (the lower NDIVIZ/2 layers) will be ignored.
+To specify a single value for all cells, use the MULSGGD keyword.
+UNITS: dimensionless
+Example
+--------- IX1-IX2 JY1-JY2 KZ1-KZ2
+BOX
+            1   8   1   1   1   2   /
+MULSGGDV
+ 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5  
+ 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3  /
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+x
+SCHEDULE
+Eclipse reference manual
+Keywords
+1386
+MULSGGDV
+SLB – Private
+
+
+
+############ KEYWORD: ROCKSPLV  (Ref. Manual pp.1908-1910) ############
+
+--- p.1908 ---
+ROCKSPLV
+Dual porosity rock volume partitioning for thermal
+calculations
+If the dual porosity or dual permeability options and the thermal option are being used (by specifying the
+THERMAL or TEMP and DUALPORO or DUALPERM keywords in the RUNSPEC section), this keyword can
+be used to specify a multiplier which determines the proportion of total rock volume used in each porosity.
+The rock volume partitioning using ROCKSPLV is calculated as follows. The set of cells belonging to a
+given spatial location (that is the same I and J, and all Ks differing by (grid height)/(number of porosities))
+is defined to have a bulk volume which is the average bulk volume of the individual cells, and a pore
+volume which is the total of each of the cell pore volumes. The total rock volume R for the set is then the
+set bulk volume minus the set total pore volume. The ROCKSPLV values, r i for each cell i in the set, are
+then used so that a rock volume of riR is assigned to cell i.
+It is not required to have the proportions sum to unity, so that a multiplier effect can also be achieved. But
+the total rock volume must first have been calculated to have a positive value.
+If this keyword is specified, then this proportionality factor must be defined for all cells in the grid. There
+is no default value.
+If this keyword is not specified, then the rock proportions will be calculated as described for the thermal
+option in its section on "Dual porosity" in the Eclipse Technical Description.
+UNITS: dimensionless
+Example
+This defines all cell values for a grid of size 10 x 10 x 10 (5 layers in each of 2 porosities.) More rock is
+put into the matrix than into the fracture. For user-specified tuning purposes, only 90% of the rock volume
+is used, for example, for history matching.
+ROCKSPLV
+500*0.8 500*0.1 /
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+1908
+ROCKSPLV
+SLB – Private
+
+--- p.1909 ---
+ROCKTAB
+Rock compaction data tables
+The data comprises NTROCC (see keyword ROCKCOMP in the RUNSPEC section) tables of rock
+compaction data, each terminated by a slash (/).
+Each table consists of at least 3 columns of data
+If the RKTRMDIR keyword has been specified, each table consists of 5 columns of data.
+All values in the fourth and fifth columns can be defaulted, and if this is done the values from the third
+column are used. Defaulting all these values is equivalent to not specifying RKTRMDIR.
+1. The pressure.
+Values should increase monotonically down the column, unless the 'STRESS' option has been used in
+the ROCKOPTS keyword, in which case the values should decrease monotonically down the column.
+UNITS: barsa (METRIC), psia (FIELD), atma (LAB), atma (PVT-M)
+2. The corresponding pore volume multiplier.
+Values should be level or increasing down the column.
+3. The corresponding transmissibility multiplier.
+Values should be level or increasing down the column. If RKTRMDIR has been specified, this column is
+the transmissibility multiplier in the x-direction.
+4. If RKTRMDIR has been specified, this column is the transmissibility multiplier in the y-direction.
+5. If RKTRMDIR has been specified, this column is the transmissibility multiplier in the z-direction.
+Each table must contain at least two, and no more than NPPVT (set in the TABDIMS keyword) rows. Each
+row must be complete, containing an entry in every column of the table. The NTROCC records correspond
+to the rock compaction table region numbers, which are set using ROCKNUM.
+Apart from the last or first rows, values in the second and third columns may be defaulted, and such values
+are linearly interpolated.
+Note: In ECLIPSE 300, NTROCC can be set in the TABDIMS keyword; if the value is set in both places
+(TABDIMS and ROCKCOMP) the maximum is taken. See item 2 of keyword ROCKCOMP.
+If the Rock Compaction is specified by the keyword ROCKCOMP in the RUNSPEC section then one of the
+following keywords: ROCKTAB, ROCKTABH or ROCK2D must be used.
+The grid block pore volumes and transmissibilities are adjusted dynamically by multiplying the reference
+values (derived from the input data) by the corresponding factors in the table, interpolated at the
+instantaneous grid block pressures. If the OVERBURD keyword is present the cell overburden pressure is
+subtracted from the grid block pressure prior to interpolate the pore volume and transmissibility
+multipliers.
+If the overburden pressure supplied in the OVERBURD keyword is greater than the fluid pressure (which it
+often will be), the effective fluid pressure (Peff fl = Pfluid - Overburden) is negative. In this case the
+ROCKTAB table has to be supplied with negative pressures in column 1. The ROCKTAB table can be input
+in a more intuitive manner by using the 'STRESS' option in the ROCKOPTS keyword before the ROCKTAB
+keyword. In this case the pore volume and transmissibility multipliers are tabulated against the effective
+overburden pressure, Peff ov = Overburden - Pfluid, that are then positive.
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+GRID
+EDIT
+x
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse 300
+Eclipse reference manual
+Keywords
+1909
+ROCKTAB
+SLB – Private
+
+--- p.1910 ---
+If the rock compaction process is irreversible ('IRREVERS' specified in keyword ROCKCOMP), the table is
+interpolated at the minimum pressure reached in each grid block, to stop the pore space re-inflating if the
+pressure increases.
+The transmissibility multipliers specified in the table are applied in a similar way to the static
+transmissibility multipliers entered using keywords MULTX, MULTY and MULTZ for example. The
+multiplier associated with the block (I, J, K) is applied to the transmissibility between the block and its
+positive-direction neighbors (I+1, J, K), (I, J+1, K), and (I, J, K+1). The transmissibility multipliers are
+also applied to the well connection transmissibility factors, and to non-neighbor connections.
+In the current version of Eclipse 100, the transmissibility multiplier is obtained using the explicit value of
+the grid block pressure (or the explicit minimum pressure if the process is irreversible). For Eclipse 300,
+the implicit value of the pressure is used. The multipliers can be significantly different when the pressure is
+changing rapidly in a region of the table with big changes in the transmissibility multiplier.
+For Eclipse 100, coal bed methane option. The monotonicity restriction for the multipliers can be relaxed
+by setting item 89 of the OPTIONS keyword (coal bed methane runs only).
+For Eclipse 300, coal bed methane option. The monotonicity restriction for the multipliers can be relaxed
+by setting item 98 of the OPTIONS3 keyword (coal bed methane runs only).
+See also keywords ROCKTABH, ROCK2D, ROCK2DTR, ROCKTABW, ROCKTSIG, OVERBURD and
+ROCKOPTS, and "Rock compaction" in the Eclipse Technical Description.
+Example
+With NTROCC=2 and NPPVT≥4:
+ROCKTAB
+ 1000  .96   .98
+ 2000  .99   .99
+ 3000 1.0   1.0
+ 4000 1.01  1.0   /
+ 1000  .94   .97
+ 2000  .98   .99
+ 3000 1.0   1.0
+ 4000 1.02  1.01  /
+Eclipse reference manual
+Keywords
+1910
+ROCKTAB
+SLB – Private

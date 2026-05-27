@@ -1,0 +1,447 @@
+% =====================================================================
+%  Eclipse 2025.4 — Faults & Non-Neighbour Connections (NNCs)
+%  1-to-1 Mathematical Model
+%
+%  Every equation maps to a numbered equation in:
+%    EclipseTechnicalDescription.pdf  (TD chapter "Transmissibility calculations",
+%                                      pp. 33-51)
+%  or to the RM keyword pages for NNC, EDITNNC, EDITNNCR, MULTFLT.
+%
+%  Compile with:  pdflatex math-model.tex
+%
+%  Author: AXON, built 2026-05-23
+% =====================================================================
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{bm}
+\usepackage[margin=2.4cm]{geometry}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue!50!black, urlcolor=blue!60!black}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{parskip}
+
+\newcommand{\TDref}[1]{\textit{TD Eq.\,#1}}
+\newcommand{\RMref}[1]{\textit{RM Eq.\,#1}}
+\newcommand{\kw}[1]{\texttt{#1}}
+\newcommand{\note}[1]{\par\smallskip\textit{#1}\par\smallskip}
+
+\DeclareMathOperator{\CDARCY}{CDARCY}
+\DeclareMathOperator{\TRANX}{TRANX}
+\DeclareMathOperator{\TRANY}{TRANY}
+\DeclareMathOperator{\TRANZ}{TRANZ}
+\DeclareMathOperator{\TRANR}{TRANR}
+\DeclareMathOperator{\TMLT}{TMLT}
+\DeclareMathOperator{\DIPC}{DIPC}
+\DeclareMathOperator{\RNTG}{RNTG}
+\DeclareMathOperator{\MULTFLT}{MULTFLT}
+\DeclareMathOperator{\PERMX}{PERMX}
+\DeclareMathOperator{\PERMY}{PERMY}
+\DeclareMathOperator{\PERMZ}{PERMZ}
+\DeclareMathOperator{\PERMR}{PERMR}
+
+\title{\textbf{Eclipse 2025.4 — Faults \& Non-Neighbour Connections}\\
+       \large 1-to-1 mathematical model with manual equation cross-references}
+\author{Library: \texttt{my-axon/libraries/eclipse-faults-nncs}}
+\date{Built 2026-05-23 from Eclipse 2025.4 Technical Description and Reference Manual}
+
+\begin{document}
+\maketitle
+
+% =====================================================================
+\section{Scope and notation}
+% =====================================================================
+
+This document gives the formal equations Eclipse uses to compute transmissibilities for:
+\begin{itemize}
+  \item Block-centred grids (\kw{OLDTRAN}, \kw{OLDTRANR})
+  \item Corner-point grids (\kw{NEWTRAN}, the default with \kw{COORD}/\kw{ZCORN})
+  \item Half-cell directional permeability (\kw{HALFTRAN}, E100)
+  \item Radial grids
+  \item Non-Neighbour Connections (NNCs) — both auto-generated and user-defined
+\end{itemize}
+
+The \emph{dual-porosity} matrix-fracture transmissibility (\TDref{2.54}) lives in the
+sibling document at \texttt{eclipse-dual-porosity/notes/math-model.pdf}.
+
+\paragraph{Symbols.}
+\begin{description}
+  \item[$\CDARCY$] Darcy unit conversion constant; $0.00112712$ (FIELD), $0.00852702$ (METRIC)
+  \item[$\PERMX_i$, $\PERMY_i$, $\PERMZ_i$] permeabilities in cell $i$
+  \item[$\RNTG_i$] net-to-gross ratio in cell $i$
+  \item[$\TMLT$] composite transmissibility multiplier $= \kw{MULTX}\cdot\kw{MULTY}\cdot\kw{MULTZ}\cdot\MULTFLT\cdot\kw{MULTREGT}\cdot\ldots$
+  \item[$\DIPC$] dip correction (for OLDTRAN family)
+  \item[$DX_i, DY_i, DZ_i$] in OLDTRAN context: cell side lengths;
+                              in NEWTRAN context: vector components from cell centre to face centre
+  \item[$A_x, A_y, A_z$] X-, Y-, Z-projections of the mutual interface area between two cells
+  \item[$T_i, T_j$] half-cell transmissibilities (used in harmonic mean)
+\end{description}
+
+% =====================================================================
+\section{Block-centred transmissibility (\kw{OLDTRAN})}
+% =====================================================================
+
+Used by default with \kw{DX}/\kw{DY}/\kw{DZ}/\kw{TOPS} input.
+
+\subsection*{X-direction transmissibility}
+\begin{equation}
+\TRANX_i \;=\; \frac{\CDARCY \cdot \kw{TMLTX}_i \cdot A \cdot \DIPC}{B}
+\label{eq:oldtran-x}
+\tag{TD 2.1}
+\end{equation}
+with the interface area
+\begin{equation}
+A \;=\; \frac{DX_i \cdot DY_j \cdot DZ_j \cdot \RNTG_j \;+\; DX_j \cdot DY_i \cdot DZ_i \cdot \RNTG_i}{DX_i + DX_j}
+\label{eq:oldtran-A}
+\tag{TD 2.2}
+\end{equation}
+the flow-resistance sum
+\begin{equation}
+B \;=\; \frac{\dfrac{DX_i}{\PERMX_i} + \dfrac{DX_j}{\PERMX_j}}{2}
+\label{eq:oldtran-B}
+\tag{TD 2.3}
+\end{equation}
+and the dip correction
+\begin{equation}
+\DIPC \;=\; \frac{\mathrm{DHS}}{\mathrm{DHS} + \mathrm{DVS}}
+\label{eq:oldtran-dipc}
+\tag{TD 2.4}
+\end{equation}
+with
+\[
+\mathrm{DHS} \;=\; \left(\frac{DX_i + DX_j}{2}\right)^{2}
+\qquad
+\mathrm{DVS} \;=\; \bigl(\mathrm{DEPTH}_j - \mathrm{DEPTH}_i\bigr)^{2}
+\]
+
+\subsection*{Y-direction transmissibility}
+Analogous to \eqref{eq:oldtran-x} with X $\to$ Y in all subscripts.
+
+\subsection*{Z-direction transmissibility}
+\begin{equation}
+\TRANZ_i \;=\; \frac{\CDARCY \cdot \kw{TMLTZ}_i \cdot A}{B}
+\label{eq:oldtran-z}
+\tag{TD 2.5}
+\end{equation}
+\begin{equation}
+A \;=\; \frac{DZ_i \cdot DX_j \cdot DY_j \;+\; DZ_j \cdot DX_i \cdot DY_i}{DZ_i + DZ_j}
+\label{eq:oldtran-Az}
+\tag{TD 2.6}
+\end{equation}
+\begin{equation}
+B \;=\; \frac{\dfrac{DZ_i}{\PERMZ_i} + \dfrac{DZ_j}{\PERMZ_j}}{2}
+\label{eq:oldtran-Bz}
+\tag{TD 2.7}
+\end{equation}
+\note{No dip correction in Z; no net-to-gross factor either ($\RNTG$ is a horizontal-flow correction only).}
+
+% =====================================================================
+\section{Alternative block-centred form (\kw{OLDTRANR})}
+% =====================================================================
+
+Activated by \kw{OLDTRANR} keyword in the GRID section. Different combination of cell-cross-section
+and permeability per cell.
+
+\begin{equation}
+\TRANX_i \;=\; \frac{\CDARCY \cdot \kw{TMLTX}_i \cdot \DIPC}{B}
+\label{eq:oldtranr-x}
+\tag{TD 2.8}
+\end{equation}
+\begin{equation}
+B \;=\; \frac{\dfrac{DX_i}{A_i \cdot \PERMX_i} \;+\; \dfrac{DX_j}{A_j \cdot \PERMX_j}}{2}
+\label{eq:oldtranr-B}
+\tag{TD 2.9}
+\end{equation}
+with $A_i = DY_i \cdot DZ_i \cdot \kw{NTG}_i$ and $A_j = DY_j \cdot DZ_j \cdot \kw{NTG}_j$
+(per-cell cross-sections).
+The dip correction follows \TDref{2.4}/\eqref{eq:oldtran-dipc}.
+
+\subsection*{Z-direction (OLDTRANR)}
+\begin{equation}
+\TRANZ_i \;=\; \frac{\CDARCY \cdot \kw{TMLTZ}_i}{B}
+\label{eq:oldtranr-z}
+\tag{TD 2.11}
+\end{equation}
+\begin{equation}
+B \;=\; \frac{\dfrac{DZ_i}{A_i \cdot \PERMZ_i} \;+\; \dfrac{DZ_j}{A_j \cdot \PERMZ_j}}{2}
+\label{eq:oldtranr-Bz}
+\tag{TD 2.12}
+\end{equation}
+with $A_i = DX_i \cdot DY_i$ and $A_j = DX_j \cdot DY_j$ (no NTG in vertical).
+
+% =====================================================================
+\section{Corner-point transmissibility (\kw{NEWTRAN})}
+% =====================================================================
+
+The workhorse formula. Handles both regular face connections and fault-displaced
+NNCs uniformly.
+
+\subsection*{X-direction transmissibility}
+\begin{equation}
+\TRANX_{ij} \;=\; \frac{\CDARCY \cdot \kw{TMLTX}_i}{\dfrac{1}{T_i} + \dfrac{1}{T_j}}
+\label{eq:newtran-x}
+\tag{TD 2.13}
+\end{equation}
+The half-cell transmissibility for cell $i$ is
+\begin{equation}
+T_i \;=\; \PERMX_i \cdot \RNTG_i \cdot \frac{\mathbf{A}\cdot\mathbf{D}_i}{\mathbf{D}_i\cdot\mathbf{D}_i}
+\label{eq:newtran-Ti}
+\end{equation}
+where
+\begin{equation}
+\mathbf{A}\cdot\mathbf{D}_i \;=\; A_x\,DX_i + A_y\,DY_i + A_z\,DZ_i
+\label{eq:newtran-AdotD}
+\end{equation}
+\begin{equation}
+\mathbf{D}_i\cdot\mathbf{D}_i \;=\; DX_i^{\,2} + DY_i^{\,2} + DZ_i^{\,2}
+\label{eq:newtran-DdotD}
+\end{equation}
+with:
+\begin{itemize}
+  \item $(A_x, A_y, A_z)$ — projections of the mutual interface area onto the global X, Y, Z axes (computed by Eclipse from the corner-point overlap)
+  \item $(DX_i, DY_i, DZ_i)$ — components of the vector from cell-$i$ centre to the centre of the face connecting cells $i$ and $j$ (\emph{not} cell side lengths in NEWTRAN context)
+\end{itemize}
+
+$T_j$ is computed analogously for cell $j$ (using $\PERMX_j$, $\RNTG_j$, and $\mathbf{D}_j$ — the vector from cell-$j$ centre to the same face centre).
+
+\note{Why this works for NNCs: for an axis-aligned face neighbour pair, $A_y = A_z = 0$ and the formula collapses to the half-cell harmonic mean. For an NNC across a fault, $\mathbf{A}$ encodes the partial overlap geometry (which may have all three components non-zero), and the dot-product structure correctly projects the flow path onto the permeability tensor.}
+
+\subsection*{Y- and Z-direction transmissibility}
+Y-transmissibility uses $\PERMY$ in place of $\PERMX$. Z-transmissibility uses $\PERMZ$ \emph{without} the $\RNTG$ factor (vertical flow is between full layer interfaces, no net-to-gross reduction).
+
+% =====================================================================
+\section{Half-cell permeability scheme (\kw{HALFTRAN})}
+% =====================================================================
+Eclipse 100. Allows six effective half-cell permeabilities per cell:
+$K_{xil},\,K_{xir},\,K_{yil},\,K_{yir},\,K_{zil},\,K_{zir}$ (left/right of each cell in each direction).
+
+The half-cell transmissibilities are
+\begin{equation}
+T_{il} \;=\; K_{xil} \cdot \RNTG_i \cdot \frac{\mathbf{A}\cdot\mathbf{D}_i}{\mathbf{D}_i\cdot\mathbf{D}_i}
+\label{eq:halftran-Til}
+\tag{TD 2.14}
+\end{equation}
+\begin{equation}
+T_{ir} \;=\; K_{xir} \cdot \RNTG_i \cdot \frac{\mathbf{A}\cdot\mathbf{D}_i}{\mathbf{D}_i\cdot\mathbf{D}_i}
+\label{eq:halftran-Tir}
+\tag{TD 2.15}
+\end{equation}
+Implemented by storing $\kw{MULTX}_i = K_{xir}/\PERMX_i$ and $\kw{MULTX-}_i = K_{xil}/\PERMX_i$,
+with normal $\PERMX$ values entered.
+
+\note{Requires \kw{GRIDOPTS} \kw{YES} in RUNSPEC to enable the negative-direction multipliers (\kw{MULTX-}, \kw{MULTY-}, \kw{MULTZ-}).}
+
+% =====================================================================
+\section{Radial transmissibility}
+% =====================================================================
+
+For DR/DTHETA/DZ grids:
+\begin{equation}
+\TRANR_i \;=\; \frac{\CDARCY \cdot \kw{TMLTR}_i \cdot \DIPC}{\dfrac{1}{T_i} + \dfrac{1}{T_j}}
+\label{eq:radial-R}
+\tag{TD 2.16}
+\end{equation}
+with pressure-equivalent radii $r_1, r_2, r_3$ giving
+\[
+T_i \;=\; \frac{\PERMR_i\,\RNTG_i\,D\theta_i\,DZ_i}{F_{1i}}
+\qquad
+F_{1i} \;=\; \frac{r_1^{\,2}}{r_2^{\,2}-r_1^{\,2}}\,\ln(r_1/r_2) + \tfrac{1}{2}
+\]
+\[
+T_j \;=\; \frac{\PERMR_j\,\RNTG_j\,D\theta_j\,DZ_j}{F_{2j}}
+\qquad
+F_{2j} \;=\; \frac{r_3^{\,2}}{r_3^{\,2}-r_2^{\,2}}\,\ln(r_3/r_2) - \tfrac{1}{2}
+\]
+where $r_2$ is the radius of the cell interface and $r_1, r_3$ are pressure-equivalent radii of cells $i$ and $j$.
+
+% =====================================================================
+\section{Non-Neighbour Connections}
+% =====================================================================
+
+Eclipse auto-generates an NNC between two cells whenever they have a non-zero mutual interface area
+but are not Cartesian neighbours. Sources:
+
+\begin{enumerate}
+  \item Corner-point fault offset (the canonical case — see below)
+  \item Pinch-out bridging (\kw{PINCH})
+  \item Local-grid-refinement boundary (\kw{CARFIN}/\kw{RADFIN})
+  \item Numerical aquifer connection (\kw{AQUNUM}/\kw{AQUCON})
+  \item Dual porosity / dual permeability matrix-fracture coupling (\kw{DUALPORO}/\kw{DUALPERM})
+\end{enumerate}
+
+\subsection*{Geometric NNC transmissibility}
+For cases 1--3 above, Eclipse computes the NNC transmissibility via the \emph{same} NEWTRAN formula
+\eqref{eq:newtran-x}--\eqref{eq:newtran-DdotD}, with the appropriate mutual interface area projections
+$(A_x, A_y, A_z)$ for the partial overlap. The formula is uniform across regular faces and NNCs.
+
+\subsection*{Aquifer NNC}
+Numerical aquifer transmissibilities use specialised formulas defined by \kw{AQUCON} parameters
+(area, length, permeability). Beyond the scope of this document.
+
+\subsection*{Dual-porosity NNC (cross-reference only)}
+\begin{equation}
+T_{mf} \;=\; \CDARCY \cdot \sigma \cdot K \cdot V
+\label{eq:dp-nnc}
+\tag{TD 2.54}
+\end{equation}
+where $\sigma$ is the Kazemi shape factor, $K$ is the matrix permeability, $V$ is the matrix
+bulk volume. See sibling library \texttt{eclipse-dual-porosity} for full derivation.
+
+\subsection*{User-defined NNC transmissibility (\kw{NNC} keyword)}
+The user enters the transmissibility directly:
+\begin{equation}
+T_{ij}^{\text{user}} \;=\; \kw{TRAN} \quad \text{(item 7 of the \kw{NNC} record)}
+\label{eq:nnc-user}
+\end{equation}
+
+If the user also supplies an area $A_{ij}$ (item 16) and linking permeability $K^{\text{link}}_{ij}$
+(item 17) — both required for non-Darcy flow (\kw{VDFLOW}) — Eclipse back-computes the half-cell distances:
+\begin{equation}
+DX_i + DX_j \;=\; \frac{2\,A_{ij}\,K^{\text{link}}_{ij}\,c_{\text{conv}}}{T_{ij}^{\text{user}}}
+\label{eq:nnc-backcompute}
+\end{equation}
+where $c_{\text{conv}}$ is a unit conversion factor. Implementation split: \(DX_i = DX_j = (DX_i + DX_j)/2\).
+
+\subsection*{Combined multiplier semantics}
+For any connection between cells $i$ and $j$, the final transmissibility is the product:
+\begin{equation}
+T_{\text{final}}\;=\; T_{\text{base}} \;\cdot\; M_{i,j}^{\,(\text{cell})} \;\cdot\; M^{\,\text{fault}} \;\cdot\; M^{\,\text{region}} \;\cdot\; M^{\,\text{EDITNNC}}
+\label{eq:Tfinal}
+\end{equation}
+where
+\begin{itemize}
+  \item $T_{\text{base}}$ is the geometric Tx from NEWTRAN \eqref{eq:newtran-x} or OLDTRAN \eqref{eq:oldtran-x};
+  \item $M_{i,j}^{\,(\text{cell})}$ is the product of per-cell \kw{MULTX/Y/Z} (and \kw{MULTX-/Y-/Z-} where applicable);
+  \item $M^{\,\text{fault}}$ is the \kw{MULTFLT} multiplier for the named fault face containing this connection (1 if no fault);
+  \item $M^{\,\text{region}}$ is the \kw{MULTREGT} multiplier between the cells' \kw{MULTNUM} regions (1 if same region);
+  \item $M^{\,\text{EDITNNC}}$ is the \kw{EDITNNC} multiplier (1 if not edited; replaced by a constant if \kw{EDITNNCR} is used).
+\end{itemize}
+
+% =====================================================================
+\section{Dip correction $\DIPC$}
+% =====================================================================
+For block-centred OLDTRAN/OLDTRANR:
+\begin{equation}
+\DIPC \;=\; \frac{\mathrm{DHS}}{\mathrm{DHS}+\mathrm{DVS}}
+\quad,\quad
+\mathrm{DHS} = \left(\tfrac{DX_i + DX_j}{2}\right)^{2}
+\quad,\quad
+\mathrm{DVS} = \bigl(\mathrm{DEPTH}_j - \mathrm{DEPTH}_i\bigr)^{2}
+\label{eq:dipc-full}
+\tag{TD 2.4/2.10}
+\end{equation}
+\textbf{Limit cases}: horizontal layer $\Rightarrow$ DVS = 0 $\Rightarrow$ $\DIPC = 1$. Highly dipping
+$\Rightarrow$ $\DIPC < 1$, reducing effective Tx. Applied only to X and Y (not Z).
+NEWTRAN does not require an explicit $\DIPC$ — the corner-point geometry already encodes dip in
+$\mathbf{D}_i, \mathbf{D}_j$.
+
+% =====================================================================
+\section{Equation \(\to\) keyword cross-reference}
+% =====================================================================
+
+\begin{center}\small
+\begin{tabular}{lll}
+\toprule
+Equation & Concept & Controlling keyword(s) \\
+\midrule
+\eqref{eq:oldtran-x}--\eqref{eq:oldtran-dipc} & Block-centred X Tx (OLDTRAN)             & \kw{OLDTRAN}, \kw{DX}, \kw{DY}, \kw{DZ}, \kw{PERMX}, \kw{MULTX} \\
+\eqref{eq:oldtran-z}--\eqref{eq:oldtran-Bz}   & Block-centred Z Tx                       & \kw{OLDTRAN}, \kw{DZ}, \kw{PERMZ}, \kw{MULTZ}                  \\
+\eqref{eq:oldtranr-x}--\eqref{eq:oldtranr-Bz} & Alternative block-centred                & \kw{OLDTRANR}                                                  \\
+\eqref{eq:newtran-x}--\eqref{eq:newtran-DdotD} & Corner-point Tx (NEWTRAN, NNC formula)  & \kw{NEWTRAN}, \kw{COORD}, \kw{ZCORN}                            \\
+\eqref{eq:halftran-Til}--\eqref{eq:halftran-Tir} & Half-cell perm scheme                 & \kw{HALFTRAN}, \kw{MULTX-}, \kw{MULTY-}, \kw{MULTZ-}, \kw{GRIDOPTS} \\
+\eqref{eq:radial-R}                            & Radial Tx                              & \kw{DR}, \kw{DTHETA}, \kw{INRAD}                                \\
+\eqref{eq:nnc-user}--\eqref{eq:nnc-backcompute} & User-defined NNC                       & \kw{NNC}, \kw{NNCGEN}                                            \\
+\eqref{eq:dp-nnc}                              & DP/DK matrix-fracture NNC               & \kw{DUALPORO}/\kw{DUALPERM}, \kw{SIGMA}, \kw{SIGMAV}             \\
+\eqref{eq:Tfinal}                              & Combined multiplier product            & \kw{MULTX}, \kw{MULTFLT}, \kw{MULTREGT}, \kw{EDITNNC}, \kw{EDITNNCR} \\
+\eqref{eq:dipc-full}                           & Dip correction (OLDTRAN family only)    & implicit; not user-controlled                                   \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% =====================================================================
+\section{Default \kw{CDARCY} values}
+% =====================================================================
+
+\begin{center}\small
+\begin{tabular}{lll}
+\toprule
+Unit system & E100 value & E300 value \\
+\midrule
+METRIC  & 0.008527 & 0.00852702 \\
+FIELD   & 0.001127 & 0.00112712 \\
+LAB     & 3.6      & 3.6        \\
+PVT-M   & 0.00864  & 0.00864    \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+These conversion constants give transmissibilities in units of cP$\cdot$reservoir-volume / (day $\cdot$ pressure) — specifically:
+$\text{cP}\cdot\text{rm}^{3}/\text{day}/\text{bars}$ (METRIC),
+$\text{cP}\cdot\text{rb}/\text{day}/\text{psi}$ (FIELD),
+$\text{cP}\cdot\text{rcc}/\text{hr}/\text{atm}$ (LAB),
+$\text{cP}\cdot\text{rm}^{3}/\text{day}/\text{atm}$ (PVT-M).
+
+% =====================================================================
+\section{NNC drop / inline thresholds}
+% =====================================================================
+\begin{itemize}
+  \item NNCs with $T < 10^{-6}$ are silently dropped from the connection list (RM p.1468).
+  \item NNCs with $T < 10^{-20}$ produce a warning and are dropped.
+  \item NNCs whose path is geometrically equivalent to a regular face connection (e.g.\ entire intervening layer inactive) are \emph{inlined} — converted back to regular face connections internally. Visible only via the \kw{ALLNNC} mnemonic in \kw{RPTGRID}.
+\end{itemize}
+
+% =====================================================================
+\section{Composition with the DP/DK system}
+% =====================================================================
+
+For a fully coupled DP+faulted run, the Jacobian contains connections from:
+\begin{enumerate}
+  \item Standard NEWTRAN/OLDTRAN face-neighbour connections (fracture-fracture and, under DK, matrix-matrix)
+  \item Auto-generated geometric NNCs from corner-point fault offsets — same NEWTRAN formula with partial overlap area
+  \item Pinch-out NNCs from \kw{PINCH}
+  \item Dual-porosity $\sigma$-NNCs (separate Kazemi formula, \eqref{eq:dp-nnc})
+  \item Block-to-block NNCs from \kw{BTOBALFA} (standard spatial Tx with area multiplier)
+\end{enumerate}
+
+\kw{MULTFLT} applies to (1), (2), (3), and (5). It does \emph{not} apply to (4) (DP $\sigma$-NNCs);
+modify those via \kw{SIGMAV} or \kw{MULTSIGV}.
+
+% =====================================================================
+\appendix
+\section{Equation index (by TD equation number)}
+% =====================================================================
+\begin{center}\small
+\begin{tabular}{ll}
+\toprule
+TD Eq. & Label in this document \\
+\midrule
+2.1  & \eqref{eq:oldtran-x}  \\
+2.2  & \eqref{eq:oldtran-A}  \\
+2.3  & \eqref{eq:oldtran-B}  \\
+2.4  & \eqref{eq:oldtran-dipc} \\
+2.5  & \eqref{eq:oldtran-z}  \\
+2.6  & \eqref{eq:oldtran-Az} \\
+2.7  & \eqref{eq:oldtran-Bz} \\
+2.8  & \eqref{eq:oldtranr-x} \\
+2.9  & \eqref{eq:oldtranr-B} \\
+2.10 & \eqref{eq:dipc-full}  \\
+2.11 & \eqref{eq:oldtranr-z} \\
+2.12 & \eqref{eq:oldtranr-Bz}\\
+2.13 & \eqref{eq:newtran-x}  \\
+2.14 & \eqref{eq:halftran-Til}\\
+2.15 & \eqref{eq:halftran-Tir}\\
+2.16 & \eqref{eq:radial-R}   \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\bigskip\noindent\emph{End of mathematical model.}
+
+\end{document}

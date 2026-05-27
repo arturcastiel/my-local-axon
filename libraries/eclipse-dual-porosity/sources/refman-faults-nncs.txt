@@ -1,0 +1,1025 @@
+
+
+############ FAULTDIM (RM pp.812-813) ############
+
+--- p.812 ---
+FAULTDIM
+Dimensions for fault data
+This keyword specifies the maximum number of segments of fault data entered with the FAULTS keyword
+in the GRID section.
+The keyword should be followed by a single item of data, terminated by a slash (/).
+1. MFSEGS The maximum number of fault segments
+DEFAULT: 0
+Example
+FAULTDIM
+3 /
+x
+Eclipse 100
+Eclipse 300
+x
+RUNSPEC
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+812
+FAULTDIM
+SLB – Private
+
+--- p.813 ---
+FAULTS
+Specifies faults for later editing
+This keyword is used to define a set of faults, which can subsequently have their transmissibilities (and
+diffusivities) modified using the keyword MULTFLT .
+The FAULTS keyword is followed by any number of records, each containing the following items of data,
+and each terminated with a slash (/):
+1. Fault name (up to 8 characters)
+The fault is made up of all the segments with the same name. The segments may be placed in any order.
+2. Lower I-coordinate of cells along the fault (IX1)
+3. Upper I-coordinate of cells along the fault (IX2)
+IX1 must equal IX2 if the face (item 8) is X or I
+4. Lower J-coordinate of cells along the fault (IY1)
+5. Upper J-coordinate of cells along the fault (IY2)
+IY1 must equal IY2 if the face (item 8) is Y or J
+6. Lower K-coordinate of cells along the fault (IZ1)
+7. Upper K-coordinate of cells along the fault (IZ2)
+IZ1 must equal IZ if the face (item 8) is Z or K
+8. Face of the fault
+This should be one of X, Y, Z or I, J, K.
+If negative direction transmissibility multipliers, MULTX-, MULTY-, or MULTZ- are enabled (using
+keyword GRIDOPTS in the RUNSPEC section), then the face may also be one of X-, Y-, Z- or I-, J-, K-.
+The set of records must end with a blank record, containing only a slash (/).
+Notes
+•
+The FAULTS keyword may be used more than once within the GRID section.
+The FAULTDIM keyword in the RUNSPEC section is used to specify the maximum number of fault
+segments that can be entered using the FAULTS keyword. So, for this simulator, the FAULTS keyword
+may be used more than once within the GRID section, provided that the total number of records does
+not exceed the value specified in FAULTDIM.
+•
+The faults defined in this keyword do not have to correspond to the actual displacement faults in the
+corner-point geometry (keywords COORD and ZCORN). The faults defined here are only used as a
+convenient way of varying the transmissibility along the fault trajectory with the MULTFLT keyword.
+The generation of the non-neighbor connections is still governed by the corner-point geometry, and
+does not depend on the fault definitions in the FAULTS keyword (except that keyword MULTFLT
+modifies any non-neighbor connection transmissibilities across named fault segments).
+•
+The fault data can be printed out by including the mnemonic FAULTS in the RPTGRID keyword.
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse 100
+Eclipse reference manual
+Keywords
+813
+FAULTS
+SLB – Private
+
+
+############ FAULTS (RM pp.813-816) ############
+
+--- p.813 ---
+FAULTS
+Specifies faults for later editing
+This keyword is used to define a set of faults, which can subsequently have their transmissibilities (and
+diffusivities) modified using the keyword MULTFLT .
+The FAULTS keyword is followed by any number of records, each containing the following items of data,
+and each terminated with a slash (/):
+1. Fault name (up to 8 characters)
+The fault is made up of all the segments with the same name. The segments may be placed in any order.
+2. Lower I-coordinate of cells along the fault (IX1)
+3. Upper I-coordinate of cells along the fault (IX2)
+IX1 must equal IX2 if the face (item 8) is X or I
+4. Lower J-coordinate of cells along the fault (IY1)
+5. Upper J-coordinate of cells along the fault (IY2)
+IY1 must equal IY2 if the face (item 8) is Y or J
+6. Lower K-coordinate of cells along the fault (IZ1)
+7. Upper K-coordinate of cells along the fault (IZ2)
+IZ1 must equal IZ if the face (item 8) is Z or K
+8. Face of the fault
+This should be one of X, Y, Z or I, J, K.
+If negative direction transmissibility multipliers, MULTX-, MULTY-, or MULTZ- are enabled (using
+keyword GRIDOPTS in the RUNSPEC section), then the face may also be one of X-, Y-, Z- or I-, J-, K-.
+The set of records must end with a blank record, containing only a slash (/).
+Notes
+•
+The FAULTS keyword may be used more than once within the GRID section.
+The FAULTDIM keyword in the RUNSPEC section is used to specify the maximum number of fault
+segments that can be entered using the FAULTS keyword. So, for this simulator, the FAULTS keyword
+may be used more than once within the GRID section, provided that the total number of records does
+not exceed the value specified in FAULTDIM.
+•
+The faults defined in this keyword do not have to correspond to the actual displacement faults in the
+corner-point geometry (keywords COORD and ZCORN). The faults defined here are only used as a
+convenient way of varying the transmissibility along the fault trajectory with the MULTFLT keyword.
+The generation of the non-neighbor connections is still governed by the corner-point geometry, and
+does not depend on the fault definitions in the FAULTS keyword (except that keyword MULTFLT
+modifies any non-neighbor connection transmissibilities across named fault segments).
+•
+The fault data can be printed out by including the mnemonic FAULTS in the RPTGRID keyword.
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse 100
+Eclipse reference manual
+Keywords
+813
+FAULTS
+SLB – Private
+
+--- p.814 ---
+Example
+FAULTS
+--         IX1 IX2 IY1 IY2 IZ1 IZ2 FACE
+ 'zigzag'    1   1   1   2   1   4  X /
+ 'zigzag'    2   2   2   2   1   4  Y /
+ 'zigzag'    2   2   3   4   1   4  X /
+ 'zigzag'    3   3   4   4   1   4  Y /
+ 'zigzag'    3   3   5   6   1   4  X /
+ 'zigzag'    4   4   6   6   1   4  Y /
+ 'zigzag'    4   4   7   8   1   4  X /
+ 'zigzag'    5   5   8   8   1   4  Y /
+ 'zigzag'    5   5   9  10   1   4  X /
+ 'zigzag'    6   6   10 10   1   4  Y /
+ 'block'    19  19  20  30   1   4  X /
+ 'block'    30  30  20  30   1   4  X /
+ 'block'    20  30  19  19   1   4  Y /
+ 'block'    20  30  30  30   1   4  Y /
+/
+For the above example, a value of 14 has been specified in the FAULTDIM keyword in the RUNSPEC
+section.
+Eclipse 100
+Eclipse reference manual
+Keywords
+814
+FAULTS
+SLB – Private
+
+--- p.815 ---
+FBHPDEF
+Provides default BHP target or limit values
+The keyword is optional and is used to provide a default BHP (bottom hole pressure) target or limit values
+to be used where none is specified for a well.
+The keyword should be followed by up to two positive real numbers:
+1. The target BHP for production wells.
+UNITS: barsa (METRIC), psia (FIELD), atma (LAB), atma (PVT-M)
+Eclipse 100 DEFAULT: (production) 1 atma = 14.70 psia = 1.01 barsa
+Eclipse 300 DEFAULT: (production, history matching) 1 atma = 14.70 psia = 1.01 barsa
+Eclipse 300 DEFAULT: (production, other) 100 atma = 1469.59 psia = 101.32 barsa
+2. The limit BHP for injection wells.
+UNITS: barsa (METRIC), psia (FIELD), atma (LAB), atma (PVT-M)
+Eclipse 100 DEFAULT: (injection) 6802.72 atma, or 1.0E5 psia, or 6891.16 barsa
+Eclipse 300 DEFAULT: (injection, thermal) 200 atma = 2939.1 psia = 202.65 barsa
+Eclipse 300 DEFAULT: (injection, CO2STORE) 592.15 atma=8702.18 psia = 600 bars
+Eclipse 300 DEFAULT: (injection, all other cases) 1000 atma = 14695.9 psia = 1013.25 barsa
+Either or both of these can be defaulted. Defaulting both is equivalent to not specifying the keyword.
+All defaults stated are accurate to 2 decimal places.
+The data must be terminated by a slash (/).
+Notes
+•
+The values in this keyword are used purely when default values would otherwise be used to set up a
+well's control data, that is when no BHP target or limit value is set in one of the related keywords.
+Setting new default values with this keyword does not change existing control data for any well. It must
+be defined before the keyword to which it is to apply. To change an existing BHP limit, use WELTARG.
+•
+This keyword can be specified more than once: the new values will then be used with subsequent
+related keywords if a default BHP value is required.
+•
+The keywords for which the FBHPDEF production value will be used as the BHP limit if it is defaulted
+in the keyword are WCONPROD and WCONHIST.
+•
+The keywords for which the FBHPDEF injection value will be used as the BHP target if it is defaulted
+in the keyword are WCONINJE, WCONINJH and WCONINJP.
+•
+The FBHPDEF injection value will also be used as the BHP target if it is defaulted in the obsolete
+WCONINJ keyword.
+•
+For the WCONINJH keyword, it is possible that a well may change to BHP control before its
+productivity index has been properly matched. If this happens, the default BHP limit value should be
+set to atmospheric pressure and the WELTARG keyword used subsequently to set the required BHP
+limit.
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+x
+SCHEDULE
+Eclipse 100
+Eclipse reference manual
+Keywords
+815
+FBHPDEF
+SLB – Private
+
+--- p.816 ---
+•
+If the WCONINJH or WCONHIST keyword is respecified for an existing history matching well, the
+default BHP value is only reapplied if the limit was previously defaulted (in practice this means that
+BHP limit values set by WELTARG are preserved). For all other keywords, the default is always
+reapplied if no new BHP limit value is specified. This is true in general, not only when FBHPDEF has
+been used to specify a default value.
+Example
+This will set the default production well BHP limit to 250 and the default injection well BHP limit to 1500.
+These values will be used to set up the well control data if the BHP limit is defaulted in subsequent uses of
+one of the related keywords.
+FBHPDEF
+250 1500 /
+Eclipse reference manual
+Keywords
+816
+FBHPDEF
+SLB – Private
+
+
+############ MULTFLT (RM pp.1387-1389) ############
+
+--- p.1387 ---
+MULTFLT
+Modifies the transmissibility across a named fault
+The MULTFLT keyword can be used to modify the transmissibility (and diffusivity) across a fault
+previously defined using the FAULTS keyword.
+The keyword is followed by any number of records, each containing the following items of data, and each
+terminated with a slash (/):
+1. Fault name (up to 8 characters)
+(as specified in the FAULTS keyword)
+A fault root name, ending with an asterisk (*) can also be used to refer to several faults in one record.
+2. Transmissibility multiplier
+DEFAULT: 1.0
+3. Diffusivity multiplier
+(used only if the Diffusion option is enabled with the DIFFUSE keyword in the RUNSPEC section)
+DEFAULT: 1.0
+The set of records must end with a blank record containing only a slash (/).
+Notes
+•
+If a fault is referred to twice in one or more MULTFLT keywords, the transmissibility multiplier is
+taken from the last entry.
+•
+If a fault is specified twice in one or more FAULTS keywords, the transmissibility multiplier will be
+applied twice. In Eclipse 300, this behavior can be turned off by setting item 248 of the OPTIONS3
+keyword to 1.
+•
+If the fault has been specified with a face X, Y or Z in the FAULTS keyword, then using the MULTFLT
+keyword in the GRID section modifies the MULTX, MULTY and MULTZ arrays along the fault
+trajectory. If the MULTX, MULTY or MULTZ keyword is used for some cells, in addition to the
+MULTFLT keyword, then the resultant transmissibility multiplier is the product of the two input
+multipliers.
+Similarly, if negative direction transmissibility multipliers are enabled (using the GRIDOPTS keyword
+in the RUNSPEC section), and if the fault has been specified with a face X-, Y- or Z- in the FAULTS
+keyword, then using the MULTFLT keyword in the GRID section modifies the MULTX-, MULTY- and
+MULTZ- arrays along the fault trajectory. If the MULTX-, MULTY- or MULTZ- keyword is used for
+some cells, in addition to the MULTFLT keyword, then the resultant transmissibility multiplier is the
+product of the two input multipliers.
+•
+Use of the MULTFLT keyword in the EDIT section multiplies the transmissibilities along fault
+trajectories specified by the FAULTS keyword in the GRID section. The transmissibilities for any non-
+neighbor connections across such a fault are also modified to reflect the multiplier analogously to the
+use of MULTX, MULTY or MULTZ.
+Similarly, with the MULTX-, MULTY-, MULTZ- keywords.
+•
+If two faults with different names run along the same face of a cell, then both transmissibility
+multipliers are applied.
+•
+Refer also to the keywords, FAULTS and RPTGRID.
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+x
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+x
+SCHEDULE
+Eclipse reference manual
+Keywords
+1387
+MULTFLT
+SLB – Private
+
+--- p.1388 ---
+•
+The MULTFLT keyword can be used in the SCHEDULE section to modify the transmissibilities along
+the fault trajectory during the run. The effect of this keyword in the SCHEDULE section is cumulative,
+so every time the MULTFLT keyword is encountered, it multiplies the current transmissibility across a
+specific face.
+•
+The modified transmissibilities can be output to the Print file by using the mnemonic MULT in the
+RPTSCHED keyword.
+•
+If the transmissibilities have been imported from a GSG file rather than calculated (by using the
+TRANPORV mnemonic in the PETOPTS keyword) MULTFLT will be ignored in the GRID section and
+must be specified in the EDIT section instead if required.
+•
+If TRANX, TRANY or TRANZ keywords are used then MULTFLT should appear after these keywords in
+the EDIT section. Otherwise, as TRANX, TRANY and TRANZ set transmissibility explicitly, they will
+selectively override MULTFLT for neighboring connections.
+•
+When specified in the EDIT section, in Eclipse 300, MULTFLT is applied before EDITNNCR. This
+means that if the same fault NNC is edited in both, the effects of MULTFLT will be overwritten for that
+NNC. In Eclipse 100, MULTFLT is applied after EDITNNCR. Using both keywords to modify NNCs in
+the same fault is not recommended.
+Example
+Refer to the FAULTS keyword example:
+MULTFLT
+-- Multiplier (no diffusion)
+ zigzag 0.2 /
+ block  1.4 /
+/
+Eclipse reference manual
+Keywords
+1388
+MULTFLT
+SLB – Private
+
+--- p.1389 ---
+MULTIN
+Indicates that input files are multiple
+This indicates that input files, which may be either multiple or unified, are to be multiple. This is the
+default; unified files may be requested with the UNIFIN keyword.
+Multiple files enable the progress of the run to be monitored, and are generally preferred; but they do
+produce a larger number of files, which may be inconvenient on machines without a directory structure.
+This keyword has no associated data.
+x
+Eclipse 100
+x
+Eclipse 300
+x
+RUNSPEC
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+1389
+MULTIN
+SLB – Private
+
+
+############ NNC (RM pp.1466-1469) ############
+
+--- p.1466 ---
+NNC
+Set non-neighbor connection values explicitly
+Non-neighbor connections are usually generated from within the program by faults when corner point
+geometry is used; from the dual porosity or dual permeability options; or from numerical aquifer options.
+This keyword enables a specified transmissibility to be set up between any two cells in the grid.
+The keyword consists of a line of data for each required non-neighbor connection, specifying the cells to
+be linked and the required transmissibility value. The cell coordinates are specified in natural order.
+Each line of data must be terminated by a slash (/). After the last non-neighbor connection is defined, an
+additional slash on a new line terminates the list. It is possible to specify this keyword more than once in
+the grid data.
+The values in each data record are:
+1. I-index of first cell joined to the non-neighbor connection (IX)
+2. J-index of first cell joined to the non-neighbor connection (IY)
+3. K-index of first cell joined to the non-neighbor connection (IZ)
+4. I-index of second cell joined to the non-neighbor connection (JX)
+5. J-index of second cell joined to the non-neighbor connection (JY)
+6. K-index of second cell joined to the non-neighbor connection (JZ)
+7. Transmissibility value of the non-neighbor connection (TRAN)
+UNITS: cP.rm3/day/bars (METRIC), cP.rb/day/psi (FIELD), cP.rcc/hr/atm (LAB), cP.rm3/day/atm
+(PVT-M)
+DEFAULT: 0.0
+8. This item depends on which simulator is being used:
+Eclipse 100 Saturation table number to be associated with flow from the first to the second cell
+(IST1)
+Eclipse 300 Usage deprecated. Enter diffusivity value using item 14 of this keyword. For back
+compatibility purposes, if item 14 is not specified, this value will be used instead.
+DEFAULT: 0.0
+9. This item depends on which simulator is being used:
+Eclipse 100 Saturation table number to be associated with flow from the second to the first cell
+(IST2)
+Eclipse 300 Usage deprecated. Enter thermal conduction transmissibility value using item 15 of this
+keyword. For back compatibility purposes, if item 15 is not specified, this value will be
+used instead.
+10. Pressure table number to be associated with flow from the first to the second cell (IPT1)
+11. Pressure table number to be associated with flow from the second to the first cell (IPT2)
+12. The face associated with flow from the first to the second cell (ZF1)
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse 100
+Eclipse 100
+Eclipse 100
+Eclipse reference manual
+Keywords
+1466
+NNC
+SLB – Private
+
+--- p.1467 ---
+Choose one of: X+, X-, Y+, Y-, Z+, Z-
+This information is used only by the VE option (keyword VE in the RUNSPEC section).
+13. The face associated with flow from the second to the first cell (ZF2)
+Choose one of: X+, X-, Y+, Y-, Z+, Z-
+This information is used only by the VE option (keyword VE in the RUNSPEC section).
+14. Diffusivity value of the non-neighbor connection (DIFF)
+This information is used by the molecular diffusion option (keyword DIFFUSE in the RUNSPEC
+section) and the tracer diffusion option (keyword TRDIF in the PROPS section).
+UNITS: m (METRIC), ft (FIELD), cm (LAB), m (PVT-M)
+DEFAULT: 0.0
+If a non-default value is input for the diffusivity in Eclipse 300 then this value will overwrite any value
+input in data item 8.
+15. This item depends on which simulator is being used:
+Eclipse
+300
+Thermal conduction transmissibility value of the non-neighbor connection
+Used by the THERMAL option.
+UNITS: kJ/day/K (METRIC), Btu/day/°R (FIELD), J/hr/K (LAB), kJ/day/K (PVT-M)
+DEFAULT: 0.0
+If a non-default value is input for the thermal conduction transmissibility in Eclipse 300
+then this value will overwrite any value input in data item 9.
+Eclipse
+100
+1/(area*porosity) (Only used in calculations involving the velocity, see DISPERSE for
+example).
+UNITS: m-2 (METRIC), ft-2 (FIELD), cm-2 (LAB), m-2 (PVT-M)
+DEFAULT: 0.0
+16. The area associated with the NNC
+Used by the non-Darcy flow option (keyword VDFLOW in the PROPS section).
+UNITS: m2 (METRIC), ft2 (FIELD), cm2 (LAB), m2 (PVT-M)
+DEFAULT: No non-Darcy effect.
+17. The linking permeability associated with the NNC.
+Used by the non-Darcy flow option (keyword VDFLOW in the PROPS section).
+UNITS: mD (METRIC), mD (FIELD), mD (LAB), mD (PVT-M)
+Notes
+•
+The flow between two cells is solved using Newtonian iteration based on the permeability and
+geometry of the cells. For user-input NNCs, the geometry estimation, that is DXi and DXj, using item
+7, 16 and 17 is as follows:
+���= ���
+ ���=
+������������
+2�
+where
+Eclipse 100
+Eclipse 100
+Eclipse reference manual
+Keywords
+1467
+NNC
+SLB – Private
+
+--- p.1468 ---
+������is a unit conversion factor
+�
+is the surface area given in item 16
+�����
+is the linking permeability given in item 17
+�
+is the transmissibility given in item 7.
+•
+The last seven items are optional only when VDFLOW is not active. Therefore, if the slash is placed
+after item 7, the table numbers are defaulted to those for the cells joined. If directional relative
+permeabilities are employed, the positive X-direction table number is used.
+•
+Data items 8 and 9 can still be used to maintain back compatibility; it is, however, recommended to use
+the equivalent data items 14 and 15.
+•
+A non-neighbor connection between two cells which are actually neighbors (or between which the
+simulator would form a non-neighbor connection in the absence of the NNC keyword) is allowed: this
+simply adds to the existing transmissibility. In addition, any NNC input with transmissibility less than
+0.000001 is ignored. Furthermore, if a transmissibility value of 1.0D-20 or less is entered, then a
+warning message is issued, and the NNC is ignored. Connections to inactive cells result in a warning,
+and are ignored.
+•
+Where the simulator finds that non-neighbor connections can be represented internally as neighbor
+connections, for instance where an entire layer has been deactivated, it will replace NNCs with
+neighbor connections to improve solver efficiency. These connections will no longer be represented as
+NNCs in the output files. They can be seen in the PRT file by specifying the ALLNNC mnemonic with
+the RPTGRID keyword and looking at the list of deleted NNCs which are now described as “IN-LINE
+CELLS” (for Eclipse 100) or “Removed non-neighbor connections (inline)” (for Eclipse 300), or flows
+between the cells can be checked with the FLOWS mnemonic of RPTRST.
+Examples
+Example 1
+Two non-neighbor connections are defined, one between cells (1, 1, 1) and (3, 1, 1), and one between cells
+(1, 2, 1) and (4, 2, 1), each of transmissibility 0.1972.
+NNC
+1 1 1  3 1 1 0.1972 /
+1 2 1  4 2 1 0.1972 /
+/                
+Example 2
+General format for Eclipse 100
+NNC
+ IX IY IZ JX JY JZ TRAN IST1 IST2 IPT1 IPT2 ZF1 ZF2 DIFF /
+ .
+ .
+/            
+Eclipse 100
+Eclipse 300
+Eclipse reference manual
+Keywords
+1468
+NNC
+SLB – Private
+
+--- p.1469 ---
+NNCGEN
+Set non-neighbor connection values between
+cells in any two grids explicitly
+Non-neighbor connections are usually generated from within the program by faults when corner point
+geometry is used; from the dual porosity or dual permeability options; or from numerical aquifer options.
+This keyword enables a specified transmissibility to be set up between any two cells in any two grids.
+The keyword consists of a line of data for each required non-neighbor connection, specifying the cells to
+be linked and the required transmissibility value. The cell coordinates are specified in natural order.
+The values in each data record are:
+1. Grid of first cell
+DEFAULT: GLOBAL
+2. I-index of first cell joined to the non-neighbor connection (IX)
+3. J-index of first cell joined to the non-neighbor connection (IY)
+4. K-index of first cell joined to the non-neighbor connection (IZ)
+5. Grid of second cell
+DEFAULT: GLOBAL
+6. I-index of second cell joined to the non-neighbor connection (JX)
+7. J-index of second cell joined to the non-neighbor connection (JY)
+8. K-index of second cell joined to the non-neighbor connection (JZ)
+9. Transmissibility value of the non-neighbor connection (TRAN)
+UNITS: cP.rm3/day/bars (METRIC), cP.rb/day/psi (FIELD), cP.rcc/hr/atm (LAB), cP.rm3/day/atm
+(PVT-M)
+DEFAULT: 0.0
+10. Diffusivity value of the non-neighbor connection
+UNITS: m (METRIC), ft (FIELD), cm (LAB), m (PVT-M)
+DEFAULT: 0.0
+11. Thermal conduction transmissibility value of the non-neighbor connection, used by the Thermal option
+(keyword THERMAL in the RUNSPEC section)
+UNITS: kJ/day/K (METRIC), Btu/day/°R (FIELD), J/hr/K (LAB), kJ/day/K (PVT-M)
+DEFAULT: 0.0
+Each line of data must be terminated by a slash (/). After the last non-neighbor connection is defined, an
+additional slash on a new line terminates the list.
+It is possible to specify this keyword more than once in the GRID section.
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse reference manual
+Keywords
+1469
+NNCGEN
+SLB – Private
+
+
+############ EDITNNC (RM pp.723-725) ############
+
+--- p.723 ---
+EDITNNC
+Multiply a non-neighbor connection
+Non-neighbor connections may be generated by geological faults in the grid. This keyword can be used to
+modify these fault generated non-neighbor connections.
+Each line following the EDITNNC keyword specifies a non-neighbor connection to be modified and is
+terminated with a slash (/). After the last non-neighbor modification, a single (/) terminates the list.
+The items in each line are:
+1. I-index of first cell joined to the non-neighbor connection (IX)
+2. J-index of first cell joined to the non-neighbor connection (IY)
+3. K-index of first cell joined to the non-neighbor connection (IZ)
+4. I-index of second cell joined to the non-neighbor connection (JX)
+5. J-index of second cell joined to the non-neighbor connection (JY)
+6. K-index of second cell joined to the non-neighbor connection (JZ)
+The cell coordinates must be defined and cannot be defaulted.
+7. Transmissibility multiplier for the non-neighbor connection (TRANM).
+The transmissibility is set to TR*TRANM, where TR is the non-neighbor connection transmissibility
+calculated by the program or entered directly using the NNC keyword.
+The multiplier TRANM should not be negative but can be zero.
+DEFAULT: 1.0
+8. Saturation table number to be associated with flow from the first to the second cell (IST1)
+DEFAULT: 0
+9. Saturation table number to be associated with flow from the second to the first cell (IST2)
+DEFAULT: 0
+10. Pressure table number to be associated with flow from the first to the second cell (PT1)
+DEFAULT: 0
+11. Pressure table number to be associated with flow from the second to the first cell (IPT2)
+DEFAULT: 0
+12. The face associated with flow from the first to the second cell (ZF1)
+Choose either: X+, X-, Y+, Y-, Z+, Z-
+This information is used with the VE option only
+13. The face associated with flow from the second to the first cell (ZF2).
+Choose either: X+, X-, Y+, Y-, Z+, Z-
+This information is used with the VE option only
+14. Diffusivity multiplier for the non-neighbor connection (DIFFM)
+The diffusivity is set to DF*DIFFM, where DF is the non-neighbor connection diffusivity calculated by
+the program or entered directly using the NNC keyword.
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+GRID
+x
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse 100
+Eclipse 100
+Eclipse 100
+Eclipse reference manual
+Keywords
+723
+EDITNNC
+SLB – Private
+
+--- p.724 ---
+The multiplier DIFFM should not be negative but can be zero.
+DEFAULT: 0
+The last seven items are optional: if they are input then they supersede the original table numbers and VE
+flow faces. However if a slash (/) is placed after the TRANM item, then the original table numbers and VE
+flow faces will remain and diffusivities will not be altered.
+Note: When the Local Grid Refinement option is employed, the EDITNNC keyword cannot be used within
+local grids. If an NNC is edited in the global grid, then the corresponding NNCs in any local grids are not
+edited. In this case, it is advisable to employ multipliers, for example MULTX, instead (where applicable) or
+else consider using inter-region transmissibility multipliers defined by keyword MULTREGT to replace the
+EDITNNC records.
+When generating non-neighbor connections in the GRID section, any NNC which would have less than the
+minimum transmissibility allowed is not created. EDITNNC can therefore not be used to edit these non-
+neighbor connections.
+If a non-neighbor connection to be edited cannot be found, then a warning message is issued and the
+EDITNNC line ignored.
+It is not possible to edit dual porosity NNCs using this keyword, and Eclipse 100 will warn to say they
+cannot be found if they are included in the EDITNNC keyword. Transmissibility multipliers can be applied
+to dual porosity connections using the SIGMAV keyword.
+Arguments 8–11 can be given values in Eclipse 300, but will have no effect.
+If non-default values are used in arguments 8–13, Eclipse 100 will not attempt to inline the NNC even if
+the explicit value given is the value which will be assigned by the program. This can impact the
+performance of the solver, so these values should be defaulted rather than stated explicitly if possible.
+The records which are applied, i.e. those for which a matching NNC is found, can be output (in the form of
+equivalent EDITNNCR records) by setting item 167 of the DEBUG3 keyword to 1.
+Example
+EDITNNC
+ IX IY IZ JX JY JZ TRANM IST1 IST2 IPT1 IPT2 /
+ .
+ .
+/       
+Eclipse 100
+Eclipse reference manual
+Keywords
+724
+EDITNNC
+SLB – Private
+
+--- p.725 ---
+EDITNNCR
+Replace a non-neighbor connection
+Non-neighbor connections may be generated by geological faults in the grid. This keyword can be used to
+replace these fault-generated non-neighbor connections.
+Each line following the EDITNNCR keyword specifies a non-neighbor connection to be replaced and is
+terminated with a slash (/). After the last non-neighbor replacement, a single slash (/) terminates the list.
+The items in each line are:
+1. I-index of first cell joined to the non-neighbor connection (IX)
+2. J-index of first cell joined to the non-neighbor connection (IY)
+3. K-index of first cell joined to the non-neighbor connection (IZ)
+4. I-index of second cell joined to the non-neighbor connection (JX)
+5. J-index of second cell joined to the non-neighbor connection (JY)
+6. K-index of second cell joined to the non-neighbor connection (JZ)
+The cell coordinates must be defined and cannot be defaulted.
+7. Transmissibility for the non-neighbor connection (TRANS)
+The transmissibility must be defined and cannot be defaulted.
+8. Saturation table number to be associated with flow from the first to the second cell (IST1)
+DEFAULT: value calculated in GRID section
+9. Saturation table number to be associated with flow from the second to the first cell (IST2)
+DEFAULT: 0
+10. Pressure table number to be associated with flow from the first to the second cell (IPT1)
+DEFAULT: 0
+11. Pressure table number to be associated with flow from the second to the first cell (IPT2)
+DEFAULT: 0
+12. The face associated with flow from the first to the second cell (ZF1)
+Choose either: X+, X-, Y+, Y-, Z+, Z-
+This information is used with the VE option only
+13. The face associated with flow from the second to the first cell (ZF2)
+Choose either: X+, X-, Y+, Y-, Z+, Z-
+This information is used with the VE option only
+14. Diffusivity for the non-neighbor connection.
+UNITS: m (METRIC), ft (FIELD), cm (LAB), m (PVT-M)
+DEFAULT: Value calculated in GRID section.
+The last seven items are optional: if they are input then they supersede the original table numbers and VE
+flow faces. However if a slash (/) is placed after the TRANS item, then the original table numbers and VE
+flow faces will remain and diffusivities will not be altered.
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+GRID
+x
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse 100
+Eclipse 100
+Eclipse 100
+Eclipse 100
+Eclipse reference manual
+Keywords
+725
+EDITNNCR
+SLB – Private
+
+
+############ GRIDOPTS (RM pp.1006-1007) ############
+
+--- p.1006 ---
+GRIDOPTS
+Options to process grid data
+This keyword requests additional options for processing the grid data. It should be followed by some or all
+of the following items, terminated with a slash (/).
+1. Allow the alternative transmissibility multipliers including MULTX-, MULTY-, MULTZ- (which apply
+to the grid block faces X-, Y-, Z-) to be used in the GRID, EDIT or SCHEDULE sections. Similarly, the
+keyword is required if the alternative diffusivity multipliers, which include DIFFMX-, DIFFMY-,
+DIFFMZ-, are used.
+YES Keywords MULTX-, DIFFX- and related keywords may be used
+NO
+Otherwise
+DEFAULT: NO
+2. NRMULT
+The maximum number of MULTNUM regions entered in the GRID section, which apply either to inter-
+region transmissibility multipliers using the MULTREGT keyword, or pore volume multipliers using the
+MULTREGP keyword. For both cases, if this item is set to zero or defaulted then any multiplier is
+applied between flux regions entered using FLUXNUM.
+MULTNUM regions can similarly be used for diffusivity and thermal conductivity multipliers
+(MULTREGD and MULTREGH).
+DEFAULT: 0
+Note: If this value is defaulted or set to 0 and the 4th item of REGDIMS is also defaulted or set to 0, the
+simulator behaves as though all grid blocks are in MULTNUM region 1. This has no effect except that
+specifying multipliers for region 1 will not generate a warning or error, and is a side-effect of the
+default value for MULTNUM being 1.
+Note: If this value is defaulted or set to 0, the maximum number of MULTNUM regions is set to be the
+same as the maximum number of FLUXNUM regions. However, if you also specify MULTNUM, the
+simulator will use the MULTNUM values and will not substitute FLUXNUM.
+3. NRPINC
+The maximum number of PINCHNUM regions entered in the GRID section, which apply to the
+calculation of pinchouts by region.
+DEFAULT: 0
+Note: Any values read in for this item is ignored by the simulator.
+Note: This keyword can be specified once only, unless item 223 in the OPTIONS keyword is set to 1 for
+backward compatibility purposes. If specified more than once, GRIDOPTS will overwrite values while re-
+specifying them. It does not undo options which were triggered by the first specification, in particular the
+choice of which region set is used by default for MULTREGT.
+x
+Eclipse 100
+x
+Eclipse 300
+x
+RUNSPEC
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse 100
+Eclipse 100
+Eclipse 300
+Eclipse 100
+Eclipse 300
+Eclipse 100
+Eclipse reference manual
+Keywords
+1006
+GRIDOPTS
+SLB – Private
+
+--- p.1007 ---
+Example
+GRIDOPTS
+ YES   0   3 /
+Eclipse reference manual
+Keywords
+1007
+GRIDOPTS
+SLB – Private
+
+
+############ PINCH (RM pp.1727-1729) ############
+
+--- p.1727 ---
+PINCH
+Generates connections across pinched-out layers
+The keyword should be followed by some or all of the following items, which define the pinchout
+threshold thickness in the z-direction and the threshold gap between adjacent layers. The data record
+should be terminated by a slash (/).
+1. Pinchout threshold thickness.
+UNITS: m (METRIC), ft (FIELD), cm (LAB), m (PVT-M)
+DEFAULT: 0.001 (all unit sets)
+2. Option controlling generation of pinchouts when a minimum pore volume has been set using MINPV or
+MINPVV.
+GAP
+Allow NNCs across cells that are inactive due to MINPV even if the thickness exceeds the
+threshold.
+NOGAP The threshold thickness is strictly observed whether or not the pinched-out cells are inactive
+due to MINPV.
+DEFAULT: GAP
+Note: Regardless of the value of this argument, any cells with a pore volume less than 0.000001 (in all
+unit sets) are automatically considered to have a negligible pore volume available for flow and only
+allow a pinchout NNC across them if the threshold thickness entered as the first item is not exceeded.
+Note: If the thermal option has been selected, the cell’s rock volume is also considered, and a cell is
+only considered to have a negligible pore volume available for flow if both the pore volume and rock
+volume are less than 0.000001 (in all unit sets).
+3. Maximum empty gap allowed between cells in adjacent grid layers for a non-zero transmissibility to
+exist between them.
+UNITS: m (METRIC), ft (FIELD), cm (LAB), m (PVT-M)
+DEFAULT: Infinity (1.0E20 in all unit sets)
+4. Option for calculating the pinchout transmissibility.
+TOPBOT The pinchout transmissibility is formed from the half-cell Z-direction transmissibilities of
+the active cells on either side of the pinched-out layer(s).
+ALL
+The pinchout transmissibility is a harmonic average of the Z-direction transmissibilities of
+all the cells between the active cells on either side of the pinched-out layer(s), including any
+z-direction transmissibility multipliers. In Eclipse 300, this option is only available for
+Cartesian corner-point geometry.
+DEFAULT: TOPBOT
+5. Option for accounting for MULTZ through a pinched-out column, if item 4 has been set to TOPBOT. If
+item 4 has been set to ALL, individual multipliers are always applied to their respective cells in the
+transmissibility calculation, which does not correspond to either of the below options and this item is
+ignored.
+x
+Eclipse 100
+x
+Eclipse 300
+RUNSPEC
+x
+GRID
+EDIT
+PROPS
+REGIONS
+SOLUTION
+SUMMARY
+SCHEDULE
+Eclipse 300
+Eclipse reference manual
+Keywords
+1727
+PINCH
+SLB – Private
+
+--- p.1728 ---
+TOP The transmissibility multiplier applied to the pinchout is the MULTZ for the active cell at the top
+of the pinchout.
+ALL The transmissibility multiplier applied to the pinchout is the minimum of the MULTZ values for
+the active cell at the top of the pinchout and all the inactive cells in the pinched-out column.
+This replaces OPTIONS keyword switch 17. In Eclipse 300, this option is only available for
+Cartesian corner-point geometry.
+DEFAULT: TOP
+Note: If a model uses the DIFFMZ keyword, this option is also used to determine the diffusivity
+multiplier for the pinchout.
+Note: In a USEFLUX run, the transmissibility multipliers for all cells not included in the loaded flux region
+are set to zero. Pinchouts will therefore not be created across any cells not in the active flux regions when
+the ALL option of item 5 is specified.
+Pinched-out layers are represented in the grid as layers of inactive cells of zero thickness. The presence of
+a layer of inactive cells would normally prevent flow from crossing it, between the active cells
+immediately above and below.
+If the keyword PINCH is entered, Eclipse will automatically generate non-neighbor connections between
+the active cells on either side of the pinched-out layer(s), allowing fluid to flow across it. Generally, the
+layer or layers of inactive cells are deemed to be pinched-out if their overall cell thickness is less than the
+specified threshold value.
+When PINCH has been specified and if keyword MINPV or MINPVV has been used to set the minimum
+pore volume a cell must have to be active, then by default, a column of cells may be pinched-out if the
+pore volumes are less than the minimum value, even if the overall thickness exceeds the threshold
+thickness. If MINPV or MINPVV is used to switch off cells with small pore volumes (to enhance the
+convergence of the solver), these cells will not act as a barrier to vertical flow unless the second item
+equals NOGAP and/or the pore volume is less than 0.000001 (in all unit sets), and the overall thickness
+exceeds the threshold set in the first item. If the second item equals GAP, cells with pore volume of less
+than 0.000001 (in all unit sets) will only act as a barrier if that individual cell’s thickness exceeds the
+threshold set in the first item.
+By default, the pinchout connection reflects the Z-transmissibility multiplier (MULTZ) specified in the
+upper of the two connected cells. item 5 can be set to modify this behavior such that the minimum value of
+MULTZ for all pinched out cells is used.
+If the third item is defaulted or omitted, then a non-zero transmissibility exists between two adjacent active
+cells in the same vertical column, whatever the size of the empty gap between the cells, and when MULTZ
+is not zero for the upper of the two cells. Otherwise, if this gap exceeds the threshold empty gap, then the
+transmissibility is always set to zero. For a prospective pinchout connection, no NNC is formed if the sum
+of the empty gaps between all adjacent layers of inactive cells in the pinchout exceeds this threshold.
+The PINCH keyword only affects pinchouts between layers, that is in the z-direction. To control generation
+of pinchouts within a layer, that is in the x or y direction, use PINCHXY.
+Notes
+•
+Non-neighbor connections are not generated if the keyword NONNC has been entered in the RUNSPEC
+section.
+Eclipse reference manual
+Keywords
+1728
+PINCH
+SLB – Private
+
+--- p.1729 ---
+•
+Pinchout connections are only formed across inactive cells, whatever the value set for the threshold
+thickness; there is no connection across active cells.
+•
+The default method (TOPBOT in item 4) to calculate the transmissibility of a non-neighbor connection
+due to a pinchout uses a harmonic average of the half-cell Z-direction transmissibilities for the active
+cells on either side of the pinched-out layer(s). For block-centered geometry with OLDTRAN (see
+"Transmissibility Calculations" in the Eclipse Technical Description) the pinchout transmissibility
+between top and bottom cells � and � is
+Tr =
+1
+1
+Tr�
++
+1
+Tr�
+MULTZ�
+where
+Tr�= CDARCY
+2PERMZ�DX�DY�
+DZ�
+ is the half-cell transmissibility for the top cell, and Tr� is the half-cell
+transmissibility for the bottom cell.
+The case of corner-point geometry with NEWTRAN is analogous (see "Transmissibility Calculations" in
+the Eclipse Technical Description). If item 5 is set to ALL, then the multiplier used is the minimum
+value of MULTZ between all cells in the pinched-out column (that is ��������� for �= �, …, �−1).
+If the flag ALL is specified in item 4, then the pinchout transmissibility is calculated as a weighted
+average
+��=
+1
+1
+������
+where
+the sum is over all cells �= �, …�= �−1 in the column between t and b,
+n is the number of cells being summed over, and
+each transmissibility TRANZ� is calculated as described in "Transmissibility Calculations" in the
+Eclipse Technical Description. In this case, item 5 is ignored as the multiplier for each cell is applied
+when calculating the transmissibility for that cell. If any of the transmissibilities in the sum are zero, the
+pinchout will not be made.
+However, if the thickness of a cell (or cells) is less than 0.0001 (in current units) then this cell is
+ignored during the transmissibility calculations and the transmissibility between the thicker cells on
+either side will be used in the sum. (Note that this is a clarification of the existing algorithm and not a
+change in behavior.)
+•
+In corner-point geometry, the total thickness of inactive layers in the pinchout (compare item 1) is
+computed as the maximum difference in corner-point depths between the active cells on either side of
+the pinched-out layer(s), for each of the four coordinate lines surrounding the column.
+In corner-point geometry, the thickness of the empty gap between two adjacent cells (see item 3) is
+taken as minimum difference in corner-point depths between the appropriate coordinate lines.
+•
+When item 5 is set to ALL, note that the transmissibility multiplier for the cell at the top is not itself
+changed when calculating the multiplier to be used for the pinchout.
+•
+If a model includes diffusivity or thermal transmissibility, the same choices are applied to these
+calculations as for the transmissibility.
+Eclipse reference manual
+Keywords
+1729
+PINCH
+SLB – Private
