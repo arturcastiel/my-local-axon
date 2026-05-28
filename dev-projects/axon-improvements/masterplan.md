@@ -20,6 +20,12 @@
 | **axon-ascent/** | 3-safety-budget | eval/benchmark maturation (seeds + CIs + scoring) → feeds axon-million P3 | — |
 | **axon-memory/** | 2-plan | core shipped; **open: #96 load-wire + 4 deferred follow-ups** | — |
 
+**Mechanical-truth — self-knowledge integrity (QUEUED 2026-05-28, owner-approved — fixes the drift/hollow-metrics concerns; siblings of dag-consistency/dont-do)**
+| Workstream | Phase | Next action | Blocked by |
+|---|---|---|---|
+| **project-refresh/** | queued | A reconciler for project *status* (fixes tracking drift — concern 2). `project-refresh <proj>` re-derives from ground truth: `codebase:` exists+canonical? · plan items "build R_X/tool Y/program Z" → does the artifact already exist? (marked-remaining-but-done) · "PR-N merged" vs canonical squash history · bound todos open-but-artifact-exists (stale-done). Output drift report; `--fix` safe mechanical ones; optional `R_PROJECT_FRESH` WARN control. Build first (also unblocks trusting the plan). | — |
+| **metric-integrity/** | queued | `R_METRIC_GROUNDED` audit/gate (fixes hollow self-metrics — concern 3). Flags metrics that are: no falsifying tripwire · presence-only (count files, not effect) · n=0 (hollow sample) · stale (cached vs source) · self-graded (no control delta). 5-mechanism design captured. Start with coverage / health-score / dispatch. Build after project-refresh. | — |
+
 **Cross-host coherence (X1 — feeds axon-million P3 goal #4 + Axiom portability)**
 | Workstream | Phase | Open items | 
 |---|---|---|

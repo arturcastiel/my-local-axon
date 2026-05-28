@@ -1,0 +1,15 @@
+{"ts": "2026-05-28T06:52:00+00:00", "repo": "axon-fixture-a", "mode": "overview", "structural-match": 1.0, "key-fact-coverage": 1.0, "structural-pairs": [5, 5], "fact-hits": [2, 2], "score": 1.0, "pass": true}
+{"ts": "2026-05-28T06:52:00+00:00", "repo": "axon-fixture-a", "mode": "subsystem", "structural-match": 1.0, "key-fact-coverage": 1.0, "structural-pairs": [5, 5], "fact-hits": [1, 1], "score": 1.0, "pass": true}
+{"ts": "2026-05-28T06:52:00+00:00", "repo": "axon-fixture-a", "mode": "deep", "structural-match": 1.0, "key-fact-coverage": 1.0, "structural-pairs": [5, 5], "fact-hits": [2, 2], "score": 1.0, "pass": true}
+{"ts": "2026-05-28T06:52:00+00:00", "repo": "axon-fixture-b", "mode": "overview", "structural-match": 1.0, "key-fact-coverage": 1.0, "structural-pairs": [5, 5], "fact-hits": [2, 2], "score": 1.0, "pass": true}
+{"ts": "2026-05-28T06:52:00+00:00", "repo": "axon-fixture-b", "mode": "subsystem", "structural-match": 1.0, "key-fact-coverage": 1.0, "structural-pairs": [5, 5], "fact-hits": [1, 1], "score": 1.0, "pass": true}
+{"ts": "2026-05-28T06:52:00+00:00", "repo": "axon-fixture-b", "mode": "deep", "structural-match": 1.0, "key-fact-coverage": 1.0, "structural-pairs": [5, 5], "fact-hits": [2, 2], "score": 1.0, "pass": true}
+{"ts": "2026-05-28T06:52:00+00:00", "repo": "flask-mini", "mode": "overview", "structural-match": 1.0, "key-fact-coverage": 1.0, "structural-pairs": [5, 5], "fact-hits": [2, 2], "score": 1.0, "pass": true}
+{"ts": "2026-05-28T06:52:00+00:00", "repo": "flask-mini", "mode": "subsystem", "structural-match": 1.0, "key-fact-coverage": 1.0, "structural-pairs": [5, 5], "fact-hits": [1, 1], "score": 1.0, "pass": true}
+{"ts": "2026-05-28T06:52:00+00:00", "repo": "flask-mini", "mode": "deep", "structural-match": 1.0, "key-fact-coverage": 1.0, "structural-pairs": [5, 5], "fact-hits": [2, 2], "score": 1.0, "pass": true}
+{"ts": "2026-05-28T06:52:00+00:00", "repo": "tiny-py-cli", "mode": "overview", "structural-match": 1.0, "key-fact-coverage": 1.0, "structural-pairs": [5, 5], "fact-hits": [2, 2], "score": 1.0, "pass": true}
+{"ts": "2026-05-28T06:52:00+00:00", "repo": "tiny-py-cli", "mode": "subsystem", "structural-match": 1.0, "key-fact-coverage": 1.0, "structural-pairs": [5, 5], "fact-hits": [1, 1], "score": 1.0, "pass": true}
+{"ts": "2026-05-28T06:52:00+00:00", "repo": "tiny-py-cli", "mode": "deep", "structural-match": 1.0, "key-fact-coverage": 1.0, "structural-pairs": [5, 5], "fact-hits": [2, 2], "score": 1.0, "pass": true}
+{"ts": "2026-05-28T06:52:00+00:00", "repo": "tiny-ts-lib", "mode": "overview", "structural-match": 1.0, "key-fact-coverage": 1.0, "structural-pairs": [5, 5], "fact-hits": [2, 2], "score": 1.0, "pass": true}
+{"ts": "2026-05-28T06:52:00+00:00", "repo": "tiny-ts-lib", "mode": "subsystem", "structural-match": 1.0, "key-fact-coverage": 1.0, "structural-pairs": [5, 5], "fact-hits": [1, 1], "score": 1.0, "pass": true}
+{"ts": "2026-05-28T06:52:00+00:00", "repo": "tiny-ts-lib", "mode": "deep", "structural-match": 1.0, "key-fact-coverage": 1.0, "structural-pairs": [5, 5], "fact-hits": [2, 2], "score": 1.0, "pass": true}

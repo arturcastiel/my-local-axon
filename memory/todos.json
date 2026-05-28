@@ -34,5 +34,18 @@
     "bindings": [],
     "created": "2026-05-26",
     "done_ts": ""
+  },
+  {
+    "id": "91e75e61",
+    "text": "axon-million PROOF pillar: run the dual-agent benchmark LIVE (needs ANTHROPIC_API_KEY + budget; >=15-20 goals x2 arms to clear the 95% CI lower-bound>0.5 bar). Wedge is done; this is THE bottleneck for the million thesis. Clear with: todo done <id>",
+    "due": "",
+    "status": "open",
+    "bindings": [
+      "axon-million",
+      "proof",
+      "human-step"
+    ],
+    "created": "2026-05-28",
+    "done_ts": ""
   }
 ]
