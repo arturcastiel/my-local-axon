@@ -47,5 +47,18 @@
     ],
     "created": "2026-05-28",
     "done_ts": ""
+  },
+  {
+    "id": "837110b2",
+    "text": "Gate-before-commit blind spot: lint_paths scans only git-TRACKED files + commit-trailer --range scans only committed commits, so new untracked files / the pending commit aren't seen at the pre-commit crucible gate \u2014 they surface on the NEXT gate (hit 2x: commit-trailer, then project-refresh tripped lint-paths post-merge). Fix: a pre-commit-aware lint over staged+untracked in the gate, OR stage-then-gate. Low severity, real.",
+    "due": "",
+    "status": "open",
+    "bindings": [
+      "process",
+      "gate",
+      "crucible"
+    ],
+    "created": "2026-05-28",
+    "done_ts": ""
   }
 ]
