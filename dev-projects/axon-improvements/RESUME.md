@@ -1,7 +1,20 @@
-# RESUME — axon-improvements (session handover, 2026-05-27)
+# RESUME — axon-improvements (session handover, updated 2026-05-28)
 
-> Open this first on resume. The autonomous dev loop is fully wired and PROVEN
-> (2 PRs merged this session). Everything below is the state to pick up from.
+> Open this first on resume. Autonomous dev loop wired + PROVEN.
+>
+> **2026-05-28 SESSION (14 PRs, MR !3..!16; tags v3.8.0 + 4 dev checkpoints):** safety core
+> (dont-do-enforce x3 · dag-consistency 1-gate · compiled-mirror shrink + `prefer-compiled:false`
+> · commit-trailer `--range`/`--stdin`) → **v3.8.0 release** → **axon-million WEDGE feature-complete**
+> (axiom coherence + enforcement-gaps + portability + `report`) → boot-reminder panel → **META-FIXES**
+> from the concerns review: **project-refresh** (tracking drift, MR !15) + **metric-integrity**
+> (hollow self-metrics, MR !16). my-axon `/mnt/c` routing fixed; 7 codebase refs repointed.
+>
+> **NEXT = CONCERN 1, the PROOF live-run** (axon-million bottleneck, HUMAN: API key + budget).
+> Caveats: only ~2 of 5 goals are prompt-harness-runnable → n=2 → verdict INCONCLUSIVE; need
+> ≥15-20 goals for a conclusive CI. AND the AXON arm is an AXON-discipline *prompt*, not full
+> AXON+tools (todo 43b4bf4b). Runner: `benchmark/run.sh` (live-only, key-gated). See the
+> general memory `session-state-2026-05-28-proof-next` + `proof-pillar-is-the-bottleneck`.
+> Other open human item: X1 Stop-hook (signature prereq + ~/.claude, supervised).
 
 ## Resume in 3 steps
 1. `load axon`  → boots **canonical new-axon** (output-style was repointed 2026-05-27).
