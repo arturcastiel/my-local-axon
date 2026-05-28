@@ -2,19 +2,42 @@
 
 > Open this first on resume. Autonomous dev loop wired + PROVEN.
 >
-> **2026-05-28 SESSION (14 PRs, MR !3..!16; tags v3.8.0 + 4 dev checkpoints):** safety core
+> **2026-05-28 SESSION (21 PRs, MR !3..!23; tags v3.8.0 + 7 dev checkpoints):** safety core
 > (dont-do-enforce x3 · dag-consistency 1-gate · compiled-mirror shrink + `prefer-compiled:false`
 > · commit-trailer `--range`/`--stdin`) → **v3.8.0 release** → **axon-million WEDGE feature-complete**
 > (axiom coherence + enforcement-gaps + portability + `report`) → boot-reminder panel → **META-FIXES**
 > from the concerns review: **project-refresh** (tracking drift, MR !15) + **metric-integrity**
-> (hollow self-metrics, MR !16). my-axon `/mnt/c` routing fixed; 7 codebase refs repointed.
+> (hollow self-metrics, MR !16) → **PROOF MACHINERY**: methodology (MR !17) + sandbox (!18) +
+> MMS oracle (!19) + **B2.5 objective grader wired into the harness (!20)**. my-axon `/mnt/c`
+> routing fixed; 7 codebase refs repointed.
 >
 > **NEXT = CONCERN 1, the PROOF live-run** (axon-million bottleneck, HUMAN: API key + budget).
-> Caveats: only ~2 of 5 goals are prompt-harness-runnable → n=2 → verdict INCONCLUSIVE; need
-> ≥15-20 goals for a conclusive CI. AND the AXON arm is an AXON-discipline *prompt*, not full
-> AXON+tools (todo 43b4bf4b). Runner: `benchmark/run.sh` (live-only, key-gated). See the
-> general memory `session-state-2026-05-28-proof-next` + `proof-pillar-is-the-bottleneck`.
-> Other open human item: X1 Stop-hook (signature prereq + ~/.claude, supervised).
+> The benchmark is now RUNNABLE END-TO-END + OBJECTIVE: `dual_agent_eval.py run-mms` (NOT the old
+> self-graded prose `run.sh`) presents an MMS PDE goal (no u*), runs both arms, extracts the
+> produced solver, and grades it for convergence — a win is an oracle pass, never a say-so.
+> PROOF TARGET COMPLETE: `preflight` (B4, cost + price-independent conclusiveness gate) + `prereg`
+> (B5, locked bar + git-commit/sha256-pinned grader, commit before running) both MERGED (tag
+> `v3.8.0-dev-proof-target`). The flow is `preflight --n K` → `prereg --seeds 0..K` (commit it) →
+> `run-mms --backend anthropic --goals heat:0,advdiff:0,... --model <m>`. BREADTH SHIPPED (tag
+> `v3.8.0-dev-proof-spectrum`): a 2nd MMS field — advection-diffusion/transport — + operator
+> dispatch (`operator:seed` ids; `--goals` on run-mms/preflight/prereg). 12 mixed goals (6 heat +
+> 6 advdiff), all reference solvers order ~2; preflight(12) is conclusive-capable at win-rate 0.85.
+> REMAINING for the live NUMBER: **B3** full-AXON-over-MCP arm (today the AXON arm is an AXON-
+> discipline *prompt* via make_operator, not full AXON+tools — todo 43b4bf4b, owner-steered
+> fidelity) · OPTIONAL more breadth (Buckley-Leverett analytical oracle / 3rd MMS field) · then
+> HUMAN: cheap pilot → confirm → scale → headline (Opus) → read CI.
+>
+> **PAUSED 2026-05-28 pending an internal TNO discussion on HOW to run it.** TWO backends now merged
+> (MR !20–!25): `--backend anthropic` (pay-per-token API key, bare-model base = the locked design) and
+> `--backend claude-cli` (Pro/Max SUBSCRIPTION via `claude -p`, no API key, agent-with-tools base = a
+> real-world H1 variant). Colleague explainer kept OUT of the repo (owner's request):
+> `/home/arturcastiel/projects/new-axon/AXON-benchmark-guide.md`. **Loadable resume anchor = todo
+> `cbe1b46d`** (the boot menu surfaces it). AFTER the discussion: pick option+model → prereg → run-mms
+> → interpret. While on hold, safe autonomous proof-strengthening = the Buckley-Leverett analytical oracle.
+> See `dev-projects/axon-million/proof-design.md` +
+> `04-log.md` (2026-05-28) + general memories `session-state-2026-05-28-proof-next` +
+> `proof-pillar-is-the-bottleneck`. Other open human item: X1 Stop-hook (signature prereq +
+> ~/.claude, supervised).
 
 ## Resume in 3 steps
 1. `load axon`  → boots **canonical new-axon** (output-style was repointed 2026-05-27).

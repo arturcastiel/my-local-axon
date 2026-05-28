@@ -3,28 +3,28 @@
     "id": "ccc8e2b0",
     "text": "Study human-handoff-banner drift: gated human actions (build/test/commit/push/merge/PR) rendered as prose instead of TOOL(human-handoff). Design a mechanical check (R_HANDOFF_SURFACED verifier rule or coherence-lint extension) that flags prose-handoff phrases not wrapped in a handoff render. Same root-cause family as artifact-identity + DAG drift: convention not enforced.",
     "due": "",
-    "status": "open",
+    "status": "done",
     "bindings": [],
     "created": "2026-05-26",
-    "done_ts": ""
+    "done_ts": "2026-05-28"
   },
   {
     "id": "116bf0af",
     "text": "Strengthen artifact-identity enforcement: lint-commit-trailer must scan the commit-message BODY (not just trailers) for brand self-references (Claude/Copilot/GPT/'Claude Code') + 'PR-N'; wire it as a REAL pre-push/pre-commit gate that BLOCKS (the manual grep && echo guard is cosmetic \u2014 it doesn't halt the push). Root incident: commit 9de380f leaked 'Claude Code' into the body 2026-05-26.",
     "due": "",
-    "status": "open",
+    "status": "done",
     "bindings": [],
     "created": "2026-05-26",
-    "done_ts": ""
+    "done_ts": "2026-05-28"
   },
   {
     "id": "ec1f912f",
     "text": "Fix lint_paths.py to skip gitignored files (workspace/memory/working|longterm session state with /mnt/c paths) so the pre-commit pre-commit-stage hook can be re-activated without false-positive-blocking every commit. Then re-enable: pre-commit install --hook-type pre-commit.",
     "due": "",
-    "status": "open",
+    "status": "done",
     "bindings": [],
     "created": "2026-05-26",
-    "done_ts": ""
+    "done_ts": "2026-05-28"
   },
   {
     "id": "43b4bf4b",
@@ -39,24 +39,78 @@
     "id": "91e75e61",
     "text": "axon-million PROOF pillar: run the dual-agent benchmark LIVE (needs ANTHROPIC_API_KEY + budget; >=15-20 goals x2 arms to clear the 95% CI lower-bound>0.5 bar). Wedge is done; this is THE bottleneck for the million thesis. Clear with: todo done <id>",
     "due": "",
-    "status": "open",
+    "status": "done",
     "bindings": [
       "axon-million",
       "proof",
       "human-step"
     ],
     "created": "2026-05-28",
-    "done_ts": ""
+    "done_ts": "2026-05-28"
   },
   {
     "id": "837110b2",
     "text": "Gate-before-commit blind spot: lint_paths scans only git-TRACKED files + commit-trailer --range scans only committed commits, so new untracked files / the pending commit aren't seen at the pre-commit crucible gate \u2014 they surface on the NEXT gate (hit 2x: commit-trailer, then project-refresh tripped lint-paths post-merge). Fix: a pre-commit-aware lint over staged+untracked in the gate, OR stage-then-gate. Low severity, real.",
     "due": "",
-    "status": "open",
+    "status": "done",
     "bindings": [
       "process",
       "gate",
       "crucible"
+    ],
+    "created": "2026-05-28",
+    "done_ts": "2026-05-28"
+  },
+  {
+    "id": "cbe1b46d",
+    "text": "axon-million PROOF: PAUSED pending TNO discussion \u2014 choose run option A (API key, pay-per-token, bare-model base) vs B (Pro/Max subscription via claude-cli, agent base). Machinery DONE + runnable: objective MMS grader + preflight + prereg + 2 fields (heat+advdiff) + 12 goals (conclusive-capable at win-rate 0.85), BOTH backends merged (MR !20-!25). Internal guide: /home/arturcastiel/projects/new-axon/AXON-benchmark-guide.md. AFTER discussion: pick option+model -> prereg -> run-mms -> bring verdict back to interpret. NOT yet run. AXON arm still prompt-level (B3 full-MCP arm open: todo 43b4bf4b). Full state: memory session-state-2026-05-28-proof-next.",
+    "due": "",
+    "status": "open",
+    "bindings": [
+      "axon-million",
+      "proof",
+      "benchmark",
+      "tno-decision"
+    ],
+    "created": "2026-05-28",
+    "done_ts": ""
+  },
+  {
+    "id": "e2ae00a9",
+    "text": "Wire the Buckley-Leverett analytical oracle into the run-mms harness: generalize the goal dispatch so run_mms_fixtures grades BL goals (proof_bl.grade \u2014 L1 + shock-front) alongside MMS goals (proof_mms.grade \u2014 order-fit); the two graders have different signatures. Then BL goals (M in {1.5,2,3,5}) can join the benchmark goal set \u2014 a 3rd oracle TYPE + more breadth. Oracle DONE + merged (tag v3.8.0-dev-proof-bl-oracle); only the harness dispatch remains.",
+    "due": "",
+    "status": "done",
+    "bindings": [
+      "axon-million",
+      "proof",
+      "benchmark"
+    ],
+    "created": "2026-05-28",
+    "done_ts": "2026-05-28"
+  },
+  {
+    "id": "20166489",
+    "text": "COMPILED-MIRROR KILL (owner decision 2026-05-28) \u2014 focused-session workstream, NOT a delete (gate-protected, ~40 files). KEY COUPLING found: compile_suggest.py POPULATES dispatch's index (register_in_dispatch_index -> memory/longterm/dispatch-index.json) as a compile side-effect, and dispatch.py reads it -> STEP 0 = decouple: build the dispatch index from program SOURCE (workspace/programs/*.md name+description), independent of compilation. THEN: (1) dispatch.py run-target compiled->source + remove prefer_compiled (read/bypass/output) + docstring. (2) rm workspace/programs/compiled/ (49 .cmp.md). (3) rm the 5 compile tools (compile, compile_suggest [after step 0], compile_optimizer, compile-write, audit_compiled \u2014 no import ripple) + their REGISTRY.json entries. (4) rm 4 machinery test files (~23 tests: test_compile_write/_audit_compiled/_compiled_freshness/_compiled_regression). (5) drop prefer-compiled from smart-dispatch.md; retire suggest-compile.md + stats.md compiled bits. (6) clean programs_registry.py (compiled field) + axon_audit.py (compiled count) \u2014 both degrade gracefully today. (7) drop compiled-coverage from metrics_manifest.json. (8) update AXON-DOCS-COMPILER.md + REGISTRY.md + AXON-DOCS-*. (9) gate: registry-drift + doc_counts + freshness. run.py STAYS (executes source .md). A partial attempt was reverted 2026-05-28 on finding the index coupling (no half-kill left).",
+    "due": "",
+    "status": "open",
+    "bindings": [
+      "axon-os",
+      "compiled-mirror",
+      "decision-locked",
+      "refactor"
+    ],
+    "created": "2026-05-28",
+    "done_ts": ""
+  },
+  {
+    "id": "3a33424a",
+    "text": "Lane 1 remaining (optional breadth, lower-value than what's built): (a) a 3rd MMS field \u2014 reaction-diffusion (u_t=alpha*u_xx+k*u+f, low-risk heat-analog) or wave (hyperbolic, 2nd-order time, more distinct); (b) property oracles (mass/energy conservation, symmetry) = methodology oracle-TYPE 3, field-agnostic. Proof already spans heat+advdiff (MMS) + Buckley-Leverett (analytical/shock), all runnable via run-mms --goals. Do AFTER the pilot confirms an effect exists (don't over-build past the live-run bottleneck).",
+    "due": "",
+    "status": "open",
+    "bindings": [
+      "axon-million",
+      "proof",
+      "breadth"
     ],
     "created": "2026-05-28",
     "done_ts": ""
