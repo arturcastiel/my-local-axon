@@ -63,16 +63,22 @@ the strongest claim ("AXON improves even SOTA"). Same code, `--model` switch. Bu
 by the PREFLIGHT (runnable-goals × est tokens × $/model) → owner sets a hard cap; note the AXON
 arm costs more (tool-use turns over MCP). The live run + key + budget is the irreducible HUMAN step.
 
-## DESIGN COMPLETE — build plan (all autonomous except the run)
-Ordered, de-risked:
-1. **Sandbox** (subprocess limits) — prerequisite for grading untrusted code.
-2. **MMS generator + grader** for the 2 pilot cases (Buckley-Leverett analytical; 1D heat MMS):
-   generate goal (PDE+f+BCs, NO u*) → run produced code in sandbox → check vs u* + convergence
-   order + conservation.
-3. **Full-AXON-over-MCP arm** (todo 43b4bf4b) — Agent-A calls AXON tools.
-4. **Preflight** (cost + best-case CI) before any budgeted run.
-5. **Pre-registration doc** (hypothesis + analysis plan + bar + seed).
-Then HUMAN: run pilot (cheap) → confirm effect → scale to ~10-20 → run headline (Opus) → read CI.
+## BUILD STATUS (2026-05-28)
+Methodology written: `benchmark/METHODOLOGY.md` (merged).
+1. ✓ **Sandbox** — `tools/proof_sandbox.py` (timeout/mem/no-net/scrubbed-env, fail-closed). MERGED.
+2. ✓ **MMS generator + grader (heat-1d)** — `tools/proof_mms.py`: leakage-safe goal gen (sympy
+   forcing, no u*) + grader (convergence-order + error via sandbox); reference CN solver validated
+   at order~2; bad solvers FAIL. MERGED. *(Buckley-Leverett analytical grader = a small follow-on.)*
+3. ☐ **Full-AXON-over-MCP arm** (todo 43b4bf4b) — the big remaining piece; better fresh + supervised.
+4. ☐ **Preflight** (cost + best-case CI) — depends on the harness integration below.
+5. ☐ **Pre-registration doc**.
++ ☐ **B2.5 harness integration** — wire `proof_mms` goals + objective grader INTO `dual_agent_eval`
+  (present MMS goal → run both arms → extract produced solver code → grade objectively, replacing
+  the self-graded goal-met). This is what makes the machinery runnable end-to-end.
+
+**The hard, correctness-critical core (oracle machinery) is DONE.** Remaining = integration (B2.5) +
+the MCP arm (B3) + preflight (B4) + prereg (B5). Then HUMAN: run pilot (cheap) → confirm effect →
+scale to ~10-20 → run headline (Opus) → read CI.
 
 ## Build implications (when design is locked)
 - Wire the full-AXON-over-MCP arm (todo 43b4bf4b).
