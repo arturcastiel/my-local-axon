@@ -2,7 +2,8 @@
 
 > The pillar-3 PROOF of the million thesis: does a model scaffolded by AXON beat the
 > SAME bare model on long-horizon, coherence-demanding work — objectively + conclusively?
-> Designed concern-by-concern with the owner. Status: concerns 1-3 LOCKED; 4-5 in design.
+> Designed concern-by-concern with the owner. Status: all 5 concerns LOCKED; oracle + harness
+> BUILT (B1/B2/B2.5 merged, leakage-hardened); remaining = MCP arm (B3) + preflight (B4) + prereg (B5).
 
 ## Locked decisions
 
@@ -69,16 +70,42 @@ Methodology written: `benchmark/METHODOLOGY.md` (merged).
 2. ✓ **MMS generator + grader (heat-1d)** — `tools/proof_mms.py`: leakage-safe goal gen (sympy
    forcing, no u*) + grader (convergence-order + error via sandbox); reference CN solver validated
    at order~2; bad solvers FAIL. MERGED. *(Buckley-Leverett analytical grader = a small follow-on.)*
++ ✓ **B2.5 harness integration** — `dual_agent_eval` gained an MMS path (`run-mms`): render a PDE
+  goal (forcing/BCs/grid, NEVER u*) → run both arms → extract the operator's produced solver →
+  grade with `proof_mms.grade`, REPLACING the GOAL-MET self-grade. Paired AXON-vs-bare →
+  Wilson-CI verdict (conservative: ties count as non-wins). `run-mms` CLI + 12 tests; gate green.
+  MERGED (v3.8.0-dev-proof-harness-mms). **The benchmark is now runnable end-to-end.**
+  + leakage HARDENED: family excludes eigenfunctions (f ∝ u* would leak u*'s shape via the
+    forcing); `proof_mms._forcing_leaks_solution` fails closed; METHODOLOGY §6.A documents the
+    two-layer defense (the order check independently rejects a hardcoded-exact answer).
 3. ☐ **Full-AXON-over-MCP arm** (todo 43b4bf4b) — the big remaining piece; better fresh + supervised.
-4. ☐ **Preflight** (cost + best-case CI) — depends on the harness integration below.
-5. ☐ **Pre-registration doc**.
-+ ☐ **B2.5 harness integration** — wire `proof_mms` goals + objective grader INTO `dual_agent_eval`
-  (present MMS goal → run both arms → extract produced solver code → grade objectively, replacing
-  the self-graded goal-met). This is what makes the machinery runnable end-to-end.
+   (Today the AXON arm is prompt-level via make_operator; B3 swaps in real AXON tools over MCP.)
+4. ✓ **Preflight** (`dual_agent_eval.py preflight`) — PRICE-INDEPENDENT conclusiveness gate (best-case
+   Wilson CI + N_min + CI at an assumed win-rate) PLUS a caveated $ estimate. Tells you BEFORE
+   spending whether a run can even clear the bar. MERGED.
+5. ✓ **Pre-registration** (`dual_agent_eval.py prereg` + `benchmark/PRE-REGISTRATION.md`) — stamps a
+   LOCKED record (fixed bar, seeds/model, git commit + sha256 fingerprint of methodology+oracle+
+   harness, embedded power projection) to commit BEFORE running. MERGED.
 
-**The hard, correctness-critical core (oracle machinery) is DONE.** Remaining = integration (B2.5) +
-the MCP arm (B3) + preflight (B4) + prereg (B5). Then HUMAN: run pilot (cheap) → confirm effect →
-scale to ~10-20 → run headline (Opus) → read CI.
+**The proof TARGET is COMPLETE** — the benchmark is one command from a CI'd verdict, cost known
+up-front, bar locked + grader pinned before the run.
+**BREADTH SHIPPED** (the owner's explicit ask): a 2nd MMS field — 1D advection-diffusion/transport
+(reservoir-adjacent) with a validated order-2 reference + operator dispatch (`operator:seed` goal
+ids; `--goals` everywhere). 12 mixed goals (6 heat + 6 advdiff), all reference solvers order ~2;
+preflight(12) = conclusive-capable at win-rate 0.85. The MMS unlock realized: breadth across fields
+with ONE automatic oracle, no extra domain experts. Tag `v3.8.0-dev-proof-spectrum`.
+**3rd ORACLE TYPE SHIPPED** (built while paused for the TNO discussion): the Buckley-Leverett
+ANALYTICAL oracle (`tools/proof_bl.py`, tag v3.8.0-dev-proof-bl-oracle) — nonlinear hyperbolic
+transport with a closed-form rarefaction+shock (Welge), Rusanov reference, L1/front grader; validated
+across M={1.5,2,3,5}; reservoir-native + owner-verifiable. The methodology oracle set is now complete:
+MMS (manufactured) + analytical (BL) + property. Follow-on (todo e2ae00a9): wire BL into run-mms.
+Remaining for the live NUMBER = the MCP arm (B3, owner-steered fidelity) + HUMAN: pilot → confirm
+effect → scale → headline (Opus) → read CI.
+
+**ONE-COMMAND TARGET (hit):** `python3 tools/dual_agent_eval.py preflight --n K` (power+cost) →
+`prereg --seeds 0..K --model <m>` (lock, commit it) → `run-mms --backend anthropic --seeds 0..K
+--model <m> --out reports/dual-agent` (CI'd H1 verdict). B2.5 made the command real; preflight +
+prereg make spending on it safe + honest.
 
 ## Build implications (when design is locked)
 - Wire the full-AXON-over-MCP arm (todo 43b4bf4b).

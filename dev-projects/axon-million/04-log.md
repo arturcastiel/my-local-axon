@@ -69,3 +69,44 @@
 - PROOF (pillar 3): CI shipped; live run needs an API key (human/config step) = a WALL for
   real numbers. THEORY (pillar 1): docs exist (theory/thesis.md). Feeders next: axon-ascent
   (telemetry/eval) + X1 cross-host (touches ~/.claude, snapshot-first).
+
+## 2026-05-28 — pillar 3 (proof): oracle machinery + harness integration DONE
+- Designed the conclusive benchmark concern-by-concern with the owner (all 5 LOCKED) and wrote
+  the full methodology: `benchmark/METHODOLOGY.md` (owner confirmed: "I like the methodology").
+- BUILT + MERGED the correctness-critical oracle: `tools/proof_sandbox.py` (timeout/mem/no-net/
+  scrubbed-env, fail-closed) + `tools/proof_mms.py` (Method of Manufactured Solutions: sympy-
+  derived forcing, leakage-safe goal gen, convergence-order grader; reference CN solver validated
+  at order ~2; bad solvers FAIL).
+- SHIPPED B2.5 — wired the objective grader INTO `dual_agent_eval` (`run-mms`): present a PDE goal
+  (forcing/BCs/grid, NEVER u*) → run AXON arm + bare arm → extract the operator's produced solver
+  → grade with `proof_mms.grade`, REPLACING the GOAL-MET self-grade. Paired → Wilson-CI verdict.
+  **The benchmark is now runnable end-to-end.** Tag `v3.8.0-dev-proof-harness-mms`.
+- HARDENED leakage (safer, not a shortcut): the manufactured family now EXCLUDES eigenfunctions
+  (where f = c·u* would leak u*'s shape via the forcing); a fail-closed guard rejects any such
+  solution; METHODOLOGY §6.A documents the two-layer defense (the order check independently
+  rejects a hardcoded-exact answer — exact ⇒ ~0 error at every N ⇒ fitted order ≈ noise, not 2).
+- SHIPPED B4 preflight (`preflight`): PRICE-INDEPENDENT conclusiveness gate (best-case Wilson CI +
+  N_min + CI at an assumed win-rate) + caveated $ estimate — tells you BEFORE spending whether a
+  run can clear the bar (n=4 only on a near-perfect sweep; need n≥11 at win-rate 0.85). MERGED.
+- SHIPPED B5 pre-registration (`prereg` + `benchmark/PRE-REGISTRATION.md`): LOCKED record with a
+  fixed bar (CI lower>0.5, not weakenable), git commit + sha256 fingerprint of methodology+oracle+
+  harness (pins the exact grader), embedded power projection (can't retro-frame an underpowered run
+  as conclusive). Commit it BEFORE running. MERGED. Tag `v3.8.0-dev-proof-target`.
+- **PROOF TARGET COMPLETE** — one command from a CI'd verdict, cost known up-front, bar locked.
+- SHIPPED BREADTH (the owner's explicit ask, "conclusive on a broader spectrum"): a 2nd MMS field
+  — 1D advection-diffusion / transport (reservoir-adjacent), u_t + c·u_x = α·u_xx + f, with a
+  validated order-2 CN+central reference. Operator dispatch: a goal id is `operator:seed`
+  (heat:0 / advdiff:1); grader is operator-agnostic; harness/preflight/prereg take `--goals`.
+  Families expanded to 6 each → 12 mixed goals, ALL reference solvers order ~2 (selftest sweep).
+  preflight(12) = CONCLUSIVE-CAPABLE at win-rate 0.85 (CI lower 0.552). Tag v3.8.0-dev-proof-spectrum.
+  This is the MMS unlock realized: breadth across fields with ONE automatic oracle, no extra experts.
+  REMAINING for the live NUMBER: B3 full-AXON-over-MCP arm (today the AXON arm is prompt-level,
+  owner-steered fidelity) + HUMAN: pilot → confirm effect → scale → headline (Opus) → CI.
+- PAUSED for an internal TNO discussion on HOW to run it (option A API key vs B Pro/Max subscription;
+  both backends merged !25; colleague guide at /home/arturcastiel/projects/new-axon/AXON-benchmark-guide.md;
+  loadable resume = todo cbe1b46d).
+- WHILE ON HOLD shipped the 3rd ORACLE TYPE — Buckley-Leverett ANALYTICAL oracle (tag
+  v3.8.0-dev-proof-bl-oracle, MR !26): tools/proof_bl.py — nonlinear hyperbolic transport, closed-form
+  rarefaction+shock (Welge), Rusanov reference, L1/front grader; validated M={1.5,2,3,5}; wrong solvers
+  fail; reservoir-native + owner-verifiable. Completes the methodology oracle set (MMS + analytical +
+  property). Follow-on (todo e2ae00a9): wire BL goals into run-mms (general grader dispatch).
