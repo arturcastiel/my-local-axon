@@ -14,3 +14,33 @@
 {"ts": "2026-05-28T08:27:41+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
 {"ts": "2026-05-28T08:38:51+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
 {"ts": "2026-05-28T08:38:51+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-28T09:02:35+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-28T09:02:35+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-28T09:06:43+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-28T09:06:43+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-28T09:18:10+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-28T09:18:10+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-28T09:24:56+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-28T09:24:56+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-28T09:41:08+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-28T09:41:08+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-28T09:45:05+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-28T09:45:05+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-28T10:08:20+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-28T10:08:20+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-28T12:15:13+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-28T12:15:13+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-28T12:38:10+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-28T12:38:10+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-28T13:00:24+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-28T13:00:24+00:00", "name": "registry-drift", "pass": false, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": {"ok": false, "summary": {"registered": 141, "on_disk": 142, "drift_count": 1}, "drifts": [{"kind": "filesystem-orphan", "script": "tools/proof_bl.py", "detail": "tools/proof_bl.py exists but is not referenced by any REGISTRY.json entry \u2014 register it or delete it"}], "action": "check", "strict": false}}
+{"ts": "2026-05-28T13:06:20+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-28T13:06:20+00:00", "name": "registry-drift", "pass": false, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": {"ok": false, "summary": {"registered": 141, "on_disk": 142, "drift_count": 1}, "drifts": [{"kind": "filesystem-orphan", "script": "tools/proof_bl.py", "detail": "tools/proof_bl.py exists but is not referenced by any REGISTRY.json entry \u2014 register it or delete it"}], "action": "check", "strict": false}}
+{"ts": "2026-05-28T13:11:41+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-28T13:11:41+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-28T15:17:24+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-28T15:17:24+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-28T15:29:33+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-28T15:29:33+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-28T16:57:30+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-28T16:57:30+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}

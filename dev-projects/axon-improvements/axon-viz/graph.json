@@ -1,6 +1,6 @@
 {
-  "generated": "2026-05-28T10:38:54",
-  "node_count": 49,
+  "generated": "2026-06-04T13:44:09",
+  "node_count": 63,
   "edge_count": 1,
   "elements": [
     {
@@ -452,11 +452,154 @@
     },
     {
       "data": {
+        "id": "axon-accountable-autonomy",
+        "label": "axon-accountable-autonomy\n\u00b7 3-pr",
+        "status": "active",
+        "phase": "3-pr",
+        "title": "axon-accountable-autonomy",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-alias-retire",
+        "label": "axon-alias-retire\n\u00b7 1-study",
+        "status": "active",
+        "phase": "1-study",
+        "title": "axon-alias-retire",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-architecture",
+        "label": "axon-architecture\n\u00b7 1-study",
+        "status": "active",
+        "phase": "1-study",
+        "title": "AXON Architecture \u2014 flawless, maintainable, enforcement-real",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-autonomy-discipline",
+        "label": "axon-autonomy-discipline\n\u00b7 3-reaudit-fixes",
+        "status": "done",
+        "phase": "3-reaudit-fixes",
+        "title": "AXON Autonomy Discipline \u2014 safe unattended operation",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-bug-free",
+        "label": "axon-bug-free\n\u00b7 1-study",
+        "status": "active",
+        "phase": "1-study",
+        "title": "AXON Bug-Free \u2014 deep codebase audit, bug capture, autonomous remediation",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-compile-decision",
+        "label": "axon-compile-decision\n\u00b7 1-study",
+        "status": "active",
+        "phase": "1-study",
+        "title": "axon-compile-decision",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-discipline",
+        "label": "axon-discipline\n\u00b7 1-foundations",
+        "status": "active",
+        "phase": "1-foundations",
+        "title": "AXON Discipline \u2014 methodology for safe growth",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
         "id": "axon-million",
         "label": "axon-million\n\u00b7 1-theory",
         "status": "active",
         "phase": "1-theory",
         "title": "AXON Million \u2014 foundation of the million-dollar case",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-pkg-boundaries",
+        "label": "axon-pkg-boundaries\n\u00b7 1-study",
+        "status": "active",
+        "phase": "1-study",
+        "title": "axon-pkg-boundaries",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-registry-accessor",
+        "label": "axon-registry-accessor\n\u00b7 1-study",
+        "status": "active",
+        "phase": "1-study",
+        "title": "axon-registry-accessor",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-registry-consumers",
+        "label": "axon-registry-consumers\n\u00b7 3-pr",
+        "status": "active",
+        "phase": "3-pr",
+        "title": "axon-registry-consumers",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-resweep",
+        "label": "axon-resweep\n\u00b7 2-reaudit-fixes",
+        "status": "active",
+        "phase": "2-reaudit-fixes",
+        "title": "AXON re-sweep \u2014 MEGA correctness fixes",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-state-singlewriter",
+        "label": "axon-state-singlewriter\n\u00b7 1-study",
+        "status": "active",
+        "phase": "1-study",
+        "title": "axon-state-singlewriter",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
+        "id": "axon-workflow-discipline",
+        "label": "axon-workflow-discipline\n\u00b7 3-pr",
+        "status": "active",
+        "phase": "3-pr",
+        "title": "AXON Workflow Discipline \u2014 mechanical phase-order + always-on state surfacing",
         "loc": "top",
         "kind": "project"
       }
@@ -589,6 +732,17 @@
         "status": "active",
         "phase": "2-plan",
         "title": "Reservoir-Eng \u2014 AXON programs + workflows for petroleum reservoir engineering",
+        "loc": "top",
+        "kind": "project"
+      }
+    },
+    {
+      "data": {
+        "id": "super-polish",
+        "label": "super-polish\n\u00b7 3-resweep-fixes",
+        "status": "active",
+        "phase": "3-resweep-fixes",
+        "title": "super-polish",
         "loc": "top",
         "kind": "project"
       }

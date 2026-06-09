@@ -19,6 +19,8 @@
 | **axon-tests/** | ✓ enforcement SATISFIED by crucible | "5-enforce" goal (mandatory tests for axon/tools changes) is already live: `pytest` is a BLOCK crucible control + `R_NEW_NEEDS_TEST` BLOCK + full gate fail-closed pre-merge. NO separate CI exists (TNO shows "no pipeline") — the local `crucible gate` IS the gate. Remaining = the doc co-outputs (Goal B, lower priority); not an enforcement gap. *(stale `_meta.codebase=/mnt/c` — cosmetic)* | — |
 | **axon-ascent/** | 3-safety-budget | eval/benchmark maturation (seeds + CIs + scoring) → feeds axon-million P3 | — |
 | **axon-memory/** | 2-plan | core shipped; **open: #96 load-wire + 4 deferred follow-ups** | — |
+| **axon-bug-free/** | 1-study (NEW 2026-05-29) | Deepest-feasible codebase audit → bug ledger + gate-gap register → autonomous fail-closed remediation (non-kernel; kernel/build/destructive = human). Realizes the "→ bug-free" critical path; hardens axon-million proof integrity. 20/25 findings ✓MERGED (MR !30–!45). | — |
+| **axon-workflow-discipline/** | 1-study DONE? (NEW 2026-05-29) | Rigid fixed-workflow/program-graph traversal (no node-jumping) + explicit DONE-to-advance + backward cascade-invalidation + always-on verbose state narration + revive anticipation + ANTI-ORPHANING liveness gate. All mechanical/mandatory. Study 9/10 grounded (4-auditor deep pass); awaiting owner STUDY-DONE to enter PLAN. Kernel response-gate piece = owner-merge. | — |
 
 **Mechanical-truth — self-knowledge integrity (QUEUED 2026-05-28, owner-approved — fixes the drift/hollow-metrics concerns; siblings of dag-consistency/dont-do)**
 | Workstream | Phase | Next action | Blocked by |

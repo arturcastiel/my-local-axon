@@ -1,0 +1,481 @@
+{
+  "summary": {
+    "confirmed_findings": 15,
+    "regressions": 5,
+    "new_bugs": 10,
+    "by_severity": "critical:0 high:7 medium:7 low:1"
+  },
+  "verdict": {
+    "headline": "The 65-fix campaign did NOT cleanly hold \u2014 it spawned a tight cluster of case/prefix/name-vs-id regressions (5 confirmed, 4 high-severity) all in the freshly-touched PR-spec and workflow-trajectory code \u2014 while AXON's deepest invariant (axon/ write-protection + the kernel-change floor) remains genuinely hard and the tool surface is healthy.",
+    "position": "AXON on merged main (kernel v1.1.5) is two systems wearing one badge. The deep enforcement spine is real and verified: axon/ write-protection is triple-wired (in-process R9WriteError before disk, enforce.py exit 1, PreToolUse hook exit 2 \u2014 all live), the kernel-change floor is structurally never-delegable (denied before the grant even loads, double-filtered at grant time, content-hash locked to baa26d9a...e16a2 which matches the merged file byte-for-byte), the destructive override is default-off and per-op-per-repo scoped, and ~45 sampled ACTIVE tools all run with real output (health 135 ACTIVE/0 FAILED, registry 147/147 zero drift). That is a strong floor and it is the hardest thing AXON claims. But the campaign that fixed 65 bugs introduced a tight regression cluster in exactly the code it touched, and the regressions share ONE root cause: an unresolved PR-spec filename convention war (uppercase-zero-padded `PR-001.md` as written by the producers vs lowercase/unpadded `pr-N.md` assumed by consumers) plus a name-vs-id field mismatch in workflow trajectories. The fixes were applied to ONE site each and their siblings left unfixed (drift fixed, export+ready not; promote records NAME, advance compares ID). Worse, three of these fixes are inverted or mutually incompatible: the freeze/undo fix moved the stuck-frozen bug from project-meta to phase-meta and shipped a regression test that validates only the producer and never asserts undo restores both files (its own docstring admits undo reverses one row); the pr-create status-flip fix double-prefixes to `## PR-PR-001` and is a guaranteed no-op re-introducing the exact symptom it targeted; the workflow promote-fix and skip-detection-fix cannot both be on \u2014 wiring the guard breaks promote, leaving promote on breaks the guard. Net: 392+ area tests are green over divergent state because the tests lock the wrong behavior. Outside the regressions, the per-turn enforcement story is honestly self-conceded as advisory (the Stop hook is LOG-ONLY by design \u2014 coherence/identity/rules are computed and surfaced but cannot stop a render), the headline axon-million proof is harness-ready but has zero collected results, and compiled .cmp.md artifacts have no content-hash guard (byte-identical regen explicitly deferred) so they can silently drift. The position is: solid floor, healthy tools, honest about its advisory ceiling \u2014 but the most recent campaign regressed the PR/workflow surface and the green test suite is actively masking it.",
+    "fix_campaign_held": "NO \u2014 not cleanly. 5 confirmed regressions of the 65, 4 of them high-severity, all clustered in the just-touched PR-spec + workflow-trajectory code. Three are the worst failure mode \u2014 a fix that LOCKS the wrong behavior with a passing test: (1) freeze/undo \u2014 fix inverted the bug (phase-meta now stuck frozen instead of project-meta); the regression test test_safety_freeze_undo_logging.py validates only the producer (both metas snapshotted, distinct ids) and NEVER asserts a single `code-dev undo` restores both \u2014 its docstring at lines 142-143 admits undo reverses LAST/one-by-id, so it knowingly passes a still-divergent state; (2) pr-create status-flip \u2014 the super-polish #40 fix interpolates section=\\\"## PR-{pr-id}\\\" \u2192 \\\"## PR-PR-001\\\" (double prefix; line 98 in the SAME file does it correctly) \u2192 guaranteed no-op, PR stays not-started forever, the exact symptom #40 targeted; (3) advance-guard \u2014 the promote fix records the synapse NAME (line 120) while advance() compares last-node to cursor.id (workflow_run.py:79); the two same-campaign fixes are structurally incompatible \u2014 skip-detection is dead in-program (no --run-id at line 179) AND broken on the CLI path. Plus the unfixed siblings of an already-fixed bug: pr-export (builds lowercase pr-{n}.md, crashes with uncaught FileNotFoundError \u2014 the existence guard added to pr_drift was NOT mirrored) and pr-ready (builds double-prefixed pr-PR-007.md \u2192 --strict governance gate evaluates a missing file). I verified all 5 against source line-by-line; every cited line and mechanism is exact. The campaign hardened the kernel/safety floor (those held) but regressed the PR + workflow feature surface, and the test suite is masking it.",
+    "new_issue_counts": "critical:0 high:4 medium:5 low:1 (of NEW non-regression confirmed bugs). NEW high: pr-create PR-PR-001 no-op; plan_dag empty-DAG (lowercase glob misses uppercase specs \u2192 ok:true empty DAG for every real project); workflow-run --name crash at first transition (empty W:_workflow-run-path); advance trajectory name/id mismatch (WorkflowJumpError on first transition whenever a trajectory is supplied). NEW medium: pr-review P9 status never flips (cross-line + case-wrong regex); journal-log unbound pr-id on general entries; thaw corrupts project workflow-step to phase's value + dangling `# was:` comment; workflow-new resume loses all built state (PHASE-C resets synapses, PHASE-D/E read unhydrated locals); W:ws-path never set so trajectory writes off-tree; R_MEMORY_RESPECTED manifest BLOCK degrades to WARN unless CWD is repo root (state:{} vs siblings get repo_root). NEW low: crucible change-set gate fail-open (base\u2192literal 'HEAD~1' \u2192 0 violations, vacuous pass) on single-commit/no-origin repos. SEPARATELY (counted in regressions above, not here): the 5 regressions of the 65 add 4 more high. Two recurring root-cause families dominate: (A) the PR-spec filename case/pad war \u2014 touches pr-export, pr-ready, pr-create, plan_dag, pr-review; (B) the workflow name-vs-id / unset-W-key family \u2014 touches advance-guard x2, --name crash, ws-path off-tree, workflow-new resume.",
+    "strengths": [
+      "axon/ write-protection (R9) is genuinely hard and triple-wired \u2014 verified LIVE: _axon_io.atomic_write('axon/__probe__') raises R9WriteError before touching disk, enforce.py check-write exits 1, PreToolUse hook (now installed + active in settings.json) exits 2. This is the one marquee claim where 'enforced' really means 'a program cannot bypass it.'",
+      "kernel-change floor is structurally inviolable \u2014 denied in autonomous_mode.py:110-111 BEFORE load_grant() (no grant state can reach it), double-filtered at grant time; kernel content sha256-locked to baa26d9a...e16a2 and the merged file matches EXACTLY, so the safety prose cannot drift silently. test_kernel_change_never_delegable + version-lock pass.",
+      "Destructive override is default-OFF, per-op AND per-repo scoped, and audited (grant-on/authorized/authorized-destructive records). The floor holds until an op is explicitly opted in per repo. Verified empirically.",
+      "Tool surface is healthy and live \u2014 ~45 ACTIVE tools sampled across every category run with real output (dag, phase-model, workflow-runner traversal guard, cron, dispatch, verify, crucible, autonomous-mode, pr_* family, reservoir-pvt, project-graph). health.py=135 ACTIVE/0 FAILED, registry_drift=147/147 zero drift, no dead ACTIVE tools found.",
+      "crucible/merge gate is fail-CLOSED \u2014 errored/unknown control counts as BLOCK; manifest.py + test_rules_manifest lock the 4 runner lists so a rule can't silently go dead. The hard-block enforcement that DOES exist sits correctly at the merge gate.",
+      "Kernel self-honesty is admirable \u2014 KERNEL-SLIM 'Enforcement reality' (lines 89-95) openly concedes the per-turn response gate is advisory/agent-discipline, tells the reader to run verify.py status and NOT read 'enforced' as 'cannot be bypassed.' It under-claims its now-installed write-gate rather than over-claiming.",
+      "dont-do enforcement is largely coherent end-to-end \u2014 write-time token block (exit 2) + change-set R_DONT_DO (fail-closed prose/semantic BLOCK) + capture-lint, all wired into crucible, all fail-SAFE (a hook fault never blocks legit work), 103 related tests pass."
+    ],
+    "top_gaps": [
+      "The PR-spec filename convention is unsettled and the producers/consumers disagree (uppercase-padded PR-001.md written; lowercase pr-N.md read in export/ready/plan_dag/pr-review). This ONE unresolved convention is the root cause of 5+ bugs and 3 of the 4 high-severity regressions. Until the convention is locked with a shared helper + a test, this family will keep regressing.",
+      "The test suite is masking regressions \u2014 392+ area tests green over divergent freeze/undo state because the regression test validates only the producer; pr-create no-op ships green; plan_dag returns ok:true on an EMPTY DAG for every real project. Green does not currently mean correct on the feature surface. Missing: end-to-end assertions on observed final state (does undo restore BOTH files? did the status line actually flip? does the DAG have nodes?).",
+      "The workflow trajectory subsystem has a structural name-vs-id contradiction baked in by two same-campaign fixes that cannot coexist (promote needs NAME, skip-guard compares ID). Skip-detection \u2014 billed as 'the real teeth' \u2014 is dead in-program and broken on the CLI. Plus --name mode crashes at the first transition and trajectories write off-tree (W:ws-path unset). The whole advance-guard + trajectory path is effectively non-functional as shipped.",
+      "Per-turn enforcement is advisory-only by design \u2014 the sole per-turn surface (Stop hook) is LOG-ONLY, so coherence/identity/rules are computed and surfaced but cannot stop a render. The 'proactive / before render / HALT' temporal claim is FALSE as wired. Honest in the kernel note, but it means 4 of 5 marquee claims are advisory in the live session.",
+      "The headline axon-million 'AXON beats bare model' (H1) claim has ZERO collected results \u2014 benchmark/reports/ holds only .gitkeep, dual_agent_eval returns status:'harness-ready', pre-registration locked but unexecuted. The flagship proof is unproven and owner-gated on an API key.",
+      "Compiled .cmp.md artifacts can silently drift \u2014 byte-identical regen-and-diff CI gate explicitly DEFERRED, headers carry a wall-clock timestamp and NO source content-hash, only a structural freshness check exists; several .cmp.md are orphans with no source program at all.",
+      "Multiple fail-open seams in the static gate: crucible change-set returns 0 violations (vacuous pass) when the diff base can't resolve (single-commit/no-origin \u2192 literal 'HEAD~1'), and R_MEMORY_RESPECTED's manifest-declared BLOCK silently degrades to WARN unless invoked from exactly the repo root (state:{} while its three sibling rules in the same loop get repo_root). Same fail-open class the C10 fix was meant to close.",
+      "git-op guarantees are advisory at the tool boundary \u2014 authorized() has NO production caller (only its own CLI 'check'); a confused agent that just runs `git push --force` is not mechanically blocked by this layer. Plus the delete-branch (safe default) vs branch-delete (destructive) naming collision auto-authorizes branch deletion whenever the caller spells it the safe way."
+    ],
+    "recommendations": [
+      "FIRST \u2014 fix the 3 inverted/no-op regressions that ship green, because a passing test over wrong behavior is worse than a known-open bug: (a) pr-create.md:312 change section=\"## PR-{pr-id}\" \u2192 \"## {pr-id}\" (match line 98); (b) freeze/undo \u2014 make `code-dev undo` loop over all rows sharing a base action-id (strip trailing letter), and ADD an end-to-end assertion that one undo restores BOTH metas; (c) decide promote-vs-skip-guard: either record BOTH name and id in the trajectory, or have advance() resolve name\u2192id before comparing \u2014 then wire --run-id into run.md:179. These three are actively masked by the suite.",
+      "Lock the PR-spec filename convention ONCE with a single shared path helper (canonical = uppercase-zero-padded PR-NNN.md, matching every producer + every real file on disk) and route pr-export/pr-ready/plan_dag/pr-review/pr-drift through it. Add ONE test that asserts producer-written path == consumer-read path. This kills the largest bug family (5+ bugs) at the root and prevents the next regression. While there, mirror pr_drift's existence guard into pr_export.py:31 so a miss returns a result, not a traceback.",
+      "Add observed-final-state assertions to the highest-value flows, not just producer-side checks: plan_dag (assert nodes \u2260 [] on a real project \u2014 would have caught the empty-DAG instantly), pr-review P9 / pr-create (assert the status line actually changed to the new value), freeze\u2192undo\u2192status (assert convergence), workflow --name (assert it survives the first transition). The current suite's blind spot is 'did the side effect actually happen,' which is exactly where every regression hid.",
+      "Repair the workflow trajectory subsystem as a unit (it is non-functional as shipped): STORE W:_workflow-run-path on the --name path, STORE W:ws-path (or default it to 'workspace') so trajectories land on-tree, and resolve the name/id mismatch. Until done, the advance-guard 'teeth' and skip-detection are dead \u2014 either fix or honestly mark the trajectory features as not-yet-wired so they aren't trusted.",
+      "Close the two fail-open seams in the static gate: make crucible change_files() fail-CLOSED (refuse, don't green-light, when the diff base can't resolve), and pass repo_root to r_memory_respected.check in the run_changeset loop (crucible.py:176) like its three siblings, so the manifest BLOCK doesn't silently become WARN off-root. Both are the same fail-open class the campaign already tried to close elsewhere.",
+      "Fix the lower-severity but easy wins while in these files: journal-log unbound pr-id at lines 166/310 (add the '| general' fallback already used at 183/211/257); thaw \u2014 parse project prior from the PROJECT meta (not phase) and fix the substring REPLACE pattern; workflow-new resume \u2014 rehydrate locals from state on the PHASE-D/E path and stop resetting synapses in PHASE-C; rename the delete-branch/branch-delete collision to ONE token.",
+      "Update the now-stale kernel/harness self-notes (the write-gate hedge in KERNEL-SLIM 89-95 and the STORE(L:host-cap-enforce,'self') target in claude-code.md) \u2014 the PreToolUse hook IS installed now, so the kernel currently UNDER-claims its real write-gate. Cheap honesty win that keeps the self-report trustworthy.",
+      "Decide explicitly on the advisory ceiling and the unproven proof \u2014 these are the two biggest 'promise vs reality' gaps, both currently honest-but-open. Either collect the axon-million baseline (owner-gated, needs the API key) or stop foregrounding H1 as a result; and either escalate the Stop hook toward exit-2 (after the false-positive data it asks for) or keep documenting the per-turn gate as advisory. Don't let 'harness-ready' and 'computed-but-advisory' quietly read as 'proven' and 'enforced.'"
+    ],
+    "state_rating": "mixed"
+  },
+  "confirmed_findings": [
+    {
+      "title": "freeze\u2192undo still leaves a _meta.md stuck 'frozen' (fix inverted the bug; its regression test locks the wrong behavior)",
+      "file": "workspace/programs/code-dev-safety-freeze.md + workspace/programs/code-dev-state-undo.md + tests/test_safety_freeze_undo_logging.py",
+      "line": "freeze.md 58-61; undo.md 55 (+59-89); test 140-150",
+      "severity": "high",
+      "is_regression": true,
+      "dim": "regression-of-the-65",
+      "mechanism": "The original Bug-16 fix was 'append a SECOND _actions.log entry for proj_meta, OR make undo restore every snapshot under one action-id'. The implementers did ONLY the first half: freeze now writes two rows \u2014 `{action-id}  replace  {phase-dir}/_meta.md  \u2026/phase_meta.md` (line 58-59) and `{action-id}b  replace  {proj-dir}/_meta.md  \u2026/proj_meta.md` (line 60-61). But code-dev-state-undo reverses exactly ONE row per invocation: `target \u2190 IF sub \u2260 \u2205 \u2192 FIRST(FILTER(entries, contains=sub)) | LAST(entries)` (undo.md:55), then it parses that single row's op/target/snap (lines 59-63) and restores only it (lines 72-89). There is no loop over rows sharing a base action-id. A bare `code-dev undo` after a freeze picks `LAST(entries)` = the proj_meta row (`{action-id}b`, appended last), so it restores ONLY the project _meta.md and leaves the PHASE _meta.md at 'workflow-step: frozen  # was: \u2026'. The bug is not fixed \u2014 it is inverted (phase meta now stuck instead of project meta); the post-undo state is still divergent, and `code-dev status`/resume still disagree. The regression test test_safety_freeze_undo_logging.py validates ONLY the producer side (both metas snapshotted; each snapshot has its own distinct-id _actions.log row) and never asserts that a single `code-dev undo` actually restores both files \u2014 its own comment at lines 142-143 admits 'Undo's default reverses LAST(entries); code-dev undo <id> targets one by id', i.e. it knows undo reverses one row yet still passes the fix as correct. So 392 area tests are green over a still-divergent state.",
+      "fix": "Make undo restore every row sharing the base action-id in one pass: after selecting `target`, derive base-id = target's action-id with any trailing letter suffix stripped, then `group \u2190 FILTER(entries, action-id-base \u2261 base-id)` and reverse each row in the group (COPY-FILE per replace row). Update test_safety_freeze_undo_logging.py to assert the END STATE: simulate a freeze+undo and check BOTH _meta.md files are restored, not just that two distinct rows were logged."
+    },
+    {
+      "title": "pr-export reads the wrong-case spec filename \u2192 pr_export.py crashes with FileNotFoundError (sibling of an already-fixed bug, left unfixed)",
+      "file": "workspace/programs/code-dev-pr-export.md + tools/pr_export.py",
+      "line": "pr-export.md:37; pr_export.py:31 (export() read_text, no guard)",
+      "severity": "high",
+      "is_regression": true,
+      "dim": "regression-of-the-65",
+      "mechanism": "The original finding 'drift / export / pr-ready read the wrong spec filename (case + zero-pad mismatch); drift also crashes on the miss' was fixed ONLY for drift. code-dev-pr-create writes specs as `03-prs/PR-{pad(pr-n,3)}.md` (uppercase, zero-padded \u2014 PR-003.md; confirmed by fixtures PR-001.md\u2026PR-100.md and create.md:97 `pr-id \u2190 \"PR-{pad(pr-n,3)}\"`). code-dev-pr-drift.md:37 was corrected to `03-prs/PR-{pad(pr-num,3)}.md` and pr_drift.drift() got an existence guard (pr_drift.py:55-57 returns {ok:false,reason:'spec not found'}). But code-dev-pr-export.md:37 STILL builds `03-prs/pr-{pr-num}.md` (lowercase, no pad), so for PR 3 it builds `pr-3.md` while the real file is `PR-003.md`. Worse, pr_export.py:31 export() does `spec_path.read_text(...)` with NO existence guard (the guard added to pr_drift was NOT mirrored here), so the casing miss raises an uncaught FileNotFoundError and the export tool crashes instead of returning a result.",
+      "fix": "In code-dev-pr-export.md:37 use the create convention: `spec-path \u2190 \"{proj-dir}/03-prs/PR-{pad(pr-num,3)}.md\"` (mirroring pr-drift.md:37). Add an existence guard to pr_export.export(): `if not spec_path.is_file(): return {\"ok\": False, \"reason\": \"spec not found\", \"spec\": str(spec_path)}` before read_text(), mirroring pr_drift.py:55-57."
+    },
+    {
+      "title": "pr-ready --strict builds a double-prefixed, nonexistent spec path (pr-PR-007.md) \u2192 governance gate evaluates against a missing file",
+      "file": "workspace/programs/code-dev-pr-ready.md",
+      "line": "93",
+      "severity": "high",
+      "is_regression": true,
+      "dim": "regression-of-the-65",
+      "mechanism": "Same original finding as #2's sibling; the pr-ready half was not fixed. pr-ready resolves the PR id as `pr \u2190 RETRIEVE(W:code-dev-pr-create) | QUERY(user): \"Which PR? (e.g. PR-007)\"` (line 40), and preflight stores it via `STORE(W:code-dev-pr-create, pr)` where pr is the already-formatted id `PR-007`. Line 93 then builds `pr-spec \u2190 \"\u2026/03-prs/pr-{W:code-dev-pr-create}.md\"` = `03-prs/pr-PR-007.md` \u2014 a double `pr-` prefix that exists nowhere (the real file is `PR-007.md`). This `pr-spec` is passed as `--target` to `TOOL(rules, evaluate, \u2026)` (lines 95-97), so the full --strict governance gate (R-rules over the spec) runs against a missing spec file: rules that read the spec see empty/absent content and the strict PASS/BLOCK verdict is meaningless. The original fix note explicitly said 'in pr-ready.md drop the extra pr- prefix'; it was applied to pr-drift but not here.",
+      "fix": "Change line 93 to the create convention without the extra prefix: `pr-spec \u2190 \"{W:myaxon-dev-projects}/{W:code-dev-project}/03-prs/{W:code-dev-pr-create}.md\"` (since the var already holds `PR-007`), or normalize-and-pad a numeric arg to `PR-{pad(n,3)}`. Match exactly what code-dev-pr-create writes (PR-00N.md)."
+    },
+    {
+      "title": "advance-guard skip-detection ('the real teeth') is wired into the tool but unreachable from workflow-run, and is structurally incompatible with the promote fix",
+      "file": "workspace/programs/workflow-run.md + tools/workflow_run.py",
+      "line": "run.md:179 (advance call) + run.md:120 (record-step) vs workflow_run.py:70-83 (trajectory check) & 238-241 (CLI loads traj only with --run-id)",
+      "severity": "medium",
+      "is_regression": true,
+      "dim": "regression-of-the-65",
+      "mechanism": "The Bug-high fix 'advance-guard is structurally a no-op' added real teeth to advance(): when a `trajectory` is supplied it rejects a transition whose `from` \u2260 the last-recorded node and requires the first step to equal `start` (workflow_run.py:70-83). The CLI activates this ONLY when `--run-id` is passed (line 239: `traj = load_trajectory(...) if args.run_id else None`). But workflow-run.md's advance call omits --run-id entirely: `TOOL(workflow-runner, advance, \"--workflow \u2026 --from {cursor.id} --to {next-id}\u2026\")` (line 179) \u2014 no run-id, so traj is None and advance() falls straight through to the old single-edge check (line 84-92). The guard therefore remains the no-op the fix was meant to cure. Worse, the two fixes are mutually incompatible by construction: the promote fix records the trajectory by NAME (`record-step \u2026 --node {cursor.name}`, line 120) so promoted drafts stay executable, while advance()'s skip check compares the last trajectory node against `cursor.id` (line 79: `last != cursor_id`). Since ids are `s1/s2/\u2026` and names are `code-dev-study/\u2026`, wiring --run-id into line 179 would make `_last_node` return a NAME and advance() raise `out-of-order advance` on essentially every step. So skip-detection cannot be turned on without breaking promote \u2014 the capability is dead as shipped. run.md's own comment (lines 116-119) acknowledges the split ('Record the synapse NAME\u2026 The advance-guard below still keys off cursor.id').",
+      "fix": "Record BOTH id and name in the trajectory (record_step already accepts name; change run.md:120 to keep --node {cursor.id} AND add --name {cursor.name}), make advance()'s skip check compare against the step's node-ID while promote() reads step['name'] (it already prefers name via _step_name). THEN wire --run-id {run-id} into the advance call at run.md:179 so the teeth actually engage. As-is, either keep them off (status quo) or the two fixes collide."
+    },
+    {
+      "title": "pr-create status-flip is a guaranteed no-op: section=\"## PR-{pr-id}\" double-prefixes to \"## PR-PR-001\" and matches nothing (regression of super-polish #40)",
+      "file": "/home/arturcastiel/projects/new-axon/axon/workspace/programs/code-dev-pr-create.md",
+      "line": "312 (effects 313-314)",
+      "severity": "high",
+      "is_regression": true,
+      "dim": "fresh-codedev",
+      "mechanism": "Line 97 sets pr-id \u2190 \"PR-{pad(pr-n,3)}\" (e.g. PR-001). The super-polish fix for finding #40 then does at line 312: pr-block \u2190 EXTRACT(prs-doc, section=\"## PR-{pr-id}\"), which interpolates to section=\"## PR-PR-001\". But code-dev-plan.md:309-310 writes the section header as \"## {pr.number} \u2014 title\" = \"## PR-001\" (pr.number already carries the PR- prefix). Every other section= call in the codebase passes the literal header text (e.g. section=\"## Summary\"); there is no auto-prefixing. Line 98 in this very file already does it correctly: EXTRACT(prs-list, \"## {pr-id}\"). So the extract at 312 returns empty, REPLACE(pr-block,...) at 313 yields empty new-block, and REPLACE(02-prs.md, pr-block='', new-block='') at 314 is empty-with-empty = no-op. The PR row stays '- **Status:** not-started' forever \u2014 exactly the symptom finding #40 was meant to fix, re-introduced by the fix's literal double 'PR-' prefix.",
+      "fix": "Change line 312 to use the same form as line 98: pr-block \u2190 EXTRACT(prs-doc, section=\"## {pr-id}\"). (Drop the literal 'PR-' prefix so the interpolated header is '## PR-001', matching what the planner writes.)"
+    },
+    {
+      "title": "plan_dag.py emits an EMPTY DAG (ok:true) for every real project: glob('pr-*.md') is case-sensitive and misses the uppercase PR-NNN.md spec files that are actually written",
+      "file": "/home/arturcastiel/projects/new-axon/axon/tools/plan_dag.py",
+      "line": "145",
+      "severity": "high",
+      "is_regression": false,
+      "dim": "fresh-codedev",
+      "mechanism": "run() discovers PR specs via prs_dir.glob('pr-*.md') (lowercase). But code-dev-pr-create.md:264 writes specs as 'PR-{pad(pr-n,3)}.md' = PR-001.md (uppercase), and every real project on disk uses PR-NN.md. On Linux (case-sensitive fs, confirmed by env) the lowercase glob matches ZERO files, so nodes=[], topo=[], critical_path=[], and run() returns {ok:true} \u2014 a silent empty-DAG. _parse_pr lowercases the stem only AFTER globbing, so its normalization never compensates for the glob miss. (DAG-SPEC.md:210 documents the convention as lowercase pr-NNN.md, but the actual producers all write uppercase \u2014 a doc-vs-reality split that plan_dag follows on the wrong side.) This is distinct from super-polish #38 (topo_sort double-count on duplicate ids); #38 left line 145's glob untouched.",
+      "fix": "Make discovery case-insensitive, e.g. pr_files = sorted(p for p in prs_dir.glob('[pP][rR]-*.md') if not p.stem.startswith('_')). (Or normalize: iterate prs_dir.glob('*.md') and keep p whose stem.lower() starts with 'pr-'.)"
+    },
+    {
+      "title": "pr-review Phase 9 never flips PR status in 02-prs.md: REPLACE pattern '{pr-id}.*status.*' is a single-line regex that can't span the header/Status lines",
+      "file": "/home/arturcastiel/projects/new-axon/axon/workspace/programs/code-dev-pr-review.md",
+      "line": "485 (effects 484-486)",
+      "severity": "medium",
+      "is_regression": false,
+      "dim": "fresh-codedev",
+      "mechanism": "The canonical 02-prs.md (code-dev-plan.md:309-316) puts the PR id on the header line ('## PR-001 \u2014 title') and the status on a SEPARATE line ('- **Status:** not-started'). Line 485 does REPLACE(prs-content, pattern=\"{pr-id}.*status.*\", replacement=...). Regex '.' does not cross newlines by default, so no single line contains both 'PR-001' and 'status'; the pattern matches nothing. (It is also case-wrong: the file has '**Status:**' capital-S vs the lowercase 'status' in the pattern.) prs-updated therefore equals prs-content, and line 486 re-writes the file unchanged \u2014 the '\u2705 ready to push' status is never recorded. Same family as #40 but a distinct site (pr-review P9, not pr-create) and a distinct mechanism (cross-line/case-mismatched regex).",
+      "fix": "Operate on the PR's section like pr-create should: extract the '## PR-001 \u2026' block, REPLACE the '- **Status:** <old>' line within that block, write the block back. Or use a multiline/section-scoped replace anchored to the Status line (capital S), not a single-line '{pr-id}.*status.*' regex."
+    },
+    {
+      "title": "journal-log references unbound pr-id on 'general' (non-PR) entries \u2014 shadow finding text and the human test-action hint interpolate an undefined variable",
+      "file": "/home/arturcastiel/projects/new-axon/axon/workspace/programs/code-dev-journal-log.md",
+      "line": "166 (and 310)",
+      "severity": "medium",
+      "is_regression": false,
+      "dim": "fresh-codedev",
+      "mechanism": "pr-id is bound ONLY inside the IF pr-target \u2260 \"none\" block (lines 119-121). The shadow-update loop runs unconditionally whenever files-changed \u2260 \"skip\" (line 160, independent of pr-target), and line 166 builds finding-text \u2190 \"Modified during {pr-id} \u00b7 \u2026\" \u2014 referencing pr-id which is unbound when the user logged a 'general' entry. The author guarded the other consumers with the '| general' fallback (lines 183, 211, 257) but missed line 166 and line 310 ('ctest -R {pr-id}'). Same unbound-variable class as super-polish #9/#10 but at sites those findings didn't cover.",
+      "fix": "Use the same fallback already used elsewhere: bind pr-id \u2190 \"PR-{pad(pr-target,3)}\" when pr-target\u2260'none' else 'general' once near line 117-122, OR change lines 166 and 310 to {pr-id | 'general'}."
+    },
+    {
+      "title": "code-dev thaw restores the PROJECT _meta.md workflow-step to the PHASE's prior value, corrupting project state whenever the two differed (the normal case)",
+      "file": "/home/arturcastiel/projects/new-axon/axon/workspace/programs/code-dev-safety-freeze.md",
+      "line": "81 (depends on prior parsed at 77-78)",
+      "severity": "medium",
+      "is_regression": false,
+      "dim": "fresh-codedev",
+      "mechanism": "At freeze, the project and phase _meta.md hold independent workflow-step values (real example: project axon-architecture has 'workflow-step:   study' while a started phase has 'workflow-step:  build'). Freeze snapshots each correctly: phase \u2192 'frozen  # was: {phase prior}' (line 63), project \u2192 'frozen  # was: {project prior}' (line 65). But thaw parses a single prior from the PHASE meta only (line 78: prior \u2190 EXTRACT(phase-meta.workflow-step, 'was: (\\S+)')), then at line 81-82 restores the PROJECT meta to that same phase-derived prior: REPLACE(proj-dir/_meta.md, 'workflow-step:   frozen', 'workflow-step:   {prior}'). So a project that was 'study' before freeze comes back as 'build' (the phase's value) after thaw. Secondary defect: the project REPLACE pattern 'workflow-step:   frozen' is a substring of what freeze wrote ('frozen  # was: study'), so it also leaves a dangling '# was: study' comment.",
+      "fix": "Parse and restore the project's own prior separately: project-prior \u2190 EXTRACT(proj-meta.workflow-step, 'was: (\\S+)'), and REPLACE the whole frozen line including its comment, e.g. REPLACE(proj-dir/_meta.md, 'workflow-step:   frozen  # was: {project-prior}', 'workflow-step:   {project-prior}'). Keep the phase restore using the phase-derived prior."
+    },
+    {
+      "title": "advance-guard reads empty W:_workflow-run-path under `--name` invocation \u2014 every `--name` fixed-mode run crashes at the first transition",
+      "file": "/home/arturcastiel/projects/new-axon/axon/workspace/programs/workflow-run.md",
+      "line": "179 (RESOLVE PATH at 55-57)",
+      "severity": "high",
+      "is_regression": false,
+      "dim": "fresh-workflow",
+      "mechanism": "RESOLVE PATH (lines 55-57) resolves the workflow file into the LOCAL variable `path` (`IF path \u2261 \u2205 AND name \u2260 \u2205 \u2192 path \u2190 \"workspace/workflows/{name}.yml\"`) and never STOREs it back to W:_workflow-run-path. The documented `--name` form (HELP line 34) binds only W:_workflow-run-name (flag-binding convention stated at line 61: each flag \u2192 W:_<prog>-<flag>, separate keys), so W:_workflow-run-path stays \u2205. Validate/load correctly use the local `{path}` (lines 73, 76), but the in-loop advance-guard at line 179 dereferences the wrong symbol: `advance, \"--workflow {W:_workflow-run-path} --from {cursor.id} ...\"`. Under `--name`, that interpolates `--workflow \"\"` \u2192 workflow_run.py `_load(\"\")` (tools/workflow_run.py:157-160) raises OSError, which the CLI's try/except only catches for WorkflowJumpError (workflow_run.py:263) \u2192 uncaught traceback. The advance is inside the LOOP (line 104) and fires unconditionally in fixed mode, so the run dies at the first on-complete transition.",
+      "fix": "Use the resolved local variable, not the W key: change line 179 to `--workflow {path}`. (And/or STORE(W:_workflow-run-path, path) right after line 57 so any later W-keyed reference stays consistent.)"
+    },
+    {
+      "title": "advance trajectory skip-check is broken by a name/id field mismatch \u2014 record-step stores the synapse NAME in `node`, advance compares it to cursor.id",
+      "file": "/home/arturcastiel/projects/new-axon/axon/tools/workflow_run.py",
+      "line": "79 (advance) vs workflow-run.md:120 (record-step --node {cursor.name})",
+      "severity": "high",
+      "is_regression": false,
+      "dim": "fresh-workflow",
+      "mechanism": "The promote-fix deliberately made the run record the synapse NAME: workflow-run.md line 120 is `record-step --node {cursor.name}` (comment lines 116-119 explain it must be the name so promote stays executable), so each trajectory step's `node` field holds e.g. 'code-dev-study'. But advance()'s skip-detection (workflow_run.py:79) does `elif last != cursor_id:` where `last = _last_node(trajectory)` returns the `node` field (the NAME) and `cursor_id` is the graph ID (e.g. 's1'). For any real workflow (name \u2260 id, which is universal \u2014 ids are s1/s2, names are program names), `last != cursor_id` is ALWAYS true, so advance raises WorkflowJumpError('out-of-order advance ...') on the very first transition whenever a trajectory is supplied. This breaks the documented CLI path `advance --run-id` (CLI help line 219: 'check --from against this run's recorded trajectory'). Compounding it, the in-program guard at workflow-run.md:179 never passes --run-id, so the only part of the guard 'with real teeth against a skip' (advance docstring, lines 64-66) is simultaneously dead in-program AND broken on the CLI path. The two same-campaign fixes (record-the-name for promote; check-cursor-against-trajectory for skips) are mutually incompatible.",
+      "fix": "Make the skip-check compare like-for-like. Either record the id alongside and compare ids (have _last_node read a dedicated id field), or in advance() resolve cursor_id\u2192name via synapses_by_id and compare the trajectory `node` (name) to that name. Simplest: store BOTH in record_step (it already accepts name) and have _last_node prefer the id field for the advance comparison while promote keeps using name."
+    },
+    {
+      "title": "W:ws-path is never set, so workflow-run writes the run trajectory outside the workspace tree (record-step/promote --workspace resolves to empty)",
+      "file": "/home/arturcastiel/projects/new-axon/axon/workspace/programs/workflow-run.md",
+      "line": "120 and 47",
+      "severity": "medium",
+      "is_regression": false,
+      "dim": "fresh-workflow",
+      "mechanism": "Both the per-step record (`record-step ... --workspace {W:ws-path}`, line 120) and the promote path (`promote ... --workspace {W:ws-path}`, line 47) interpolate W:ws-path, but W:ws-path is never STOREd anywhere in workspace/ or tools/ (grep for STORE(W:ws-path)/W:ws-path\u2190 returns nothing \u2014 only RETRIEVE sites exist). So `{W:ws-path}` expands to empty and the CLI receives `--workspace ''`. workflow_run.py _traj_path (line 171) then builds os.path.join('', 'memory', 'episodic', 'workflow-traj', f'{run}.json') \u2192 a CWD-relative `memory/episodic/workflow-traj/...`, NOT `workspace/memory/...` (the CLI default is 'workspace', workflow_run.py:233). The trajectory is written to the wrong place; any tooling that reads `workspace/memory/episodic/workflow-traj/` (and the promote MODE invoked as a separate process/turn, which also reads the mis-set path) sees nothing there. The recording silently lands off-tree.",
+      "fix": "Resolve a concrete workspace root before these calls \u2014 e.g. STORE/derive ws-path = the workspace dir (the same value the CLI default 'workspace' uses) and pass it, or drop --workspace so the tool's own default ('workspace') applies. Ensure record-step and promote use the identical, real workspace root."
+    },
+    {
+      "title": "workflow-new resume loses all built state: PHASE-C resets synapses to [] and resume into PHASE-D/E reads unhydrated locals, writing a corrupt/empty workflow",
+      "file": "/home/arturcastiel/projects/new-axon/axon/workspace/programs/workflow-new.md",
+      "line": "47, 78, 83",
+      "severity": "medium",
+      "is_regression": false,
+      "dim": "fresh-workflow",
+      "mechanism": "workflow-new advertises a resumable dialog (lines 41, 105 persist synapses into W:_workflow-author-state). RESUME-IF-PRESENT (line 47) does `GOTO(SECTION:PHASE-{state.phase})`. But (a) PHASE-C entry unconditionally re-initializes `synapses \u2190 []` (line 83), discarding state.synapses that line 105 carefully accumulated \u2014 a resume mid-build erases prior steps; and (b) resuming to PHASE-D/PHASE-E jumps past PHASE-A/B/C, yet PHASE-E (lines 126-133) builds the draft from LOCAL variables name/domain/mode/goal/synapses/triggers/allow-sug/allow-dev, none of which are rehydrated from `state` on the resume path \u2014 they are all \u2205, so WRITE-YAML emits a draft with name:\u2205 and synapses:\u2205 (then start: (synapses[0].id | \"s1\") dereferences an empty list). Additionally line 78 uses `APPEND(W:_workflow-author-state, {phase:\"C\", goal, synapses:[]})` where every other state write is STORE (lines 51, 64); APPEND on the dict-valued state key is the wrong operator and corrupts the state shape (phase/name may not survive for a later resume).",
+      "fix": "On resume, rehydrate locals from state before the GOTO (name/domain/mode/goal/synapses/triggers/allow-* \u2190 state.*), and make PHASE-C seed `synapses \u2190 (state.synapses | [])` instead of always []. Change line 78 APPEND to STORE (merging into, not appending to, the dict state) so phase/name/goal/synapses persist coherently across a pause."
+    },
+    {
+      "title": "R_MEMORY_RESPECTED's manifest-locked BLOCK silently degrades to WARN in the crucible change-set gate unless invoked from exactly the repo root (CWD-fragile activation flag)",
+      "file": "/home/arturcastiel/projects/new-axon/axon/tools/crucible.py",
+      "line": "176 (call site); root cause tools/rules/r_memory_respected.py:41",
+      "severity": "medium",
+      "is_regression": false,
+      "dim": "fresh-core",
+      "mechanism": "The C10 fix re-activated R_MEMORY_RESPECTED in run_changeset() by calling it per changed file: `r_memory_respected.check({\"program_text\": text, \"program_path\": p, \"state\": {}})` (crucible.py:176). It passes `state: {}` \u2014 no `workspace_path` and no `repo_root`. R_MEMORY_RESPECTED._is_required() (r_memory_respected.py:38-54) therefore falls through to `workspace = state.get(\"workspace_path\", \"workspace\")` and reads the activation flag from the RELATIVE path `workspace/memory/longterm/memory-respected-required.md`, which only resolves when os.getcwd() is exactly the repo root. The three sibling change-set rules in the SAME run_changeset loop (r_dont_do, r_no_orphan_tools, r_workflow_node_order) instead receive `ctx={..., \"repo_root\": cwd}` and resolve their flags from `ctx['repo_root']` (CWD-robust). So R_MEMORY_RESPECTED is the odd one out: when an operator sets L:memory-respected-required=true expecting the manifest-declared BLOCK (manifest.py:40 lists it as a BLOCK-tier crucible rule), the rule still emits only WARN \u2014 and the change-set gate passes \u2014 whenever `crucible.py changeset` runs from any CWD other than the repo root. This is the same fail-open class (a manifest-locked BLOCK silently inert) that the C10 fix was meant to close.",
+      "fix": "Make R_MEMORY_RESPECTED's flag resolution CWD-independent like its siblings: at crucible.py:176 pass `\"state\": {\"workspace_path\": os.path.join(cwd, \"workspace\")}` (cwd is the repo root used everywhere else in run_changeset), OR add a `repo_root` fallback inside r_memory_respected._is_required (mirror r_no_orphan_tools._required which reads `os.path.join(ctx.get('repo_root','.'), 'workspace', 'memory', 'longterm', ...)`). Either makes the manifest-locked BLOCK fire regardless of invocation CWD."
+    },
+    {
+      "title": "crucible change-set gate returns zero violations (fail-open) when the diff base cannot be resolved \u2014 single-commit repo or missing origin/main",
+      "file": "/home/arturcastiel/projects/new-axon/axon/tools/crucible.py",
+      "line": "124-144 (changed_files)",
+      "severity": "low",
+      "is_regression": false,
+      "dim": "fresh-core",
+      "mechanism": "changed_files() computes the base as `git merge-base HEAD origin/main 2>/dev/null || git rev-parse HEAD~1`. On a repo with no origin/main AND no second commit, `git rev-parse HEAD~1` prints the literal unresolved string 'HEAD~1' to stdout (exit 128, error to stderr), so base becomes the literal 'HEAD~1'. The subsequent `git diff --name-status HEAD~1...HEAD` then fails (invalid revision) and is swallowed by the bare `except Exception: return []` (lines 137-138). With changed_files==[], EVERY change-set rule (r_new_needs_test, r_dont_do, r_no_orphan_tools, r_workflow_node_order, and the r_memory_respected per-file loop) early-returns None ('no diff -> dormant'), so `crucible changeset` reports {ok:true, violations:[]} \u2014 the entire static change-set gate passes vacuously. It is fail-open rather than fail-closed: a degenerate/un-resolvable git state should refuse, not green-light.",
+      "fix": "Distinguish 'no changes' from 'could not compute changes'. In changed_files, if the resolved base is empty or still equals the literal unresolved token (e.g. 'HEAD~1' when rev-parse failed), or the `git diff` invocation returns non-zero, return a sentinel that run_changeset treats as fail-closed (ok:false, reason 'diff base unresolved') rather than an empty list that reads as 'clean'."
+    }
+  ],
+  "assessments": [
+    {
+      "dimension": "PROMISE vs MECHANICAL REALITY (merged main, cc2744e)",
+      "rating": "mixed",
+      "summary": "AXON's hardest claim \u2014 axon/ write-protection (R9) \u2014 genuinely HOLDS with triple-redundant mechanical enforcement (in-process R9WriteError, enforce.py CLI exit 1, PreToolUse hook exit 2), all verified live. The other four marquee claims (identity unconditional, coherence pre-render, rules mechanical, fail-loud) are mechanically COMPUTED but only ADVISORILY enforced per-turn, because the sole per-turn output surface (the Stop hook) is LOG-ONLY by deliberate design. The kernel's own \"Enforcement reality\" note (KERNEL-SLIM lines 89-95) honestly concedes most of this gap, though it is now slightly stale re: the now-installed PreToolUse write-gate.",
+      "points": [
+        {
+          "claim": "Identity unconditional \u2014 coherence guardian / R_COHERENCE blocks persona-bleed on every output, no flag required",
+          "status": "partial",
+          "evidence": "tools/rules/r_coherence.py: declared severity=BLOCK, ZERO activation-flag gating (grep 'required' count=0), so the RULE is unconditional. Live-tested: verify.py output --text 'As an AI, I think...' \u2192 passed:false, R_COHERENCE BLOCK. BUT the only per-turn surface running it is the Stop hook (verify_stop.py), which is LOG-ONLY (stderr + episodic jsonl, always sys.exit(0) \u2014 docstring: 'a Stop hook cannot un-send'). So the verdict is computed and surfaced, never actually blocks a render in the live Claude Code session. Hard block exists only at the crucible merge gate (off the per-turn path) and via model discipline. Separately, identity-disclosure keys host-harness/host-model/disclose-execution-layer all read <absent> on disk this session, so the identity gate correctly falls back to minimal AXON render (fail-silent as designed) \u2014 disclosure-from-declared-keys-only HOLDS, but the keys are not populated."
+        },
+        {
+          "claim": "Memory protected \u2014 programs may NEVER write axon/; memory routed through the single API",
+          "status": "holds",
+          "evidence": "axon/-integrity protection is genuinely hard and triple-wired. Live-tested _axon_io.atomic_write('axon/__probe__') \u2192 raises R9WriteError BEFORE touching disk (actor=unset, not in _R9_WHITELIST={'loop-receipt'}). enforce.py check-write --target axon/KERNEL-SLIM.md \u2192 exits 1 with allowed:false. PreToolUse hook (enforce_pretooluse.py) maps Write/Edit to enforce.py and exits 2 (deny) on failure. All three read dev-mode via the single canonical _longterm reader from the SAME workspace longterm dir (F08/F18/F39/F46 split-brain fix verified \u2014 default_workspace()=/.../axon/workspace, dev-mode='false'). This is the one marquee claim where 'enforced' really does mean 'cannot be bypassed by a program.' NOTE the weaker sibling: R_MEMORY_RESPECTED (memory-API routing) is WARN-default, BLOCK only if memory-respected-required=true (absent on disk), and per manifest.py runs ONLY in crucible/lint/audit \u2014 NOT the verify runtime gate \u2014 so that narrower 'single-memory-API' sense is advisory."
+        },
+        {
+          "claim": "Coherence is proactive \u2014 guardian scans every output BEFORE render; persona-bleed = HALT + rewrite",
+          "status": "gap",
+          "evidence": "The temporal claim ('before render', 'scans every output before render', KERNEL-SLIM line 47/164) is FALSE as wired. The only per-turn coherence surface is the Stop hook, which fires AFTER the message is rendered and is LOG-ONLY by explicit design (verify_stop.py: 'a Stop hook cannot un-send, and exit-2-blocking would risk bricking a session on a false positive, so the crucible MERGE gate is where rules BLOCK'). No PreToolUse/pre-render hook gates assistant text. So coherence is post-hoc advisory in the live session, not proactive/pre-render. The rule logic is BLOCK-capable and correct; the wiring cannot stop a render."
+        },
+        {
+          "claim": "Rules are mechanical \u2014 kernel rules become mechanical checks, not behavioral guidance",
+          "status": "partial",
+          "evidence": "TRUE at compile/merge: crucible.py is fail-closed (errored/unknown control counts as BLOCK failure; run_changeset runs static rules over the changeset with real exit codes), and manifest.py + test_rules_manifest lock the 4 runner lists so a rule can't silently go dead. PARTIAL at runtime: verify.py status shows 19 registered rules, but the runtime gate is invoked ONLY by the LOG-ONLY Stop hook. Of the runtime BLOCK rules, R_COHERENCE/R_DRIFT_GATE/R9(action) need no flag and R_STATE_SURFACED is live (state-surfaced-required=true + active-phase 'axon-workflow-discipline:3-pr' \u2192 BLOCK confirmed), but R_REASONING_TRACE, R_GROUNDED_CLAIMS, R_ADVERSARY_SCAN are dormant (flags absent), and R_IDENTITY_LOCK/R_MEMORY_RESPECTED/R_PROJECT_ANCHOR are WARN-default. So runtime = 'mechanically computed, advisorily surfaced.' Verifier correctly reports warn_is_block:false (F15/F16 \u2014 WARN never fails the gate even under strict halt-mode)."
+        },
+        {
+          "claim": "Fail loud \u2014 on failure FAIL(program,reason): loud, logged, recoverable; no silent fallback",
+          "status": "partial",
+          "evidence": "Strong where a real chokepoint exists: R9WriteError is a raised exception with an actionable message; enforce.py emits a structured refusal envelope; PreToolUse denies with stderr text + exit 2; crucible fails closed. WEAKER at the response gate: a BLOCK verdict from verify_stop.py is written to stderr (truncated 1500 chars) + appended to memory/episodic/response-gate-log.jsonl, then exits 0 \u2014 'loud' only to whoever reads hook stderr/logs, and invisible to the user as an actual block. So fail-loud HOLDS for writes/merge, PARTIAL for per-turn output (logged-but-not-halted)."
+        },
+        {
+          "claim": "Kernel's own hardness claims match the wiring (self-honesty)",
+          "status": "partial",
+          "evidence": "KERNEL-SLIM lines 89-95 ('Enforcement reality') are admirably honest: they state the response gate runs by 'AGENT DISCIPLINE (advisory), not mechanically' until the Stop-hook wrapper + L:*-required flags are active, and tell the reader to run verify.py status and NOT read 'enforced' as 'cannot be bypassed.' Accurate for the response gate. STALE in two spots: (1) the same note hedges the write-gate '...while L:host-cap-enforce is self with no PreToolUse hook' \u2014 but enforce_pretooluse.py IS now installed and active in .claude/settings.json (the .proposed file is already promoted), so the axon/ write-gate DOES bite mechanically now; (2) workspace/harness/claude-code.md still declares STORE(L:host-cap-enforce,'self') target 'pretooluse-hook \u2192 enforce.py', now stale since that hook exists. Net: the kernel under-claims its write-gate and accurately self-reports the advisory response gate."
+        }
+      ]
+    },
+    {
+      "dimension": "Functional verification of AXON's ACTIVE tool surface on merged main",
+      "rating": "strong",
+      "summary": "Sampled ~45 ACTIVE tools across every category (kernel, os, integration, synapse, system, audit, meta, viz, memory) by invoking --help plus a real read-only subcommand on each. The surface is healthy: every priority recently-fixed tool (dag, phase-model, workflow-runner, cron, dispatch, verify, crucible, autonomous-mode, pr_*) works correctly with real output, the registry-driven health probe reports 135 ACTIVE / 0 FAILED, and registry-drift shows 147/147 zero drift. One genuine defect surfaced: docgen_verify crashes with a ValueError traceback when given a relative --workspace path (works fine with an absolute path) \u2014 the recurring CWD/relative-path bug class this repo has been fighting.",
+      "points": [
+        {
+          "claim": "dag (system) works \u2014 verify + render machinery is live",
+          "status": "holds",
+          "evidence": "`python3 tools/dag.py --help` lists 13 subcommands; `dag verify --all` -> `[]` (no DAG files = clean, exit 0); `synapse-infer --tool dag` emits a full neuron-contract record."
+        },
+        {
+          "claim": "phase-model (kernel) works \u2014 data-driven phase manifest load/render/status",
+          "status": "holds",
+          "evidence": "On a temp project dir: `phase_model.py load --project <tmp>` seeds + returns the ordered ladder; `render` returns phases ordered by `order`; `status --project <tmp> --phase study` -> `{\"status\": null}` (queries cleanly). Exit 0."
+        },
+        {
+          "claim": "workflow-runner (kernel) works \u2014 deterministic traversal guard enforces declared edges",
+          "status": "holds",
+          "evidence": "On workspace/workflows/adaptive-free-text.yml: `next-allowed --node s1` -> `{\"allowed\":[\"s3\",\"s2\"]}`; legal `advance --from s1 --to s3` -> `{\"ok\":true,\"next\":\"s3\"}` exit 0; illegal `advance --from s1 --to s99` -> `{\"ok\":false,\"error\":\"illegal node-jump...\"}` exit 1. Exactly the documented behavior."
+        },
+        {
+          "claim": "cron (kernel) works \u2014 scheduler lists real jobs",
+          "status": "holds",
+          "evidence": "`cron.py list --workspace workspace` returns JSON with 11 jobs (health, igap-report, compile-rank, freshness, etc.) incl schedule_parsed + consecutive_failures fields. Exit 0."
+        },
+        {
+          "claim": "dispatch (kernel) works \u2014 TF-IDF match + stats",
+          "status": "holds",
+          "evidence": "`dispatch.py stats` -> `{dispatch_index_count:1, current_threshold:0.65,...}`; `dispatch.py match --query 'compile a workflow'` -> real verdict `{action:fallback, best_match:{program:foo,confidence:0.0}}` exit 0."
+        },
+        {
+          "claim": "verify (kernel) works \u2014 rule verifier lists rules + enforcement posture",
+          "status": "holds",
+          "evidence": "`verify.py rules` -> 19 registered rules (R3/R7/R9/... with phase+severity+module); `verify.py status` -> `{halt_mode:strict, warn_is_block:false, activation_flags_on_disk:{...}}`. Exit 0."
+        },
+        {
+          "claim": "crucible (kernel) works \u2014 control+test gate enumerates and runs all controls",
+          "status": "holds",
+          "evidence": "`crucible.py list` -> 22 controls (pytest, changeset-rules, registry-drift, liveness...); `crucible.py status` actually RUNS them -> verdict `{passed:true, blocking_failures:[], warnings:[freshness], total:22}`. Exit 0."
+        },
+        {
+          "claim": "autonomous-mode (kernel) works \u2014 grant status + op authorization",
+          "status": "holds",
+          "evidence": "`autonomous_mode.py status` -> active grant for artur.castiel-tno/axon with ops/deny lists; `check --op commit --repo ...` -> `{authorized:true}`; `check --op kernel-change` -> `{authorized:false, reason:'inviolable floor'}`. Correct allow/deny. Exit 0."
+        },
+        {
+          "claim": "pr_* family (os) works \u2014 aggregate/sync/drift/export",
+          "status": "holds",
+          "evidence": "All four `--help` print correct usage exit 0; `pr_aggregate.py --all-projects --json` exits 0 (empty set = no open PR lists in tracked projects, not a failure)."
+        },
+        {
+          "claim": "docgen_verify (audit) is PARTIAL \u2014 crashes on a relative --workspace path",
+          "status": "partial",
+          "evidence": "`docgen_verify.py --workspace workspace` -> uncaught `ValueError: 'workspace/AXON-DOCS-CHEATSHEET.md' is not in the subpath of '<abs axon root>'` at line 94 (`doc.relative_to(ROOT)`), exit 1 with 2 ValueError lines. Same call with an ABSOLUTE path runs clean and correctly reports the real violation (doc references missing programs/code-dev-tour.md). Bug only triggers when a violation exists AND the arg is relative."
+        },
+        {
+          "claim": "freshness (meta) works \u2014 correctly reports a real docs-staleness defect (not a tool bug)",
+          "status": "holds",
+          "evidence": "`freshness.py check` -> `{ok:false, checks:{...docgen_verify:false...}}` exit 1; the false sub-check is the genuine missing-cross-ref (code-dev-tour.md). freshness invokes docgen_verify via its own CWD-relative default which works; the failure is real drift it is designed to surface."
+        },
+        {
+          "claim": "synapse + predicate + goal (synapse) work \u2014 predicate language + goal store + ranker stats",
+          "status": "holds",
+          "evidence": "`predicate.py eval --expr '1 == 1' --ctx '{}'` -> `{result:true}`; `goal.py list` -> `{ok:true, count:0, goals:[]}`; `synapse_suggest.py stats` -> `{predicate_errors:0}`. Exit 0."
+        },
+        {
+          "claim": "synapse-infer / synapse-validate / domain_validate (system) work",
+          "status": "holds",
+          "evidence": "`synapse_infer.py --tool dag` emits full v1.1 neuron-contract JSON; `domain_validate.py --all --json` -> `{ok:true, count:2, valid:2, invalid:0}`. Help clean for synapse_validate. Exit 0."
+        },
+        {
+          "claim": "registry-drift / doc-counts / axon-state / loop-receipt (kernel) work",
+          "status": "holds",
+          "evidence": "`registry_drift.py check` -> `{registered:147, on_disk:147, drift_count:0}`; `doc_counts.py counts` -> `{programs:158, tools:147, rules:31}`; `axon_state.py summary` -> per-log summary; `loop_receipt.py list` -> a real committed two-phase receipt. Exit 0."
+        },
+        {
+          "claim": "call_graph / coherence-lint / liveness (audit/meta) work",
+          "status": "holds",
+          "evidence": "`call_graph.py --workspace workspace` -> `{ok:true, nodes:13, cycles:[], longest_path:4}`; `coherence_lint.py check` -> `{ok:true, defect_count:0}`; `liveness.py --help` lists report/check. Exit 0."
+        },
+        {
+          "claim": "integration tools work \u2014 reservoir-pvt, mcp-client, library, axon-bridge",
+          "status": "holds",
+          "evidence": "`reservoir_pvt.py --api 35 --gor 600 --temp 200 --steps 3` computes a real Standing PVT table (oil_sg, Pb, Rs, Bo); `mcp_client.py list-servers` -> 1 server (pyrestoolbox, 108 tools); library + axon-bridge `--help` clean. Exit 0."
+        },
+        {
+          "claim": "project-graph (viz) works \u2014 generates a real DAG + viewer",
+          "status": "holds",
+          "evidence": "`project_graph.py --out <tmp>` -> `{ok:true, nodes:60, edges:1, by_location:{...}}` and writes graph.json (20KB) + viewer.html (17KB). Exit 0."
+        },
+        {
+          "claim": "memory + os utilities work \u2014 memory, calculator, tokenizer, clock, events, deps, test-runner, deprecation-log, workflow-dag, aegis-policy, phase-gate",
+          "status": "holds",
+          "evidence": "memory list (9 L: keys); calculator '2+2*10' -> 22; tokenizer --text -> 4 tokens; clock -> NTP ISO ts; events hook-list -> {count:0}; deps tree --program code-dev -> full tree; test-runner list -> real corpus; deprecation-log cron -> {overdue:0,imminent:0}; workflow-dag analyze --dir -> {ok:true, synapses:3, cycles:1}; aegis-policy resolve --capability develop -> {allowed:false, reason:'policy: human'} (fail-closed). All exit 0."
+        },
+        {
+          "claim": "Registry-driven health probe corroborates the surface is wired and reachable",
+          "status": "holds",
+          "evidence": "`health.py --include-kernel --workspace workspace` -> `{ACTIVE:135, FAILED:0, SKIPPED:12, score:100}`; the 12 SKIPPED are all OPTIONAL/deprecated shims (a2a, axiom, axon-eval, hooks, rtk, compile-write/suggest/optimizer, memory-sync, skill-adapter, migrate-synapse-blocks, axon-managed). No ACTIVE tool failed its probe."
+        },
+        {
+          "claim": "No dead tools found in the sample \u2014 every ACTIVE script exists and is invocable",
+          "status": "holds",
+          "evidence": "registry_drift reports 0 drift (147 registered == 147 on disk, no registry-orphan/filesystem-orphan); every tool I invoked dispatched and ran (the only exit-2s were my own wrong arg names, after which the tools printed correct usage and ran on retry)."
+        }
+      ]
+    },
+    {
+      "dimension": "Promised-but-not-delivered / incomplete / tech-debt on merged main",
+      "rating": "mixed",
+      "summary": "Main carries a moderate, well-documented debt load: most gaps are deliberately deferred and visibly marked (STUB programs, \"deferred\" doc notes, owner-gated proof), not silent rot. The two genuinely material items are (1) the axon-million proof being harness-ready but never run \u2014 the headline claim is unproven \u2014 and (2) compiled .cmp.md artifacts having only a structural freshness check with byte-identical regen explicitly deferred, so they can silently drift from source (and several .cmp.md have no source at all). The rest is housekeeping debt (orphan stubs, quarantined compileds, un-finished PR-142 deprecation scrub) that is tracked but accumulating across releases.",
+      "points": [
+        {
+          "claim": "axon-million proof is owner-gated: harness-ready but NEVER actually run \u2014 the headline H1 claim ('AXON beats bare model') has zero collected results. benchmark/reports/ holds only .gitkeep; tools/dual_agent_eval.py cmd_run_mms returns status:'harness-ready' with no --backend, and a real run needs an owner-supplied ANTHROPIC_API_KEY / Claude subscription.",
+          "status": "gap",
+          "evidence": "benchmark/reports/ contains only .gitkeep (0-byte); tools/dual_agent_eval.py:710 'demo backend emits no solver code, so MMS goals cannot pass \u2014 a real coding model is required for the proof'; pre-registration benchmark/preregistrations/prereg-2026-05-28-*.md is LOCKED but unexecuted; CHANGELOG 3.7.0: 'Production telemetry for hit-rate \u2014 baseline not yet collected'."
+        },
+        {
+          "claim": "Per-turn response gate (verify_stop Stop hook) is held LOG-ONLY by design: on a violation it writes stderr + an episodic log and ALWAYS exit 0. Escalation to a hard exit-2 BLOCK is an owner switch, and zero false-positive data has been logged yet, so flipping it is blind today.",
+          "status": "partial",
+          "evidence": "tools/hooks/verify_stop.py:99-102 'LOG-ONLY ... Escalate this to exit 2 only after validating zero false positives on real AXON output'; .claude/settings.json _comment confirms 'verify_stop is LOG-ONLY'. Matches the memory note (only open held item)."
+        },
+        {
+          "claim": "Compiled .cmp.md staleness is not truly guarded: the byte-identical regen-and-diff CI gate is explicitly DEFERRED. Headers carry a wall-clock 'Compiled:' timestamp and NO source content-hash, so a compiled artifact can silently drift from its edited source \u2014 only a structural freshness check (header fields present, dir populated) exists.",
+          "status": "broken",
+          "evidence": "workspace/AXON-DOCS-COMPILER.md:65 'A byte-identical regen-and-diff CI gate is **deferred** ... Tracked for a future PR'; .cmp.md headers (e.g. code-dev.cmp.md) show 'Compiled: 2026-05-04' with no src-hash field; tests/test_compiled_freshness.py only checks structure, not content equivalence."
+        },
+        {
+          "claim": "Multiple compiled .cmp.md artifacts have NO corresponding source program \u2014 they are stale orphans of deleted/renamed programs (e.g. chat-folder, dev-new, interactive, list-chats, new-chat, switch-chat, plan-add/-done/-list/-new, register-preference).",
+          "status": "broken",
+          "evidence": "workspace/programs/compiled/ contains chat-folder.cmp.md, dev-new.cmp.md, interactive.cmp.md, plan-done.cmp.md etc. with no matching workspace/programs/<name>.md (confirmed by source-existence sweep); these survive because the freshness gate never checks source presence."
+        },
+        {
+          "claim": "16 STUB-status + 4 alias-stub programs remain on main. Three are orphan-stubs (code-dev-actions, code-dev-dry-run, code-dev-examples) referenced by other programs but never implemented \u2014 they only LOG(WARN) and print 'stub (not yet implemented)', explicitly logged for an axon-cleanup PR-119 follow-up that never landed.",
+          "status": "gap",
+          "evidence": "workspace/programs/code-dev-actions.md:25 'LOG(WARN, ... stub only. See axon-cleanup PR-119.)'; code-dev-dry-run.md, code-dev-examples.md identical pattern; grep shows 16 'status: STUB' programs incl. several '(autogen-stub \u2014 needs description)' (code-dev-meta-board/-igap/-usage/-dispatch-stats, code-dev-rules-audit, code-dev-events-emit)."
+        },
+        {
+          "claim": "Deprecated subsystem 'semantic-search' (removed in axon-cleanup wave 2, on the strict deprecation set) is still referenced \u2014 as commented-out 'deprecated PR-142' lines \u2014 in 8 workspace/programs/*.md. The PR-142 scrub never finished, and the deprecation guard does NOT catch it because the test only checks 4 A-tier docs (README/CONTRIBUTING/AGENTS/CHANGELOG) + pyproject, not B-tier program source.",
+          "status": "partial",
+          "evidence": "grep 'semantic-search' workspace/programs/*.md = 17 lines across find-program.md, mode-router.md, meta.md, code-dev-init.md, code-dev-plan.md, list-tools.md, authoring-guide.md, igap-improve.md, all tagged '# deprecated (axon-cleanup PR-142)'; tests/test_no_stale_subsystems.py scopes only _A_TIER_DOCS \u2014 residue is un-guarded."
+        },
+        {
+          "claim": "Quarantined compiled programs (verbatim-copy ratio 1.00 + synapse-header-oversize after PR-108) are parked off-dispatch in _quarantine.md, tracked as axon-cleanup PR-121/PR-122 'recompile with synapse-aware bytes-budget logic' \u2014 which never landed.",
+          "status": "gap",
+          "evidence": "workspace/programs/compiled/_quarantine.md:138-141 lists stats/status/turn-log/versions (verbatim) and code-dev-actions/-audit/-check-structure (synapse-header oversize) 'Off-dispatch until recompiled ... tracked as axon-cleanup PR-122'."
+        },
+        {
+          "claim": "Domain reviewer reservoir-review.md ships marked DOMAIN-REVIEW-PENDING: its engineering criteria (applicability ranges, concern order) are 'not yet engineer-validated', and the deterministic FLOOR checks it should enforce are deferred to authoritative neurons it only advisorily NOTEs.",
+          "status": "partial",
+          "evidence": "workspace/programs/reservoir-review.md:41 'DOMAIN-REVIEW-PENDING: the engineering criteria below ... ' and :102 '(DOMAIN-REVIEW-PENDING \u2014 criteria not yet engineer-validated.)'; :62 'FLOOR (deferred \u2014 deterministic neurons OWN these; this reader never blocks)'."
+        },
+        {
+          "claim": "Synapse ranker weights are static / un-tuned: the auto-improve loop that would learn weights from production hit-rate is deferred (PR-130-132 in 3.7.0 scorecard; PR-152 'auto-improve will tune the weight set'). The hit-rate counter is live but its baseline was never collected, so there is no data to tune against.",
+          "status": "gap",
+          "evidence": "CHANGELOG.md:39 '\u2b1b Auto-improve loop (PR-130-132) \u2014 deferred to a future dev-project'; workspace/tools/synapse-suggest.md:117 'PR-152 auto-improve will tune the weight set'; CHANGELOG.md:38 'counter live; baseline not yet collected'."
+        },
+        {
+          "claim": "Outbound MCP capability is v1 stdio-transport-only; HTTP/SSE transport and the reverse direction (AXON exposing itself as an MCP server) are deferred. The shared mcp-servers.json pyrestoolbox entry is a disabled placeholder template requiring manual local wiring.",
+          "status": "partial",
+          "evidence": "tools/mcp_client.py:13 'Scope (v1): stdio transport only ... HTTP/SSE transport and an MCP[-server] ... '; tools/REGISTRY.json:208 'stdio transport only in v1; HTTP + MCP-server (reverse) deferred'; workspace/mcp-servers.json:23 enabled:false placeholder <PYRESTOOLBOX_MCP_DIR>."
+        },
+        {
+          "claim": "Reservoir objective-function built-in module is deferred to Phase 2: the MVP evaluates the objective externally from exported rates; several OBJECTIVE-FUNCTION-INTERFACE open questions (time-varying prices, multi-phase injection adjoint sign) are 'not needed for MVP'.",
+          "status": "gap",
+          "evidence": "workspace/OBJECTIVE-FUNCTION-INTERFACE.md:322 'The built-in module can be deferred to Phase 2'; Section 8 Open Questions list time-varying prices / group objectives / injection adjoint as MVP-deferred."
+        },
+        {
+          "claim": "Accountability ledger surface (un-reconciled spawned/background work) is also LOG-ONLY advisory at turn-end \u2014 it reminds but never blocks, sharing the same non-enforcing Stop hook as the response gate.",
+          "status": "partial",
+          "evidence": "tools/accountability.py:12 'The Stop hook surfaces any OPEN entries at turn-end (LOG-ONLY)'; tools/hooks/verify_stop.py:90 _surface_open_accountability '(LOG-ONLY, never blocks)'."
+        },
+        {
+          "claim": "DAG-SPEC PR-110 lowercase normalization is an open Phase-3 housekeeping task: the phase-2 DAG.json still stores uppercase PR-NNN ids, to be regenerated lowercase 'when PR-110 lands'.",
+          "status": "gap",
+          "evidence": "workspace/DAG-SPEC.md:218 'this project's phases/2-design/03-prs/DAG.json will be regenerated in lowercase when PR-110 lands. Tracked as a Phase-3 housekeeping task.'"
+        },
+        {
+          "claim": "F21 module-mode import conversion (python3 -m tools.x + flat->package rewrite) was deliberately NOT done \u2014 correctly so per the held-refactors decision (the 49 redundant bootstraps were removed; 3 functional sys.path inserts are intentionally KEPT). This is intentional non-debt, flagged so a future session does not naively 're-finish' it.",
+          "status": "holds",
+          "evidence": "memory/axon-held-refactors.md: 'planned module-mode conversion ... was NOT done and is NOT needed'; tests/test_no_sys_path_bootstrap.py allowlists crucible.py/dont_do_lint.py/_axon_lib.py \u2014 the inserts are load-bearing because the editable axon install points at a different checkout."
+        },
+        {
+          "claim": "axon-million/proof-design.md (the proof decision log) is referenced by benchmark/METHODOLOGY.md but is NOT present in the repo \u2014 it lives only in the un-shipped local my-axon area, so a cloner cannot read the cited rationale.",
+          "status": "gap",
+          "evidence": "benchmark/METHODOLOGY.md:9 'decision log: axon-million/proof-design.md'; find for 'axon-million' returns only that doc reference \u2014 no axon-million/ directory exists in the tree (same pattern as the gitignored my-axon/dev-projects audit files)."
+        }
+      ]
+    },
+    {
+      "dimension": "SAFETY posture: git-op rule rationalization (kernel v1.1.5) + dont-do enforcement",
+      "rating": "solid",
+      "summary": "The core safety invariants hold and are well-tested: kernel-change is structurally never delegable (denied before the grant is even loaded, and double-filtered at grant time), the destructive override is default-off, correctly scoped per-op-per-repo, and audited, and the floor is preserved by default with the kernel content-hash lock matching the merged file exactly. dont-do enforcement is largely coherent end-to-end (write-time token block + preflight change-set gate + capture-lint), with both rules wired into the crucible. Two real seams keep this from \"strong\": a delete-branch vs branch-delete naming collision where the same operation is gated oppositely depending on the string passed, and the fact that authorized() has no production caller (it is an advisory self-consult the agent must voluntarily run, not a mechanical interceptor) \u2014 so none of these git-op guarantees are actually enforced at the tool boundary.",
+      "points": [
+        {
+          "claim": "kernel-change is truly never delegable by any grant (inviolable floor)",
+          "status": "holds",
+          "evidence": "tools/autonomous_mode.py:110-111 checks `op in ALWAYS_DENY` and returns authorized:False BEFORE load_grant() \u2014 no grant state can reach the kernel-change path. Defense-in-depth at grant time: grant_on (line 88) filters `--destructive` with `o in DESTRUCTIVE_OPS and o not in ALWAYS_DENY`, and `--ops` (line 84) drops anything in DENY_OPS (= ALWAYS_DENY + DESTRUCTIVE_OPS). Empirically: grant_on(repo, destructive=['kernel-change','force-push']) yields grant.destructive=['force-push'] (kernel-change stripped) and authorized(kernel-change) is False. test_kernel_change_never_delegable passes. KERNEL-SLIM.md:567,697 and workspace/autonomous-mode.md:21 both state it as the inviolable floor."
+        },
+        {
+          "claim": "the destructive override is default-OFF (the floor holds until an op is explicitly opted in)",
+          "status": "holds",
+          "evidence": "grant_on default `destructive=None` -> `[o for o in (destructive or []) ...]` = [] (autonomous_mode.py:88). DEFAULT_OPS (line 32) = commit/push/pr-create/merge-squash/delete-branch \u2014 contains no force-push/reset-hard/amend/rebase. With a default safe grant, authorized(force-push) and authorized(reset-hard) are both False empirically. DEVELOPER.md changelog: 'No behaviour change by default \u2014 the destructive floor holds until an op is opted in.' test_destructive_denied_by_default passes."
+        },
+        {
+          "claim": "destructive delegation is correctly scoped per-op AND per-repo",
+          "status": "holds",
+          "evidence": "authorized() (autonomous_mode.py:115-123): repo mismatch returns False (line 115-116); a destructive op is authorized only if `op in g['destructive']` (line 118) \u2014 a per-op list, not a blanket flag. Empirically: grant destructive=['force-push','reset-hard'] for a/b gives force-push@a/b=True, reset-hard@a/b=True, but force-push@x/y=False (other repo) and rebase@a/b=False (op not delegated). test_destructive_allowed_only_when_explicitly_delegated covers op-scope, repo-scope, and the wrong-op case."
+        },
+        {
+          "claim": "every grant and every authorization decision is audited",
+          "status": "holds",
+          "evidence": "_audit appends ts+record to my-axon/memory/local/autonomous-mode-audit.jsonl (autonomous_mode.py:75-79). grant_on emits grant-on (line 92), grant_off emits grant-off (line 98), each successful ordinary authorize emits 'authorized' (line 126) and each destructive authorize emits 'authorized-destructive' (line 119). Verified: the audit jsonl contains grant-on (with destructive list), authorized, and authorized-destructive records after a test sequence. Note: DENY decisions are not audited (only granted ops are) \u2014 a minor observability gap, not a safety hole."
+        },
+        {
+          "claim": "the kernel-change rule is the same floor across kernel prose, the tool, and the doc; kernel content is locked",
+          "status": "holds",
+          "evidence": "KERNEL-SLIM.md:697 (HARD RULE) + :567 (code-dev exception) + workspace/autonomous-mode.md:21-27 all state: reversible ops grant-delegable, destructive ops human-only unless explicitly per-op-per-repo delegated, kernel-file changes never delegable. test_kernel_version_lock.py pins v1.1.5 + sha256 baa26d9a2515...e16a2; recomputed hash of the merged axon/KERNEL-SLIM.md matches exactly, so the safety prose cannot drift silently."
+        },
+        {
+          "claim": "no bypass: a grant cannot smuggle a denied op in via --ops or junk values",
+          "status": "holds",
+          "evidence": "grant_on filters --ops through `o not in DENY_OPS` (autonomous_mode.py:84) so force-push/kernel-change cannot enter grant.ops; --destructive is filtered to known DESTRUCTIVE_OPS minus ALWAYS_DENY (line 88) so junk strings ('rm -rf') are dropped. Empirically ops=['commit','kernel-change','force-push'] -> grant.ops=['commit']; destructive with junk -> only valid destructive ops kept. The authorized() destructive branch (line 117) intercepts a destructive op even if it somehow appeared in grant.ops, since it is checked against grant.destructive, not grant.ops."
+        },
+        {
+          "claim": "delete-branch vs branch-delete naming collision \u2014 the SAME operation is gated oppositely depending on the string the agent passes",
+          "status": "partial",
+          "evidence": "DEFAULT_OPS includes 'delete-branch' (autonomous_mode.py:32, a safe default-granted op) while DESTRUCTIVE_OPS includes 'branch-delete' (line 30, human-only). They denote the same real git action (deleting a branch). Empirically with a default safe grant: authorized('delete-branch','a/b')=True but authorized('branch-delete','a/b')=False. So branch deletion \u2014 listed as destructive in the kernel (:697) and the doc (:21) \u2014 is in practice auto-authorized whenever the caller spells it 'delete-branch'. The docstring (line 12) and DEVELOPER.md call it 'branch-delete' as destructive, contradicting its presence in the safe DEFAULT_OPS set. Branch deletion is recoverable via reflog so impact is bounded, but the floor is not what the prose claims for this op."
+        },
+        {
+          "claim": "the git-op guarantees are mechanically enforced at the tool boundary (not just advisory)",
+          "status": "partial",
+          "evidence": "authorized() has NO production caller: grep across tools/ shows it is invoked only by autonomous_mode.py's own CLI 'check' subcommand (line 170); enforce.py has no git-op handling (no force-push/reset-hard/merge-squash references). The protocol (workspace/autonomous-mode.md:38-43) says 'the agent MUST run autonomous-mode check ... and proceed only if authorized:true' \u2014 i.e. it relies on the agent voluntarily self-consulting before each git op. There is no PreToolUse-style interceptor on Bash git commands. So the kernel-change floor and destructive scoping are correct as a decision oracle but are advisory in practice; a non-compliant or confused agent that just runs `git push --force` is not mechanically blocked by this layer."
+        },
+        {
+          "claim": "dont-do is coherent end-to-end: tokenized rules block at write-time, prose/semantic caught at preflight, capture-gate forces tokenization (no silent prose escape)",
+          "status": "partial",
+          "evidence": "Three legs are wired: (1) write-time hook (enforce_pretooluse.py) blocks tokenized match: hits at the keystroke via dont_do_violation, with exit 2 (PreToolUse deny) \u2014 and crucible.py:150-157 + registry.py:54-55 register both (2) R_DONT_DO (change-set token + fail-closed prose/semantic BLOCK, r_dont_do.py:115-128) and (3) R_DONT_DO_LINT (capture-gate, fails closed on prose-only prohibitions). All 103 related tests pass. SEAM: the write-time walk-up (enforce_pretooluse.py:60) and the active-project loader read _dont-do.md AND _dont-do-seeds.md AND phase _dont-do.md, but R_DONT_DO only reads <repo_root>/_dont-do.md (r_dont_do.py:64) and R_DONT_DO_LINT only lints files whose basename == '_dont-do.md' (r_dont_do_lint.py:53). So a PROSE-ONLY prohibition placed in a _dont-do-seeds.md (or a phase _dont-do.md outside repo-root) is not write-time-blockable (write-time only checks tokens) and is not caught by the capture-lint \u2014 confirmed: lint_text flags it but R_DONT_DO_LINT.check never feeds a seeds file to it. The 'every prohibition is ALWAYS enforced, no silently-un-enforced prose escape' claim in the hook docstring (lines 8-10) thus holds for repo-root _dont-do.md but has a narrow gap for seeds/phase files."
+        },
+        {
+          "claim": "the enforcement layers are fail-safe (a hook/rule fault must not block legitimate work, and dormant when no _dont-do exists)",
+          "status": "holds",
+          "evidence": "Write-time dont_do_violation and _active_project_dont_dos wrap everything in try/except returning None/[] (enforce_pretooluse.py:118-119,150-152) so a fault never blocks a legit write; _axon_active() gates the whole hook to AXON-OS sessions only (line 177). R_DONT_DO/R_DONT_DO_LINT return None when no _dont-do.md or no changed_files (r_dont_do.py:90,98; r_dont_do_lint.py:43), so they are dormant in repos without the file. This is the correct fail-direction for the floor-preservation goal: default-off, opt-in."
+        }
+      ]
+    }
+  ]
+}

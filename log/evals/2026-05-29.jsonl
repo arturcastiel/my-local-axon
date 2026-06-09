@@ -1,0 +1,92 @@
+{"ts": "2026-05-28T22:33:23+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-28T22:33:23+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T04:24:23+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T04:24:23+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T04:34:05+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T04:34:05+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T04:45:13+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T04:45:13+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T04:54:54+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T04:54:54+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T05:02:38+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T05:02:38+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T05:20:53+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T05:20:53+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T05:28:39+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T05:28:39+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T05:35:47+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T05:35:47+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T05:41:53+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T05:41:53+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T05:50:17+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T05:50:17+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T05:57:28+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T05:57:28+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T06:04:38+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T06:04:38+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T06:50:08+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T06:50:08+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T07:02:17+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T07:02:17+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T07:13:38+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T07:13:38+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T08:30:23+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T08:30:23+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T08:43:22+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T08:43:22+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T09:02:02+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T09:02:02+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T09:10:26+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T09:10:26+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T09:27:19+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T09:27:19+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T09:37:29+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T09:37:29+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T09:44:18+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T09:44:18+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T10:08:57+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T10:08:57+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T10:18:47+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T10:18:47+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T10:24:08+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T10:24:08+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T10:27:29+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T10:27:29+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T10:34:09+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T10:34:09+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T10:41:20+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T10:41:20+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T11:03:04+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T11:03:04+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T11:15:42+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T11:15:42+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T12:08:01+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T12:08:01+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T12:13:26+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T12:13:26+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T13:37:35+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T13:37:35+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T13:44:34+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T13:44:34+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T13:49:29+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T13:49:29+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T15:45:10+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T15:45:10+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T18:31:53+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T18:31:53+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T18:37:47+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T18:37:47+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T18:42:55+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T18:42:55+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T18:49:41+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T18:49:41+00:00", "name": "registry-drift", "pass": false, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": {"ok": false, "summary": {"registered": 145, "on_disk": 148, "drift_count": 3}, "drifts": [{"kind": "filesystem-orphan", "script": "tools/hooks/verify_stop.py", "detail": "tools/hooks/verify_stop.py exists but is not referenced by any REGISTRY.json entry \u2014 register it or delete it"}, {"kind": "filesystem-orphan", "script": "tools/hooks/reanchor_store.py", "detail": "tools/hooks/reanchor_store.py exists but is not referenced by any REGISTRY.json entry \u2014 register it or delete it"}, {"kind": "filesystem-orphan", "script": "tools/hooks/enforce_pretooluse.py", "detail": "tools/hooks/enforce_pretooluse.py exists but is not referenced by any REGISTRY.json entry \u2014 register it or delete it"}], "action": "check", "strict": false}}
+{"ts": "2026-05-29T18:56:15+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T18:56:15+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T19:04:05+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T19:04:05+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T19:12:36+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T19:12:36+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T19:21:35+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T19:21:35+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}
+{"ts": "2026-05-29T19:28:37+00:00", "name": "doc-counts", "pass": true, "expected": {"ok": true, "drift_count": 0}, "actual": "(matched)"}
+{"ts": "2026-05-29T19:28:37+00:00", "name": "registry-drift", "pass": true, "expected": {"ok": true, "summary": {"drift_count": 0}}, "actual": "(matched)"}

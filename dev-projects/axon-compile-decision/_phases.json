@@ -1,0 +1,49 @@
+{
+  "schema": "v1",
+  "phases": [
+    {
+      "id": "study",
+      "name": "Study",
+      "order": 1,
+      "deps": [],
+      "status": "done"
+    },
+    {
+      "id": "plan",
+      "name": "Plan",
+      "order": 2,
+      "deps": [
+        "study"
+      ],
+      "status": "done"
+    },
+    {
+      "id": "pr",
+      "name": "PR-specs",
+      "order": 3,
+      "deps": [
+        "plan"
+      ],
+      "status": "done"
+    },
+    {
+      "id": "log",
+      "name": "Log",
+      "order": 4,
+      "deps": [
+        "pr"
+      ],
+      "status": "done"
+    },
+    {
+      "id": "audit",
+      "name": "Audit",
+      "order": 5,
+      "deps": [
+        "log"
+      ],
+      "status": "done"
+    }
+  ],
+  "updated": "2026-05-30T18:40:17.220069+00:00"
+}

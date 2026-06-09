@@ -110,3 +110,21 @@
   rarefaction+shock (Welge), Rusanov reference, L1/front grader; validated M={1.5,2,3,5}; wrong solvers
   fail; reservoir-native + owner-verifiable. Completes the methodology oracle set (MMS + analytical +
   property). Follow-on (todo e2ae00a9): wire BL goals into run-mms (general grader dispatch).
+
+## 2026-06-01 — B3 shipped: full-AXON-over-MCP arm (the proof now tests the OS)
+- The benchmark's AXON arm was prompt-level (a discipline system prompt) → it tested a PROMPT, not
+  the OS, a mismatch with pre-registered Concern 1 ("Full AXON over MCP"). Running it as-is + calling
+  it "AXON the OS wins" would have been a credibility hole (own prereg + R_GROUNDED_CLAIMS).
+- BUILT + MERGED (MR !103, main 10cc5df): the headless-CLI backend `axon_mcp` mode launches
+  `tools/mcp_server.py` over the CLI's native MCP (`--mcp-config` + `--allowedTools mcp__axon`) →
+  Agent-A gets AXON's REAL tools (memory/checkpoint/health/audit). A distinct `axon_backend` is
+  threaded through `run_mms_fixtures` so ONLY the AXON arm gets the tools; the bare arm is unchanged
+  (fair control: same model, no AXON). New CLI: `run-mms --axon-arm mcp` (needs `--backend cli`).
+  7 tests (config / flag-wiring / arm-routing); full suite green; gate 22/0.
+- **Pillar-3 PROOF code is now COMPLETE** — oracle set (MMS heat + advdiff + Buckley-Leverett) +
+  harness + preflight + prereg + the rigorous MCP arm. The ONLY thing between here and the headline
+  NUMBER is the owner-gated live run: pip the SDK / use a subscription + real goals → pilot → confirm
+  → scale → headline (Opus) → CI. No code piece remains.
+
+## 2026-06-01 — preflight verdict saved → preflight-verdict.md
+- GO from code+stats: n=12 conclusive iff AXON edge ≥0.85 (n_min 11); best-case n=4; ~$10/API or ~$0 subscription. Live run owner-gated (backend + pilot + prereg). See preflight-verdict.md.
