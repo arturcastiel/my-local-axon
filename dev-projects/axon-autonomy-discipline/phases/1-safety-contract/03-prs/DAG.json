@@ -1,0 +1,110 @@
+{
+  "schema": "axon-dag",
+  "schema-version": "v1",
+  "level": "plan",
+  "owner": "project:axon-autonomy-discipline",
+  "generated": "2026-06-03T10:27:20Z",
+  "generator": "tools/dag.py",
+  "validated": true,
+  "critical-path": [],
+  "nodes": [
+    {
+      "id": "PR-001",
+      "kind": "pr",
+      "name": "Gate rule: code-change requires PR+phase",
+      "label": "Gate rule: code-change requires PR+phase",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-002",
+      "kind": "pr",
+      "name": "Reanchor workflow-position",
+      "label": "Reanchor workflow-position",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-003",
+      "kind": "pr",
+      "name": "Autonomy contract",
+      "label": "Autonomy contract",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-004",
+      "kind": "pr",
+      "name": "Circuit breakers",
+      "label": "Circuit breakers",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-005",
+      "kind": "pr",
+      "name": "Operate-loop: counter + cadence fire + workflow",
+      "label": "Operate-loop: counter + cadence fire + workflow",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-006",
+      "kind": "pr",
+      "name": "Cadence backstop",
+      "label": "Cadence backstop",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-007",
+      "kind": "pr",
+      "name": "Flip WARN to BLOCK",
+      "label": "Flip WARN to BLOCK",
+      "status": "pending",
+      "child-dag": null
+    }
+  ],
+  "edges": [
+    {
+      "from": "PR-001",
+      "to": "PR-002",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-003",
+      "to": "PR-004",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-002",
+      "to": "PR-005",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-003",
+      "to": "PR-005",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-004",
+      "to": "PR-005",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-005",
+      "to": "PR-006",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-001",
+      "to": "PR-007",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-006",
+      "to": "PR-007",
+      "kind": "depends"
+    }
+  ]
+}

@@ -8,9 +8,9 @@ workflow-step:   plan
 branch:          main
 codebase:        /home/arturcastiel/projects/new-axon/axon
 parent:          (none)
-sub-projects:    [dont-do-enforce, dag-consistency, axon-viz, axon-tests, axon-ascent, axon-memory, axon-gap-closure, axon-wiring-gaps, axon-claude-code-consistency, axon-copilot-anchor, axon-copilot-consistency, copilot-deviation-study]
+sub-projects:    [dont-do-enforce, dag-consistency, axon-viz, axon-tests, axon-ascent, axon-memory, axon-gap-closure, axon-wiring-gaps, axon-claude-code-consistency, axon-copilot-anchor, axon-copilot-consistency, copilot-deviation-study, axon-bug-free, axon-workflow-discipline]
 created:         2026-05-27
-updated:         2026-05-27
+updated:         2026-05-29
 
 ## Working Context
 - THE umbrella. Every internal AXON improvement is tracked HERE — as a nested

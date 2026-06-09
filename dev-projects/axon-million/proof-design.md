@@ -78,8 +78,12 @@ Methodology written: `benchmark/METHODOLOGY.md` (merged).
   + leakage HARDENED: family excludes eigenfunctions (f ∝ u* would leak u*'s shape via the
     forcing); `proof_mms._forcing_leaks_solution` fails closed; METHODOLOGY §6.A documents the
     two-layer defense (the order check independently rejects a hardcoded-exact answer).
-3. ☐ **Full-AXON-over-MCP arm** (todo 43b4bf4b) — the big remaining piece; better fresh + supervised.
-   (Today the AXON arm is prompt-level via make_operator; B3 swaps in real AXON tools over MCP.)
+3. ✓ **Full-AXON-over-MCP arm** — MERGED 2026-06-01 (MR !103). The headless-CLI backend gained an
+   `axon_mcp` mode wiring `tools/mcp_server.py` over the CLI's native MCP (`--mcp-config` + allowed
+   `mcp__axon` tools); `run-mms --axon-arm mcp` threads a distinct `axon_backend` so ONLY the AXON arm
+   gets the real tools (the bare arm stays a fair control). The AXON arm now tests the OS, not a prompt
+   — Concern 1 satisfied. 7 tests (config / flag-wiring / arm-routing). Live NUMBER still owner-gated
+   (subscription/compute + real goals); the harness code is complete.
 4. ✓ **Preflight** (`dual_agent_eval.py preflight`) — PRICE-INDEPENDENT conclusiveness gate (best-case
    Wilson CI + N_min + CI at an assumed win-rate) PLUS a caveated $ estimate. Tells you BEFORE
    spending whether a run can even clear the bar. MERGED.

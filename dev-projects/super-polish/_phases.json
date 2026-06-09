@@ -1,0 +1,11 @@
+{
+  "schema": "v1",
+  "phases": [
+    {"id": "study", "name": "Study", "order": 1, "deps": [], "status": "done"},
+    {"id": "plan", "name": "Plan", "order": 2, "deps": ["study"], "status": "done"},
+    {"id": "pr", "name": "PR-specs", "order": 3, "deps": ["plan"], "status": "active"},
+    {"id": "log", "name": "Log", "order": 4, "deps": ["pr"], "status": "pending"},
+    {"id": "audit", "name": "Audit", "order": 5, "deps": ["log"], "status": "pending"}
+  ],
+  "updated": "2026-06-02T00:00:00+00:00"
+}
