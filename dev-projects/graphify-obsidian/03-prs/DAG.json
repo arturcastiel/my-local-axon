@@ -1,0 +1,134 @@
+{
+  "schema": "axon-dag",
+  "schema-version": "v1",
+  "level": "plan",
+  "owner": "project:graphify-obsidian",
+  "generated": "2026-06-11T06:46:55Z",
+  "generator": "tools/dag.py",
+  "validated": true,
+  "critical-path": [],
+  "nodes": [
+    {
+      "id": "PR-001",
+      "kind": "pr",
+      "name": "Make dead-code REGISTRY-aware",
+      "label": "Make dead-code REGISTRY-aware",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-002",
+      "kind": "pr",
+      "name": "Repair axon-graph usage doc + full-output UX",
+      "label": "Repair axon-graph usage doc + full-output UX",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-003",
+      "kind": "pr",
+      "name": "Graphify-present-path tests",
+      "label": "Graphify-present-path tests",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-004",
+      "kind": "pr",
+      "name": "Persist code map + freshness reconciler",
+      "label": "Persist code map + freshness reconciler",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-005",
+      "kind": "pr",
+      "name": "Richer Obsidian projection",
+      "label": "Richer Obsidian projection",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-006",
+      "kind": "pr",
+      "name": "Contextual surfacing: synapse+dispatch+anticipate",
+      "label": "Contextual surfacing: synapse+dispatch+anticipate",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-007",
+      "kind": "pr",
+      "name": "P-CD s0 graphify-map + shadow node-id cache",
+      "label": "P-CD s0 graphify-map + shadow node-id cache",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-008",
+      "kind": "pr",
+      "name": "P-CD code-derived depends_on into plan DAG",
+      "label": "P-CD code-derived depends_on into plan DAG",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-009",
+      "kind": "pr",
+      "name": "P-CD review caller-cone + test-map coverage",
+      "label": "P-CD review caller-cone + test-map coverage",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-010",
+      "kind": "pr",
+      "name": "P-CD graphify-query adaptive synapse",
+      "label": "P-CD graphify-query adaptive synapse",
+      "status": "pending",
+      "child-dag": null
+    }
+  ],
+  "edges": [
+    {
+      "from": "PR-001",
+      "to": "PR-004",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-004",
+      "to": "PR-005",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-002",
+      "to": "PR-006",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-003",
+      "to": "PR-007",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-007",
+      "to": "PR-008",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-007",
+      "to": "PR-009",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-007",
+      "to": "PR-010",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-006",
+      "to": "PR-010",
+      "kind": "depends"
+    }
+  ]
+}
