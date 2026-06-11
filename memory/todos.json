@@ -92,7 +92,7 @@
     "id": "20166489",
     "text": "COMPILED-MIRROR KILL (owner decision 2026-05-28) \u2014 focused-session workstream, NOT a delete (gate-protected, ~40 files). KEY COUPLING found: compile_suggest.py POPULATES dispatch's index (register_in_dispatch_index -> memory/longterm/dispatch-index.json) as a compile side-effect, and dispatch.py reads it -> STEP 0 = decouple: build the dispatch index from program SOURCE (workspace/programs/*.md name+description), independent of compilation. THEN: (1) dispatch.py run-target compiled->source + remove prefer_compiled (read/bypass/output) + docstring. (2) rm workspace/programs/compiled/ (49 .cmp.md). (3) rm the 5 compile tools (compile, compile_suggest [after step 0], compile_optimizer, compile-write, audit_compiled \u2014 no import ripple) + their REGISTRY.json entries. (4) rm 4 machinery test files (~23 tests: test_compile_write/_audit_compiled/_compiled_freshness/_compiled_regression). (5) drop prefer-compiled from smart-dispatch.md; retire suggest-compile.md + stats.md compiled bits. (6) clean programs_registry.py (compiled field) + axon_audit.py (compiled count) \u2014 both degrade gracefully today. (7) drop compiled-coverage from metrics_manifest.json. (8) update AXON-DOCS-COMPILER.md + REGISTRY.md + AXON-DOCS-*. (9) gate: registry-drift + doc_counts + freshness. run.py STAYS (executes source .md). A partial attempt was reverted 2026-05-28 on finding the index coupling (no half-kill left).",
     "due": "",
-    "status": "open",
+    "status": "done",
     "bindings": [
       "axon-os",
       "compiled-mirror",
@@ -100,7 +100,7 @@
       "refactor"
     ],
     "created": "2026-05-28",
-    "done_ts": ""
+    "done_ts": "2026-06-10"
   },
   {
     "id": "3a33424a",
@@ -113,6 +113,42 @@
       "breadth"
     ],
     "created": "2026-05-28",
+    "done_ts": ""
+  },
+  {
+    "id": "ad0b772b",
+    "text": "general-bugfix PR-0d: apply the 6-line kernel patch to axon/programs/interactive.md (spec: dev-projects/general-bugfix/03-prs/PR-0d-kernel-patch.md), push to general-bugfix/pr-0d-mirror-kill, gate green, squash-merge MR !162. Then mark todo 20166489 (compiled-mirror kill) done.",
+    "due": "",
+    "status": "done",
+    "bindings": [],
+    "created": "2026-06-10",
+    "done_ts": "2026-06-10"
+  },
+  {
+    "id": "1c7b2d2e",
+    "text": "general-bugfix PR-2 kernel half: run apply-pr2b-kernel-repoint.sh (dev-projects/general-bugfix/03-prs/) \u2014 repoints 13 kernel chat/plan path refs, promotes lint-path-vars to BLOCK, merges the held mode-wiring branch. One command.",
+    "due": "",
+    "status": "done",
+    "bindings": [],
+    "created": "2026-06-10",
+    "done_ts": "2026-06-10"
+  },
+  {
+    "id": "1b03a09c",
+    "text": "general-bugfix follow-up A: migrate the 27 literal _meta REPLACE call-sites to TOOL(meta, set), then flip residue-lint WARN\u2192BLOCK (its promotes_on condition). Census: residue-lint report.",
+    "due": "",
+    "status": "open",
+    "bindings": [],
+    "created": "2026-06-11",
+    "done_ts": ""
+  },
+  {
+    "id": "481824b2",
+    "text": "general-bugfix follow-up B (reduce-surface round 2): freeze/thaw\u2194hold + divide/combine\u2194partition de-dup \u00b7 phases/{name}/ dir retirement (5 consumers: hold/cascade/explain-reviewer/dont-do/journal-search) \u00b7 workflow simulate/run implementation fold \u00b7 full route-manifest. Each its own gated PR.",
+    "due": "",
+    "status": "open",
+    "bindings": [],
+    "created": "2026-06-11",
     "done_ts": ""
   }
 ]

@@ -1,0 +1,8 @@
+2026-06-09T10:31:00Z  project-created   axon-resilience — cron-contract robustness (A) + identity persistence/self-care (B)
+2026-06-09T10:45:00Z  study-done        5-investigator parallel study → 01-study.md
+2026-06-09T11:10:00Z  pr-merged         PR-1 cron-contract gate → origin/main f99f5f8 (MR !150), crucible green 4566 tests
+2026-06-09T11:30:00Z  hook-installed    UserPromptSubmit re-anchor hook installed in ~/.claude (decisive "becomes AXON" fix)
+2026-06-09T12:05:00Z  pr-merged         PR-2 self-care + identity-persistence → origin/main b55c85f (MR !151), crucible green 4579 tests
+2026-06-09T12:08:00Z  spec-handed-off   99-kernel-spec.md prepared for human apply (signature-gated Stop hook + compaction reanchor)
+2026-06-09T12:08:00Z  memory-persisted  agent-memory general(2)+project(1), L:cron-contract-conformance-gate, E:session-log
+2026-06-09T12:20:00Z  project-closed    autonomous scope complete; both PRs tested-green pre-merge + merged. Standing HUMAN handoff: apply 99-kernel-spec.md under dev-mode (optional hardening, non-blocking).
