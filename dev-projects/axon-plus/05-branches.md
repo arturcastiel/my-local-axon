@@ -11,3 +11,4 @@ updated: 2026-06-11
 | axon-plus/pr-7-compile-pilot | PR-007 | merged local+deleted | db0c2c8 | axon-plus: pr-7 — compile pipeline pilot |
 | axon-plus/pr-8-brief-envelopes | PR-008 | merged local+deleted | d71cba4 | axon-plus: pr-8 — brief boot envelope |
 | axon-plus/pr-9-sectional-reads | PR-009 | merged local+deleted | 14e9d47 | axon-plus: pr-9 — sectional reads via TOCs |
+| axon-plus/pr-10-convergence-contract | PR-010 | merged local+deleted | b1cc896 | axon-plus: pr-10 — convergence contracts |
