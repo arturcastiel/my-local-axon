@@ -90,7 +90,7 @@ Updated: 2026-06-11  ·  Total PRs: 27 (firm) · +2 conditional in 02-prs.deferr
 - **Spec:** 03-prs/PR-011.md (not written yet)
 
 ## PR-012 — D: goal-define mode (intake→organize→interrogate→harden)
-- **Status:** not-started
+- **Status:** merged locally (1132184, 2026-06-12 — push queued)
 - **Phase:** 2-convergence-goals
 - **Complexity:** M
 - **Scope:** study --mode=goals + standalone · this session = prototype fixture · acceptance per goal

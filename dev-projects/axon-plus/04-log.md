@@ -87,3 +87,8 @@ backup/v01..v04 + bundles on GitHub. Push queue: 4 (GitLab outage).
 - 4-fork interrogation → contract → direction simulation → runnable skeleton (G-02,
   REPLAN, EXHAUSTED handoff). Dispatch-routed from natural phrasing. Compiled 32%.
 - Gate caught: program OUTPUT-banner convention. backup/v06. W2: 2/4. Next: PR-012.
+
+### PR-012 — goal-define mode · commit 1132184 (LOCAL) · 2026-06-12
+- Interrogation productized (intake/organize/interrogate-with-evidence/harden+coherence);
+  standalone + dispatch + study --mode=goals. Compiled 39%. Gate catches: path-var +
+  program-as-tool (static scanners). backup/v07. W2: 3/4. Next: PR-013 closes the wave.
