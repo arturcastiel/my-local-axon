@@ -26,3 +26,9 @@ protected) · startup 1,377 · prefs 691 · boot 593 · harness 736 · snapshot 
    work, W5 candidate), registry-first answers (discipline doc, free anytime).
 
 ## Wave 2 unchanged. Push queue: 3 commits (GitLab outage).
+
+## Owner constraint (2026-06-12): HARNESS-AGNOSTIC ONLY
+Kernel-in-system-prompt REJECTED for now (per-harness install burden). Approved
+direction: file/tool-level levers only. Next A-wave candidates (autonomous):
+hash-attested warm boot (−12k warm sessions) + menu-as-template (−3.5k always);
+byte-stable prefix as free discipline. Kernel sharding/diet remain owner-gated.
