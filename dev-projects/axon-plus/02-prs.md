@@ -98,7 +98,7 @@ Updated: 2026-06-11  ·  Total PRs: 27 (firm) · +2 conditional in 02-prs.deferr
 - **Spec:** 03-prs/PR-012.md (not written yet)
 
 ## PR-013 — D: scoped-constraints registry + auto-routing + phase checklists
-- **Status:** not-started
+- **Status:** merged locally (c14f2e7, 2026-06-12 — push queued)
 - **Phase:** 2-convergence-goals
 - **Complexity:** S
 - **Scope:** global ledger (gate-readable) · goal-define routes scope · phase-entry checklist render

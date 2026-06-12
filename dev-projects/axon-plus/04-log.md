@@ -92,3 +92,14 @@ backup/v01..v04 + bundles on GitHub. Push queue: 4 (GitLab outage).
 - Interrogation productized (intake/organize/interrogate-with-evidence/harden+coherence);
   standalone + dispatch + study --mode=goals. Compiled 39%. Gate catches: path-var +
   program-as-tool (static scanners). backup/v07. W2: 3/4. Next: PR-013 closes the wave.
+
+### PR-013 — constraints registry · commit c14f2e7 (LOCAL) · 2026-06-12
+- CONSTRAINTS.json (3 scopes, 10 seeded laws, 4 mechanical) + constraints tool +
+  goal-define auto-routing + phase-entry checklists. Gate catches: F401 + F22-literal
+  (store renamed). backup/v08.
+
+## WAVE 2 COMPLETE — 2026-06-12
+Goal C live end-to-end (engine + designer: contract/iterate/replan/budget-wall +
+4-fork authoring) · Goal D live (goal-define interrogation, study --mode=goals,
+scoped-constraints architecture with auto-routing + checklists). 13/27 PRs (48%).
+Push queue: 8 (GitLab outage). Next: Wave 3 — quality loop + discoverability.
