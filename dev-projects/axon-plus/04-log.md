@@ -82,3 +82,8 @@ backup/v01..v04 + bundles on GitHub. Push queue: 4 (GitLab outage).
 - Historic gate note: the compile staleness CI fired its FIRST real enforcement on this
   PR's own menu edit — recompile forced mechanically. 8 lifecycle tests.
 - backup/v05 + bundle v05. W2: 1/4. Next: PR-011 loop designer.
+
+### PR-011 — loop designer · commit 20071a9 (LOCAL) · 2026-06-12
+- 4-fork interrogation → contract → direction simulation → runnable skeleton (G-02,
+  REPLAN, EXHAUSTED handoff). Dispatch-routed from natural phrasing. Compiled 32%.
+- Gate caught: program OUTPUT-banner convention. backup/v06. W2: 2/4. Next: PR-012.

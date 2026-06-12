@@ -82,7 +82,7 @@ Updated: 2026-06-11  ·  Total PRs: 27 (firm) · +2 conditional in 02-prs.deferr
 - **Spec:** 03-prs/PR-010.md (not written yet)
 
 ## PR-011 — C: loop designer (interrogate → spec → simulate)
-- **Status:** not-started
+- **Status:** merged locally (20071a9, 2026-06-12 — push queued)
 - **Phase:** 2-convergence-goals
 - **Complexity:** M
 - **Scope:** conversational designer program · generates contract · simulate before run
