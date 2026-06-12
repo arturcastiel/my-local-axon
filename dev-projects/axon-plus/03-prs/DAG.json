@@ -1,0 +1,325 @@
+{
+  "schema": "axon-dag",
+  "schema-version": "v1",
+  "level": "plan",
+  "owner": "project:axon-plus",
+  "generated": "2026-06-11T16:55:05Z",
+  "generator": "tools/dag.py",
+  "validated": true,
+  "critical-path": [],
+  "nodes": [
+    {
+      "id": "PR-001",
+      "kind": "pr",
+      "name": "token bench + baseline",
+      "label": "token bench + baseline",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-002",
+      "kind": "pr",
+      "name": "execution receipts",
+      "label": "execution receipts",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-003",
+      "kind": "pr",
+      "name": "menu-render check",
+      "label": "menu-render check",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-004",
+      "kind": "pr",
+      "name": "doc census",
+      "label": "doc census",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-005",
+      "kind": "pr",
+      "name": "census discrepancy fixes",
+      "label": "census discrepancy fixes",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-006",
+      "kind": "pr",
+      "name": "menu aggregation",
+      "label": "menu aggregation",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-007",
+      "kind": "pr",
+      "name": "compile pilot",
+      "label": "compile pilot",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-008",
+      "kind": "pr",
+      "name": "brief envelopes",
+      "label": "brief envelopes",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-009",
+      "kind": "pr",
+      "name": "program shadows",
+      "label": "program shadows",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-010",
+      "kind": "pr",
+      "name": "convergence contract+runner",
+      "label": "convergence contract+runner",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-011",
+      "kind": "pr",
+      "name": "loop designer",
+      "label": "loop designer",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-012",
+      "kind": "pr",
+      "name": "goal-define mode",
+      "label": "goal-define mode",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-013",
+      "kind": "pr",
+      "name": "constraints registry",
+      "label": "constraints registry",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-014",
+      "kind": "pr",
+      "name": "quality-loop program",
+      "label": "quality-loop program",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-015",
+      "kind": "pr",
+      "name": "autonomy ramp gate",
+      "label": "autonomy ramp gate",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-016",
+      "kind": "pr",
+      "name": "situation triggers",
+      "label": "situation triggers",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-017",
+      "kind": "pr",
+      "name": "orchestrator footer live",
+      "label": "orchestrator footer live",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-018",
+      "kind": "pr",
+      "name": "phrases rollout",
+      "label": "phrases rollout",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-019",
+      "kind": "pr",
+      "name": "suggester accuracy",
+      "label": "suggester accuracy",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-020",
+      "kind": "pr",
+      "name": "run visibility",
+      "label": "run visibility",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-021a",
+      "kind": "pr",
+      "name": "designer dialogue\u2192yml",
+      "label": "designer dialogue\u2192yml",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-021b",
+      "kind": "pr",
+      "name": "synapse generation",
+      "label": "synapse generation",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-024",
+      "kind": "pr",
+      "name": "weak-tier overlay",
+      "label": "weak-tier overlay",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-025",
+      "kind": "pr",
+      "name": "conformance scorecard",
+      "label": "conformance scorecard",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-026",
+      "kind": "pr",
+      "name": "stale sweep",
+      "label": "stale sweep",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-027",
+      "kind": "pr",
+      "name": "doc floor+index",
+      "label": "doc floor+index",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-028",
+      "kind": "pr",
+      "name": "final vs-baseline measurement",
+      "label": "final vs-baseline measurement",
+      "status": "pending",
+      "child-dag": null
+    }
+  ],
+  "edges": [
+    {
+      "from": "PR-001",
+      "to": "PR-006",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-001",
+      "to": "PR-007",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-001",
+      "to": "PR-008",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-007",
+      "to": "PR-009",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-010",
+      "to": "PR-011",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-012",
+      "to": "PR-013",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-010",
+      "to": "PR-014",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-014",
+      "to": "PR-015",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-011",
+      "to": "PR-021a",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-019",
+      "to": "PR-021a",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-021a",
+      "to": "PR-021b",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-002",
+      "to": "PR-024",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-024",
+      "to": "PR-025",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-004",
+      "to": "PR-026",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-026",
+      "to": "PR-027",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-006",
+      "to": "PR-028",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-007",
+      "to": "PR-028",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-008",
+      "to": "PR-028",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-009",
+      "to": "PR-028",
+      "kind": "depends"
+    }
+  ]
+}

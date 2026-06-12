@@ -1,0 +1,195 @@
+{
+  "ok": true,
+  "encoding": "cl100k_base",
+  "scenarios": {
+    "boot-menu": {
+      "file_tokens": 20589,
+      "envelope_tokens": 12004,
+      "total": 32593,
+      "exact": true
+    },
+    "chat-turn": {
+      "file_tokens": 908,
+      "envelope_tokens": 133,
+      "total": 1041,
+      "exact": true
+    },
+    "pr-cycle": {
+      "file_tokens": 7809,
+      "envelope_tokens": 251,
+      "total": 8060,
+      "exact": true
+    },
+    "study": {
+      "file_tokens": 6646,
+      "envelope_tokens": 143,
+      "total": 6789,
+      "exact": true
+    }
+  },
+  "detail": {
+    "boot-menu": {
+      "scenario": "boot-menu",
+      "file_tokens": 20589,
+      "envelope_tokens": 12004,
+      "total": 32593,
+      "exact": true,
+      "files": [
+        {
+          "file": "startup.md",
+          "exists": true,
+          "tokens": 1377
+        },
+        {
+          "file": "axon/KERNEL-SLIM.md",
+          "exists": true,
+          "tokens": 12881
+        },
+        {
+          "file": "workspace/programs/menu.md",
+          "exists": true,
+          "tokens": 5595
+        },
+        {
+          "file": "workspace/harness/claude-code.md",
+          "exists": true,
+          "tokens": 736
+        }
+      ],
+      "envelopes": [
+        {
+          "tool": "tools/boot.py",
+          "tokens": 2950
+        },
+        {
+          "tool": "tools/prefs.py",
+          "tokens": 691
+        },
+        {
+          "tool": "tools/clock.py",
+          "tokens": 74
+        },
+        {
+          "tool": "tools/dispatch_index.py status",
+          "tokens": 56
+        },
+        {
+          "tool": "tools/drift.py gate",
+          "tokens": 39
+        },
+        {
+          "tool": "tools/prompt_log.py consent",
+          "tokens": 17
+        },
+        {
+          "tool": "tools/agent_todo.py list --status open",
+          "tokens": 781
+        },
+        {
+          "tool": "tools/workflow_run.py list --format json",
+          "tokens": 1247
+        },
+        {
+          "tool": "tools/auto_audit.py summary --days 7",
+          "tokens": 36
+        },
+        {
+          "tool": "tools/health.py",
+          "tokens": 6113
+        }
+      ]
+    },
+    "chat-turn": {
+      "scenario": "chat-turn",
+      "file_tokens": 908,
+      "envelope_tokens": 133,
+      "total": 1041,
+      "exact": true,
+      "files": [
+        {
+          "file": "workspace/programs/mode-detect.md",
+          "exists": true,
+          "tokens": 908
+        }
+      ],
+      "envelopes": [
+        {
+          "tool": "tools/dispatch.py match --query show me the project status --workspace workspace",
+          "tokens": 133
+        }
+      ]
+    },
+    "pr-cycle": {
+      "scenario": "pr-cycle",
+      "file_tokens": 7809,
+      "envelope_tokens": 251,
+      "total": 8060,
+      "exact": true,
+      "files": [
+        {
+          "file": "workspace/programs/code-dev-pr-create.md",
+          "exists": true,
+          "tokens": 4407
+        },
+        {
+          "file": "workspace/programs/code-dev-review.md",
+          "exists": true,
+          "tokens": 760
+        },
+        {
+          "file": "workspace/programs/code-dev-review-scope.md",
+          "exists": true,
+          "tokens": 1178
+        },
+        {
+          "file": "workspace/programs/code-dev-review-self.md",
+          "exists": true,
+          "tokens": 1162
+        },
+        {
+          "file": "workspace/programs/code-dev-finalize.md",
+          "exists": true,
+          "tokens": 302
+        }
+      ],
+      "envelopes": [
+        {
+          "tool": "tools/registry_drift.py check",
+          "tokens": 59
+        },
+        {
+          "tool": "tools/freshness.py check",
+          "tokens": 170
+        },
+        {
+          "tool": "tools/lint_paths.py",
+          "tokens": 22
+        }
+      ]
+    },
+    "study": {
+      "scenario": "study",
+      "file_tokens": 6646,
+      "envelope_tokens": 143,
+      "total": 6789,
+      "exact": true,
+      "files": [
+        {
+          "file": "workspace/programs/code-dev-study.md",
+          "exists": true,
+          "tokens": 6646
+        }
+      ],
+      "envelopes": [
+        {
+          "tool": "tools/study_modes.py resolve --mode overview",
+          "tokens": 101
+        },
+        {
+          "tool": "tools/shadow.py stats --shadow-dir /tmp/axon-bench-shadow",
+          "tokens": 42
+        }
+      ]
+    }
+  }
+}
