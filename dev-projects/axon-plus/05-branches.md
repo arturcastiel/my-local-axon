@@ -14,3 +14,4 @@ updated: 2026-06-11
 | axon-plus/pr-10-convergence-contract | PR-010 | merged local+deleted | b1cc896 | axon-plus: pr-10 — convergence contracts |
 | axon-plus/pr-11-loop-designer | PR-011 | merged local+deleted | 20071a9 | axon-plus: pr-11 — loop designer |
 | axon-plus/pr-12-goal-define | PR-012 | merged local+deleted | 1132184 | axon-plus: pr-12 — goal-define mode |
+| axon-plus/pr-13-constraints-registry | PR-013 | merged local+deleted | c14f2e7 | axon-plus: pr-13 — constraints registry |
