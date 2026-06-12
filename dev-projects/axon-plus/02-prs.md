@@ -74,7 +74,7 @@ Updated: 2026-06-11  ·  Total PRs: 27 (firm) · +2 conditional in 02-prs.deferr
 - **Spec:** 03-prs/PR-009.md (not written yet)
 
 ## PR-010 — C: convergence contract schema + runner enforcement
-- **Status:** not-started
+- **Status:** merged locally (b1cc896, 2026-06-12 — push queued)
 - **Phase:** 2-convergence-goals
 - **Complexity:** M
 - **Scope:** spec: target predicate/metric/budget · runner enforces · halt report · loop-receipts per iteration

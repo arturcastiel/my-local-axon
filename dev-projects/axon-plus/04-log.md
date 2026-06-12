@@ -75,3 +75,10 @@ menu probes → 1 snapshot · compile pipeline real (7/191, 10–43%/read) · ro
 Checkpoint-w1: A-targets proposal + below-floor paths (menu-as-template, hash-attested
 warm boot = autonomous candidates; kernel-in-system-prompt, kernel diet = owner-gated).
 backup/v01..v04 + bundles on GitHub. Push queue: 4 (GitLab outage).
+
+### PR-010 — convergence contracts · commit b1cc896 (LOCAL) · 2026-06-12
+- loop-contract engine: define/iterate/replan/rebudget(human-wall)/report; mechanical
+  CONVERGED/EXHAUSTED/REPLAN-advice; receipts per transition; goal-store integration.
+- Historic gate note: the compile staleness CI fired its FIRST real enforcement on this
+  PR's own menu edit — recompile forced mechanically. 8 lifecycle tests.
+- backup/v05 + bundle v05. W2: 1/4. Next: PR-011 loop designer.
