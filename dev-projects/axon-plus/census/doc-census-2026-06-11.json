@@ -1,0 +1,4095 @@
+{
+ "generated": "2026-06-11",
+ "total_docs": 497,
+ "by_area": {
+  "(root)": {
+   "count": 10,
+   "bytes": 124890
+  },
+  ".claude": {
+   "count": 1,
+   "bytes": 3151
+  },
+  ".github": {
+   "count": 2,
+   "bytes": 8747
+  },
+  ".pytest_cache": {
+   "count": 1,
+   "bytes": 302
+  },
+  "axon": {
+   "count": 107,
+   "bytes": 336240
+  },
+  "benchmark": {
+   "count": 5,
+   "bytes": 27562
+  },
+  "memory": {
+   "count": 1,
+   "bytes": 378
+  },
+  "scripts": {
+   "count": 4,
+   "bytes": 5518
+  },
+  "tests": {
+   "count": 46,
+   "bytes": 8955
+  },
+  "workspace": {
+   "count": 320,
+   "bytes": 1388118
+  }
+ },
+ "adjoint_class": [
+  "axon/programs/help/new-chat.md",
+  "axon/programs/mode-chat.md",
+  "axon/programs/mode-plan.md",
+  "axon/programs/new-chat.md",
+  "axon/programs/plan-new.md",
+  "workspace/OBJECTIVE-FUNCTION-INTERFACE.md"
+ ],
+ "unreferenced": [
+  ".claude/HOOKS-README.md",
+  "axon/core/RUN-HEADER.md",
+  "benchmark/PRE-REGISTRATION.md",
+  "benchmark/preregistrations/prereg-2026-05-28-68b27bbed637f197.md",
+  "memory/episodic/phase-ledger.md",
+  "tests/dag/fixtures/acyclic-5node.md",
+  "tests/dag/fixtures/render-snapshot.md",
+  "tests/fixtures/retrieval_eval/chunking_doc.md",
+  "tests/fixtures/study-evals/axon-fixture-a/expected/deep.md",
+  "tests/fixtures/study-evals/axon-fixture-a/expected/subsystem.md",
+  "tests/fixtures/study-evals/axon-fixture-a/output/deep.md",
+  "tests/fixtures/study-evals/axon-fixture-a/output/subsystem.md",
+  "tests/fixtures/study-evals/axon-fixture-b/expected/deep.md",
+  "tests/fixtures/study-evals/axon-fixture-b/expected/subsystem.md",
+  "tests/fixtures/study-evals/axon-fixture-b/output/deep.md",
+  "tests/fixtures/study-evals/axon-fixture-b/output/subsystem.md",
+  "tests/fixtures/study-evals/flask-mini/expected/deep.md",
+  "tests/fixtures/study-evals/flask-mini/expected/subsystem.md",
+  "tests/fixtures/study-evals/flask-mini/output/deep.md",
+  "tests/fixtures/study-evals/flask-mini/output/subsystem.md",
+  "tests/fixtures/study-evals/tiny-py-cli/expected/deep.md",
+  "tests/fixtures/study-evals/tiny-py-cli/expected/subsystem.md",
+  "tests/fixtures/study-evals/tiny-py-cli/output/deep.md",
+  "tests/fixtures/study-evals/tiny-py-cli/output/subsystem.md",
+  "tests/fixtures/study-evals/tiny-ts-lib/expected/deep.md",
+  "tests/fixtures/study-evals/tiny-ts-lib/expected/subsystem.md",
+  "tests/fixtures/study-evals/tiny-ts-lib/output/deep.md",
+  "tests/fixtures/study-evals/tiny-ts-lib/output/subsystem.md",
+  "tests/shadow/fixtures/mixed-project/phases/1-study/03-prs/PR-100.md",
+  "tests/shadow/fixtures/mixed-project/phases/3-implement/03-prs/PR-004.md",
+  "tests/shadow/fixtures/mixed-project/phases/3-implement/shadow/PR-001.findings.md",
+  "tests/shadow/fixtures/mixed-project/phases/3-implement/shadow/PR-003.findings.md",
+  "workspace/AXON-DOCS-PLAN.md",
+  "workspace/AXON-DOCS-STUDY.md",
+  "workspace/AXON-GLOSSARY.md",
+  "workspace/OBJECTIVE-FUNCTION-INTERFACE.md",
+  "workspace/addons/hollow-signal/accuse.md",
+  "workspace/addons/hollow-signal/analyze.md",
+  "workspace/addons/hollow-signal/case-briefing.md",
+  "workspace/addons/hollow-signal/help/accuse.md",
+  "workspace/addons/hollow-signal/help/analyze.md",
+  "workspace/addons/hollow-signal/help/case-briefing.md",
+  "workspace/addons/hollow-signal/help/interrogate.md",
+  "workspace/addons/hollow-signal/interrogate.md",
+  "workspace/addons/soccer-manager/help/new-game.md",
+  "workspace/addons/soccer-manager/help/set-formation.md",
+  "workspace/addons/soccer-manager/help/squad.md",
+  "workspace/addons/soccer-manager/help/standings.md",
+  "workspace/addons/soccer-manager/help/transfer.md",
+  "workspace/addons/soccer-manager/new-game.md",
+  "workspace/addons/soccer-manager/set-formation.md",
+  "workspace/addons/soccer-manager/squad.md",
+  "workspace/addons/soccer-manager/standings.md",
+  "workspace/addons/soccer-manager/transfer.md",
+  "workspace/axon-memory/axon-self-conformance.md",
+  "workspace/axon-memory/axon-self-endgame.md",
+  "workspace/axon-memory/axon-self-harness-agnostic.md",
+  "workspace/axon-memory/axon-self-identity.md",
+  "workspace/axon-memory/axon-self-response.md",
+  "workspace/log/entries/2026-05-27.md"
+ ],
+ "older_than_may": [],
+ "rows": [
+  {
+   "path": ".claude/HOOKS-README.md",
+   "area": ".claude",
+   "bytes": 3151,
+   "title": "AXON enforcement hooks \u2014 proposal (axon-workflow-discipline PR-13)",
+   "last_commit": "2026-05-29",
+   "refs": 0
+  },
+  {
+   "path": ".github/PULL_REQUEST_TEMPLATE.md",
+   "area": ".github",
+   "bytes": 601,
+   "title": "Summary",
+   "last_commit": "2026-05-17",
+   "refs": 3
+  },
+  {
+   "path": ".github/copilot-instructions.md",
+   "area": ".github",
+   "bytes": 8146,
+   "title": "GitHub Copilot \u2014 repo persona contract",
+   "last_commit": "2026-05-20",
+   "refs": 10
+  },
+  {
+   "path": ".pytest_cache/README.md",
+   "area": ".pytest_cache",
+   "bytes": 302,
+   "title": "pytest cache directory",
+   "last_commit": "untracked",
+   "refs": 8
+  },
+  {
+   "path": "AGENTS.md",
+   "area": "(root)",
+   "bytes": 3456,
+   "title": "AGENTS.md \u2014 agent contract for this repo",
+   "last_commit": "2026-05-30",
+   "refs": 8
+  },
+  {
+   "path": "CHANGELOG.md",
+   "area": "(root)",
+   "bytes": 48941,
+   "title": "AXON Changelog",
+   "last_commit": "2026-06-11",
+   "refs": 7
+  },
+  {
+   "path": "CONTEXT.md",
+   "area": "(root)",
+   "bytes": 13194,
+   "title": "AXON \u2014 Session Context",
+   "last_commit": "2026-06-11",
+   "refs": 2
+  },
+  {
+   "path": "CONTRIBUTING.md",
+   "area": "(root)",
+   "bytes": 5675,
+   "title": "Contributing to AXON",
+   "last_commit": "2026-05-17",
+   "refs": 6
+  },
+  {
+   "path": "COPILOT.md",
+   "area": "(root)",
+   "bytes": 4558,
+   "title": "AXON \u00b7 GitHub Copilot integration",
+   "last_commit": "2026-05-17",
+   "refs": 2
+  },
+  {
+   "path": "README.md",
+   "area": "(root)",
+   "bytes": 4852,
+   "title": "AXON",
+   "last_commit": "2026-05-25",
+   "refs": 8
+  },
+  {
+   "path": "SETUP.md",
+   "area": "(root)",
+   "bytes": 10940,
+   "title": "AXON \u2014 Setup Guide",
+   "last_commit": "2026-05-17",
+   "refs": 3
+  },
+  {
+   "path": "WORKFLOW.md",
+   "area": "(root)",
+   "bytes": 26628,
+   "title": "AXON + code-dev Workflow Guide",
+   "last_commit": "2026-05-18",
+   "refs": 3
+  },
+  {
+   "path": "_policy.md",
+   "area": "(root)",
+   "bytes": 841,
+   "title": "Project policy \u2014 AEGIS dev-autonomy delegation",
+   "last_commit": "untracked",
+   "refs": 3
+  },
+  {
+   "path": "axon/BOOT.md",
+   "area": "axon",
+   "bytes": 9909,
+   "title": "BOOT \u2014 full sequence (loaded on demand from KERNEL-SLIM)",
+   "last_commit": "2026-06-05",
+   "refs": 3
+  },
+  {
+   "path": "axon/COMMANDS.md",
+   "area": "axon",
+   "bytes": 5206,
+   "title": "COMMANDS \u2014 full parsing rules (loaded on demand from KERNEL-SLIM)",
+   "last_commit": "2026-05-04",
+   "refs": 2
+  },
+  {
+   "path": "axon/DEVELOPER.md",
+   "area": "axon",
+   "bytes": 15966,
+   "title": "DEVELOPER GUIDE",
+   "last_commit": "2026-06-02",
+   "refs": 31
+  },
+  {
+   "path": "axon/HOWTO.md",
+   "area": "axon",
+   "bytes": 10028,
+   "title": "HOWTO \u2014 AXON",
+   "last_commit": "2026-05-17",
+   "refs": 5
+  },
+  {
+   "path": "axon/KERNEL-SLIM.md",
+   "area": "axon",
+   "bytes": 50046,
+   "title": "KERNEL-SLIM",
+   "last_commit": "2026-06-04",
+   "refs": 24
+  },
+  {
+   "path": "axon/OUTPUT-LAYER.md",
+   "area": "axon",
+   "bytes": 6937,
+   "title": "OUTPUT LAYER \u2014 full rendering spec (loaded on demand from KERNEL-SLIM)",
+   "last_commit": "2026-06-04",
+   "refs": 9
+  },
+  {
+   "path": "axon/PROGRAMS-INDEX.md",
+   "area": "axon",
+   "bytes": 3930,
+   "title": "PROGRAMS INDEX",
+   "last_commit": "2026-05-17",
+   "refs": 2
+  },
+  {
+   "path": "axon/archive/KERNEL-LEGACY.md",
+   "area": "axon",
+   "bytes": 6032,
+   "title": "KERNEL (LEGACY \u2014 archived 2026-05-02)",
+   "last_commit": "2026-05-04",
+   "refs": 2
+  },
+  {
+   "path": "axon/compiler/COMPILER.md",
+   "area": "axon",
+   "bytes": 10448,
+   "title": "COMPILER",
+   "last_commit": "2026-05-08",
+   "refs": 11
+  },
+  {
+   "path": "axon/compiler/GRAMMAR.md",
+   "area": "axon",
+   "bytes": 14510,
+   "title": "GRAMMAR",
+   "last_commit": "2026-05-08",
+   "refs": 8
+  },
+  {
+   "path": "axon/compiler/templates/TEMPLATES.md",
+   "area": "axon",
+   "bytes": 5891,
+   "title": "TEMPLATES",
+   "last_commit": "2026-05-04",
+   "refs": 4
+  },
+  {
+   "path": "axon/compiler/templates/chat-session.tpl.md",
+   "area": "axon",
+   "bytes": 3419,
+   "title": "TEMPLATE: chat-session",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/compiler/templates/data-pipeline.tpl.md",
+   "area": "axon",
+   "bytes": 4332,
+   "title": "TEMPLATE: data-pipeline",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/compiler/templates/feedback-loop.tpl.md",
+   "area": "axon",
+   "bytes": 4487,
+   "title": "TEMPLATE: feedback-loop",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/compiler/templates/qc-workflow.tpl.md",
+   "area": "axon",
+   "bytes": 3809,
+   "title": "TEMPLATE: qc-workflow",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/core/LANG.md",
+   "area": "axon",
+   "bytes": 14394,
+   "title": "LANG",
+   "last_commit": "2026-05-04",
+   "refs": 18
+  },
+  {
+   "path": "axon/core/OUTPUT.md",
+   "area": "axon",
+   "bytes": 5297,
+   "title": "OUTPUT",
+   "last_commit": "2026-05-04",
+   "refs": 3
+  },
+  {
+   "path": "axon/core/RESPONSE-CONVENTIONS.md",
+   "area": "axon",
+   "bytes": 1978,
+   "title": "RESPONSE CONVENTIONS \u2014 handoff \u00b7 choices \u00b7 narration",
+   "last_commit": "2026-05-25",
+   "refs": 3
+  },
+  {
+   "path": "axon/core/RUN-HEADER.md",
+   "area": "axon",
+   "bytes": 817,
+   "title": "RUN-HEADER \u2014 Standard Program Start Banner",
+   "last_commit": "2026-05-04",
+   "refs": 0
+  },
+  {
+   "path": "axon/core/TRANSLATE.md",
+   "area": "axon",
+   "bytes": 4377,
+   "title": "TRANSLATE",
+   "last_commit": "2026-05-04",
+   "refs": 7
+  },
+  {
+   "path": "axon/log/LOG.md",
+   "area": "axon",
+   "bytes": 4714,
+   "title": "LOG",
+   "last_commit": "2026-05-04",
+   "refs": 12
+  },
+  {
+   "path": "axon/log/entries/_index.md",
+   "area": "axon",
+   "bytes": 121,
+   "title": "Log Entries",
+   "last_commit": "2026-05-04",
+   "refs": 14
+  },
+  {
+   "path": "axon/memory/MEMORY.md",
+   "area": "axon",
+   "bytes": 4598,
+   "title": "MEMORY",
+   "last_commit": "2026-05-04",
+   "refs": 6
+  },
+  {
+   "path": "axon/memory/episodic/_index.md",
+   "area": "axon",
+   "bytes": 234,
+   "title": "Episodic Memory",
+   "last_commit": "2026-05-04",
+   "refs": 14
+  },
+  {
+   "path": "axon/memory/longterm/_index.md",
+   "area": "axon",
+   "bytes": 234,
+   "title": "Long-term Memory",
+   "last_commit": "2026-05-04",
+   "refs": 14
+  },
+  {
+   "path": "axon/memory/longterm/benchmark-log.md",
+   "area": "axon",
+   "bytes": 1133,
+   "title": "Benchmark Log",
+   "last_commit": "2026-05-04",
+   "refs": 6
+  },
+  {
+   "path": "axon/memory/working/_index.md",
+   "area": "axon",
+   "bytes": 234,
+   "title": "Working Memory",
+   "last_commit": "2026-05-04",
+   "refs": 14
+  },
+  {
+   "path": "axon/processes/PROCESS.md",
+   "area": "axon",
+   "bytes": 4428,
+   "title": "PROCESS",
+   "last_commit": "2026-05-04",
+   "refs": 5
+  },
+  {
+   "path": "axon/processes/active/_index.md",
+   "area": "axon",
+   "bytes": 163,
+   "title": "Active Processes",
+   "last_commit": "2026-05-04",
+   "refs": 14
+  },
+  {
+   "path": "axon/programs/PROGRAM-TEMPLATE.md",
+   "area": "axon",
+   "bytes": 5387,
+   "title": "PROGRAM-TEMPLATE",
+   "last_commit": "2026-05-04",
+   "refs": 4
+  },
+  {
+   "path": "axon/programs/PROGRAMS-SLIM.md",
+   "area": "axon",
+   "bytes": 984,
+   "title": "PROGRAMS-SLIM",
+   "last_commit": "2026-05-04",
+   "refs": 2
+  },
+  {
+   "path": "axon/programs/PROGRAMS.md",
+   "area": "axon",
+   "bytes": 5499,
+   "title": "PROGRAMS",
+   "last_commit": "2026-05-04",
+   "refs": 6
+  },
+  {
+   "path": "axon/programs/_chat-checkpoint.md",
+   "area": "axon",
+   "bytes": 944,
+   "title": "PROGRAM: _chat-checkpoint",
+   "last_commit": "2026-06-10",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/_index.md",
+   "area": "axon",
+   "bytes": 307,
+   "title": "Programs",
+   "last_commit": "2026-05-04",
+   "refs": 14
+  },
+  {
+   "path": "axon/programs/chat-folder.md",
+   "area": "axon",
+   "bytes": 2122,
+   "title": "PROGRAM: chat-folder",
+   "last_commit": "2026-06-10",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/compiled/_index.md",
+   "area": "axon",
+   "bytes": 418,
+   "title": "Compiled Programs",
+   "last_commit": "2026-05-04",
+   "refs": 14
+  },
+  {
+   "path": "axon/programs/dev-mode.md",
+   "area": "axon",
+   "bytes": 1460,
+   "title": "PROGRAM: dev-mode",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/dev-new.md",
+   "area": "axon",
+   "bytes": 2368,
+   "title": "PROGRAM: dev-new",
+   "last_commit": "2026-05-04",
+   "refs": 6
+  },
+  {
+   "path": "axon/programs/help/chat-folder.md",
+   "area": "axon",
+   "bytes": 648,
+   "title": "",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/help/dev-mode.md",
+   "area": "axon",
+   "bytes": 734,
+   "title": "HELP: dev-mode",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/help/dev-new.md",
+   "area": "axon",
+   "bytes": 850,
+   "title": "HELP: dev-new",
+   "last_commit": "2026-05-04",
+   "refs": 6
+  },
+  {
+   "path": "axon/programs/help/list-chats.md",
+   "area": "axon",
+   "bytes": 456,
+   "title": "",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/help/list-programs.md",
+   "area": "axon",
+   "bytes": 861,
+   "title": "HELP: list-programs  (shortcut: 7)",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/help/mode-build.md",
+   "area": "axon",
+   "bytes": 1105,
+   "title": "HELP: mode-build  (shortcut: 2)",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/help/mode-chat.md",
+   "area": "axon",
+   "bytes": 833,
+   "title": "HELP: mode-chat  (shortcut: 1)",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/help/mode-dev.md",
+   "area": "axon",
+   "bytes": 867,
+   "title": "HELP: mode-dev  (shortcut: D)",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/help/mode-memory.md",
+   "area": "axon",
+   "bytes": 982,
+   "title": "HELP: mode-memory  (shortcut: 4)",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/help/mode-plan.md",
+   "area": "axon",
+   "bytes": 1085,
+   "title": "HELP: mode-plan  (shortcut: 6)",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/help/mode-run.md",
+   "area": "axon",
+   "bytes": 633,
+   "title": "HELP: mode-run  (shortcut: 3)",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/help/mode-system.md",
+   "area": "axon",
+   "bytes": 968,
+   "title": "HELP: mode-system  (shortcut: 5)",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/help/new-chat.md",
+   "area": "axon",
+   "bytes": 775,
+   "title": "",
+   "last_commit": "2026-05-04",
+   "refs": 2
+  },
+  {
+   "path": "axon/programs/help/plan-add.md",
+   "area": "axon",
+   "bytes": 550,
+   "title": "HELP: plan-add",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/help/plan-done.md",
+   "area": "axon",
+   "bytes": 769,
+   "title": "HELP: plan-done",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/help/plan-list.md",
+   "area": "axon",
+   "bytes": 529,
+   "title": "HELP: plan-list",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/help/plan-new.md",
+   "area": "axon",
+   "bytes": 629,
+   "title": "HELP: plan-new",
+   "last_commit": "2026-05-04",
+   "refs": 2
+  },
+  {
+   "path": "axon/programs/help/plan-view.md",
+   "area": "axon",
+   "bytes": 521,
+   "title": "HELP: plan-view",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/help/register-preference.md",
+   "area": "axon",
+   "bytes": 893,
+   "title": "",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/help/show-preferences.md",
+   "area": "axon",
+   "bytes": 505,
+   "title": "",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/help/switch-chat.md",
+   "area": "axon",
+   "bytes": 700,
+   "title": "",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/identity.md",
+   "area": "axon",
+   "bytes": 2489,
+   "title": "PROGRAM: identity",
+   "last_commit": "2026-05-15",
+   "refs": 7
+  },
+  {
+   "path": "axon/programs/interactive.md",
+   "area": "axon",
+   "bytes": 6363,
+   "title": "PROGRAM: interactive",
+   "last_commit": "2026-06-10",
+   "refs": 6
+  },
+  {
+   "path": "axon/programs/list-chats.md",
+   "area": "axon",
+   "bytes": 2056,
+   "title": "PROGRAM: list-chats",
+   "last_commit": "2026-06-10",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/list-programs.md",
+   "area": "axon",
+   "bytes": 7962,
+   "title": "PROGRAM: list-programs",
+   "last_commit": "2026-05-17",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/mode-build.md",
+   "area": "axon",
+   "bytes": 3136,
+   "title": "PROGRAM: mode-build",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/mode-chat.md",
+   "area": "axon",
+   "bytes": 2498,
+   "title": "PROGRAM: mode-chat",
+   "last_commit": "2026-06-10",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/mode-dev.md",
+   "area": "axon",
+   "bytes": 2416,
+   "title": "PROGRAM: mode-dev",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/mode-memory.md",
+   "area": "axon",
+   "bytes": 3048,
+   "title": "PROGRAM: mode-memory",
+   "last_commit": "2026-06-10",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/mode-plan.md",
+   "area": "axon",
+   "bytes": 2894,
+   "title": "PROGRAM: mode-plan",
+   "last_commit": "2026-06-10",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/mode-run.md",
+   "area": "axon",
+   "bytes": 3103,
+   "title": "PROGRAM: mode-run",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/mode-system.md",
+   "area": "axon",
+   "bytes": 3130,
+   "title": "PROGRAM: mode-system",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/new-chat.md",
+   "area": "axon",
+   "bytes": 2405,
+   "title": "PROGRAM: new-chat",
+   "last_commit": "2026-06-10",
+   "refs": 2
+  },
+  {
+   "path": "axon/programs/open-chat.md",
+   "area": "axon",
+   "bytes": 393,
+   "title": "PROGRAM: open-chat",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/plan-add.md",
+   "area": "axon",
+   "bytes": 1391,
+   "title": "PROGRAM: plan-add",
+   "last_commit": "2026-06-10",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/plan-done.md",
+   "area": "axon",
+   "bytes": 2267,
+   "title": "PROGRAM: plan-done",
+   "last_commit": "2026-06-10",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/plan-list.md",
+   "area": "axon",
+   "bytes": 1445,
+   "title": "PROGRAM: plan-list",
+   "last_commit": "2026-06-10",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/plan-new.md",
+   "area": "axon",
+   "bytes": 1757,
+   "title": "PROGRAM: plan-new",
+   "last_commit": "2026-06-10",
+   "refs": 2
+  },
+  {
+   "path": "axon/programs/plan-view.md",
+   "area": "axon",
+   "bytes": 1399,
+   "title": "PROGRAM: plan-view",
+   "last_commit": "2026-06-10",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/register-preference.md",
+   "area": "axon",
+   "bytes": 2056,
+   "title": "PROGRAM: register-preference",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/show-preferences.md",
+   "area": "axon",
+   "bytes": 1647,
+   "title": "PROGRAM: show-preferences",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/programs/switch-chat.md",
+   "area": "axon",
+   "bytes": 2078,
+   "title": "PROGRAM: switch-chat",
+   "last_commit": "2026-06-10",
+   "refs": 1
+  },
+  {
+   "path": "axon/scheduler/QUEUE.md",
+   "area": "axon",
+   "bytes": 841,
+   "title": "QUEUE",
+   "last_commit": "2026-05-04",
+   "refs": 8
+  },
+  {
+   "path": "axon/scheduler/SCHEDULER.md",
+   "area": "axon",
+   "bytes": 3616,
+   "title": "SCHEDULER",
+   "last_commit": "2026-05-04",
+   "refs": 5
+  },
+  {
+   "path": "axon/tools/REGISTRY.md",
+   "area": "axon",
+   "bytes": 11768,
+   "title": "TOOL REGISTRY \u2014 OS Built-ins",
+   "last_commit": "2026-05-29",
+   "refs": 27
+  },
+  {
+   "path": "axon/tools/boot.md",
+   "area": "axon",
+   "bytes": 1061,
+   "title": "TOOL: boot",
+   "last_commit": "2026-05-17",
+   "refs": 1
+  },
+  {
+   "path": "axon/tools/calculator.md",
+   "area": "axon",
+   "bytes": 2425,
+   "title": "TOOL: calculator",
+   "last_commit": "2026-05-04",
+   "refs": 3
+  },
+  {
+   "path": "axon/tools/checkpoint.md",
+   "area": "axon",
+   "bytes": 991,
+   "title": "TOOL: checkpoint",
+   "last_commit": "2026-05-17",
+   "refs": 2
+  },
+  {
+   "path": "axon/tools/clock.md",
+   "area": "axon",
+   "bytes": 801,
+   "title": "TOOL: clock",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/tools/compile.md",
+   "area": "axon",
+   "bytes": 852,
+   "title": "TOOL: compile",
+   "last_commit": "2026-05-17",
+   "refs": 2
+  },
+  {
+   "path": "axon/tools/context.md",
+   "area": "axon",
+   "bytes": 1473,
+   "title": "TOOL: context",
+   "last_commit": "2026-05-17",
+   "refs": 3
+  },
+  {
+   "path": "axon/tools/diff.md",
+   "area": "axon",
+   "bytes": 901,
+   "title": "TOOL: diff",
+   "last_commit": "2026-05-04",
+   "refs": 2
+  },
+  {
+   "path": "axon/tools/dispatch.md",
+   "area": "axon",
+   "bytes": 1042,
+   "title": "TOOL: dispatch",
+   "last_commit": "2026-05-17",
+   "refs": 6
+  },
+  {
+   "path": "axon/tools/document-parser.md",
+   "area": "axon",
+   "bytes": 1238,
+   "title": "TOOL: document-parser",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/tools/drift.md",
+   "area": "axon",
+   "bytes": 1110,
+   "title": "TOOL: drift",
+   "last_commit": "2026-05-17",
+   "refs": 2
+  },
+  {
+   "path": "axon/tools/enforce.md",
+   "area": "axon",
+   "bytes": 1146,
+   "title": "TOOL: enforce",
+   "last_commit": "2026-05-17",
+   "refs": 1
+  },
+  {
+   "path": "axon/tools/events.md",
+   "area": "axon",
+   "bytes": 1904,
+   "title": "TOOL: events",
+   "last_commit": "2026-05-17",
+   "refs": 4
+  },
+  {
+   "path": "axon/tools/health.md",
+   "area": "axon",
+   "bytes": 1035,
+   "title": "TOOL: health",
+   "last_commit": "2026-05-17",
+   "refs": 1
+  },
+  {
+   "path": "axon/tools/kv-store.md",
+   "area": "axon",
+   "bytes": 1725,
+   "title": "TOOL: kv-store",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/tools/log.md",
+   "area": "axon",
+   "bytes": 1132,
+   "title": "TOOL: log",
+   "last_commit": "2026-05-17",
+   "refs": 46
+  },
+  {
+   "path": "axon/tools/memory.md",
+   "area": "axon",
+   "bytes": 1235,
+   "title": "TOOL: memory",
+   "last_commit": "2026-05-17",
+   "refs": 2
+  },
+  {
+   "path": "axon/tools/notify.md",
+   "area": "axon",
+   "bytes": 1445,
+   "title": "TOOL: notify",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/tools/queue.md",
+   "area": "axon",
+   "bytes": 1437,
+   "title": "TOOL: queue",
+   "last_commit": "2026-05-17",
+   "refs": 1
+  },
+  {
+   "path": "axon/tools/run.md",
+   "area": "axon",
+   "bytes": 1228,
+   "title": "TOOL: run",
+   "last_commit": "2026-05-17",
+   "refs": 5
+  },
+  {
+   "path": "axon/tools/session.md",
+   "area": "axon",
+   "bytes": 1413,
+   "title": "TOOL: session",
+   "last_commit": "2026-05-17",
+   "refs": 12
+  },
+  {
+   "path": "axon/tools/tokenizer.md",
+   "area": "axon",
+   "bytes": 1012,
+   "title": "TOOL: tokenizer",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/tools/translate.md",
+   "area": "axon",
+   "bytes": 1973,
+   "title": "TOOL: translate (Python fast mode)",
+   "last_commit": "2026-05-04",
+   "refs": 3
+  },
+  {
+   "path": "axon/tools/validator.md",
+   "area": "axon",
+   "bytes": 1124,
+   "title": "TOOL: validator",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "axon/tools/web-search.md",
+   "area": "axon",
+   "bytes": 1325,
+   "title": "TOOL: web-search",
+   "last_commit": "2026-05-17",
+   "refs": 1
+  },
+  {
+   "path": "benchmark/EXAMPLE-REPORT.md",
+   "area": "benchmark",
+   "bytes": 1063,
+   "title": "Dual-agent eval \u2014 AXON vs bare baseline",
+   "last_commit": "2026-05-27",
+   "refs": 1
+  },
+  {
+   "path": "benchmark/METHODOLOGY.md",
+   "area": "benchmark",
+   "bytes": 12938,
+   "title": "AXON Dual-Agent Benchmark \u2014 Methodology",
+   "last_commit": "2026-05-29",
+   "refs": 2
+  },
+  {
+   "path": "benchmark/PRE-REGISTRATION.md",
+   "area": "benchmark",
+   "bytes": 4229,
+   "title": "AXON proof \u2014 pre-registration protocol",
+   "last_commit": "2026-05-28",
+   "refs": 0
+  },
+  {
+   "path": "benchmark/README.md",
+   "area": "benchmark",
+   "bytes": 6609,
+   "title": "AXON dual-agent benchmark",
+   "last_commit": "2026-05-28",
+   "refs": 8
+  },
+  {
+   "path": "benchmark/preregistrations/prereg-2026-05-28-68b27bbed637f197.md",
+   "area": "benchmark",
+   "bytes": 2723,
+   "title": "AXON proof \u2014 PRE-REGISTRATION (LOCKED)",
+   "last_commit": "2026-05-28",
+   "refs": 0
+  },
+  {
+   "path": "memory/episodic/phase-ledger.md",
+   "area": "memory",
+   "bytes": 378,
+   "title": "E:phase-ledger",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "scripts/copilot/code.md",
+   "area": "scripts",
+   "bytes": 1558,
+   "title": "Copilot \u2014 code generation slot",
+   "last_commit": "2026-05-08",
+   "refs": 5
+  },
+  {
+   "path": "scripts/copilot/commits.md",
+   "area": "scripts",
+   "bytes": 1057,
+   "title": "Copilot \u2014 commit message generation slot",
+   "last_commit": "2026-05-08",
+   "refs": 1
+  },
+  {
+   "path": "scripts/copilot/review.md",
+   "area": "scripts",
+   "bytes": 1381,
+   "title": "Copilot \u2014 code review slot",
+   "last_commit": "2026-05-08",
+   "refs": 4
+  },
+  {
+   "path": "scripts/copilot/tests.md",
+   "area": "scripts",
+   "bytes": 1522,
+   "title": "Copilot \u2014 test generation slot",
+   "last_commit": "2026-05-08",
+   "refs": 2
+  },
+  {
+   "path": "startup.md",
+   "area": "(root)",
+   "bytes": 5805,
+   "title": "AXON \u2014 Startup",
+   "last_commit": "2026-06-09",
+   "refs": 10
+  },
+  {
+   "path": "tests/dag/fixtures/acyclic-5node.md",
+   "area": "tests",
+   "bytes": 744,
+   "title": "DAG \u00b7 plan \u00b7 tests/dag/fixtures/acyclic-5node",
+   "last_commit": "2026-05-18",
+   "refs": 0
+  },
+  {
+   "path": "tests/dag/fixtures/render-snapshot.md",
+   "area": "tests",
+   "bytes": 744,
+   "title": "DAG \u00b7 plan \u00b7 tests/dag/fixtures/acyclic-5node",
+   "last_commit": "2026-05-18",
+   "refs": 0
+  },
+  {
+   "path": "tests/fixtures/compaction/_meta.md",
+   "area": "tests",
+   "bytes": 409,
+   "title": "_meta.md \u2014 synthetic compaction fixture",
+   "last_commit": "2026-05-16",
+   "refs": 79
+  },
+  {
+   "path": "tests/fixtures/compaction/_session.md",
+   "area": "tests",
+   "bytes": 336,
+   "title": "",
+   "last_commit": "2026-05-16",
+   "refs": 13
+  },
+  {
+   "path": "tests/fixtures/programs/study/golden-smoke/expected/01-study.md",
+   "area": "tests",
+   "bytes": 170,
+   "title": "Study (golden-smoke \u00b7 curated expected)",
+   "last_commit": "2026-05-29",
+   "refs": 24
+  },
+  {
+   "path": "tests/fixtures/programs/study/golden-smoke/output/01-study.md",
+   "area": "tests",
+   "bytes": 322,
+   "title": "Study (golden-smoke \u00b7 curated output)",
+   "last_commit": "2026-05-29",
+   "refs": 24
+  },
+  {
+   "path": "tests/fixtures/projects/v1-minimal/_meta.md",
+   "area": "tests",
+   "bytes": 267,
+   "title": "Project: V1 Minimal Fixture",
+   "last_commit": "2026-05-16",
+   "refs": 79
+  },
+  {
+   "path": "tests/fixtures/projects/v1-with-custom/_meta.md",
+   "area": "tests",
+   "bytes": 452,
+   "title": "Project: V1 With Custom",
+   "last_commit": "2026-05-16",
+   "refs": 79
+  },
+  {
+   "path": "tests/fixtures/retrieval_eval/chunking_doc.md",
+   "area": "tests",
+   "bytes": 616,
+   "title": "Fruit and Fauna Notes",
+   "last_commit": "2026-06-08",
+   "refs": 0
+  },
+  {
+   "path": "tests/fixtures/study-evals/axon-fixture-a/expected/deep.md",
+   "area": "tests",
+   "bytes": 93,
+   "title": "axon-fixture-a \u2014 deep",
+   "last_commit": "2026-05-16",
+   "refs": 0
+  },
+  {
+   "path": "tests/fixtures/study-evals/axon-fixture-a/expected/overview.md",
+   "area": "tests",
+   "bytes": 97,
+   "title": "axon-fixture-a \u2014 overview",
+   "last_commit": "2026-05-16",
+   "refs": 1
+  },
+  {
+   "path": "tests/fixtures/study-evals/axon-fixture-a/expected/subsystem.md",
+   "area": "tests",
+   "bytes": 98,
+   "title": "axon-fixture-a \u2014 subsystem",
+   "last_commit": "2026-05-16",
+   "refs": 0
+  },
+  {
+   "path": "tests/fixtures/study-evals/axon-fixture-a/output/deep.md",
+   "area": "tests",
+   "bytes": 93,
+   "title": "axon-fixture-a \u2014 deep",
+   "last_commit": "2026-05-16",
+   "refs": 0
+  },
+  {
+   "path": "tests/fixtures/study-evals/axon-fixture-a/output/overview.md",
+   "area": "tests",
+   "bytes": 97,
+   "title": "axon-fixture-a \u2014 overview",
+   "last_commit": "2026-05-16",
+   "refs": 1
+  },
+  {
+   "path": "tests/fixtures/study-evals/axon-fixture-a/output/subsystem.md",
+   "area": "tests",
+   "bytes": 98,
+   "title": "axon-fixture-a \u2014 subsystem",
+   "last_commit": "2026-05-16",
+   "refs": 0
+  },
+  {
+   "path": "tests/fixtures/study-evals/axon-fixture-b/expected/deep.md",
+   "area": "tests",
+   "bytes": 93,
+   "title": "axon-fixture-b \u2014 deep",
+   "last_commit": "2026-05-16",
+   "refs": 0
+  },
+  {
+   "path": "tests/fixtures/study-evals/axon-fixture-b/expected/overview.md",
+   "area": "tests",
+   "bytes": 97,
+   "title": "axon-fixture-b \u2014 overview",
+   "last_commit": "2026-05-16",
+   "refs": 1
+  },
+  {
+   "path": "tests/fixtures/study-evals/axon-fixture-b/expected/subsystem.md",
+   "area": "tests",
+   "bytes": 98,
+   "title": "axon-fixture-b \u2014 subsystem",
+   "last_commit": "2026-05-16",
+   "refs": 0
+  },
+  {
+   "path": "tests/fixtures/study-evals/axon-fixture-b/output/deep.md",
+   "area": "tests",
+   "bytes": 93,
+   "title": "axon-fixture-b \u2014 deep",
+   "last_commit": "2026-05-16",
+   "refs": 0
+  },
+  {
+   "path": "tests/fixtures/study-evals/axon-fixture-b/output/overview.md",
+   "area": "tests",
+   "bytes": 97,
+   "title": "axon-fixture-b \u2014 overview",
+   "last_commit": "2026-05-16",
+   "refs": 1
+  },
+  {
+   "path": "tests/fixtures/study-evals/axon-fixture-b/output/subsystem.md",
+   "area": "tests",
+   "bytes": 98,
+   "title": "axon-fixture-b \u2014 subsystem",
+   "last_commit": "2026-05-16",
+   "refs": 0
+  },
+  {
+   "path": "tests/fixtures/study-evals/flask-mini/expected/deep.md",
+   "area": "tests",
+   "bytes": 89,
+   "title": "flask-mini \u2014 deep",
+   "last_commit": "2026-05-16",
+   "refs": 0
+  },
+  {
+   "path": "tests/fixtures/study-evals/flask-mini/expected/overview.md",
+   "area": "tests",
+   "bytes": 93,
+   "title": "flask-mini \u2014 overview",
+   "last_commit": "2026-05-16",
+   "refs": 1
+  },
+  {
+   "path": "tests/fixtures/study-evals/flask-mini/expected/subsystem.md",
+   "area": "tests",
+   "bytes": 94,
+   "title": "flask-mini \u2014 subsystem",
+   "last_commit": "2026-05-16",
+   "refs": 0
+  },
+  {
+   "path": "tests/fixtures/study-evals/flask-mini/output/deep.md",
+   "area": "tests",
+   "bytes": 89,
+   "title": "flask-mini \u2014 deep",
+   "last_commit": "2026-05-16",
+   "refs": 0
+  },
+  {
+   "path": "tests/fixtures/study-evals/flask-mini/output/overview.md",
+   "area": "tests",
+   "bytes": 93,
+   "title": "flask-mini \u2014 overview",
+   "last_commit": "2026-05-16",
+   "refs": 1
+  },
+  {
+   "path": "tests/fixtures/study-evals/flask-mini/output/subsystem.md",
+   "area": "tests",
+   "bytes": 94,
+   "title": "flask-mini \u2014 subsystem",
+   "last_commit": "2026-05-16",
+   "refs": 0
+  },
+  {
+   "path": "tests/fixtures/study-evals/tiny-py-cli/expected/deep.md",
+   "area": "tests",
+   "bytes": 217,
+   "title": "tiny-py-cli \u2014 deep (golden)",
+   "last_commit": "2026-05-16",
+   "refs": 0
+  },
+  {
+   "path": "tests/fixtures/study-evals/tiny-py-cli/expected/overview.md",
+   "area": "tests",
+   "bytes": 243,
+   "title": "tiny-py-cli \u2014 overview (golden)",
+   "last_commit": "2026-05-16",
+   "refs": 1
+  },
+  {
+   "path": "tests/fixtures/study-evals/tiny-py-cli/expected/subsystem.md",
+   "area": "tests",
+   "bytes": 219,
+   "title": "tiny-py-cli \u2014 subsystem (golden)",
+   "last_commit": "2026-05-16",
+   "refs": 0
+  },
+  {
+   "path": "tests/fixtures/study-evals/tiny-py-cli/output/deep.md",
+   "area": "tests",
+   "bytes": 217,
+   "title": "tiny-py-cli \u2014 deep (golden)",
+   "last_commit": "2026-05-16",
+   "refs": 0
+  },
+  {
+   "path": "tests/fixtures/study-evals/tiny-py-cli/output/overview.md",
+   "area": "tests",
+   "bytes": 243,
+   "title": "tiny-py-cli \u2014 overview (golden)",
+   "last_commit": "2026-05-16",
+   "refs": 1
+  },
+  {
+   "path": "tests/fixtures/study-evals/tiny-py-cli/output/subsystem.md",
+   "area": "tests",
+   "bytes": 219,
+   "title": "tiny-py-cli \u2014 subsystem (golden)",
+   "last_commit": "2026-05-16",
+   "refs": 0
+  },
+  {
+   "path": "tests/fixtures/study-evals/tiny-ts-lib/expected/deep.md",
+   "area": "tests",
+   "bytes": 217,
+   "title": "tiny-ts-lib \u2014 deep (golden)",
+   "last_commit": "2026-05-16",
+   "refs": 0
+  },
+  {
+   "path": "tests/fixtures/study-evals/tiny-ts-lib/expected/overview.md",
+   "area": "tests",
+   "bytes": 243,
+   "title": "tiny-ts-lib \u2014 overview (golden)",
+   "last_commit": "2026-05-16",
+   "refs": 1
+  },
+  {
+   "path": "tests/fixtures/study-evals/tiny-ts-lib/expected/subsystem.md",
+   "area": "tests",
+   "bytes": 219,
+   "title": "tiny-ts-lib \u2014 subsystem (golden)",
+   "last_commit": "2026-05-16",
+   "refs": 0
+  },
+  {
+   "path": "tests/fixtures/study-evals/tiny-ts-lib/output/deep.md",
+   "area": "tests",
+   "bytes": 217,
+   "title": "tiny-ts-lib \u2014 deep (golden)",
+   "last_commit": "2026-05-16",
+   "refs": 0
+  },
+  {
+   "path": "tests/fixtures/study-evals/tiny-ts-lib/output/overview.md",
+   "area": "tests",
+   "bytes": 243,
+   "title": "tiny-ts-lib \u2014 overview (golden)",
+   "last_commit": "2026-05-16",
+   "refs": 1
+  },
+  {
+   "path": "tests/fixtures/study-evals/tiny-ts-lib/output/subsystem.md",
+   "area": "tests",
+   "bytes": 219,
+   "title": "tiny-ts-lib \u2014 subsystem (golden)",
+   "last_commit": "2026-05-16",
+   "refs": 0
+  },
+  {
+   "path": "tests/shadow/fixtures/mixed-project/phases/1-study/03-prs/PR-100.md",
+   "area": "tests",
+   "bytes": 19,
+   "title": "PR-100 \u2014 study",
+   "last_commit": "2026-05-18",
+   "refs": 0
+  },
+  {
+   "path": "tests/shadow/fixtures/mixed-project/phases/3-implement/03-prs/PR-001.md",
+   "area": "tests",
+   "bytes": 72,
+   "title": "PR-001 \u2014 fixture",
+   "last_commit": "2026-05-18",
+   "refs": 1
+  },
+  {
+   "path": "tests/shadow/fixtures/mixed-project/phases/3-implement/03-prs/PR-002.md",
+   "area": "tests",
+   "bytes": 72,
+   "title": "PR-002 \u2014 fixture",
+   "last_commit": "2026-05-18",
+   "refs": 1
+  },
+  {
+   "path": "tests/shadow/fixtures/mixed-project/phases/3-implement/03-prs/PR-003.md",
+   "area": "tests",
+   "bytes": 72,
+   "title": "PR-003 \u2014 fixture",
+   "last_commit": "2026-05-18",
+   "refs": 1
+  },
+  {
+   "path": "tests/shadow/fixtures/mixed-project/phases/3-implement/03-prs/PR-004.md",
+   "area": "tests",
+   "bytes": 72,
+   "title": "PR-004 \u2014 fixture",
+   "last_commit": "2026-05-18",
+   "refs": 0
+  },
+  {
+   "path": "tests/shadow/fixtures/mixed-project/phases/3-implement/shadow/PR-001.findings.md",
+   "area": "tests",
+   "bytes": 84,
+   "title": "PR-001 \u2014 Shadow",
+   "last_commit": "2026-05-18",
+   "refs": 0
+  },
+  {
+   "path": "tests/shadow/fixtures/mixed-project/phases/3-implement/shadow/PR-003.findings.md",
+   "area": "tests",
+   "bytes": 84,
+   "title": "PR-003 \u2014 Shadow",
+   "last_commit": "2026-05-18",
+   "refs": 0
+  },
+  {
+   "path": "workspace/AXON-DOCS-ARCHITECTURE.md",
+   "area": "workspace",
+   "bytes": 16067,
+   "title": "AXON-DOCS \u2014 Architecture",
+   "last_commit": "2026-06-11",
+   "refs": 5
+  },
+  {
+   "path": "workspace/AXON-DOCS-CHEATSHEET.md",
+   "area": "workspace",
+   "bytes": 3016,
+   "title": "AXON-DOCS: CHEATSHEET \u2014 one-page code-dev reference",
+   "last_commit": "2026-06-04",
+   "refs": 19
+  },
+  {
+   "path": "workspace/AXON-DOCS-CI.md",
+   "area": "workspace",
+   "bytes": 6975,
+   "title": "AXON-DOCS \u2014 CI & quality gates",
+   "last_commit": "2026-05-17",
+   "refs": 13
+  },
+  {
+   "path": "workspace/AXON-DOCS-COMPILER.md",
+   "area": "workspace",
+   "bytes": 3663,
+   "title": "AXON-DOCS \u2014 COMPILER",
+   "last_commit": "2026-06-10",
+   "refs": 2
+  },
+  {
+   "path": "workspace/AXON-DOCS-DEPRECATIONS.md",
+   "area": "workspace",
+   "bytes": 6464,
+   "title": "AXON-DOCS \u2014 Deprecations",
+   "last_commit": "2026-05-17",
+   "refs": 10
+  },
+  {
+   "path": "workspace/AXON-DOCS-FAILURE-MODES.md",
+   "area": "workspace",
+   "bytes": 2094,
+   "title": "AXON-DOCS \u2014 FAILURE MODES",
+   "last_commit": "2026-06-09",
+   "refs": 3
+  },
+  {
+   "path": "workspace/AXON-DOCS-GOVERNANCE.md",
+   "area": "workspace",
+   "bytes": 8089,
+   "title": "AXON-DOCS: GOVERNANCE (precedence + composition)",
+   "last_commit": "2026-05-29",
+   "refs": 11
+  },
+  {
+   "path": "workspace/AXON-DOCS-PLAN.md",
+   "area": "workspace",
+   "bytes": 2841,
+   "title": "AXON-DOCS-PLAN",
+   "last_commit": "2026-05-29",
+   "refs": 0
+  },
+  {
+   "path": "workspace/AXON-DOCS-RAG-DEVELOPMENT.md",
+   "area": "workspace",
+   "bytes": 5795,
+   "title": "AXON-DOCS \u2014 RAG Development",
+   "last_commit": "2026-06-09",
+   "refs": 1
+  },
+  {
+   "path": "workspace/AXON-DOCS-RAG-MATURITY.md",
+   "area": "workspace",
+   "bytes": 9658,
+   "title": "AXON-DOCS \u2014 RAG Maturity",
+   "last_commit": "2026-06-08",
+   "refs": 1
+  },
+  {
+   "path": "workspace/AXON-DOCS-SCHEMA.md",
+   "area": "workspace",
+   "bytes": 3532,
+   "title": "AXON-DOCS: SCHEMA (v4.2)",
+   "last_commit": "2026-05-17",
+   "refs": 3
+  },
+  {
+   "path": "workspace/AXON-DOCS-SESSIONS.md",
+   "area": "workspace",
+   "bytes": 3884,
+   "title": "AXON-DOCS: SESSIONS \u2014 per-chat state, atomicity, and compaction recovery",
+   "last_commit": "2026-05-17",
+   "refs": 4
+  },
+  {
+   "path": "workspace/AXON-DOCS-STUDY.md",
+   "area": "workspace",
+   "bytes": 2800,
+   "title": "AXON-DOCS-STUDY",
+   "last_commit": "2026-05-29",
+   "refs": 0
+  },
+  {
+   "path": "workspace/AXON-DOCS-TESTING.md",
+   "area": "workspace",
+   "bytes": 8770,
+   "title": "AXON-DOCS \u2014 TESTING",
+   "last_commit": "2026-05-18",
+   "refs": 10
+  },
+  {
+   "path": "workspace/AXON-DOCS-WORKFLOWS.md",
+   "area": "workspace",
+   "bytes": 8587,
+   "title": "AXON-DOCS-WORKFLOWS",
+   "last_commit": "2026-06-09",
+   "refs": 6
+  },
+  {
+   "path": "workspace/AXON-DOCS.md",
+   "area": "workspace",
+   "bytes": 61321,
+   "title": "AXON \u2014 Complete System Documentation",
+   "last_commit": "2026-06-11",
+   "refs": 3
+  },
+  {
+   "path": "workspace/AXON-GLOSSARY.md",
+   "area": "workspace",
+   "bytes": 9844,
+   "title": "AXON GLOSSARY (v2)",
+   "last_commit": "2026-05-17",
+   "refs": 0
+  },
+  {
+   "path": "workspace/DAG-SPEC.md",
+   "area": "workspace",
+   "bytes": 10105,
+   "title": "DAG Spec (v1) \u2014 5 levels + nested sync-checker",
+   "last_commit": "2026-05-18",
+   "refs": 1
+  },
+  {
+   "path": "workspace/DOMAIN-MANIFEST.md",
+   "area": "workspace",
+   "bytes": 10923,
+   "title": "Domain Manifest Schema (v1) + Code-Dev & Library-Dev Reference Manifests",
+   "last_commit": "2026-05-18",
+   "refs": 2
+  },
+  {
+   "path": "workspace/NEURON-CONTRACT.md",
+   "area": "workspace",
+   "bytes": 12510,
+   "title": "Neuron Contract Schema (v1.1; was Synapse Contract v1)",
+   "last_commit": "2026-05-26",
+   "refs": 2
+  },
+  {
+   "path": "workspace/OBJECTIVE-FUNCTION-INTERFACE.md",
+   "area": "workspace",
+   "bytes": 10881,
+   "title": "Generic Objective Function Interface for OPM Adjoint",
+   "last_commit": "2026-05-07",
+   "refs": 0
+  },
+  {
+   "path": "workspace/WORKFLOW-FILE.md",
+   "area": "workspace",
+   "bytes": 10559,
+   "title": "Workflow File Schema (v1)",
+   "last_commit": "2026-05-18",
+   "refs": 3
+  },
+  {
+   "path": "workspace/WORKSPACE.md",
+   "area": "workspace",
+   "bytes": 1603,
+   "title": "WORKSPACE",
+   "last_commit": "2026-05-07",
+   "refs": 12
+  },
+  {
+   "path": "workspace/_dashboards/axon-code-map.md",
+   "area": "workspace",
+   "bytes": 50264,
+   "title": "AXON code-graph \u2014 map (tools)",
+   "last_commit": "2026-06-11",
+   "refs": 1
+  },
+  {
+   "path": "workspace/addons/hollow-signal/accuse.md",
+   "area": "workspace",
+   "bytes": 1406,
+   "title": "PROGRAM: accuse",
+   "last_commit": "2026-05-07",
+   "refs": 0
+  },
+  {
+   "path": "workspace/addons/hollow-signal/analyze.md",
+   "area": "workspace",
+   "bytes": 2122,
+   "title": "PROGRAM: analyze",
+   "last_commit": "2026-05-07",
+   "refs": 0
+  },
+  {
+   "path": "workspace/addons/hollow-signal/case-briefing.md",
+   "area": "workspace",
+   "bytes": 1461,
+   "title": "PROGRAM: case-briefing",
+   "last_commit": "2026-05-07",
+   "refs": 0
+  },
+  {
+   "path": "workspace/addons/hollow-signal/cases/default.md",
+   "area": "workspace",
+   "bytes": 1080,
+   "title": "CASE: The Hollow Signal",
+   "last_commit": "2026-05-07",
+   "refs": 1
+  },
+  {
+   "path": "workspace/addons/hollow-signal/help/accuse.md",
+   "area": "workspace",
+   "bytes": 551,
+   "title": "",
+   "last_commit": "2026-05-07",
+   "refs": 0
+  },
+  {
+   "path": "workspace/addons/hollow-signal/help/analyze.md",
+   "area": "workspace",
+   "bytes": 669,
+   "title": "",
+   "last_commit": "2026-05-07",
+   "refs": 0
+  },
+  {
+   "path": "workspace/addons/hollow-signal/help/case-briefing.md",
+   "area": "workspace",
+   "bytes": 529,
+   "title": "",
+   "last_commit": "2026-05-07",
+   "refs": 0
+  },
+  {
+   "path": "workspace/addons/hollow-signal/help/interrogate.md",
+   "area": "workspace",
+   "bytes": 613,
+   "title": "",
+   "last_commit": "2026-05-07",
+   "refs": 0
+  },
+  {
+   "path": "workspace/addons/hollow-signal/interrogate.md",
+   "area": "workspace",
+   "bytes": 2322,
+   "title": "PROGRAM: interrogate",
+   "last_commit": "2026-05-07",
+   "refs": 0
+  },
+  {
+   "path": "workspace/addons/hollow-signal/requirements.md",
+   "area": "workspace",
+   "bytes": 1207,
+   "title": "REQUIREMENTS: hollow-signal",
+   "last_commit": "2026-05-07",
+   "refs": 1
+  },
+  {
+   "path": "workspace/addons/soccer-manager/data/events.md",
+   "area": "workspace",
+   "bytes": 1010,
+   "title": "DATA: random events (1-in-5 per match)",
+   "last_commit": "2026-05-07",
+   "refs": 4
+  },
+  {
+   "path": "workspace/addons/soccer-manager/data/league.md",
+   "area": "workspace",
+   "bytes": 1634,
+   "title": "DATA: league",
+   "last_commit": "2026-05-07",
+   "refs": 3
+  },
+  {
+   "path": "workspace/addons/soccer-manager/data/market.md",
+   "area": "workspace",
+   "bytes": 944,
+   "title": "DATA: transfer market",
+   "last_commit": "2026-05-07",
+   "refs": 3
+  },
+  {
+   "path": "workspace/addons/soccer-manager/data/teams.md",
+   "area": "workspace",
+   "bytes": 3066,
+   "title": "DATA: teams",
+   "last_commit": "2026-05-07",
+   "refs": 3
+  },
+  {
+   "path": "workspace/addons/soccer-manager/end-season.md",
+   "area": "workspace",
+   "bytes": 2229,
+   "title": "PROGRAM: end-season",
+   "last_commit": "2026-05-07",
+   "refs": 1
+  },
+  {
+   "path": "workspace/addons/soccer-manager/help/end-season.md",
+   "area": "workspace",
+   "bytes": 661,
+   "title": "",
+   "last_commit": "2026-05-07",
+   "refs": 1
+  },
+  {
+   "path": "workspace/addons/soccer-manager/help/new-game.md",
+   "area": "workspace",
+   "bytes": 522,
+   "title": "",
+   "last_commit": "2026-05-07",
+   "refs": 0
+  },
+  {
+   "path": "workspace/addons/soccer-manager/help/play.md",
+   "area": "workspace",
+   "bytes": 563,
+   "title": "",
+   "last_commit": "2026-05-07",
+   "refs": 1
+  },
+  {
+   "path": "workspace/addons/soccer-manager/help/set-formation.md",
+   "area": "workspace",
+   "bytes": 591,
+   "title": "",
+   "last_commit": "2026-05-07",
+   "refs": 0
+  },
+  {
+   "path": "workspace/addons/soccer-manager/help/squad.md",
+   "area": "workspace",
+   "bytes": 481,
+   "title": "",
+   "last_commit": "2026-05-07",
+   "refs": 0
+  },
+  {
+   "path": "workspace/addons/soccer-manager/help/standings.md",
+   "area": "workspace",
+   "bytes": 376,
+   "title": "",
+   "last_commit": "2026-05-07",
+   "refs": 0
+  },
+  {
+   "path": "workspace/addons/soccer-manager/help/transfer.md",
+   "area": "workspace",
+   "bytes": 639,
+   "title": "",
+   "last_commit": "2026-05-07",
+   "refs": 0
+  },
+  {
+   "path": "workspace/addons/soccer-manager/new-game.md",
+   "area": "workspace",
+   "bytes": 2108,
+   "title": "PROGRAM: new-game",
+   "last_commit": "2026-05-07",
+   "refs": 0
+  },
+  {
+   "path": "workspace/addons/soccer-manager/play.md",
+   "area": "workspace",
+   "bytes": 3341,
+   "title": "PROGRAM: play",
+   "last_commit": "2026-05-07",
+   "refs": 1
+  },
+  {
+   "path": "workspace/addons/soccer-manager/requirements.md",
+   "area": "workspace",
+   "bytes": 1525,
+   "title": "REQUIREMENTS: soccer-manager",
+   "last_commit": "2026-05-07",
+   "refs": 1
+  },
+  {
+   "path": "workspace/addons/soccer-manager/set-formation.md",
+   "area": "workspace",
+   "bytes": 1266,
+   "title": "PROGRAM: set-formation",
+   "last_commit": "2026-05-07",
+   "refs": 0
+  },
+  {
+   "path": "workspace/addons/soccer-manager/squad.md",
+   "area": "workspace",
+   "bytes": 1014,
+   "title": "PROGRAM: squad",
+   "last_commit": "2026-05-07",
+   "refs": 0
+  },
+  {
+   "path": "workspace/addons/soccer-manager/standings.md",
+   "area": "workspace",
+   "bytes": 929,
+   "title": "PROGRAM: standings",
+   "last_commit": "2026-05-07",
+   "refs": 0
+  },
+  {
+   "path": "workspace/addons/soccer-manager/transfer.md",
+   "area": "workspace",
+   "bytes": 2667,
+   "title": "PROGRAM: transfer",
+   "last_commit": "2026-05-07",
+   "refs": 0
+  },
+  {
+   "path": "workspace/audit/axon-lang.md",
+   "area": "workspace",
+   "bytes": 11444,
+   "title": "AXON-LANG Primitive Audit",
+   "last_commit": "2026-06-11",
+   "refs": 2
+  },
+  {
+   "path": "workspace/autonomous-mode.md",
+   "area": "workspace",
+   "bytes": 2795,
+   "title": "AXON Autonomous Mode \u2014 the grant protocol",
+   "last_commit": "2026-06-02",
+   "refs": 1
+  },
+  {
+   "path": "workspace/axon-memory/axon-self-conformance.md",
+   "area": "workspace",
+   "bytes": 963,
+   "title": "",
+   "last_commit": "2026-05-25",
+   "refs": 0
+  },
+  {
+   "path": "workspace/axon-memory/axon-self-endgame.md",
+   "area": "workspace",
+   "bytes": 811,
+   "title": "",
+   "last_commit": "2026-05-25",
+   "refs": 0
+  },
+  {
+   "path": "workspace/axon-memory/axon-self-harness-agnostic.md",
+   "area": "workspace",
+   "bytes": 887,
+   "title": "",
+   "last_commit": "2026-05-25",
+   "refs": 0
+  },
+  {
+   "path": "workspace/axon-memory/axon-self-identity.md",
+   "area": "workspace",
+   "bytes": 875,
+   "title": "",
+   "last_commit": "2026-05-25",
+   "refs": 0
+  },
+  {
+   "path": "workspace/axon-memory/axon-self-response.md",
+   "area": "workspace",
+   "bytes": 922,
+   "title": "",
+   "last_commit": "2026-05-25",
+   "refs": 0
+  },
+  {
+   "path": "workspace/domains/code-dev/manifest.md",
+   "area": "workspace",
+   "bytes": 4124,
+   "title": "",
+   "last_commit": "2026-05-18",
+   "refs": 6
+  },
+  {
+   "path": "workspace/domains/code-dev/programs/_index.md",
+   "area": "workspace",
+   "bytes": 5703,
+   "title": "code-dev \u2014 programs index",
+   "last_commit": "2026-05-18",
+   "refs": 14
+  },
+  {
+   "path": "workspace/domains/code-dev/workflows/_index.md",
+   "area": "workspace",
+   "bytes": 748,
+   "title": "code-dev \u2014 workflows index",
+   "last_commit": "2026-05-18",
+   "refs": 14
+  },
+  {
+   "path": "workspace/domains/library-dev/manifest.md",
+   "area": "workspace",
+   "bytes": 2573,
+   "title": "",
+   "last_commit": "2026-05-18",
+   "refs": 6
+  },
+  {
+   "path": "workspace/domains/library-dev/programs/_index.md",
+   "area": "workspace",
+   "bytes": 780,
+   "title": "library-dev \u2014 programs index",
+   "last_commit": "2026-05-18",
+   "refs": 14
+  },
+  {
+   "path": "workspace/domains/library-dev/workflows/_index.md",
+   "area": "workspace",
+   "bytes": 526,
+   "title": "library-dev \u2014 workflows index",
+   "last_commit": "2026-05-18",
+   "refs": 14
+  },
+  {
+   "path": "workspace/harness/README.md",
+   "area": "workspace",
+   "bytes": 902,
+   "title": "workspace/harness \u2014 per-harness declarations",
+   "last_commit": "2026-05-15",
+   "refs": 8
+  },
+  {
+   "path": "workspace/harness/claude-code.md",
+   "area": "workspace",
+   "bytes": 2889,
+   "title": "Harness: Claude Code",
+   "last_commit": "2026-06-09",
+   "refs": 4
+  },
+  {
+   "path": "workspace/harness/copilot.md",
+   "area": "workspace",
+   "bytes": 924,
+   "title": "Harness: GitHub Copilot",
+   "last_commit": "2026-05-25",
+   "refs": 3
+  },
+  {
+   "path": "workspace/harness/generic.md",
+   "area": "workspace",
+   "bytes": 798,
+   "title": "Harness: generic / unknown",
+   "last_commit": "2026-05-25",
+   "refs": 3
+  },
+  {
+   "path": "workspace/log/entries/2026-05-27.md",
+   "area": "workspace",
+   "bytes": 134,
+   "title": "LOG \u2014 2026-05-27",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "workspace/log/entries/2026-05-28.md",
+   "area": "workspace",
+   "bytes": 527,
+   "title": "LOG \u2014 2026-05-28",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "workspace/log/entries/2026-05-29.md",
+   "area": "workspace",
+   "bytes": 5637,
+   "title": "LOG \u2014 2026-05-29",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "workspace/log/entries/2026-06-09.md",
+   "area": "workspace",
+   "bytes": 3403,
+   "title": "LOG \u2014 2026-06-09",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "workspace/log/entries/2026-06-10.md",
+   "area": "workspace",
+   "bytes": 2932,
+   "title": "LOG \u2014 2026-06-10",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "workspace/log/entries/2026-06-11.md",
+   "area": "workspace",
+   "bytes": 4611,
+   "title": "LOG \u2014 2026-06-11",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "workspace/log/igap/2026-05-29.md",
+   "area": "workspace",
+   "bytes": 397,
+   "title": "IGAP \u2014 2026-05-29",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "workspace/log/igap/2026-06-04.md",
+   "area": "workspace",
+   "bytes": 450,
+   "title": "IGAP \u2014 2026-06-04",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "workspace/log/igap/2026-06-11.md",
+   "area": "workspace",
+   "bytes": 730,
+   "title": "IGAP \u2014 2026-06-11",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "workspace/memory/episodic/deprecation-log.md",
+   "area": "workspace",
+   "bytes": 2388,
+   "title": "E:deprecation-log",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "workspace/memory/episodic/session-log.md",
+   "area": "workspace",
+   "bytes": 61206,
+   "title": "SESSION LOG",
+   "last_commit": "2026-05-04",
+   "refs": 3
+  },
+  {
+   "path": "workspace/memory/kv-store/axon-cron-defaults-seeded.md",
+   "area": "workspace",
+   "bytes": 5,
+   "title": "",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "workspace/memory/longterm/cognition-frame.md",
+   "area": "workspace",
+   "bytes": 8,
+   "title": "",
+   "last_commit": "2026-05-04",
+   "refs": 0
+  },
+  {
+   "path": "workspace/memory/longterm/cron-contract-conformance-gate.md",
+   "area": "workspace",
+   "bytes": 66,
+   "title": "",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "workspace/memory/longterm/dev-mode.md",
+   "area": "workspace",
+   "bytes": 235,
+   "title": "Enabled 2026-06-11 by owner explicit command (\"full grant mode + dev mode\")",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "workspace/memory/longterm/last-session-snapshot.md",
+   "area": "workspace",
+   "bytes": 1216,
+   "title": "",
+   "last_commit": "2026-05-04",
+   "refs": 1
+  },
+  {
+   "path": "workspace/memory/longterm/last-session-summary.md",
+   "area": "workspace",
+   "bytes": 90,
+   "title": "",
+   "last_commit": "2026-05-04",
+   "refs": 0
+  },
+  {
+   "path": "workspace/memory/longterm/no-orphan-tools-required.md",
+   "area": "workspace",
+   "bytes": 5,
+   "title": "",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "workspace/memory/longterm/prompt-log-consent-asked.md",
+   "area": "workspace",
+   "bytes": 218,
+   "title": "",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "workspace/memory/longterm/prompt-log-enabled.md",
+   "area": "workspace",
+   "bytes": 12,
+   "title": "",
+   "last_commit": "2026-05-04",
+   "refs": 0
+  },
+  {
+   "path": "workspace/memory/longterm/state-surfaced-required.md",
+   "area": "workspace",
+   "bytes": 5,
+   "title": "",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "workspace/memory/longterm/workflow-node-order-required.md",
+   "area": "workspace",
+   "bytes": 5,
+   "title": "",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "workspace/memory/working/active-phase.md",
+   "area": "workspace",
+   "bytes": 18,
+   "title": "",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "workspace/memory/working/active-program.md",
+   "area": "workspace",
+   "bytes": 13,
+   "title": "",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "workspace/memory/working/archived-lines.md",
+   "area": "workspace",
+   "bytes": 28,
+   "title": "",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "workspace/memory/working/code-dev-project.md",
+   "area": "workspace",
+   "bytes": 9,
+   "title": "",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "workspace/memory/working/health-report.md",
+   "area": "workspace",
+   "bytes": 18,
+   "title": "",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "workspace/memory/working/myaxon-path.md",
+   "area": "workspace",
+   "bytes": 50,
+   "title": "",
+   "last_commit": "untracked",
+   "refs": 1
+  },
+  {
+   "path": "workspace/memory/working/reasoning-mode.md",
+   "area": "workspace",
+   "bytes": 11,
+   "title": "",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "workspace/memory/working/reasoning-trace.md",
+   "area": "workspace",
+   "bytes": 153,
+   "title": "",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "workspace/memory/working/recent-user-input.md",
+   "area": "workspace",
+   "bytes": 401,
+   "title": "",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "workspace/memory/working/to-compact.md",
+   "area": "workspace",
+   "bytes": 3,
+   "title": "",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "workspace/memory/working/total-lines.md",
+   "area": "workspace",
+   "bytes": 27,
+   "title": "",
+   "last_commit": "untracked",
+   "refs": 0
+  },
+  {
+   "path": "workspace/operating-discipline.md",
+   "area": "workspace",
+   "bytes": 2006,
+   "title": "AXON Operating Discipline \u2014 be AXON \u00b7 anchor verbosely \u00b7 remember in AXON",
+   "last_commit": "2026-05-25",
+   "refs": 0
+  },
+  {
+   "path": "workspace/preferences/README.md",
+   "area": "workspace",
+   "bytes": 1231,
+   "title": "PREFERENCES",
+   "last_commit": "2026-05-07",
+   "refs": 8
+  },
+  {
+   "path": "workspace/preferences/agent.md",
+   "area": "workspace",
+   "bytes": 3052,
+   "title": "PREFERENCES: agent",
+   "last_commit": "2026-05-10",
+   "refs": 4
+  },
+  {
+   "path": "workspace/preferences/compile.md",
+   "area": "workspace",
+   "bytes": 526,
+   "title": "Preference: compile",
+   "last_commit": "2026-05-16",
+   "refs": 2
+  },
+  {
+   "path": "workspace/preferences/output-layer.md",
+   "area": "workspace",
+   "bytes": 1374,
+   "title": "PREFERENCES: output-layer",
+   "last_commit": "2026-05-07",
+   "refs": 1
+  },
+  {
+   "path": "workspace/preferences/output.md",
+   "area": "workspace",
+   "bytes": 112,
+   "title": "PREFERENCE: output",
+   "last_commit": "2026-05-07",
+   "refs": 2
+  },
+  {
+   "path": "workspace/preferences/reservoir.md",
+   "area": "workspace",
+   "bytes": 2516,
+   "title": "PREFERENCES: reservoir",
+   "last_commit": "2026-05-24",
+   "refs": 1
+  },
+  {
+   "path": "workspace/preferences/smart-dispatch.md",
+   "area": "workspace",
+   "bytes": 1045,
+   "title": "PREFERENCES: smart-dispatch",
+   "last_commit": "2026-06-10",
+   "refs": 2
+  },
+  {
+   "path": "workspace/preferences/tools/README.md",
+   "area": "workspace",
+   "bytes": 743,
+   "title": "TOOL OUTPUT PREFERENCES",
+   "last_commit": "2026-05-07",
+   "refs": 8
+  },
+  {
+   "path": "workspace/preferences/tools/deps.md",
+   "area": "workspace",
+   "bytes": 345,
+   "title": "TOOL OUTPUT PREFERENCES: deps",
+   "last_commit": "2026-05-07",
+   "refs": 1
+  },
+  {
+   "path": "workspace/preferences/tools/events.md",
+   "area": "workspace",
+   "bytes": 302,
+   "title": "TOOL OUTPUT PREFERENCES: events",
+   "last_commit": "2026-05-07",
+   "refs": 4
+  },
+  {
+   "path": "workspace/preferences/tools/simulate.md",
+   "area": "workspace",
+   "bytes": 422,
+   "title": "TOOL OUTPUT PREFERENCES: simulate",
+   "last_commit": "2026-05-07",
+   "refs": 1
+  },
+  {
+   "path": "workspace/processes/active/_index.md",
+   "area": "workspace",
+   "bytes": 770,
+   "title": "Active Processes \u2014 Index",
+   "last_commit": "2026-05-22",
+   "refs": 14
+  },
+  {
+   "path": "workspace/processes/completed/P-001.md",
+   "area": "workspace",
+   "bytes": 184,
+   "title": "",
+   "last_commit": "2026-05-07",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/_code-dev-schema-v4.md",
+   "area": "workspace",
+   "bytes": 6949,
+   "title": "PROGRAM: _code-dev-schema-v4",
+   "last_commit": "2026-06-01",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/_reservoir-manifest.md",
+   "area": "workspace",
+   "bytes": 2116,
+   "title": "Reservoir cluster \u2014 removal manifest (self-contained, deletable demo)",
+   "last_commit": "2026-05-26",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/audit-to-study.md",
+   "area": "workspace",
+   "bytes": 3335,
+   "title": "PROGRAM: audit-to-study",
+   "last_commit": "2026-06-05",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/authoring-guide.md",
+   "area": "workspace",
+   "bytes": 11788,
+   "title": "PROGRAM: authoring-guide",
+   "last_commit": "2026-05-26",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/auto-actions.md",
+   "area": "workspace",
+   "bytes": 3656,
+   "title": "PROGRAM: auto-actions",
+   "last_commit": "2026-05-26",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/auto-improve.md",
+   "area": "workspace",
+   "bytes": 5597,
+   "title": "PROGRAM: auto-improve",
+   "last_commit": "2026-05-26",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/autonomy-contract.md",
+   "area": "workspace",
+   "bytes": 3662,
+   "title": "PROGRAM: autonomy-contract",
+   "last_commit": "2026-06-03",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/autonomy-reanchor.md",
+   "area": "workspace",
+   "bytes": 4947,
+   "title": "PROGRAM: autonomy-reanchor",
+   "last_commit": "2026-06-10",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/axon-audit.md",
+   "area": "workspace",
+   "bytes": 8409,
+   "title": "PROGRAM: axon-audit",
+   "last_commit": "2026-06-10",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/axon-compare.md",
+   "area": "workspace",
+   "bytes": 9720,
+   "title": "PROGRAM: axon-compare",
+   "last_commit": "2026-05-22",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/axon-docs-gen.md",
+   "area": "workspace",
+   "bytes": 4195,
+   "title": "PROGRAM: axon-docs-gen",
+   "last_commit": "2026-05-22",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/axon-graph.md",
+   "area": "workspace",
+   "bytes": 3739,
+   "title": "PROGRAM: axon-graph",
+   "last_commit": "2026-06-11",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/axon-reanchor.md",
+   "area": "workspace",
+   "bytes": 5237,
+   "title": "PROGRAM: axon-reanchor",
+   "last_commit": "2026-05-24",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/chat-input.md",
+   "area": "workspace",
+   "bytes": 1893,
+   "title": "PROGRAM: chat-input",
+   "last_commit": "2026-05-22",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/code-dev-actions.md",
+   "area": "workspace",
+   "bytes": 725,
+   "title": "PROGRAM: code-dev-actions",
+   "last_commit": "2026-05-26",
+   "refs": 3
+  },
+  {
+   "path": "workspace/programs/code-dev-branch.md",
+   "area": "workspace",
+   "bytes": 8418,
+   "title": "PROGRAM: code-dev-branch",
+   "last_commit": "2026-05-26",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-cascade.md",
+   "area": "workspace",
+   "bytes": 3158,
+   "title": "PROGRAM: code-dev-cascade",
+   "last_commit": "2026-05-26",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-changelog.md",
+   "area": "workspace",
+   "bytes": 3142,
+   "title": "PROGRAM: code-dev-changelog",
+   "last_commit": "2026-05-26",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-chats.md",
+   "area": "workspace",
+   "bytes": 1762,
+   "title": "PROGRAM: code-dev-chats",
+   "last_commit": "2026-06-11",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-combine.md",
+   "area": "workspace",
+   "bytes": 7107,
+   "title": "PROGRAM: code-dev-combine",
+   "last_commit": "2026-06-10",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-divide.md",
+   "area": "workspace",
+   "bytes": 7397,
+   "title": "PROGRAM: code-dev-divide",
+   "last_commit": "2026-06-10",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-dont-do.md",
+   "area": "workspace",
+   "bytes": 6446,
+   "title": "PROGRAM: code-dev-dont-do",
+   "last_commit": "2026-06-02",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-dry-run.md",
+   "area": "workspace",
+   "bytes": 725,
+   "title": "PROGRAM: code-dev-dry-run",
+   "last_commit": "2026-05-26",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-events-emit.md",
+   "area": "workspace",
+   "bytes": 3382,
+   "title": "PROGRAM: code-dev-events-emit",
+   "last_commit": "2026-06-11",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-examples.md",
+   "area": "workspace",
+   "bytes": 729,
+   "title": "PROGRAM: code-dev-examples",
+   "last_commit": "2026-05-26",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-explain-reviewer.md",
+   "area": "workspace",
+   "bytes": 3028,
+   "title": "PROGRAM: code-dev-explain-reviewer",
+   "last_commit": "2026-05-26",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-finalize.md",
+   "area": "workspace",
+   "bytes": 1003,
+   "title": "PROGRAM: code-dev-finalize",
+   "last_commit": "2026-05-18",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-flow.md",
+   "area": "workspace",
+   "bytes": 1621,
+   "title": "PROGRAM: code-dev-flow",
+   "last_commit": "2026-06-11",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-help.md",
+   "area": "workspace",
+   "bytes": 2624,
+   "title": "PROGRAM: code-dev-help",
+   "last_commit": "2026-05-26",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-hold.md",
+   "area": "workspace",
+   "bytes": 2370,
+   "title": "PROGRAM: code-dev-hold",
+   "last_commit": "2026-06-01",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-init.md",
+   "area": "workspace",
+   "bytes": 6345,
+   "title": "PROGRAM: code-dev-init",
+   "last_commit": "2026-06-01",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-journal-decision.md",
+   "area": "workspace",
+   "bytes": 3269,
+   "title": "PROGRAM: code-dev-journal-decision",
+   "last_commit": "2026-06-02",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-journal-event.md",
+   "area": "workspace",
+   "bytes": 1491,
+   "title": "PROGRAM: code-dev-journal-event",
+   "last_commit": "2026-06-01",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-journal-log.md",
+   "area": "workspace",
+   "bytes": 14526,
+   "title": "PROGRAM: code-dev-journal-log",
+   "last_commit": "2026-06-03",
+   "refs": 3
+  },
+  {
+   "path": "workspace/programs/code-dev-journal-search.md",
+   "area": "workspace",
+   "bytes": 2835,
+   "title": "PROGRAM: code-dev-journal-search",
+   "last_commit": "2026-06-01",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-journal.md",
+   "area": "workspace",
+   "bytes": 1523,
+   "title": "PROGRAM: code-dev-journal",
+   "last_commit": "2026-06-11",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-knowledge-explain.md",
+   "area": "workspace",
+   "bytes": 10404,
+   "title": "PROGRAM: code-dev-knowledge-explain",
+   "last_commit": "2026-06-01",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-knowledge-impact.md",
+   "area": "workspace",
+   "bytes": 5130,
+   "title": "PROGRAM: code-dev-knowledge-impact",
+   "last_commit": "2026-06-09",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-knowledge-reviewer-track.md",
+   "area": "workspace",
+   "bytes": 3421,
+   "title": "PROGRAM: code-dev-knowledge-reviewer-track",
+   "last_commit": "2026-06-10",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-knowledge-shadow.md",
+   "area": "workspace",
+   "bytes": 20515,
+   "title": "PROGRAM: code-dev-knowledge-shadow",
+   "last_commit": "2026-06-10",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-knowledge.md",
+   "area": "workspace",
+   "bytes": 1679,
+   "title": "PROGRAM: code-dev-knowledge",
+   "last_commit": "2026-06-11",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-lifecycle-tour.md",
+   "area": "workspace",
+   "bytes": 3991,
+   "title": "PROGRAM: code-dev-lifecycle-tour",
+   "last_commit": "2026-06-01",
+   "refs": 3
+  },
+  {
+   "path": "workspace/programs/code-dev-lifecycle.md",
+   "area": "workspace",
+   "bytes": 1605,
+   "title": "PROGRAM: code-dev-lifecycle",
+   "last_commit": "2026-06-11",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-link.md",
+   "area": "workspace",
+   "bytes": 3262,
+   "title": "PROGRAM: code-dev-link",
+   "last_commit": "2026-05-26",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-load.md",
+   "area": "workspace",
+   "bytes": 2821,
+   "title": "PROGRAM: code-dev-load",
+   "last_commit": "2026-06-10",
+   "refs": 3
+  },
+  {
+   "path": "workspace/programs/code-dev-merge.md",
+   "area": "workspace",
+   "bytes": 3653,
+   "title": "PROGRAM: code-dev-merge",
+   "last_commit": "2026-06-10",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-meta-board.md",
+   "area": "workspace",
+   "bytes": 1208,
+   "title": "PROGRAM: code-dev-meta-board",
+   "last_commit": "2026-06-11",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-meta-context.md",
+   "area": "workspace",
+   "bytes": 3902,
+   "title": "PROGRAM: code-dev-meta-context",
+   "last_commit": "2026-06-01",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-meta-dispatch-stats.md",
+   "area": "workspace",
+   "bytes": 2109,
+   "title": "PROGRAM: code-dev-meta-dispatch-stats",
+   "last_commit": "2026-06-11",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-meta-igap.md",
+   "area": "workspace",
+   "bytes": 2524,
+   "title": "PROGRAM: code-dev-meta-igap",
+   "last_commit": "2026-06-11",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-meta-usage.md",
+   "area": "workspace",
+   "bytes": 2021,
+   "title": "PROGRAM: code-dev-meta-usage",
+   "last_commit": "2026-06-11",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-meta.md",
+   "area": "workspace",
+   "bytes": 1714,
+   "title": "PROGRAM: code-dev-meta",
+   "last_commit": "2026-06-11",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-migrate.md",
+   "area": "workspace",
+   "bytes": 1515,
+   "title": "PROGRAM: code-dev-migrate",
+   "last_commit": "2026-05-26",
+   "refs": 3
+  },
+  {
+   "path": "workspace/programs/code-dev-new.md",
+   "area": "workspace",
+   "bytes": 6798,
+   "title": "PROGRAM: code-dev-new",
+   "last_commit": "2026-06-10",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-next.md",
+   "area": "workspace",
+   "bytes": 6643,
+   "title": "PROGRAM: code-dev-next",
+   "last_commit": "2026-06-04",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-partition.md",
+   "area": "workspace",
+   "bytes": 2214,
+   "title": "PROGRAM: code-dev-partition",
+   "last_commit": "2026-05-26",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-phase-new.md",
+   "area": "workspace",
+   "bytes": 7273,
+   "title": "PROGRAM: code-dev-phase-new",
+   "last_commit": "2026-05-26",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-phase-start.md",
+   "area": "workspace",
+   "bytes": 4872,
+   "title": "PROGRAM: code-dev-phase-start",
+   "last_commit": "2026-06-02",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-plan-master.md",
+   "area": "workspace",
+   "bytes": 4050,
+   "title": "PROGRAM: code-dev-plan-master",
+   "last_commit": "2026-05-26",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-plan.md",
+   "area": "workspace",
+   "bytes": 21032,
+   "title": "PROGRAM: code-dev-plan",
+   "last_commit": "2026-06-11",
+   "refs": 6
+  },
+  {
+   "path": "workspace/programs/code-dev-pr-create.md",
+   "area": "workspace",
+   "bytes": 15680,
+   "title": "PROGRAM: code-dev-pr-create",
+   "last_commit": "2026-06-03",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-pr-drift.md",
+   "area": "workspace",
+   "bytes": 1147,
+   "title": "PROGRAM: code-dev-pr-drift",
+   "last_commit": "2026-06-11",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-pr-export.md",
+   "area": "workspace",
+   "bytes": 1408,
+   "title": "PROGRAM: code-dev-pr-export",
+   "last_commit": "2026-06-11",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-pr-github.md",
+   "area": "workspace",
+   "bytes": 3617,
+   "title": "PROGRAM: code-dev-pr-github",
+   "last_commit": "2026-06-01",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-pr-link.md",
+   "area": "workspace",
+   "bytes": 4660,
+   "title": "PROGRAM: code-dev-pr-link",
+   "last_commit": "2026-05-26",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-pr-list.md",
+   "area": "workspace",
+   "bytes": 2272,
+   "title": "PROGRAM: code-dev-pr-list",
+   "last_commit": "2026-06-11",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-pr-ready.md",
+   "area": "workspace",
+   "bytes": 4755,
+   "title": "PROGRAM: code-dev-pr-ready",
+   "last_commit": "2026-06-03",
+   "refs": 4
+  },
+  {
+   "path": "workspace/programs/code-dev-pr-respond.md",
+   "area": "workspace",
+   "bytes": 3415,
+   "title": "PROGRAM: code-dev-pr-respond",
+   "last_commit": "2026-06-01",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-pr-review.md",
+   "area": "workspace",
+   "bytes": 23825,
+   "title": "PROGRAM: code-dev-pr-review",
+   "last_commit": "2026-06-03",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-pr-suggest-reviewer.md",
+   "area": "workspace",
+   "bytes": 1322,
+   "title": "PROGRAM: code-dev-pr-suggest-reviewer",
+   "last_commit": "2026-06-11",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-pr-sync.md",
+   "area": "workspace",
+   "bytes": 1651,
+   "title": "PROGRAM: code-dev-pr-sync",
+   "last_commit": "2026-06-11",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-pr-update-spec.md",
+   "area": "workspace",
+   "bytes": 2410,
+   "title": "PROGRAM: code-dev-pr-update-spec",
+   "last_commit": "2026-06-01",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-preflight.md",
+   "area": "workspace",
+   "bytes": 766,
+   "title": "PROGRAM: code-dev-safety-preflight-ALIAS",
+   "last_commit": "2026-05-26",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-replay.md",
+   "area": "workspace",
+   "bytes": 3824,
+   "title": "PROGRAM: code-dev-replay",
+   "last_commit": "2026-06-02",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-review-correctness.md",
+   "area": "workspace",
+   "bytes": 3288,
+   "title": "PROGRAM: code-dev-review-correctness",
+   "last_commit": "2026-06-10",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/code-dev-review-coverage.md",
+   "area": "workspace",
+   "bytes": 1688,
+   "title": "PROGRAM: code-dev-review-coverage",
+   "last_commit": "2026-06-11",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-review-diff.md",
+   "area": "workspace",
+   "bytes": 4404,
+   "title": "PROGRAM: code-dev-review-diff",
+   "last_commit": "2026-06-10",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-review-scope.md",
+   "area": "workspace",
+   "bytes": 4108,
+   "title": "PROGRAM: code-dev-review-scope",
+   "last_commit": "2026-06-11",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-review-self.md",
+   "area": "workspace",
+   "bytes": 3959,
+   "title": "PROGRAM: code-dev-review-self",
+   "last_commit": "2026-06-11",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-review-tests.md",
+   "area": "workspace",
+   "bytes": 2833,
+   "title": "PROGRAM: code-dev-review-tests",
+   "last_commit": "2026-06-10",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-review.md",
+   "area": "workspace",
+   "bytes": 2750,
+   "title": "PROGRAM: code-dev-review",
+   "last_commit": "2026-06-11",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-reviewer-track.md",
+   "area": "workspace",
+   "bytes": 819,
+   "title": "PROGRAM: code-dev-knowledge-reviewer-track-ALIAS",
+   "last_commit": "2026-05-26",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-rules-audit.md",
+   "area": "workspace",
+   "bytes": 1770,
+   "title": "PROGRAM: code-dev-rules-audit",
+   "last_commit": "2026-06-11",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-safety-audit-structure.md",
+   "area": "workspace",
+   "bytes": 3612,
+   "title": "PROGRAM: code-dev-safety-audit-structure",
+   "last_commit": "2026-06-10",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-safety-audit.md",
+   "area": "workspace",
+   "bytes": 15927,
+   "title": "PROGRAM: code-dev-safety-audit",
+   "last_commit": "2026-06-01",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-safety-freeze.md",
+   "area": "workspace",
+   "bytes": 4619,
+   "title": "PROGRAM: code-dev-safety-freeze",
+   "last_commit": "2026-06-03",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-safety-preflight.md",
+   "area": "workspace",
+   "bytes": 9681,
+   "title": "PROGRAM: code-dev-safety-preflight",
+   "last_commit": "2026-06-10",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-safety.md",
+   "area": "workspace",
+   "bytes": 1589,
+   "title": "PROGRAM: code-dev-safety",
+   "last_commit": "2026-06-11",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-shape.md",
+   "area": "workspace",
+   "bytes": 1645,
+   "title": "PROGRAM: code-dev-shape",
+   "last_commit": "2026-06-11",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-since.md",
+   "area": "workspace",
+   "bytes": 3550,
+   "title": "PROGRAM: code-dev-since",
+   "last_commit": "2026-05-26",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-state-handoff.md",
+   "area": "workspace",
+   "bytes": 4678,
+   "title": "PROGRAM: code-dev-state-handoff",
+   "last_commit": "2026-06-01",
+   "refs": 4
+  },
+  {
+   "path": "workspace/programs/code-dev-state-metrics.md",
+   "area": "workspace",
+   "bytes": 4374,
+   "title": "PROGRAM: code-dev-state-metrics",
+   "last_commit": "2026-06-01",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-state-resume.md",
+   "area": "workspace",
+   "bytes": 11916,
+   "title": "PROGRAM: code-dev-state-resume",
+   "last_commit": "2026-06-02",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-state-save.md",
+   "area": "workspace",
+   "bytes": 5250,
+   "title": "PROGRAM: code-dev-state-save",
+   "last_commit": "2026-06-02",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-state-status.md",
+   "area": "workspace",
+   "bytes": 3364,
+   "title": "PROGRAM: code-dev-state-status",
+   "last_commit": "2026-06-01",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-state-undo.md",
+   "area": "workspace",
+   "bytes": 4516,
+   "title": "PROGRAM: code-dev-state-undo",
+   "last_commit": "2026-06-01",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-state.md",
+   "area": "workspace",
+   "bytes": 1980,
+   "title": "PROGRAM: code-dev-state",
+   "last_commit": "2026-06-11",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/code-dev-study-area.md",
+   "area": "workspace",
+   "bytes": 5816,
+   "title": "PROGRAM: code-dev-study-area",
+   "last_commit": "2026-06-11",
+   "refs": 3
+  },
+  {
+   "path": "workspace/programs/code-dev-study.md",
+   "area": "workspace",
+   "bytes": 25767,
+   "title": "PROGRAM: code-dev-study",
+   "last_commit": "2026-06-11",
+   "refs": 4
+  },
+  {
+   "path": "workspace/programs/code-dev-test-map.md",
+   "area": "workspace",
+   "bytes": 4490,
+   "title": "PROGRAM: code-dev-test-map",
+   "last_commit": "2026-06-11",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev-whatif.md",
+   "area": "workspace",
+   "bytes": 2435,
+   "title": "PROGRAM: code-dev-whatif",
+   "last_commit": "2026-06-10",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/code-dev.md",
+   "area": "workspace",
+   "bytes": 30446,
+   "title": "PROGRAM: code-dev",
+   "last_commit": "2026-06-11",
+   "refs": 4
+  },
+  {
+   "path": "workspace/programs/config.md",
+   "area": "workspace",
+   "bytes": 5118,
+   "title": "PROGRAM: config",
+   "last_commit": "2026-05-26",
+   "refs": 3
+  },
+  {
+   "path": "workspace/programs/crucible.md",
+   "area": "workspace",
+   "bytes": 3028,
+   "title": "PROGRAM: crucible",
+   "last_commit": "2026-05-26",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/deps.md",
+   "area": "workspace",
+   "bytes": 4290,
+   "title": "PROGRAM: deps",
+   "last_commit": "2026-06-11",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/discover.md",
+   "area": "workspace",
+   "bytes": 5700,
+   "title": "PROGRAM: discover",
+   "last_commit": "2026-06-04",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/explain.md",
+   "area": "workspace",
+   "bytes": 4183,
+   "title": "PROGRAM: explain",
+   "last_commit": "2026-05-18",
+   "refs": 6
+  },
+  {
+   "path": "workspace/programs/faq.md",
+   "area": "workspace",
+   "bytes": 7369,
+   "title": "PROGRAM: faq",
+   "last_commit": "2026-05-21",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/find-program.md",
+   "area": "workspace",
+   "bytes": 3762,
+   "title": "PROGRAM: find-program",
+   "last_commit": "2026-05-19",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/gain.md",
+   "area": "workspace",
+   "bytes": 5341,
+   "title": "PROGRAM: gain",
+   "last_commit": "2026-06-04",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/glossary.md",
+   "area": "workspace",
+   "bytes": 9059,
+   "title": "PROGRAM: glossary",
+   "last_commit": "2026-05-26",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/goal-audit.md",
+   "area": "workspace",
+   "bytes": 3937,
+   "title": "PROGRAM: goal-audit",
+   "last_commit": "2026-06-10",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/goal-set.md",
+   "area": "workspace",
+   "bytes": 2025,
+   "title": "PROGRAM: goal-set",
+   "last_commit": "2026-06-05",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/handoff.md",
+   "area": "workspace",
+   "bytes": 4587,
+   "title": "PROGRAM: handoff",
+   "last_commit": "2026-06-10",
+   "refs": 6
+  },
+  {
+   "path": "workspace/programs/harness-builder.md",
+   "area": "workspace",
+   "bytes": 6602,
+   "title": "PROGRAM: harness-builder",
+   "last_commit": "2026-05-18",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/health-check.md",
+   "area": "workspace",
+   "bytes": 8225,
+   "title": "PROGRAM: health-check",
+   "last_commit": "2026-06-11",
+   "refs": 6
+  },
+  {
+   "path": "workspace/programs/help/crucible.md",
+   "area": "workspace",
+   "bytes": 1518,
+   "title": "HELP: crucible",
+   "last_commit": "2026-05-26",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/help/health-check.md",
+   "area": "workspace",
+   "bytes": 484,
+   "title": "",
+   "last_commit": "2026-05-07",
+   "refs": 6
+  },
+  {
+   "path": "workspace/programs/help/help.md",
+   "area": "workspace",
+   "bytes": 578,
+   "title": "",
+   "last_commit": "2026-05-07",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/help/list-tools.md",
+   "area": "workspace",
+   "bytes": 420,
+   "title": "",
+   "last_commit": "2026-05-07",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/help/menu.md",
+   "area": "workspace",
+   "bytes": 389,
+   "title": "",
+   "last_commit": "2026-05-07",
+   "refs": 11
+  },
+  {
+   "path": "workspace/programs/help/show-memory.md",
+   "area": "workspace",
+   "bytes": 471,
+   "title": "",
+   "last_commit": "2026-05-07",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/help/status.md",
+   "area": "workspace",
+   "bytes": 495,
+   "title": "",
+   "last_commit": "2026-05-07",
+   "refs": 8
+  },
+  {
+   "path": "workspace/programs/help/translate.md",
+   "area": "workspace",
+   "bytes": 716,
+   "title": "",
+   "last_commit": "2026-05-07",
+   "refs": 3
+  },
+  {
+   "path": "workspace/programs/help.md",
+   "area": "workspace",
+   "bytes": 4602,
+   "title": "PROGRAM: help",
+   "last_commit": "2026-05-26",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/igap-improve.md",
+   "area": "workspace",
+   "bytes": 9470,
+   "title": "PROGRAM: igap-improve",
+   "last_commit": "2026-06-10",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/iterate-or-stop.md",
+   "area": "workspace",
+   "bytes": 3052,
+   "title": "PROGRAM: iterate-or-stop",
+   "last_commit": "2026-06-05",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/library-dev-cite.md",
+   "area": "workspace",
+   "bytes": 2622,
+   "title": "PROGRAM: library-dev-cite",
+   "last_commit": "2026-05-26",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/library-dev-explain.md",
+   "area": "workspace",
+   "bytes": 7417,
+   "title": "PROGRAM: library-dev-explain",
+   "last_commit": "2026-06-10",
+   "refs": 3
+  },
+  {
+   "path": "workspace/programs/library-dev-ingest.md",
+   "area": "workspace",
+   "bytes": 9957,
+   "title": "PROGRAM: library-dev-ingest",
+   "last_commit": "2026-06-10",
+   "refs": 3
+  },
+  {
+   "path": "workspace/programs/library-dev-intersect.md",
+   "area": "workspace",
+   "bytes": 3583,
+   "title": "PROGRAM: library-dev-intersect",
+   "last_commit": "2026-05-26",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/library-dev-new.md",
+   "area": "workspace",
+   "bytes": 4990,
+   "title": "PROGRAM: library-dev-new",
+   "last_commit": "2026-06-10",
+   "refs": 3
+  },
+  {
+   "path": "workspace/programs/library-dev-report.md",
+   "area": "workspace",
+   "bytes": 3954,
+   "title": "PROGRAM: library-dev-report",
+   "last_commit": "2026-06-10",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/library-dev-search.md",
+   "area": "workspace",
+   "bytes": 3831,
+   "title": "PROGRAM: library-dev-search",
+   "last_commit": "2026-06-10",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/library-dev-status.md",
+   "area": "workspace",
+   "bytes": 4920,
+   "title": "PROGRAM: library-dev-status",
+   "last_commit": "2026-06-10",
+   "refs": 3
+  },
+  {
+   "path": "workspace/programs/library-dev.md",
+   "area": "workspace",
+   "bytes": 5290,
+   "title": "PROGRAM: library-dev",
+   "last_commit": "2026-06-10",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/list-tools.md",
+   "area": "workspace",
+   "bytes": 2641,
+   "title": "PROGRAM: list-tools",
+   "last_commit": "2026-06-08",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/memory-compact.md",
+   "area": "workspace",
+   "bytes": 4919,
+   "title": "PROGRAM: memory-compact",
+   "last_commit": "2026-05-18",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/menu.md",
+   "area": "workspace",
+   "bytes": 21435,
+   "title": "PROGRAM: menu",
+   "last_commit": "2026-06-11",
+   "refs": 11
+  },
+  {
+   "path": "workspace/programs/meta.md",
+   "area": "workspace",
+   "bytes": 5388,
+   "title": "PROGRAM: meta",
+   "last_commit": "2026-05-18",
+   "refs": 81
+  },
+  {
+   "path": "workspace/programs/migrate-workspace.md",
+   "area": "workspace",
+   "bytes": 8406,
+   "title": "PROGRAM: migrate-workspace",
+   "last_commit": "2026-05-26",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/mode-detect.md",
+   "area": "workspace",
+   "bytes": 3225,
+   "title": "PROGRAM: mode-detect",
+   "last_commit": "2026-05-18",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/mode-router.md",
+   "area": "workspace",
+   "bytes": 3946,
+   "title": "PROGRAM: mode-router",
+   "last_commit": "2026-06-10",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/mode-suggest.md",
+   "area": "workspace",
+   "bytes": 3898,
+   "title": "PROGRAM: mode-suggest",
+   "last_commit": "2026-06-10",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/my-axon-init.md",
+   "area": "workspace",
+   "bytes": 7512,
+   "title": "PROGRAM: my-axon-init",
+   "last_commit": "2026-05-26",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/orchestrator.md",
+   "area": "workspace",
+   "bytes": 9549,
+   "title": "PROGRAM: orchestrator",
+   "last_commit": "2026-06-04",
+   "refs": 4
+  },
+  {
+   "path": "workspace/programs/output-layer.md",
+   "area": "workspace",
+   "bytes": 4116,
+   "title": "PROGRAM: output-layer",
+   "last_commit": "2026-05-19",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/prompt-log-consent.md",
+   "area": "workspace",
+   "bytes": 6023,
+   "title": "PROGRAM: prompt-log-consent",
+   "last_commit": "2026-05-26",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/quickstart.md",
+   "area": "workspace",
+   "bytes": 10384,
+   "title": "PROGRAM: quickstart",
+   "last_commit": "2026-05-26",
+   "refs": 3
+  },
+  {
+   "path": "workspace/programs/rag-maturity-audit.md",
+   "area": "workspace",
+   "bytes": 1161,
+   "title": "PROGRAM: rag-maturity-audit",
+   "last_commit": "2026-06-08",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/register-tool.md",
+   "area": "workspace",
+   "bytes": 3670,
+   "title": "PROGRAM: register-tool",
+   "last_commit": "2026-05-22",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/reservoir-review.md",
+   "area": "workspace",
+   "bytes": 7482,
+   "title": "PROGRAM: reservoir-review",
+   "last_commit": "2026-05-26",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/resume.md",
+   "area": "workspace",
+   "bytes": 3979,
+   "title": "PROGRAM: resume",
+   "last_commit": "2026-06-10",
+   "refs": 3
+  },
+  {
+   "path": "workspace/programs/retrieval-eval.md",
+   "area": "workspace",
+   "bytes": 1587,
+   "title": "PROGRAM: retrieval-eval",
+   "last_commit": "2026-06-08",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/retrieval-reflect.md",
+   "area": "workspace",
+   "bytes": 2438,
+   "title": "PROGRAM: retrieval-reflect",
+   "last_commit": "2026-06-08",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/run-tests.md",
+   "area": "workspace",
+   "bytes": 3220,
+   "title": "PROGRAM: run-tests",
+   "last_commit": "2026-05-18",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/self-care.md",
+   "area": "workspace",
+   "bytes": 2052,
+   "title": "PROGRAM: self-care",
+   "last_commit": "2026-06-09",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/session-summary.md",
+   "area": "workspace",
+   "bytes": 5170,
+   "title": "PROGRAM: session-summary",
+   "last_commit": "2026-06-04",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/shadow-retroactive-bulk.md",
+   "area": "workspace",
+   "bytes": 6726,
+   "title": "PROGRAM: shadow-retroactive-bulk",
+   "last_commit": "2026-06-01",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/show-memory.md",
+   "area": "workspace",
+   "bytes": 2343,
+   "title": "PROGRAM: show-memory",
+   "last_commit": "2026-05-18",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/simulate.md",
+   "area": "workspace",
+   "bytes": 3719,
+   "title": "PROGRAM: simulate",
+   "last_commit": "2026-05-18",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/stats.md",
+   "area": "workspace",
+   "bytes": 5395,
+   "title": "PROGRAM: stats",
+   "last_commit": "2026-06-11",
+   "refs": 2
+  },
+  {
+   "path": "workspace/programs/status.md",
+   "area": "workspace",
+   "bytes": 6283,
+   "title": "PROGRAM: status",
+   "last_commit": "2026-05-18",
+   "refs": 8
+  },
+  {
+   "path": "workspace/programs/translate.md",
+   "area": "workspace",
+   "bytes": 6015,
+   "title": "PROGRAM: translate",
+   "last_commit": "2026-05-18",
+   "refs": 3
+  },
+  {
+   "path": "workspace/programs/turn-log.md",
+   "area": "workspace",
+   "bytes": 3286,
+   "title": "PROGRAM: turn-log",
+   "last_commit": "2026-06-04",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/undo.md",
+   "area": "workspace",
+   "bytes": 3640,
+   "title": "PROGRAM: undo",
+   "last_commit": "2026-05-18",
+   "refs": 3
+  },
+  {
+   "path": "workspace/programs/versions.md",
+   "area": "workspace",
+   "bytes": 4019,
+   "title": "PROGRAM: versions",
+   "last_commit": "2026-05-18",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/workflow-edit.md",
+   "area": "workspace",
+   "bytes": 4186,
+   "title": "PROGRAM: workflow-edit",
+   "last_commit": "2026-05-22",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/workflow-explain.md",
+   "area": "workspace",
+   "bytes": 1235,
+   "title": "PROGRAM: workflow-explain",
+   "last_commit": "2026-06-05",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/workflow-list.md",
+   "area": "workspace",
+   "bytes": 3123,
+   "title": "PROGRAM: workflow-list",
+   "last_commit": "2026-06-05",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/workflow-new.md",
+   "area": "workspace",
+   "bytes": 8237,
+   "title": "PROGRAM: workflow-new",
+   "last_commit": "2026-06-10",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/workflow-run.md",
+   "area": "workspace",
+   "bytes": 18862,
+   "title": "PROGRAM: workflow-run",
+   "last_commit": "2026-06-10",
+   "refs": 1
+  },
+  {
+   "path": "workspace/programs/workflow-simulate.md",
+   "area": "workspace",
+   "bytes": 4990,
+   "title": "PROGRAM: workflow-simulate",
+   "last_commit": "2026-06-10",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/workflow-validate.md",
+   "area": "workspace",
+   "bytes": 4806,
+   "title": "PROGRAM: workflow-validate",
+   "last_commit": "2026-06-02",
+   "refs": 0
+  },
+  {
+   "path": "workspace/programs/workspace-backup.md",
+   "area": "workspace",
+   "bytes": 10127,
+   "title": "PROGRAM: workspace-backup",
+   "last_commit": "2026-05-26",
+   "refs": 0
+  },
+  {
+   "path": "workspace/safety/failure-modes.md",
+   "area": "workspace",
+   "bytes": 2644,
+   "title": "Failure modes \u2014 code-dev catalog (PR-7)",
+   "last_commit": "2026-05-16",
+   "refs": 5
+  },
+  {
+   "path": "workspace/safety/postmortems/example-F-A2-2026-05-15.md",
+   "area": "workspace",
+   "bytes": 1780,
+   "title": "Postmortem \u2014 premature push to smo-faults repo (F-A2)",
+   "last_commit": "2026-05-16",
+   "refs": 1
+  },
+  {
+   "path": "workspace/safety/redact-allowlist.md",
+   "area": "workspace",
+   "bytes": 348,
+   "title": "Redact allow-list (PR-5)",
+   "last_commit": "2026-05-16",
+   "refs": 1
+  },
+  {
+   "path": "workspace/safety/rules.md",
+   "area": "workspace",
+   "bytes": 412,
+   "title": "rules.md \u2014 project rules of engagement (PR-4 seed)",
+   "last_commit": "2026-05-29",
+   "refs": 6
+  },
+  {
+   "path": "workspace/scheduler/QUEUE.md",
+   "area": "workspace",
+   "bytes": 757,
+   "title": "QUEUE \u2014 Workspace",
+   "last_commit": "2026-05-07",
+   "refs": 8
+  },
+  {
+   "path": "workspace/scheduler/shadow-refresh.cron.md",
+   "area": "workspace",
+   "bytes": 862,
+   "title": "Nightly `shadow refresh` cron (PR-32.5)",
+   "last_commit": "2026-05-16",
+   "refs": 1
+  },
+  {
+   "path": "workspace/templates/axon-docs-page.md",
+   "area": "workspace",
+   "bytes": 851,
+   "title": "{{AXON-DOCS title}}",
+   "last_commit": "2026-05-17",
+   "refs": 12
+  },
+  {
+   "path": "workspace/templates/code-dev-pr-opm.tpl.md",
+   "area": "workspace",
+   "bytes": 2817,
+   "title": "OPM-style PR specification template",
+   "last_commit": "2026-05-16",
+   "refs": 1
+  },
+  {
+   "path": "workspace/templates/postmortem.md",
+   "area": "workspace",
+   "bytes": 728,
+   "title": "Postmortem \u2014 {one-line summary}",
+   "last_commit": "2026-05-16",
+   "refs": 2
+  },
+  {
+   "path": "workspace/templates/v4-adr.md",
+   "area": "workspace",
+   "bytes": 1344,
+   "title": "v4-adr.md \u2014 template for `03-decisions/adr-NNN-<slug>.md`",
+   "last_commit": "2026-05-16",
+   "refs": 4
+  },
+  {
+   "path": "workspace/templates/v4-meta.md",
+   "area": "workspace",
+   "bytes": 2247,
+   "title": "v4 `_meta.md` template",
+   "last_commit": "2026-05-15",
+   "refs": 2
+  },
+  {
+   "path": "workspace/templates/v4-phase.md",
+   "area": "workspace",
+   "bytes": 1852,
+   "title": "v4-phase.md \u2014 template for `02-phases/phase-N-<slug>.md`",
+   "last_commit": "2026-05-16",
+   "refs": 4
+  },
+  {
+   "path": "workspace/templates/v4-roadmap.md",
+   "area": "workspace",
+   "bytes": 1408,
+   "title": "v4-roadmap.md \u2014 template for `02-roadmap.md`",
+   "last_commit": "2026-05-16",
+   "refs": 4
+  },
+  {
+   "path": "workspace/templates/v4-schema.md",
+   "area": "workspace",
+   "bytes": 4426,
+   "title": "v4 schema \u2014 full file conventions",
+   "last_commit": "2026-05-16",
+   "refs": 1
+  },
+  {
+   "path": "workspace/templates/v4-session-marker.md",
+   "area": "workspace",
+   "bytes": 1643,
+   "title": "v4 session marker format",
+   "last_commit": "2026-05-15",
+   "refs": 1
+  },
+  {
+   "path": "workspace/tools/REGISTRY.md",
+   "area": "workspace",
+   "bytes": 4909,
+   "title": "TOOL REGISTRY \u2014 Workspace",
+   "last_commit": "2026-06-11",
+   "refs": 27
+  },
+  {
+   "path": "workspace/tools/boot.md",
+   "area": "workspace",
+   "bytes": 519,
+   "title": "TOOL: boot",
+   "last_commit": "2026-05-07",
+   "refs": 1
+  },
+  {
+   "path": "workspace/tools/dag.md",
+   "area": "workspace",
+   "bytes": 3101,
+   "title": "TOOL: dag",
+   "last_commit": "2026-05-18",
+   "refs": 0
+  },
+  {
+   "path": "workspace/tools/goal.md",
+   "area": "workspace",
+   "bytes": 3952,
+   "title": "tool: goal",
+   "last_commit": "2026-05-18",
+   "refs": 4
+  },
+  {
+   "path": "workspace/tools/index.md",
+   "area": "workspace",
+   "bytes": 594,
+   "title": "TOOL: index",
+   "last_commit": "2026-05-07",
+   "refs": 15
+  },
+  {
+   "path": "workspace/tools/log.md",
+   "area": "workspace",
+   "bytes": 486,
+   "title": "TOOL: log",
+   "last_commit": "2026-05-07",
+   "refs": 46
+  },
+  {
+   "path": "workspace/tools/memory.md",
+   "area": "workspace",
+   "bytes": 646,
+   "title": "TOOL: memory",
+   "last_commit": "2026-05-07",
+   "refs": 2
+  },
+  {
+   "path": "workspace/tools/predicate.md",
+   "area": "workspace",
+   "bytes": 4015,
+   "title": "tool: predicate",
+   "last_commit": "2026-05-18",
+   "refs": 0
+  },
+  {
+   "path": "workspace/tools/python-env.md",
+   "area": "workspace",
+   "bytes": 4085,
+   "title": "AXON Python Environment \u2014 Config & Findings",
+   "last_commit": "2026-05-08",
+   "refs": 2
+  },
+  {
+   "path": "workspace/tools/queue.md",
+   "area": "workspace",
+   "bytes": 545,
+   "title": "TOOL: queue",
+   "last_commit": "2026-05-07",
+   "refs": 1
+  },
+  {
+   "path": "workspace/tools/synapse-infer.md",
+   "area": "workspace",
+   "bytes": 2264,
+   "title": "synapse-infer",
+   "last_commit": "2026-05-18",
+   "refs": 1
+  },
+  {
+   "path": "workspace/tools/synapse-suggest.md",
+   "area": "workspace",
+   "bytes": 4605,
+   "title": "synapse-suggest",
+   "last_commit": "2026-06-11",
+   "refs": 0
+  },
+  {
+   "path": "workspace/tools/synapse-validate.md",
+   "area": "workspace",
+   "bytes": 1775,
+   "title": "synapse-validate",
+   "last_commit": "2026-05-18",
+   "refs": 1
+  }
+ ]
+}
