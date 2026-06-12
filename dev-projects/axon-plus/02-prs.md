@@ -66,7 +66,7 @@ Updated: 2026-06-11  ·  Total PRs: 27 (firm) · +2 conditional in 02-prs.deferr
 - **Spec:** 03-prs/PR-008.md (not written yet)
 
 ## PR-009 — A: program shadows for stable neurons (fallback lever)
-- **Status:** not-started
+- **Status:** merged locally as SECTIONAL READS re-scope (14e9d47, 2026-06-12 — checkpoint-w1)
 - **Phase:** 1-tokens-round1
 - **Complexity:** M
 - **Scope:** hash-gated shadow of program sources · warm-boot reads · equivalence

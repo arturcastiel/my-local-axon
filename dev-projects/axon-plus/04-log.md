@@ -64,3 +64,14 @@ PR-003 menu-render check (4fca0ab) · PR-004 doc census (delivered) · PR-005 in
   test-pinned. boot envelope 2,960→593; boot-menu 24,703→22,341 (−16% wave-to-date).
 - backup/v03 + bundle v03 → GitHub. W1: 3/4. Next: PR-009 program shadows, then the
   RE-PLAN CHECKPOINT closes the wave.
+
+### PR-009 — sectional reads via compiled TOCs · commit 14e9d47 (LOCAL) · 2026-06-12
+- TOC in every .cmp.md (range accuracy = CI); code-dev router: 7,568 → 1,090/routed read
+  (−86%). 7 programs compiled. Re-scope per checkpoint-w1 (shadows redundant vs .cmp).
+
+## WAVE 1 COMPLETE — 2026-06-12
+boot-menu 26,480 → 22,341 (−16%, mechanical floor reached) · boot envelope −80% ·
+menu probes → 1 snapshot · compile pipeline real (7/191, 10–43%/read) · routed reads −86%.
+Checkpoint-w1: A-targets proposal + below-floor paths (menu-as-template, hash-attested
+warm boot = autonomous candidates; kernel-in-system-prompt, kernel diet = owner-gated).
+backup/v01..v04 + bundles on GitHub. Push queue: 4 (GitLab outage).
