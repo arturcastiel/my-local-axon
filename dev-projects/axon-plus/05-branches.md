@@ -17,3 +17,12 @@ updated: 2026-06-11
 | axon-plus/pr-13-constraints-registry | PR-013 | merged local+deleted | c14f2e7 | axon-plus: pr-13 — constraints registry |
 | axon-plus/pr-14-quality-loop | PR-014 | merged local+deleted | 627e342 | axon-plus: pr-14 — quality loop |
 | axon-plus/pr-15-ramp-gate | PR-015 | merged local+deleted | c7d27c5 | axon-plus: pr-15 — autonomy ramp gate |
+| axon-plus/pr-16-situate | PR-016 | merged+pushed | 28b75e8 | axon-plus: pr-16 — situation-trigger engine |
+| axon-plus/pr-17-footer | PR-017 | data-layer merged+pushed | a1a4ab6 | axon-plus: pr-17 — footer data layer (activation kernel-staged) |
+| axon-plus/pr-18-phrases-rollout | PR-018 | merged+pushed | 2b14315 | axon-plus: pr-18 — dispatch-phrases rollout |
+| axon-plus/pr-19-suggester-accuracy | PR-019 | merged+pushed | (v17) | axon-plus: pr-19 — synapse-infer accuracy gate |
+| axon-plus/k1k2-footer-activation | K1+K2 | merged+pushed | c8e5b59 | axon-plus: K1+K2 — footer activation (kernel) |
+| axon-plus/k3-boot-token-recovery | K3 | merged+pushed | dc93ad8 | axon-plus: K3 — boot token recovery |
+| axon-plus/k4-dispatch-guard | K4 | merged+pushed | (v20) | axon-plus: K4 — dispatch path guard |
+| axon-plus/pr-20-workflow-visibility | PR-020 | merged+pushed | (v21) | axon-plus: pr-20 — workflow run visibility |
+| axon-plus/pr-21a-workflow-designer | PR-021a | merged+pushed | (v22) | axon-plus: pr-21a — workflow designer loop-close |

@@ -130,7 +130,7 @@ Updated: 2026-06-11  ·  Total PRs: 27 (firm) · +2 conditional in 02-prs.deferr
 - **Spec:** 03-prs/PR-016.md (not written yet)
 
 ## PR-017 — B: activate orchestrator footer (≤3 ranked + why + how-to)
-- **Status:** not-started
+- **Status:** DATA LAYER merged (a1a4ab6, 2026-06-15) · ACTIVATION (BOOT.md+OUTPUT-LAYER.md) in KERNEL-REVIEW.md K1/K2
 - **Phase:** 3-quality-discover
 - **Complexity:** S
 - **Scope:** PR-112 machinery live · noise ceiling enforced
@@ -138,7 +138,7 @@ Updated: 2026-06-11  ·  Total PRs: 27 (firm) · +2 conditional in 02-prs.deferr
 - **Spec:** 03-prs/PR-017.md (not written yet)
 
 ## PR-018 — B: dispatch-phrases + cross-links full rollout
-- **Status:** not-started
+- **Status:** merged (2b14315, 2026-06-15 — pushed)
 - **Phase:** 3-quality-discover
 - **Complexity:** M
 - **Scope:** code-dev/workflow/mode surface · dispatch fixture suite extended
@@ -146,7 +146,7 @@ Updated: 2026-06-11  ·  Total PRs: 27 (firm) · +2 conditional in 02-prs.deferr
 - **Spec:** 03-prs/PR-018.md (not written yet)
 
 ## PR-019 — E: synapse-suggester accuracy (measure wrong-rate, fix, pin)
-- **Status:** not-started
+- **Status:** merged (v17, 2026-06-15 — 100% accurate, now gated)
 - **Phase:** 4-workflow-designer
 - **Complexity:** M
 - **Scope:** wrong-suggestion fixtures · evidence fix · regression pins
@@ -154,7 +154,7 @@ Updated: 2026-06-11  ·  Total PRs: 27 (firm) · +2 conditional in 02-prs.deferr
 - **Spec:** 03-prs/PR-019.md (not written yet)
 
 ## PR-020 — E: workflow run visibility (narrated step blocks)
-- **Status:** not-started
+- **Status:** merged (v21, 2026-06-15 — pushed)
 - **Phase:** 4-workflow-designer
 - **Complexity:** M
 - **Scope:** per-step state block: program · phase · why-chosen · next
@@ -162,7 +162,7 @@ Updated: 2026-06-11  ·  Total PRs: 27 (firm) · +2 conditional in 02-prs.deferr
 - **Spec:** 03-prs/PR-020.md (not written yet)
 
 ## PR-021a — E: designer dialogue → generated workflow yml + validate/simulate
-- **Status:** not-started
+- **Status:** merged (v22, 2026-06-15 — pushed)
 - **Phase:** 4-workflow-designer
 - **Complexity:** M
 - **Scope:** interrogation flow · yml generation · schema validation · simulate
