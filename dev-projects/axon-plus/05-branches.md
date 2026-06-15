@@ -15,3 +15,5 @@ updated: 2026-06-11
 | axon-plus/pr-11-loop-designer | PR-011 | merged local+deleted | 20071a9 | axon-plus: pr-11 — loop designer |
 | axon-plus/pr-12-goal-define | PR-012 | merged local+deleted | 1132184 | axon-plus: pr-12 — goal-define mode |
 | axon-plus/pr-13-constraints-registry | PR-013 | merged local+deleted | c14f2e7 | axon-plus: pr-13 — constraints registry |
+| axon-plus/pr-14-quality-loop | PR-014 | merged local+deleted | 627e342 | axon-plus: pr-14 — quality loop |
+| axon-plus/pr-15-ramp-gate | PR-015 | merged local+deleted | c7d27c5 | axon-plus: pr-15 — autonomy ramp gate |
