@@ -112,3 +112,54 @@ Push queue: 8 (GitLab outage). Next: Wave 3 — quality loop + discoverability.
 ### PR-015 — autonomy ramp gate · commit c7d27c5 (LOCAL) · 2026-06-15
 - S-fix autonomy EARNED (3 clean cycles) + REVOCABLE (failure re-locks, human unlock).
   ramp-status/record/lock/unlock; quality-loop consults before applying. 8 tests. backup/v10.
+
+### Push queue FLUSHED — 2026-06-15
+GitLab ci.tno.nl write access restored. Ground truth (git ls-remote): server main =
+local main = c7d27c5 — all 15 PRs synced. backup/v01–v10 milestone branches pushed
+(server-side per-PR history). my-axon bundles v01–v10 also on GitHub. Nothing lost
+across the outage. Push queue: 0.
+
+### Self-audit workflow (w3g1myq00) — 2026-06-15
+Multi-agent adversarial audit (36 agents, 6 dimensions × per-finding verifiers + 3 designs).
+27 findings raised → 19 CONFIRMED (8 refuted by adversarial verify). 1 critical (define
+--force autonomy bypass) + 9 high. Triage: audit/TRIAGE-2026-06-15.md. Remediation in
+3 gated PRs (R1 enforcement/autonomy · R2 lossless · R3 robustness) before resuming W3
+discoverability. Kernel-file items (BOOT.md, COMMANDS.md) + 2 design questions flagged
+for owner. PR-016/017/018 designs saved (03-prs/PR-01X-DESIGN.md).
+
+### Audit remediation R1+R2+R3 — merged 2026-06-15 (5166469, bf0ca6d, 6f45c86)
+R1 enforcement/autonomy (critical define --force wall + receipts verify-exempt/CLI-regex +
+menu-rendered dead-branch + dead receipt reuse + NaN) · R2 lossless (snapshot fallback +
+boot W:tool-registry) · R3 robustness (quality_loop crashes/dedupe + constraints + token_bench).
+13/19 audit defects fixed autonomously; 4 flagged for owner (BOOT.md, COMMANDS.md, ramp
+integrity, compiled-staleness-runtime). backup/v11–v13 pushed. Resuming W3 PR-016.
+
+### PR-016 — situation-trigger engine · commit 28b75e8 · 2026-06-15
+- situate tool (4 detectors, ≤1 ceiling, dedup, why+command mandatory) wired into
+  orchestrator + anti-orphan lock. Implemented from workflow w3g1myq00 design. 7 tests.
+  Gate catch: resweep --state-json drift guard → flag renamed --signals. backup/v14.
+  W3: 3/5 (PR-016 done; PR-017 footer render + PR-018 phrases remain).
+
+### PR-017 — footer data layer · commit a1a4ab6 · 2026-06-15
+- anticipate footer_candidates: {name, why, command, score} shape (D3 fix) + silence
+  contract. 4 tests. ACTIVATION (BOOT.md tick-write + OUTPUT-LAYER.md render) HELD for
+  owner — KERNEL-REVIEW.md K1/K2 (kernel edits not made silently). backup/v15.
+- KERNEL-REVIEW.md created: K1/K2 (pr-17 wiring) + K3 (boot token recovery) + K4
+  (COMMANDS.md dispatch guard) + D1/D2 design questions. One owner review surface.
+
+### PR-018 — dispatch-phrases rollout · commit 2b14315 · 2026-06-15
+- 19 programs phrased + cross-links + fixture re-pointed + pattern doc. Lift 8%→77% P@1,
+  92% P@3. 3 residuals pinned top-3. reduce-surface held. backup/v16.
+
+## WAVE 3 COMPLETE — 2026-06-15
+F quality loop (PR-014 generate→verify→report + PR-015 earned/revocable ramp) ·
+B discoverability (PR-016 situation engine + PR-017 footer data layer + PR-018 phrases).
+PR-017 ACTIVATION (footer render) staged in KERNEL-REVIEW.md K1/K2 (kernel wiring).
+Plus the self-audit remediation (R1/R2/R3, 13 defects). 22/27 PRs merged (+R1-3) ·
+Wave 4 (workflow designer) next.
+
+### K1+K2 — footer activation (kernel) · commit c8e5b59 · 2026-06-15
+- BOOT.md tick-write (anticipate-fed, gated, honest silence) + OUTPUT-LAYER why+command+hint
+  render. Footer activated for boot+menu. 2 wiring locks. First authorized kernel edits.
+  Per-turn-chat refresh = noted KERNEL-SLIM item (per-change confirm). PR-017 COMPLETE.
+  backup/v18.
