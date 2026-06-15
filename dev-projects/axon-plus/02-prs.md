@@ -106,7 +106,7 @@ Updated: 2026-06-11  ·  Total PRs: 27 (firm) · +2 conditional in 02-prs.deferr
 - **Spec:** 03-prs/PR-013.md (not written yet)
 
 ## PR-014 — F: quality-loop program (scan battery → triage → prepared diffs)
-- **Status:** not-started
+- **Status:** merged locally (627e342, 2026-06-12 — push queued)
 - **Phase:** 3-quality-discover
 - **Complexity:** M
 - **Scope:** generate-then-drain · report-only mode · weekly cron · receipts
@@ -114,7 +114,7 @@ Updated: 2026-06-11  ·  Total PRs: 27 (firm) · +2 conditional in 02-prs.deferr
 - **Spec:** 03-prs/PR-014.md (not written yet)
 
 ## PR-015 — F: autonomy ramp gate (3 green cycles → S-fix live)
-- **Status:** not-started
+- **Status:** merged locally (c7d27c5, 2026-06-15 — push queued)
 - **Phase:** 3-quality-discover
 - **Complexity:** S
 - **Scope:** ramp config + breaker · S-fix criteria (one-file, tested, crucible-green, undoable)

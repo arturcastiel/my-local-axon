@@ -103,3 +103,12 @@ Goal C live end-to-end (engine + designer: contract/iterate/replan/budget-wall +
 4-fork authoring) · Goal D live (goal-define interrogation, study --mode=goals,
 scoped-constraints architecture with auto-routing + checklists). 13/27 PRs (48%).
 Push queue: 8 (GitLab outage). Next: Wave 3 — quality loop + discoverability.
+
+### PR-014 — quality loop · commit 627e342 (LOCAL) · 2026-06-12
+- Battery live (47 findings cycle-0: 27 residue + 19 dead-code + 1 igap); verify slots,
+  shareability routing, report-only ramp, C-contract pilot (budget=3 owner-signed ramp).
+- Gate catches: cron program-string form (cron-conformance). backup/v09. W3: 1/5.
+
+### PR-015 — autonomy ramp gate · commit c7d27c5 (LOCAL) · 2026-06-15
+- S-fix autonomy EARNED (3 clean cycles) + REVOCABLE (failure re-locks, human unlock).
+  ramp-status/record/lock/unlock; quality-loop consults before applying. 8 tests. backup/v10.
