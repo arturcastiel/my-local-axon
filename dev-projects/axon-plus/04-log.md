@@ -163,3 +163,54 @@ Wave 4 (workflow designer) next.
   render. Footer activated for boot+menu. 2 wiring locks. First authorized kernel edits.
   Per-turn-chat refresh = noted KERNEL-SLIM item (per-change confirm). PR-017 COMPLETE.
   backup/v18.
+
+### PR-026 — personal-project quarantine · commit 12d6fad · 2026-06-16
+Re-scoped (owner 2026-06-16: "everything adjoint related is personal — mark, delete
+later"). Original census adjoint-6 list was stale: 5 were live CHAT/PLAN OS programs
+(2 restored by an earlier C4 fix in mode-router). Marked the true personal footprint —
+adjoint leakage (OBJECTIVE-FUNCTION-INTERFACE, OPM template) + reservoir/OPM demo
+cluster — via 7 deprecation-log entries (no sunset, owner-gated) + workspace/QUARANTINE.md
+register + inline marker + tests/test_quarantine.py (6). Nothing deleted; suite green
+(crucible 30/0). Deletion procedure documented (cites _reservoir-manifest.md). Keeper:
+AXON-DOCS-RAG-DEVELOPMENT.md (axon's own RAG work). W5: 1/5.
+
+### PR-027 — doc floor + navigable index · commits 9d8d804 + 0013f23 · 2026-06-16
+doc_index.py (deterministic DOC-INDEX.md, 485 docs/8 areas, excl my-axon/caches/fixtures,
+self-exclusion) + project_doc_floor.py (_meta hard floor, plan advisory, graceful absent
+my-axon) wired into freshness check+refresh; both registered. freshness refresh reconciled
+pre-existing program-corpus drift (AXON-DOCS/code-map/program-registry/coverage, +3 progs).
+7 new tests. PROCESS SLIP: 9d8d804 committed on red gate (bundled verdict+commit); caught,
+fixed forward in 0013f23 (3 freshness pins + onboarding counts 168→170). Gate green 30/0.
+Lesson logged: verdict-check and commit must be separate steps. W5: 2/5.
+
+### PR-024 — weak-tier strict overlay · commit 17c5e8e · 2026-06-16
+tier_detect.py (host-model→tier via tier-manifest.json: pins→heuristics→default; weak
+wins ties; undeclared never guessed) + weak-tier overlay (restates Rules 12/6/identity/
+no-fallback + ack token) + BOOT.md STEP 2b wiring (subsystem edit, authorized). 9 tests.
+opus-4-8→strong (no overlay this session). Commit-trailer hook caught an uppercase PR-N
+ref in the body — reworded. Gate green 30/0. W5: 3/5 (024,026,027). Goal G: 1/2 (025 next).
+
+### PR-025 + PR-021b — conformance scorecard + synapse generation · commit 06ec172 · 2026-06-16
+PR-025 (Goal G): conformance_scorecard.py — offline deterministic grader over 3 temptation
+scenarios (menu-render/mimic-vs-execute/long-output) + weak-tier ack; crucible WARN control
+(liveness surface + keystone advisory). PR-021b (Goal E, critical-path tail): synapse_scaffold.py
+— scaffold missing PROGRAM with neuron-contract v1.1 header, tests-or-STUB (STUB=R13-exempt;
+--active adds test), auto-register; wired into workflow-new PHASE-C (fixes latent register-tool
+misuse). PROCESS: wrote 021b files during 025's gate-wait → 025 gate picked them up half-wired
+(registry-drift/keystone/liveness/pytest red); recovered by finishing 021b + one combined green
+gate + one combined commit. Both tools registered (171→173), keystone advisory added. Gate 31/0.
+W5: 4/5 (024,025,026,027). Critical path COMPLETE (021b). Remaining: PR-028 bookend.
+
+### PR-028 — final vs-baseline measurement · commit 64c7e6d · 2026-06-16
+token_bench_compare.py (pure compare + sign-off renderer) + token_bench epilog wiring +
+final report. boot-menu 32593→22321 (−31.5%), total 48483→38642 (−20.3%). 6 tests.
+counts 173→174. Gate 31/0.
+
+## ════ AXON-PLUS COMPLETE — 2026-06-16 ════
+All 27 DAG nodes done (25 merged + 2 complete). Wave 5 finished this session: PR-026
+(quarantine), PR-027 (doc floor+index), PR-024 (weak-tier overlay), PR-025 (conformance
+scorecard), PR-021b (synapse generation — critical-path tail), PR-028 (final measurement).
+Commits: 12d6fad, 9d8d804+0013f23, 17c5e8e, 06ec172, 64c7e6d. Every PR crucible-green
+(31 controls, 0 blocking). Goal A bookend: −20.3% total tokens (−31.5% boot-menu).
+_meta status → complete. Process note: one red-gate slip (9d8d804) recovered fix-forward;
+discipline correction logged (verdict-check separate from commit).

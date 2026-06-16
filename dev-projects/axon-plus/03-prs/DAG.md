@@ -2,7 +2,7 @@
 # DAG · plan · project:axon-plus
 
 - schema-version: `v1`
-- generated:      `2026-06-11T16:55:05Z`
+- generated:      `2026-06-16T08:22:51Z`
 - generator:      `tools/dag.py`
 - nodes:          27
 - edges:          19
@@ -12,33 +12,33 @@
 
 | id | kind | name | label | status |
 |----|------|------|-------|--------|
-| PR-001 | pr | token bench + baseline | token bench + baseline | pending |
-| PR-002 | pr | execution receipts | execution receipts | pending |
-| PR-003 | pr | menu-render check | menu-render check | pending |
-| PR-004 | pr | doc census | doc census | pending |
-| PR-005 | pr | census discrepancy fixes | census discrepancy fixes | pending |
-| PR-006 | pr | menu aggregation | menu aggregation | pending |
-| PR-007 | pr | compile pilot | compile pilot | pending |
-| PR-008 | pr | brief envelopes | brief envelopes | pending |
-| PR-009 | pr | program shadows | program shadows | pending |
-| PR-010 | pr | convergence contract+runner | convergence contract+runner | pending |
-| PR-011 | pr | loop designer | loop designer | pending |
-| PR-012 | pr | goal-define mode | goal-define mode | pending |
-| PR-013 | pr | constraints registry | constraints registry | pending |
-| PR-014 | pr | quality-loop program | quality-loop program | pending |
-| PR-015 | pr | autonomy ramp gate | autonomy ramp gate | pending |
-| PR-016 | pr | situation triggers | situation triggers | pending |
-| PR-017 | pr | orchestrator footer live | orchestrator footer live | pending |
-| PR-018 | pr | phrases rollout | phrases rollout | pending |
-| PR-019 | pr | suggester accuracy | suggester accuracy | pending |
-| PR-020 | pr | run visibility | run visibility | pending |
-| PR-021a | pr | designer dialogue→yml | designer dialogue→yml | pending |
-| PR-021b | pr | synapse generation | synapse generation | pending |
-| PR-024 | pr | weak-tier overlay | weak-tier overlay | pending |
-| PR-025 | pr | conformance scorecard | conformance scorecard | pending |
-| PR-026 | pr | stale sweep | stale sweep | pending |
-| PR-027 | pr | doc floor+index | doc floor+index | pending |
-| PR-028 | pr | final vs-baseline measurement | final vs-baseline measurement | pending |
+| PR-001 | pr | token bench + baseline | token bench + baseline | merged |
+| PR-002 | pr | execution receipts | execution receipts | merged |
+| PR-003 | pr | menu-render check | menu-render check | merged |
+| PR-004 | pr | doc census | doc census | complete |
+| PR-005 | pr | census discrepancy fixes | census discrepancy fixes | complete |
+| PR-006 | pr | menu aggregation | menu aggregation | merged |
+| PR-007 | pr | compile pilot | compile pilot | merged |
+| PR-008 | pr | brief envelopes | brief envelopes | merged |
+| PR-009 | pr | program shadows | program shadows | merged |
+| PR-010 | pr | convergence contract+runner | convergence contract+runner | merged |
+| PR-011 | pr | loop designer | loop designer | merged |
+| PR-012 | pr | goal-define mode | goal-define mode | merged |
+| PR-013 | pr | constraints registry | constraints registry | merged |
+| PR-014 | pr | quality-loop program | quality-loop program | merged |
+| PR-015 | pr | autonomy ramp gate | autonomy ramp gate | merged |
+| PR-016 | pr | situation triggers | situation triggers | merged |
+| PR-017 | pr | orchestrator footer live | orchestrator footer live | merged |
+| PR-018 | pr | phrases rollout | phrases rollout | merged |
+| PR-019 | pr | suggester accuracy | suggester accuracy | merged |
+| PR-020 | pr | run visibility | run visibility | merged |
+| PR-021a | pr | designer dialogue→yml | designer dialogue→yml | merged |
+| PR-021b | pr | synapse generation | synapse generation | merged |
+| PR-024 | pr | weak-tier overlay | weak-tier overlay | merged |
+| PR-025 | pr | conformance scorecard | conformance scorecard | merged |
+| PR-026 | pr | stale sweep | stale sweep | merged |
+| PR-027 | pr | doc floor+index | doc floor+index | merged |
+| PR-028 | pr | final vs-baseline measurement | final vs-baseline measurement | merged |
 
 ## Edges
 
