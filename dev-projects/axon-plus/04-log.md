@@ -214,3 +214,21 @@ Commits: 12d6fad, 9d8d804+0013f23, 17c5e8e, 06ec172, 64c7e6d. Every PR crucible-
 (31 controls, 0 blocking). Goal A bookend: −20.3% total tokens (−31.5% boot-menu).
 _meta status → complete. Process note: one red-gate slip (9d8d804) recovered fix-forward;
 discipline correction logged (verdict-check separate from commit).
+
+### Remaining-scope pass (owner: "act on, gate approved") — 2026-06-16
+ACTED + shipped (gated, committed, pushed):
+- Goal A sign-off: checkbox CHECKED in final-2026-06-16.md (owner "gate approved" = attestation).
+- D1 ramp-state integrity: HMAC-signed quality.ramp.json (key in memory/local/, gitignored);
+  ramp_status fail-closed on tamper/unsigned; new ramp-verify. commit 937e00b. 3 new tests.
+
+DEFERRED with reasons (recommend fresh context — protects quality + the lossless mandate):
+- Goal G real-model run: needs API/dual-agent budget; faking transcripts would violate
+  anti-mimicry. Framework shipped; running it is infra/owner-gated.
+- D2 runtime compiled-staleness: K4 ALREADY routes dispatch to source (runtime risk
+  mitigated). Proper fix = embed SourceSHA in the compiler header + recompile 10 artifacts
+  + detector/gate. MED value, compiler-internals surgery — deferred, approach documented.
+- A-backlog A2–A9 (★TOP-goal A-wave, ~−15k+ more tokens): each is lossless-sensitive and
+  needs capability-equivalence verification (PR-007 harness). Ordered by value: A2 warm-boot
+  (−12k, needs A8 session-digest), A3 menu-template (−3.5k), A9 doc sectional-reads (−80%
+  lookups), A8 session-digest, A4 compile-tail, A7 phase-packs, A5 registry-first, A6
+  byte-stable-prefix. Best run as a fresh careful wave, not crammed.
