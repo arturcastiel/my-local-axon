@@ -64,3 +64,11 @@ are written (cognition-frame, host-cap-*, code-dev-cmd, etc.). Pure runtime chur
 content change. FIX (fold into the wiki drift-fix work): add workspace/memory/ + root
 memory/ to doc_index EXCLUDE (like my-axon), and stop docgen listing volatile L:/W: keys.
 (Stray workflow-agent scratch memory/A8-*.md also removed this session.)
+
+## PLAN — tactical --budget 7 · 2026-06-17
+Wave 1 (7 PRs, dependency-ordered): PR-001 wiki scaffold+template+INDEX-skeleton · PR-002
+freshness/doc_index wiring (+runtime-memory drift fix) · PR-003 code-dev manual · PR-004
+workflow manual · PR-005 library-dev manual · PR-006 INDEX+cross-links · PR-007 wiki test
+harness (Guarded by). DAG: 7 nodes/11 edges, critical-path 001→003→006→007.
+Peers deferred → 02-prs.deferred.md (goal-define, plan, chat, harness-builder, skills/deep-research).
+Source material = study/deep/00-06 (verified hybrid examples). Next: code-dev pr.
