@@ -1,0 +1,130 @@
+{
+  "schema": "axon-dag",
+  "schema-version": "v1",
+  "level": "plan",
+  "owner": "project:axon-new-doc",
+  "generated": "2026-06-17T17:00:00Z",
+  "generator": "tools/dag.py",
+  "validated": true,
+  "critical-path": [
+    "PR-001",
+    "PR-003",
+    "PR-006",
+    "PR-007"
+  ],
+  "nodes": [
+    {
+      "id": "PR-001",
+      "kind": "pr",
+      "name": "wiki scaffold + template + INDEX skeleton",
+      "label": "wiki scaffold + template + INDEX skeleton",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-002",
+      "kind": "pr",
+      "name": "freshness + doc_index wiring (+runtime-memory fix)",
+      "label": "freshness + doc_index wiring (+runtime-memory fix)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-003",
+      "kind": "pr",
+      "name": "code-dev manual",
+      "label": "code-dev manual",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-004",
+      "kind": "pr",
+      "name": "workflow manual",
+      "label": "workflow manual",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-005",
+      "kind": "pr",
+      "name": "library-dev manual",
+      "label": "library-dev manual",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-006",
+      "kind": "pr",
+      "name": "INDEX population + cross-links",
+      "label": "INDEX population + cross-links",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-007",
+      "kind": "pr",
+      "name": "wiki test harness (Guarded by)",
+      "label": "wiki test harness (Guarded by)",
+      "status": "pending",
+      "child-dag": null
+    }
+  ],
+  "edges": [
+    {
+      "from": "PR-001",
+      "to": "PR-002",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-001",
+      "to": "PR-003",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-001",
+      "to": "PR-004",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-001",
+      "to": "PR-005",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-003",
+      "to": "PR-006",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-004",
+      "to": "PR-006",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-005",
+      "to": "PR-006",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-003",
+      "to": "PR-007",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-004",
+      "to": "PR-007",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-005",
+      "to": "PR-007",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-006",
+      "to": "PR-007",
+      "kind": "depends"
+    }
+  ]
+}

@@ -15,4 +15,5 @@ updated:         2026-06-17
 ## Working Context
 - Study(overview) DONE → study/overview.md (architecture map + 18 gaps + 8 doc targets).
 - GOAL SET (goal-ledger.md): usage-wiki for big programs (code-dev/workflow/library-dev + peers), run-verified examples, workspace/wiki/ tree.
-- STUDY DONE (overview + grades + deep-study; 6/7 families A). Next: code-dev plan.
+- PLAN drafted (tactical, budget 7): wave-1 = scaffold + freshness/doc_index-fix + flagship 3 + INDEX + tests.
+- 02-plan.md / 02-prs.md / 02-prs.deferred.md (peers) / 03-prs/DAG.json. Next: code-dev pr (per-PR specs).
