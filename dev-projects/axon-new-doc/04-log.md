@@ -44,3 +44,15 @@ CONTRACT is undecided: AXON programs are LLM-interpreted .md neurons (NOT shell-
 not in REGISTRY); only backing Python tools run deterministically. Must decide: runnable
 tool-commands vs labeled agent-session transcripts — gates ALL examples-readiness.
 Artifact: study/study-grades.md.
+
+## DEEP-STUDY + RE-GRADE — study FINISHED · 2026-06-17
+7 deep-readers (code-dev families ×4 + plan + chat + b-traps) ran backing tools for REAL
+output (hybrid contract). Artifacts: study/deep/00..06 (~98KB command-level reference +
+verified examples). RE-GRADE: cd-lifecycle A · cd-pr A · cd-safety-structure A ·
+cd-journal-state A · plan B · chat A · b-traps A. All examples_ready.
+Universal blocker RESOLVED: hybrid contract honored (CLI output where a tool exists;
+session-transcript-from-source for agent-interpreted neurons; boundary stated).
+Confirmed live: no `pr` tool, no `deep-research` program (it's a skill → wiki 'Skills' section).
+Remaining gaps non-blocking (mutating/auth surfaces left un-run by design; non-deterministic
+agent-runtime behavior) — not fixable by more reading. VERDICT: study FINISHED.
+phase-model: study → DONE. Next: code-dev plan.

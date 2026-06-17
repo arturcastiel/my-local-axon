@@ -13,8 +13,11 @@ internal/contributor architecture reference.
 ### Hardened (interrogation forks resolved)
 - **Scope:** flagship 3 (code-dev, workflow, library-dev) FIRST, then peers
   (goal-define, plan, chat, harness-builder, deep-research) — ~6–8 manuals total.
-- **Example bar:** every worked example uses REAL commands + expected output and is
-  RUN-VERIFIED against axon before shipping (anti-mimicry — never fabricated output).
+- **Example bar (HYBRID contract, owner 2026-06-17):** a worked example is EITHER (a) a
+  runnable `python3 axon.py <tool> ...` command shown with REAL verified output where a
+  tool backs the step, OR (b) a LABELED real AXON-session transcript (captured from an
+  actual boot+run, marked 'session transcript' — not claimed reader-re-runnable) for the
+  agent-driven program flow. NEVER fabricated. Most manuals mix both layers.
 - **Structure:** new `workspace/wiki/` tree (one manual per program) + `INDEX.md`,
   separate from the architecture `AXON-DOCS-*` reference; freshness + doc-index wired.
 
