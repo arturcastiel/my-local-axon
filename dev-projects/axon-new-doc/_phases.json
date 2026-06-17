@@ -6,7 +6,7 @@
       "name": "Study",
       "order": 1,
       "deps": [],
-      "status": "pending"
+      "status": "active"
     },
     {
       "id": "plan",
@@ -45,5 +45,5 @@
       "status": "pending"
     }
   ],
-  "updated": "2026-06-17T12:21:26.534931+00:00"
+  "updated": "2026-06-17T13:59:34.262730+00:00"
 }
