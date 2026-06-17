@@ -90,3 +90,16 @@ DELIVERED: workspace/wiki/ — 8 manual pages + INDEX + _template, freshness-gat
 tests/test_wiki.py. 39 labeled real examples (tool-runs executed + session-transcripts;
 anti-mimicry honored). All 6 acceptance criteria met. Phases study→plan→pr→log→audit DONE.
 Constraints satisfied: examples run-verified, freshness-gated, programs untouched.
+
+## BUGFIXES + README LINK (owner ask, post-completion) · 2026-06-17
+Owner asked to (1) link the wiki from README, (2) fix the bugs the study surfaced.
+Done (axon repo, commits 4917dc8):
+- README.md: Documentation section now leads with workspace/wiki/INDEX.md (user manuals)
+  distinct from AXON-DOCS architecture reference.
+- tools/library.py: '## Key Terms & Concepts' parse-drift FIXED (regex matches trailing
+  words; key_terms was always empty). + regression test.
+- tools/docgen.py: hardcoded '44 ACTIVE' → LIVE registry count (now 156); identity row
+  'Never disclosed' → gated-disclosure wording (removes the AXON-DOCS contradiction). + test.
+NOTE: these are sanctioned axon MAINTENANCE fixes (separate from the wiki authoring) — the
+programs-untouched constraint scoped the documentation work, not surfaced-bug remediation.
+Status of the 3 study bugs: doc_index drift ✓ (pr-2) · library Key Terms ✓ · docgen drift ✓.
