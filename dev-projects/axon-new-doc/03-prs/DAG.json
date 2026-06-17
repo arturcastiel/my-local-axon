@@ -3,7 +3,7 @@
   "schema-version": "v1",
   "level": "plan",
   "owner": "project:axon-new-doc",
-  "generated": "2026-06-17T17:00:00Z",
+  "generated": "2026-06-17T16:19:44Z",
   "generator": "tools/dag.py",
   "validated": true,
   "critical-path": [
@@ -18,7 +18,7 @@
       "kind": "pr",
       "name": "wiki scaffold + template + INDEX skeleton",
       "label": "wiki scaffold + template + INDEX skeleton",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -26,7 +26,7 @@
       "kind": "pr",
       "name": "freshness + doc_index wiring (+runtime-memory fix)",
       "label": "freshness + doc_index wiring (+runtime-memory fix)",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -34,7 +34,7 @@
       "kind": "pr",
       "name": "code-dev manual",
       "label": "code-dev manual",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -42,7 +42,7 @@
       "kind": "pr",
       "name": "workflow manual",
       "label": "workflow manual",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -50,7 +50,7 @@
       "kind": "pr",
       "name": "library-dev manual",
       "label": "library-dev manual",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -58,7 +58,7 @@
       "kind": "pr",
       "name": "INDEX population + cross-links",
       "label": "INDEX population + cross-links",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -66,7 +66,7 @@
       "kind": "pr",
       "name": "wiki test harness (Guarded by)",
       "label": "wiki test harness (Guarded by)",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     }
   ],

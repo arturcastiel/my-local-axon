@@ -72,3 +72,11 @@ workflow manual · PR-005 library-dev manual · PR-006 INDEX+cross-links · PR-0
 harness (Guarded by). DAG: 7 nodes/11 edges, critical-path 001→003→006→007.
 Peers deferred → 02-prs.deferred.md (goal-define, plan, chat, harness-builder, skills/deep-research).
 Source material = study/deep/00-06 (verified hybrid examples). Next: code-dev pr.
+
+## WAVE 1 COMPLETE — wiki foundation + flagship 3 · 2026-06-17
+7 PRs merged (d45b744 infra · 1d04948 manuals · 5621701 index+guard):
+pr-1 scaffold · pr-2 doc_index runtime-memory fix + wiki indexed · pr-3 code-dev manual
+(200L) · pr-4 workflow manual (344L) · pr-5 library-dev manual (239L) · pr-6 INDEX populated
+· pr-7 test_wiki.py guard (5 tests). All examples run-verified (hybrid). Every gate green.
+workspace/wiki/ now ships 3 flagship manuals + INDEX + template, freshness-gated.
+Next: WAVE 2 (peers: goal-define, plan, chat, harness-builder + skills/deep-research).
