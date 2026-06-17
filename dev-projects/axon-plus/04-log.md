@@ -232,3 +232,16 @@ DEFERRED with reasons (recommend fresh context — protects quality + the lossle
   (−12k, needs A8 session-digest), A3 menu-template (−3.5k), A9 doc sectional-reads (−80%
   lookups), A8 session-digest, A4 compile-tail, A7 phase-packs, A5 registry-first, A6
   byte-stable-prefix. Best run as a fresh careful wave, not crammed.
+
+### A-wave risk council + A7 ship · commit 7cdcd4e · 2026-06-16
+73-agent council (per-item: 3 lenses → de-risk architect → adversary → chair, looped to
+very-low) studied A2–A9 against "very-low/no risk". VERDICT: GO list EMPTY. Headline savings
+(~−15k, A2 warm-boot −12k) unrecoverable at very-low risk — boot READ is the ONLY kernel-in-
+context path under Claude Code, so any read-skip = identity-floor loss. Safety invariant: no
+token artifact may gate/skip/substitute reading the canonical source.
+DROP: A6 (boot-dep structural, permanent) · A5 (registry rows too thin) · A8 (sound but 3 live
+defects, carry). DESCOPE-to-very-low: A2 (drift diagnostic, 0 saving) · A3 (~0.4k comment-strip)
+· A9 (exact-match sectional) · A4 (only after D2 + pilot).
+OWNER 2026-06-16: "A7 fix only, shelve rest." SHIPPED A7 lossless constraints-scope fix
+(rows_for_scope project-aware superset + --project + tests; dormant gap, preventive, back-compat).
+A-wave shelved; D2/Goal-G-run remain owner/infra-gated. −20.3% bookend stands.
