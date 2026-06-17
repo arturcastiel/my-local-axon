@@ -1,65 +1,58 @@
-<!-- AUTO-GENERATED from DAG.json by tools/dag.py — do not hand-edit. -->
-# DAG · plan · project:axon-plus
+# Plan DAG (PR-16.5)
+**Nodes**: 19 · **Critical path**: 1 hops · **Parallel-safe entry points**: 19
 
-- schema-version: `v1`
-- generated:      `2026-06-16T08:22:51Z`
-- generator:      `tools/dag.py`
-- nodes:          27
-- edges:          19
-- critical-path:  PR-010 → PR-011 → PR-021a → PR-021b
+## Critical path
 
-## Nodes
+pr-001
 
-| id | kind | name | label | status |
-|----|------|------|-------|--------|
-| PR-001 | pr | token bench + baseline | token bench + baseline | merged |
-| PR-002 | pr | execution receipts | execution receipts | merged |
-| PR-003 | pr | menu-render check | menu-render check | merged |
-| PR-004 | pr | doc census | doc census | complete |
-| PR-005 | pr | census discrepancy fixes | census discrepancy fixes | complete |
-| PR-006 | pr | menu aggregation | menu aggregation | merged |
-| PR-007 | pr | compile pilot | compile pilot | merged |
-| PR-008 | pr | brief envelopes | brief envelopes | merged |
-| PR-009 | pr | program shadows | program shadows | merged |
-| PR-010 | pr | convergence contract+runner | convergence contract+runner | merged |
-| PR-011 | pr | loop designer | loop designer | merged |
-| PR-012 | pr | goal-define mode | goal-define mode | merged |
-| PR-013 | pr | constraints registry | constraints registry | merged |
-| PR-014 | pr | quality-loop program | quality-loop program | merged |
-| PR-015 | pr | autonomy ramp gate | autonomy ramp gate | merged |
-| PR-016 | pr | situation triggers | situation triggers | merged |
-| PR-017 | pr | orchestrator footer live | orchestrator footer live | merged |
-| PR-018 | pr | phrases rollout | phrases rollout | merged |
-| PR-019 | pr | suggester accuracy | suggester accuracy | merged |
-| PR-020 | pr | run visibility | run visibility | merged |
-| PR-021a | pr | designer dialogue→yml | designer dialogue→yml | merged |
-| PR-021b | pr | synapse generation | synapse generation | merged |
-| PR-024 | pr | weak-tier overlay | weak-tier overlay | merged |
-| PR-025 | pr | conformance scorecard | conformance scorecard | merged |
-| PR-026 | pr | stale sweep | stale sweep | merged |
-| PR-027 | pr | doc floor+index | doc floor+index | merged |
-| PR-028 | pr | final vs-baseline measurement | final vs-baseline measurement | merged |
+## Mermaid
 
-## Edges
+```mermaid
+graph LR
+  subgraph ?
+    pr_001[pr-001]:::cp
+    pr_002[pr-002]
+    pr_003[pr-003]
+    pr_004[pr-004]
+    pr_005[pr-005]
+    pr_006[pr-006]
+    pr_007[pr-007]
+    pr_008[pr-008]
+    pr_009[pr-009]
+    pr_010[pr-010]
+    pr_011[pr-011]
+    pr_012[pr-012]
+    pr_013[pr-013]
+    pr_014[pr-014]
+    pr_015[pr-015]
+    pr_016[pr-016]
+    pr_016_design[pr-016-design]
+    pr_017_design[pr-017-design]
+    pr_018_design[pr-018-design]
+  end
+  classDef cp fill:#ffe,stroke:#f80,stroke-width:2px
+```
 
-| from | to | kind |
-|------|----|------|
-| PR-001 | PR-006 | depends |
-| PR-001 | PR-007 | depends |
-| PR-001 | PR-008 | depends |
-| PR-007 | PR-009 | depends |
-| PR-010 | PR-011 | depends |
-| PR-012 | PR-013 | depends |
-| PR-010 | PR-014 | depends |
-| PR-014 | PR-015 | depends |
-| PR-011 | PR-021a | depends |
-| PR-019 | PR-021a | depends |
-| PR-021a | PR-021b | depends |
-| PR-002 | PR-024 | depends |
-| PR-024 | PR-025 | depends |
-| PR-004 | PR-026 | depends |
-| PR-026 | PR-027 | depends |
-| PR-006 | PR-028 | depends |
-| PR-007 | PR-028 | depends |
-| PR-008 | PR-028 | depends |
-| PR-009 | PR-028 | depends |
+## Topological order
+
+| # | PR | Wave | Deps |
+|---|----|------|------|
+| 1 | pr-001 | ? | — |
+| 2 | pr-002 | ? | — |
+| 3 | pr-003 | ? | — |
+| 4 | pr-004 | ? | — |
+| 5 | pr-005 | ? | — |
+| 6 | pr-006 | ? | — |
+| 7 | pr-007 | ? | — |
+| 8 | pr-008 | ? | — |
+| 9 | pr-009 | ? | — |
+| 10 | pr-010 | ? | — |
+| 11 | pr-011 | ? | — |
+| 12 | pr-012 | ? | — |
+| 13 | pr-013 | ? | — |
+| 14 | pr-014 | ? | — |
+| 15 | pr-015 | ? | — |
+| 16 | pr-016 | ? | — |
+| 17 | pr-016-design | ? | — |
+| 18 | pr-017-design | ? | — |
+| 19 | pr-018-design | ? | — |

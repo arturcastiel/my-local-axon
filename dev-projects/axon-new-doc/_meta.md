@@ -1,9 +1,9 @@
 # Project: axon new documentation
 slug:            axon-new-doc
 schema-version:  v4
-status:          active
+status:          complete
 legacy:          false
-phase:           plan
+phase:           audit
 workflow-step:   build
 branch:          main
 codebase:        /home/arturcastiel/projects/new-axon/axon
