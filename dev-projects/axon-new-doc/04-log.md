@@ -80,3 +80,13 @@ pr-1 scaffold · pr-2 doc_index runtime-memory fix + wiki indexed · pr-3 code-d
 · pr-7 test_wiki.py guard (5 tests). All examples run-verified (hybrid). Every gate green.
 workspace/wiki/ now ships 3 flagship manuals + INDEX + template, freshness-gated.
 Next: WAVE 2 (peers: goal-define, plan, chat, harness-builder + skills/deep-research).
+
+## ════ AXON-NEW-DOC COMPLETE — 2026-06-17 ════
+Goal MET: usage-wiki for the big AXON programs. 13 PRs across 2 waves, all crucible-green.
+Wave 1 (d45b744/1d04948/5621701): scaffold + doc_index-fix + code-dev/workflow/library-dev
+manuals + INDEX + test_wiki guard. Wave 2 (efbe705): goal-define/plan/chat/harness-builder
+manuals + skills.md (deep-research).
+DELIVERED: workspace/wiki/ — 8 manual pages + INDEX + _template, freshness-gated, guarded by
+tests/test_wiki.py. 39 labeled real examples (tool-runs executed + session-transcripts;
+anti-mimicry honored). All 6 acceptance criteria met. Phases study→plan→pr→log→audit DONE.
+Constraints satisfied: examples run-verified, freshness-gated, programs untouched.

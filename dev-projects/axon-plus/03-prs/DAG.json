@@ -1,325 +1,50 @@
 {
-  "schema": "axon-dag",
-  "schema-version": "v1",
-  "level": "plan",
-  "owner": "project:axon-plus",
-  "generated": "2026-06-16T08:22:51Z",
-  "generator": "tools/dag.py",
-  "validated": true,
-  "critical-path": [],
+  "ok": true,
   "nodes": [
-    {
-      "id": "PR-001",
-      "kind": "pr",
-      "name": "token bench + baseline",
-      "label": "token bench + baseline",
-      "status": "merged",
-      "child-dag": null
-    },
-    {
-      "id": "PR-002",
-      "kind": "pr",
-      "name": "execution receipts",
-      "label": "execution receipts",
-      "status": "merged",
-      "child-dag": null
-    },
-    {
-      "id": "PR-003",
-      "kind": "pr",
-      "name": "menu-render check",
-      "label": "menu-render check",
-      "status": "merged",
-      "child-dag": null
-    },
-    {
-      "id": "PR-004",
-      "kind": "pr",
-      "name": "doc census",
-      "label": "doc census",
-      "status": "complete",
-      "child-dag": null
-    },
-    {
-      "id": "PR-005",
-      "kind": "pr",
-      "name": "census discrepancy fixes",
-      "label": "census discrepancy fixes",
-      "status": "complete",
-      "child-dag": null
-    },
-    {
-      "id": "PR-006",
-      "kind": "pr",
-      "name": "menu aggregation",
-      "label": "menu aggregation",
-      "status": "merged",
-      "child-dag": null
-    },
-    {
-      "id": "PR-007",
-      "kind": "pr",
-      "name": "compile pilot",
-      "label": "compile pilot",
-      "status": "merged",
-      "child-dag": null
-    },
-    {
-      "id": "PR-008",
-      "kind": "pr",
-      "name": "brief envelopes",
-      "label": "brief envelopes",
-      "status": "merged",
-      "child-dag": null
-    },
-    {
-      "id": "PR-009",
-      "kind": "pr",
-      "name": "program shadows",
-      "label": "program shadows",
-      "status": "merged",
-      "child-dag": null
-    },
-    {
-      "id": "PR-010",
-      "kind": "pr",
-      "name": "convergence contract+runner",
-      "label": "convergence contract+runner",
-      "status": "merged",
-      "child-dag": null
-    },
-    {
-      "id": "PR-011",
-      "kind": "pr",
-      "name": "loop designer",
-      "label": "loop designer",
-      "status": "merged",
-      "child-dag": null
-    },
-    {
-      "id": "PR-012",
-      "kind": "pr",
-      "name": "goal-define mode",
-      "label": "goal-define mode",
-      "status": "merged",
-      "child-dag": null
-    },
-    {
-      "id": "PR-013",
-      "kind": "pr",
-      "name": "constraints registry",
-      "label": "constraints registry",
-      "status": "merged",
-      "child-dag": null
-    },
-    {
-      "id": "PR-014",
-      "kind": "pr",
-      "name": "quality-loop program",
-      "label": "quality-loop program",
-      "status": "merged",
-      "child-dag": null
-    },
-    {
-      "id": "PR-015",
-      "kind": "pr",
-      "name": "autonomy ramp gate",
-      "label": "autonomy ramp gate",
-      "status": "merged",
-      "child-dag": null
-    },
-    {
-      "id": "PR-016",
-      "kind": "pr",
-      "name": "situation triggers",
-      "label": "situation triggers",
-      "status": "merged",
-      "child-dag": null
-    },
-    {
-      "id": "PR-017",
-      "kind": "pr",
-      "name": "orchestrator footer live",
-      "label": "orchestrator footer live",
-      "status": "merged",
-      "child-dag": null
-    },
-    {
-      "id": "PR-018",
-      "kind": "pr",
-      "name": "phrases rollout",
-      "label": "phrases rollout",
-      "status": "merged",
-      "child-dag": null
-    },
-    {
-      "id": "PR-019",
-      "kind": "pr",
-      "name": "suggester accuracy",
-      "label": "suggester accuracy",
-      "status": "merged",
-      "child-dag": null
-    },
-    {
-      "id": "PR-020",
-      "kind": "pr",
-      "name": "run visibility",
-      "label": "run visibility",
-      "status": "merged",
-      "child-dag": null
-    },
-    {
-      "id": "PR-021a",
-      "kind": "pr",
-      "name": "designer dialogue\u2192yml",
-      "label": "designer dialogue\u2192yml",
-      "status": "merged",
-      "child-dag": null
-    },
-    {
-      "id": "PR-021b",
-      "kind": "pr",
-      "name": "synapse generation",
-      "label": "synapse generation",
-      "status": "merged",
-      "child-dag": null
-    },
-    {
-      "id": "PR-024",
-      "kind": "pr",
-      "name": "weak-tier overlay",
-      "label": "weak-tier overlay",
-      "status": "merged",
-      "child-dag": null
-    },
-    {
-      "id": "PR-025",
-      "kind": "pr",
-      "name": "conformance scorecard",
-      "label": "conformance scorecard",
-      "status": "merged",
-      "child-dag": null
-    },
-    {
-      "id": "PR-026",
-      "kind": "pr",
-      "name": "stale sweep",
-      "label": "stale sweep",
-      "status": "merged",
-      "child-dag": null
-    },
-    {
-      "id": "PR-027",
-      "kind": "pr",
-      "name": "doc floor+index",
-      "label": "doc floor+index",
-      "status": "merged",
-      "child-dag": null
-    },
-    {
-      "id": "PR-028",
-      "kind": "pr",
-      "name": "final vs-baseline measurement",
-      "label": "final vs-baseline measurement",
-      "status": "merged",
-      "child-dag": null
-    }
+    "pr-001",
+    "pr-002",
+    "pr-003",
+    "pr-004",
+    "pr-005",
+    "pr-006",
+    "pr-007",
+    "pr-008",
+    "pr-009",
+    "pr-010",
+    "pr-011",
+    "pr-012",
+    "pr-013",
+    "pr-014",
+    "pr-015",
+    "pr-016-design",
+    "pr-016",
+    "pr-017-design",
+    "pr-018-design"
   ],
-  "edges": [
-    {
-      "from": "PR-001",
-      "to": "PR-006",
-      "kind": "depends"
-    },
-    {
-      "from": "PR-001",
-      "to": "PR-007",
-      "kind": "depends"
-    },
-    {
-      "from": "PR-001",
-      "to": "PR-008",
-      "kind": "depends"
-    },
-    {
-      "from": "PR-007",
-      "to": "PR-009",
-      "kind": "depends"
-    },
-    {
-      "from": "PR-010",
-      "to": "PR-011",
-      "kind": "depends"
-    },
-    {
-      "from": "PR-012",
-      "to": "PR-013",
-      "kind": "depends"
-    },
-    {
-      "from": "PR-010",
-      "to": "PR-014",
-      "kind": "depends"
-    },
-    {
-      "from": "PR-014",
-      "to": "PR-015",
-      "kind": "depends"
-    },
-    {
-      "from": "PR-011",
-      "to": "PR-021a",
-      "kind": "depends"
-    },
-    {
-      "from": "PR-019",
-      "to": "PR-021a",
-      "kind": "depends"
-    },
-    {
-      "from": "PR-021a",
-      "to": "PR-021b",
-      "kind": "depends"
-    },
-    {
-      "from": "PR-002",
-      "to": "PR-024",
-      "kind": "depends"
-    },
-    {
-      "from": "PR-024",
-      "to": "PR-025",
-      "kind": "depends"
-    },
-    {
-      "from": "PR-004",
-      "to": "PR-026",
-      "kind": "depends"
-    },
-    {
-      "from": "PR-026",
-      "to": "PR-027",
-      "kind": "depends"
-    },
-    {
-      "from": "PR-006",
-      "to": "PR-028",
-      "kind": "depends"
-    },
-    {
-      "from": "PR-007",
-      "to": "PR-028",
-      "kind": "depends"
-    },
-    {
-      "from": "PR-008",
-      "to": "PR-028",
-      "kind": "depends"
-    },
-    {
-      "from": "PR-009",
-      "to": "PR-028",
-      "kind": "depends"
-    }
-  ]
+  "edges": [],
+  "topo": [
+    "pr-001",
+    "pr-002",
+    "pr-003",
+    "pr-004",
+    "pr-005",
+    "pr-006",
+    "pr-007",
+    "pr-008",
+    "pr-009",
+    "pr-010",
+    "pr-011",
+    "pr-012",
+    "pr-013",
+    "pr-014",
+    "pr-015",
+    "pr-016",
+    "pr-016-design",
+    "pr-017-design",
+    "pr-018-design"
+  ],
+  "critical_path": [
+    "pr-001"
+  ],
+  "wave_count": 1
 }
