@@ -22,3 +22,13 @@ KEY FINDINGS (P0 — docs visibly wrong today):
 8 doc targets: #1 conceptual-heart newcomer · #2 boot/turn-lifecycle · #3 enforcement/governance ·
 #4 layers/state/memory · #5 programs+dispatch · #6 code-dev harness · #7 workflow engine ·
 #8 DRIFT-FIX CHANGESET (do early — parameterize docgen counts, extend doc_counts globs).
+
+## GOAL SET — goal-define · 2026-06-17
+Hardened (3 forks): SCOPE = flagship code-dev/workflow/library-dev + peers (goal-define/
+plan/chat/harness-builder/deep-research), ~6-8 manuals. EXAMPLE BAR = real, RUN-VERIFIED
+commands+output (anti-mimicry). STRUCTURE = new workspace/wiki/ tree + INDEX, freshness/
+doc-index wired. Audience = end-users ("so people can start to use them").
+6 acceptance criteria recorded. 3 invariants → constraints (project:axon-new-doc):
+wiki-examples-run-verified, wiki-freshness-gated, programs-untouched.
+Reframes the project from architecture-reference (overview's 8 targets) to USER MANUALS;
+overview map feeds the manuals as source context.

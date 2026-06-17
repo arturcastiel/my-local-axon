@@ -14,4 +14,5 @@ updated:         2026-06-17
 
 ## Working Context
 - Study(overview) DONE → study/overview.md (architecture map + 18 gaps + 8 doc targets).
-- Next: code-dev plan (atomize doc targets + P0 drift-fix into PRs).
+- GOAL SET (goal-ledger.md): usage-wiki for big programs (code-dev/workflow/library-dev + peers), run-verified examples, workspace/wiki/ tree.
+- Next: code-dev plan (atomize manuals + wiki scaffold + freshness wiring into PRs).
