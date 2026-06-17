@@ -103,3 +103,12 @@ Done (axon repo, commits 4917dc8):
 NOTE: these are sanctioned axon MAINTENANCE fixes (separate from the wiki authoring) — the
 programs-untouched constraint scoped the documentation work, not surfaced-bug remediation.
 Status of the 3 study bugs: doc_index drift ✓ (pr-2) · library Key Terms ✓ · docgen drift ✓.
+
+## WAVE 3 COMPLETE — code-dev getting-started tutorial · commit c01fbd9 · 2026-06-17
+Owner-requested + approved (multi-agent plan: log-miners on owner build-patterns → 3-lens
+design panel → synthesis). Shipped workspace/wiki/getting-started.md: a beginner walk through
+the full study→plan→pr→log→audit spine on a DEVISED example (my-first-fix, one-line README
+fix) — NOT the owner's real projects (per owner steer: mine patterns, devise examples). 13
+sections, 3 verified examples (2 tool-run + 1 session-transcript), two-hard-contracts up front,
+gates-as-friend, code-dev next safety-net. INDEX 'Start here' section added. Gate green 32/0.
+Wiki now: 9 pages (8 manuals + getting-started) + skills + INDEX, freshness-gated, test-guarded.
