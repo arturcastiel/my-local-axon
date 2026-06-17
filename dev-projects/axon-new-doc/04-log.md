@@ -32,3 +32,15 @@ doc-index wired. Audience = end-users ("so people can start to use them").
 wiki-examples-run-verified, wiki-freshness-gated, programs-untouched.
 Reframes the project from architecture-reference (overview's 8 targets) to USER MANUALS;
 overview map feeds the manuals as source context.
+
+## STUDY GRADES — readiness audit · 2026-06-17
+8 graders studied each target program's real surface. Grades: 0 A · 4 B · 4 C.
+purpose-ready 8/8 · reference-ready 5/8 · examples-ready 4/8.
+  B: workflow, library-dev, goal-define, harness-builder (tool-layer examples real)
+  C: code-dev (only ~7% of 87 files studied; ref NOT ready), plan (output-format trap),
+     chat (empty/unscaffolded, path discrepancy), deep-research (a SKILL, no on-disk spec)
+VERDICT: STUDY NOT FINISHED for the goal. Universal blocker = the "run-verified example"
+CONTRACT is undecided: AXON programs are LLM-interpreted .md neurons (NOT shell-runnable,
+not in REGISTRY); only backing Python tools run deterministically. Must decide: runnable
+tool-commands vs labeled agent-session transcripts — gates ALL examples-readiness.
+Artifact: study/study-grades.md.
