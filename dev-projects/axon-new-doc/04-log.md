@@ -56,3 +56,11 @@ Confirmed live: no `pr` tool, no `deep-research` program (it's a skill → wiki 
 Remaining gaps non-blocking (mutating/auth surfaces left un-run by design; non-deterministic
 agent-runtime behavior) — not fixable by more reading. VERDICT: study FINISHED.
 phase-model: study → DONE. Next: code-dev plan.
+
+## FINDING (drift-fix input) — doc_index indexes runtime memory · 2026-06-17
+PR-027's doc_index.py (and docgen) index workspace/memory/working|longterm + root memory/
+(kv-store + runtime scopes), so DOC-INDEX/AXON-DOCS go stale every session as memory keys
+are written (cognition-frame, host-cap-*, code-dev-cmd, etc.). Pure runtime churn, not a
+content change. FIX (fold into the wiki drift-fix work): add workspace/memory/ + root
+memory/ to doc_index EXCLUDE (like my-axon), and stop docgen listing volatile L:/W: keys.
+(Stray workflow-agent scratch memory/A8-*.md also removed this session.)
