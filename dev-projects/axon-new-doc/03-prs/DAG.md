@@ -2,7 +2,7 @@
 # DAG · plan · project:axon-new-doc
 
 - schema-version: `v1`
-- generated:      `2026-06-17T17:00:00Z`
+- generated:      `2026-06-17T16:19:44Z`
 - generator:      `tools/dag.py`
 - nodes:          7
 - edges:          11
@@ -12,13 +12,13 @@
 
 | id | kind | name | label | status |
 |----|------|------|-------|--------|
-| PR-001 | pr | wiki scaffold + template + INDEX skeleton | wiki scaffold + template + INDEX skeleton | pending |
-| PR-002 | pr | freshness + doc_index wiring (+runtime-memory fix) | freshness + doc_index wiring (+runtime-memory fix) | pending |
-| PR-003 | pr | code-dev manual | code-dev manual | pending |
-| PR-004 | pr | workflow manual | workflow manual | pending |
-| PR-005 | pr | library-dev manual | library-dev manual | pending |
-| PR-006 | pr | INDEX population + cross-links | INDEX population + cross-links | pending |
-| PR-007 | pr | wiki test harness (Guarded by) | wiki test harness (Guarded by) | pending |
+| PR-001 | pr | wiki scaffold + template + INDEX skeleton | wiki scaffold + template + INDEX skeleton | merged |
+| PR-002 | pr | freshness + doc_index wiring (+runtime-memory fix) | freshness + doc_index wiring (+runtime-memory fix) | merged |
+| PR-003 | pr | code-dev manual | code-dev manual | merged |
+| PR-004 | pr | workflow manual | workflow manual | merged |
+| PR-005 | pr | library-dev manual | library-dev manual | merged |
+| PR-006 | pr | INDEX population + cross-links | INDEX population + cross-links | merged |
+| PR-007 | pr | wiki test harness (Guarded by) | wiki test harness (Guarded by) | merged |
 
 ## Edges
 
