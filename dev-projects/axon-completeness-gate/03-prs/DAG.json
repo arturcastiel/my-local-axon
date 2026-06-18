@@ -1,0 +1,206 @@
+{
+  "schema": "axon-dag",
+  "schema-version": "v1",
+  "level": "plan",
+  "owner": "axon-completeness-gate/plan",
+  "generated": "2026-06-18T17:01:32Z",
+  "generator": "tools/dag.py",
+  "validated": true,
+  "critical-path": [],
+  "nodes": [
+    {
+      "id": "PR-01",
+      "kind": "pr",
+      "name": "phase_model mode-aware completeness gate",
+      "label": "phase_model mode-aware completeness gate",
+      "status": "complete",
+      "child-dag": null
+    },
+    {
+      "id": "PR-02",
+      "kind": "pr",
+      "name": "code-dev-new seeds the gate",
+      "label": "code-dev-new seeds the gate",
+      "status": "complete",
+      "child-dag": null
+    },
+    {
+      "id": "PR-03",
+      "kind": "pr",
+      "name": "# emits: SSOT + drift-lock",
+      "label": "# emits: SSOT + drift-lock",
+      "status": "complete",
+      "child-dag": null
+    },
+    {
+      "id": "PR-04",
+      "kind": "pr",
+      "name": "reconnect emits->seed_outputs + recompile",
+      "label": "reconnect emits->seed_outputs + recompile",
+      "status": "complete",
+      "child-dag": null
+    },
+    {
+      "id": "PR-05",
+      "kind": "pr",
+      "name": "R_TERMINAL_OUTPUTS rule (general, silent-until-flag)",
+      "label": "R_TERMINAL_OUTPUTS rule (general, silent-until-flag)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-06",
+      "kind": "pr",
+      "name": "workflow_run node outputs schema + verify",
+      "label": "workflow_run node outputs schema + verify",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-07",
+      "kind": "pr",
+      "name": "R9: PreToolUse Bash matcher -> axon/ write gate",
+      "label": "R9: PreToolUse Bash matcher -> axon/ write gate",
+      "status": "complete",
+      "child-dag": null
+    },
+    {
+      "id": "PR-08",
+      "kind": "pr",
+      "name": "R9: compile_write traversal sanitize + _axon_io",
+      "label": "R9: compile_write traversal sanitize + _axon_io",
+      "status": "complete",
+      "child-dag": null
+    },
+    {
+      "id": "PR-09",
+      "kind": "pr",
+      "name": "R9: enforce.py cwd->AXON_ROOT classification",
+      "label": "R9: enforce.py cwd->AXON_ROOT classification",
+      "status": "complete",
+      "child-dag": null
+    },
+    {
+      "id": "PR-10",
+      "kind": "pr",
+      "name": "R9: _axon_io mandatory write primitive (lint)",
+      "label": "R9: _axon_io mandatory write primitive (lint)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-11",
+      "kind": "pr",
+      "name": "Enforcement: crucible carriage of verify-only BLOCK rules",
+      "label": "Enforcement: crucible carriage of verify-only BLOCK rules",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-12",
+      "kind": "pr",
+      "name": "Enforcement: identity-independent response/dont-do gate",
+      "label": "Enforcement: identity-independent response/dont-do gate",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-13",
+      "kind": "pr",
+      "name": "Enforcement: Stop-hook honest scope / gate-on-next-turn",
+      "label": "Enforcement: Stop-hook honest scope / gate-on-next-turn",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-14",
+      "kind": "pr",
+      "name": "Drift: wire dispatch_index into freshness+cron",
+      "label": "Drift: wire dispatch_index into freshness+cron",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-15",
+      "kind": "pr",
+      "name": "Drift: dag_consistency DAG-vs-PR + freshness/boot",
+      "label": "Drift: dag_consistency DAG-vs-PR + freshness/boot",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-16",
+      "kind": "pr",
+      "name": "Firing: reanchor hook re-ticks anticipate",
+      "label": "Firing: reanchor hook re-ticks anticipate",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-17",
+      "kind": "pr",
+      "name": "Firing: turn-log/prompt-log driven by a hook",
+      "label": "Firing: turn-log/prompt-log driven by a hook",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-18",
+      "kind": "pr",
+      "name": "Firing: emit-without-listener lint + triage",
+      "label": "Firing: emit-without-listener lint + triage",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-19",
+      "kind": "pr",
+      "name": "Resume: session-owner token instead of getppid",
+      "label": "Resume: session-owner token instead of getppid",
+      "status": "pending",
+      "child-dag": null
+    }
+  ],
+  "edges": [
+    {
+      "from": "PR-01",
+      "to": "PR-02",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-01",
+      "to": "PR-03",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-03",
+      "to": "PR-04",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-03",
+      "to": "PR-05",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-01",
+      "to": "PR-06",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-08",
+      "to": "PR-10",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-05",
+      "to": "PR-11",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-11",
+      "to": "PR-13",
+      "kind": "depends"
+    }
+  ]
+}
