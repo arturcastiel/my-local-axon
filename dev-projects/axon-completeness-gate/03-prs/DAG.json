@@ -3,7 +3,7 @@
   "schema-version": "v1",
   "level": "plan",
   "owner": "axon-completeness-gate/plan",
-  "generated": "2026-06-18T17:01:32Z",
+  "generated": "2026-06-18T18:42:38Z",
   "generator": "tools/dag.py",
   "validated": true,
   "critical-path": [],
@@ -45,7 +45,7 @@
       "kind": "pr",
       "name": "R_TERMINAL_OUTPUTS rule (general, silent-until-flag)",
       "label": "R_TERMINAL_OUTPUTS rule (general, silent-until-flag)",
-      "status": "pending",
+      "status": "complete",
       "child-dag": null
     },
     {
@@ -93,7 +93,7 @@
       "kind": "pr",
       "name": "Enforcement: crucible carriage of verify-only BLOCK rules",
       "label": "Enforcement: crucible carriage of verify-only BLOCK rules",
-      "status": "pending",
+      "status": "complete",
       "child-dag": null
     },
     {

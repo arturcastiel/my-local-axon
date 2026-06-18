@@ -1,27 +1,31 @@
 # PR list — AXON Bug-Free Hardening
 19 PRs
+<!-- reconciled 2026-06-18 vs codebase+git: PR-01..04 squash-landed on main as a6ec042
+     (old per-PR hashes 3df2ba1/c7724d3/5c3b35b were pre-squash branch commits, not on main).
+     PR-07=f055cae · PR-08/09=4b0fb8f. NEXT ready on critical path: PR-05. -->
 
-## PR-01 — phase_model mode-aware completeness gate  [DONE 3df2ba1]
+
+## PR-01 — phase_model mode-aware completeness gate  [DONE a6ec042]
 - wave A · findings #2,#8 · depends —
 - change: done() reads manifest `outputs` only (SSOT); REQUIRED_OUTPUTS=seed+drift ref. seed_outputs()+CLI.
 - test: tests/test_phase_model_outputs.py
 
-## PR-02 — code-dev-new seeds the gate  [DONE c7724d3]
+## PR-02 — code-dev-new seeds the gate  [DONE a6ec042]
 - wave A · findings #2 · depends PR-01
 - change: code-dev-new calls phase-model seed-outputs after init.
 - test: integration
 
-## PR-03 — # emits: SSOT + drift-lock  [DONE 5c3b35b]
+## PR-03 — # emits: SSOT + drift-lock  [DONE a6ec042]
 - wave A · findings #2,#8 · depends PR-01
 - change: tools/emits.py + ladder # emits/# phase headers + L1 drift-lock test.
 - test: tests/test_emits.py, tests/test_emits_drift.py
 
-## PR-04 — reconnect emits->seed_outputs + recompile  [TODO]
+## PR-04 — reconnect emits->seed_outputs + recompile  [DONE a6ec042]
 - wave A · findings liveness · depends PR-03
 - change: seed-outputs --from-emits resolves each phase program's # emits as SSOT (phase_model imports emits -> live). Recompile stale .cmp.md.
 - test: tests/test_phase_model_outputs.py (from-emits)
 
-## PR-05 — R_TERMINAL_OUTPUTS rule (general, silent-until-flag)  [TODO]
+## PR-05 — R_TERMINAL_OUTPUTS rule (general, silent-until-flag)  [DONE e07154c]
 - wave A · findings L3 · depends PR-03
 - change: RUNTIME/BLOCK/silent-until-flag rule (model r_state_surfaced): on :done resolve # emits, BLOCK if absent. Default-OFF.
 - test: tests/test_terminal_outputs.py
@@ -31,17 +35,17 @@
 - change: optional per-synapse outputs:; verify_node_outputs(); record_step downgrade; advance refuse. Backward-compat.
 - test: tests/test_workflow_node_outputs.py
 
-## PR-07 — R9: PreToolUse Bash matcher -> axon/ write gate  [TODO]
+## PR-07 — R9: PreToolUse Bash matcher -> axon/ write gate  [DONE f055cae]
 - wave B · findings #1 · depends —
 - change: Bash(+MultiEdit) PreToolUse matcher via argv-inspecting gate denying axon/ shell writes when dev-mode!=true.
 - test: tests/test_enforce_bash_gate.py
 
-## PR-08 — R9: compile_write traversal sanitize + _axon_io  [TODO]
+## PR-08 — R9: compile_write traversal sanitize + _axon_io  [DONE 4b0fb8f]
 - wave B · findings #3 · depends —
 - change: sanitize --name; assert under out_dir; route via _axon_io.atomic_write.
 - test: tests/test_compile_write_traversal.py
 
-## PR-09 — R9: enforce.py cwd->AXON_ROOT classification  [TODO]
+## PR-09 — R9: enforce.py cwd->AXON_ROOT classification  [DONE 4b0fb8f]
 - wave B · findings #11 · depends —
 - change: anchor relative targets to AXON_ROOT not CWD in is_inside_axon.
 - test: tests/test_enforce_root_anchor.py
@@ -51,7 +55,7 @@
 - change: lint forbidding raw open('w')/write_text in tools/ except whitelist; route offenders.
 - test: tests/test_axon_io_lint.py
 
-## PR-11 — Enforcement: crucible carriage of verify-only BLOCK rules  [TODO]
+## PR-11 — Enforcement: crucible carriage of verify-only BLOCK rules  [DONE 592db96]
 - wave C · findings #5 · depends PR-05
 - change: crucible control running verify-only BLOCK rules over the tree at merge — the missing fail-closed runner.
 - test: tests/test_crucible_verify_carriage.py
