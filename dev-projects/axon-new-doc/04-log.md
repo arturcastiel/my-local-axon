@@ -112,3 +112,37 @@ fix) — NOT the owner's real projects (per owner steer: mine patterns, devise e
 sections, 3 verified examples (2 tool-run + 1 session-transcript), two-hard-contracts up front,
 gates-as-friend, code-dev next safety-net. INDEX 'Start here' section added. Gate green 32/0.
 Wiki now: 9 pages (8 manuals + getting-started) + skills + INDEX, freshness-gated, test-guarded.
+
+## SESSION RESUME — 2026-06-18T08:08:07.353407+00:00
+project:         axon-new-doc
+phase:           audit
+workflow-step:   build
+branch:          main  (git: main  ✓)
+shadow:          fresh:0 stale:0 branch-stale:0
+reviewer:        no PR in review
+prohibitions:    seeds-only (_dont-do.md absent)
+note:            project status=complete; resume to close loose ends (05-audit.md, advance _meta.phase)
+
+## AUDIT + REMEDIATION — fan-out verification · 2026-06-18T08:22:34.843815+00:00
+- CUSTOM fan-out verification workflow (10 agents, examples re-executed) → 05-audit.md written.
+  (NOT the code-dev-safety-audit program — it audited the 5 acceptance criteria. See correction below.)
+- Verdict: COMPLETE. 9 docs; all carry sections + ≥2 examples + Guarded-by; INDEX clean; doc-index wired; suite green.
+- D1 FIXED (library-dev.md): false "confirmed real run" on Key Terms (bug fixed in 73362d6) → rewritten as resolved-history + real recapture.
+- D2 FIXED (code-dev.md): phase-model examples re-captured (all done) + re-framed as dated snapshot (was misrepresented as "live").
+- Guard: tests/test_wiki.py + test_library.py = 23 passed.
+- Deferred (additive/cosmetic): D3 freshness wiki-check · D4 deep-research manual · D5 markdown cross-links.
+
+## AUDIT FOLLOW-UPS D3/D4/D5 — 2026-06-18T08:32:44.022373+00:00
+- D3 ADDED: dedicated 'wiki' freshness check (tools/freshness.py + tests/test_freshness_wiki.py).
+- D4 RECLASSIFIED: deep-research covered by skills.md (host-skill, by design) — not a gap; no dup manual.
+- D5 ADDED: '## Related' clickable cross-link footer on all 7 manuals + skills.md.
+- All 5 acceptance criteria now MET. 05-audit.md verdict → COMPLETE.
+
+## CORRECTION + real code-dev-safety-audit run — 2026-06-18T09:10:48.649141+00:00
+- Attribution fix: earlier "audit" was a CUSTOM fan-out workflow, mislabeled as code-dev-safety-audit.
+  05-audit.md footer + this log corrected to say so.
+- Ran the REAL code-dev-safety-audit program 2026-06-18: result = 0/7 "no spec" false-negative
+  (no 03-prs/PR-NNN.md specs — only DAG.json; 0 'pr:' log blocks; shadow coverage 0/0 FAIL).
+  The program models a per-PR-spec + shadow flow this project never used (PRs shipped as commits).
+- Write SKIPPED at the program's confirm gate (owner choice) to preserve the accurate
+  acceptance-criteria 05-audit.md. The mechanical 0/7 table was displayed, not persisted.
