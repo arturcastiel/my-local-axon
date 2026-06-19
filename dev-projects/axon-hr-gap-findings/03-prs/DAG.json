@@ -1,0 +1,19 @@
+{
+  "schema": "plan-dag-v1",
+  "project": "axon-hr-gap-findings",
+  "generated": "2026-06-19",
+  "nodes": [
+    { "id": "PR-01", "title": "drift: add --no-program mode + boot auto-init", "complexity": "S", "gap": "G1", "gate": "dev-mode", "depends_on": [] },
+    { "id": "PR-02", "title": "MYAXON.md path hygiene (symlink-safe)", "complexity": "S", "gap": "G5", "gate": "dev-mode", "depends_on": [] },
+    { "id": "PR-03", "title": "health-score smoke qualifier (menu.md)", "complexity": "S", "gap": "G6", "gate": "dev-mode", "depends_on": [] },
+    { "id": "PR-03b", "title": "health-score smoke qualifier (gain.md companion)", "complexity": "S", "gap": "G6", "gate": "dev-mode", "depends_on": [], "note": "section-header approach; PR-03 audit surfaced this companion site" },
+    { "id": "PR-04", "title": "igap daily log wiring (4 HALT sites)", "complexity": "S", "gap": "G3a", "gate": "dev-mode", "depends_on": [] },
+    { "id": "PR-05", "title": "phase-ledger program template hook", "complexity": "S", "gap": "G3b", "gate": "dev-mode", "depends_on": [] },
+    { "id": "PR-06", "title": "coverage cron + fix doc reference", "complexity": "S", "gap": "G4", "gate": "dev-mode", "depends_on": [] },
+    { "id": "PR-07a", "title": "orchestrator boot tick doc clarification", "complexity": "S", "gap": "G7", "gate": "dev-mode-doc", "depends_on": [] },
+    { "id": "PR-08", "title": "self-care cron add", "complexity": "S", "gap": "G8", "gate": "dev-mode", "depends_on": [] },
+    { "id": "PR-09", "title": "enforcement L: flag activation", "complexity": "M", "gap": "G2", "gate": "owner-confirm-per-flag", "depends_on": [], "soft_after": ["PR-01", "PR-02", "PR-03", "PR-03b", "PR-04", "PR-05", "PR-06", "PR-07a", "PR-08"] }
+  ],
+  "edges": [],
+  "notes": "All PRs are dependency-independent (no hard edges). PR-09 has soft ordering recommendation: run last after system stable. PR-03b added by council audit of PR-03 (gain.md companion site)."
+}

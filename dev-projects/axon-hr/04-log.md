@@ -52,3 +52,13 @@ state:          9 ADRs locked · 8 PRs + splits planned (PR-001..009, 007a/b/c) 
 RESUME:         code-dev load axon-hr  →  code-dev pr 1   (author 03-prs/PR-NNN.md, bottom-up)
 reason:         owner branched to a dedicated project (axon-completeness-gate) to harden the
                 terminal-transition completeness gate this very build exposed. Resume axon-hr after.
+
+## SESSION RESUME — 2026-06-18T21:00:00Z
+project:         axon-hr
+phase:           pr
+workflow-step:   build
+branch:          main  (git: main  ✓)
+shadow:          fresh:0 stale:0 branch-stale:0
+reviewer:        no PR in review
+prohibitions:    6 active (0 promoted)
+

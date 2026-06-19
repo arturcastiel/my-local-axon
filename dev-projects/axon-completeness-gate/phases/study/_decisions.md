@@ -36,3 +36,23 @@
 - Staleness via active-phase.md mtime (recommended v1) vs a phase-entered-at stamp (kernel edit, out of scope).
 - Migration: auto-populate existing projects' manifest `outputs` from the map, or leave map as default.
 - L5 semantics: structural (deps terminal) vs outcome-based (work succeeded).
+
+## ADR-005 — Revise ADR-003 "teeth reality" (post-council, 2026-06-19)
+- Status: accepted · supersedes the "L3 advisory until it rides crucible" framing of ADR-003.
+- Context: ADR-003 said L3 (R_TERMINAL_OUTPUTS) gains teeth once it "rides crucible." PR-11 did add a
+  crucible merge-carriage runner — but the hr-team council + plan-auditors proved the teeth are partial:
+  only 3 of ~12 BLOCK-RUNTIME rules are carried; the runtime rule ships flag-OFF
+  (`terminal-outputs-required` absent); and the merge runner fails OPEN on a fresh clone (gitignored
+  working-state). Also keystone has NO reverse-coverage assertion, and 8 BLOCK rules are carried only by
+  WARN-severity lint/audit controls → no fail-closed runner at all.
+- Decision (Wave G / G3): replace "carry all BLOCK rules" with an EXPLICIT per-rule disposition —
+  {carry-at-merge | reclassify-as-per-response-only | N/A-at-merge-with-reason}; content-driven rules are
+  NOT mergeable (sentinel would no-op or false-fire) so most reclassify. `r9_axon_write` is action-driven
+  and needs an action-ctx carriage, not the text sentinel. Add a keystone reverse-coverage gate over a
+  machine-checkable rule→runner registry; resolve the 8 WARN-only-runner BLOCK rules (promote or
+  reclassify) before that gate can be green. Fail-CLOSED on absent working-state ONLY when the
+  `.axon-governed` sentinel is present AND a project is genuinely active — distinguish "no active project"
+  (legit empty, allow) from "state suppressed" (block), or every clean CI merge false-blocks.
+- Honest current posture (to be stamped into KERNEL-SLIM L89-95 lineage docs, NOT the kernel file):
+  L2 (phase_model.done) = real teeth, flag-independent, always-on. L3 runtime = flag-gated + clone-open.
+  Merge-carriage = 3 rules today; Wave G makes the carried set explicit + adds reverse-coverage.

@@ -1,0 +1,9 @@
+{"type": "protocol_started", "call_id": "2026-06-19T125147Z-audit-ax-e3d70aec", "seats": 3}
+{"type": "seat_invoked", "call_id": "2026-06-19T125147Z-audit-ax-e3d70aec", "seat": "prompt-engineer"}
+{"type": "seat_invoked", "call_id": "2026-06-19T125147Z-audit-ax-e3d70aec", "seat": "eval-engineer"}
+{"type": "seat_invoked", "call_id": "2026-06-19T125147Z-audit-ax-e3d70aec", "seat": "challenger"}
+{"type": "seat_responded", "call_id": "2026-06-19T125147Z-audit-ax-e3d70aec", "seat": "prompt-engineer", "valid_schema": true}
+{"type": "seat_responded", "call_id": "2026-06-19T125147Z-audit-ax-e3d70aec", "seat": "eval-engineer", "valid_schema": true}
+{"type": "seat_responded", "call_id": "2026-06-19T125147Z-audit-ax-e3d70aec", "seat": "challenger", "valid_schema": true}
+{"type": "aggregation_computed", "call_id": "2026-06-19T125147Z-audit-ax-e3d70aec", "algorithm": "WSV"}
+{"type": "protocol_completed", "call_id": "2026-06-19T125147Z-audit-ax-e3d70aec", "status": "resolved"}

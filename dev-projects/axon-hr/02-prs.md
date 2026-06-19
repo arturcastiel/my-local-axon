@@ -1,5 +1,5 @@
 # PR list — AXON HR Team
-Phase 2 · 8 PRs · bottom-up ACTIVE-with-tests (ADR-009)
+Phase 2 · 11 PRs · bottom-up ACTIVE-with-tests (ADR-009)
 
 | PR | Title | Size | Depends | New files | Modified |
 |----|-------|------|---------|-----------|----------|
@@ -9,8 +9,11 @@ Phase 2 · 8 PRs · bottom-up ACTIVE-with-tests (ADR-009)
 | PR-004 | hr-team router neuron | M | PR-001, PR-002, PR-003 | 2 | 0 |
 | PR-005 | tools/hr_team.py (CLI + run_seats seam + audit-b | M | PR-004, PR-001..003 | 2 | 2 |
 | PR-006 | menu [10] HR TEAM section + dispatch-phrases + d | S | PR-004 | 1 | 3 |
-| PR-007 | FULL PORT of the hr-team asset packs (catalog +  | L | PR-004 | 11 | 3 |
+| PR-007a | Asset port: catalog (151 rows + H1-fix + resolver) | M | PR-004 | 4 | 3 |
+| PR-007b | Asset port: prompt pack (69 files) | S | PR-004 | 5 | 3 |
+| PR-007c | Asset port: handoff docs (optional) | XS | PR-007b | 7 | 2 |
 | PR-008 | find-program: fold # dispatch-phrases into the s | S | — | 1 | 1 |
+| PR-009 | Docs/wiki closeout (FULLEST, merged last) | L | all | 5 | 5 |
 
 ## Detail
 
@@ -42,7 +45,7 @@ Phase 2 · 8 PRs · bottom-up ACTIVE-with-tests (ADR-009)
 **Goal.** Author workspace/programs/hr-team.md: the ACTIVE router neuron of the hr-team program family. It carries the synapse header (domain deliberation, family [council,advisory,decision-support], role router/mutator, invocation_source [program,workflow]), parses the M1/M2/M3 arg surface into working memory, owns the subcommand routing table, drives the mandatory pipeline EXEC(hr-team-selector) → EXEC(hr-team-convener) → EXEC(hr-team-deliberator), STOREs the canonical HANDOFF §4.3 verdict to W:hr-team-result, and enforces the advisory_only boundary on BOTH call paths (standalone axon.py + workflow-embed H4 guard). Lands status:ACTIVE with a static router regression test (Core Rule 13 / ADR-009), depending on its three layer neurons (PR-001/002/003) already existing.
 
 - Size: M · Depends: PR-001 (hr-team-selector neuron — produces W:selector-result with seats/protocol/advisory_only), PR-002 (hr-team-convener neuron — consumes W:selector-result, calls the run_seats(messages[])->responses[] seam, produces W:council-transcript), PR-003 (hr-team-deliberator neuron — consumes W:council-transcript, aggregates to W:deliberator-verdict per HANDOFF §4.3)
-- New: /home/arturcastiel/projects/new-axon/axon/workspace/programs/hr-team.md, /home/arturcastiel/projects/new-axon/axon/tests/test_hr_team_router.py
+- New: workspace/programs/hr-team.md, tests/test_hr_team_router.py
 - Modified: —
 - Full spec → 02-phases/phase-4-*.md
 
@@ -62,13 +65,29 @@ Phase 2 · 8 PRs · bottom-up ACTIVE-with-tests (ADR-009)
 - Modified: workspace/programs/menu.md, workspace/programs/hr-team.md, workspace/memory/longterm/dispatch-index.json
 - Full spec → 02-phases/phase-6-*.md
 
-### PR-007 — FULL PORT of the hr-team asset packs (catalog + prompts + optional handoff) into workspace/hr-team/
-**Goal.** Land the hr-team profession catalog (151 rows + _REGISTRY.md + _CONFLICT-POLICY.md) and the 69-file prompt pack (personas/protocols/tiers/modes{families,presets}) as self-contained repo assets under workspace/hr-team/ (ADR-004), so the PR1-4 neurons and PR5 tool can READ real seat/persona/tier/protocol/mode data instead of placeholders. The port is mechanical/bulk COPY + a narrow, deterministic PATH-REWRITE + a mandatory H1-fix on the catalog rows so workspace/DOC-INDEX.md indexes each role by its real name (not "L0 IDENTITY"), with slug-uniqueness preserved, all 1077 slug-only cross-links left intact, and the doc-index regenerated so the freshness gate stays green.
+### PR-007a — Asset port: catalog (151 rows + H1-fix + cross-link resolver + slug-uniqueness)
+**Goal.** Port the hr-team profession catalog (151 rows + _REGISTRY.md + _CONFLICT-POLICY.md) into workspace/hr-team/catalog/professions/ with mandatory H1-fix, cross-link resolver test, slug-uniqueness gate, and doc-index regen. Carries ALL the risk of the PR-007 split (ADR-010 #2); PR-007b is clean bulk-copy contingent on this passing review. Source: ~/axon-hr-team/output/catalog/.
 
-- Size: L · Depends: PR-004 hr-team router neuron (the asset consumer; assets are inert data without a reader, so ADR-009 bottom-up places the port after the neurons that read it)
-- New: workspace/hr-team/catalog/professions/_REGISTRY.md (ported; 1 path-ref rewritten), workspace/hr-team/catalog/professions/_CONFLICT-POLICY.md (ported verbatim), workspace/hr-team/catalog/professions/{ai-ml,business,design,education,energy,humanities,legal,medicine,ops,process,science,software}/{slug}.md (151 row files; H1-fixed), workspace/hr-team/prompts/personas/{concierge,convener,panel,stealth-auto,triumvirate}.md (5; convener.md has 1 path-ref rewritten), workspace/hr-team/prompts/protocols/{adversarial,consensus,debate,delphi,prediction-market,round-robin,weighted-vote}.md (7), workspace/hr-team/prompts/tiers/{micro,low,medium,high,xhigh,full}.md (6), workspace/hr-team/prompts/modes/families/F1-context..F6-voice/*.md (31 atomic modifiers), workspace/hr-team/prompts/modes/presets/*.md (20 presets), workspace/hr-team/handoff/* (OPTIONAL — 6 .md + manifest.json with output/ refs rewritten; checksums.sha256 regenerated or omitted), tests/test_hr_team_port_integrity.py (file-count + H1 + cross-link-resolver + slug-uniqueness + doc-index-freshness checks), tools/hr_team_port.py (OPTIONAL deterministic porter: copy + H1-fix + path-rewrite, re-runnable; or inline the transform in the test fixtures if a script is over-engineering for a one-shot)
-- Modified: workspace/DOC-INDEX.md (regenerate via tools/doc_index.py export --canonical — now lists ~222 new workspace/hr-team/**/*.md entries; the freshness 'doc_index' gate drifts until this is regenerated), workspace/programs/REGISTRY.json (regenerate via tools/programs_registry.py generate — NO-OP for asset files since it globs workspace/programs/*.md requiring a '# PROGRAM:' header; run for commit honesty / to absorb any drift from sibling PRs), memory/longterm/dispatch-index.json (rebuild via tools/dispatch_index.py rebuild — also NO-OP for asset files, same programs/*.md scope; run to keep the maintenance-artifact set consistent)
-- Full spec → 02-phases/phase-7-*.md
+- Size: M · Depends: PR-004
+- New: workspace/hr-team/catalog/professions/_REGISTRY.md, _CONFLICT-POLICY.md, {12-domain-subdirs}/{slug}.md (151 rows; H1-fixed), tests/test_hr_team_port_integrity.py (catalog tests: file-count + H1 + cross-link-resolver + slug-uniqueness + doc-index-freshness), tests/fixtures/hr-team/catalog/_REGISTRY.min.md (SUPERSEDES PR-001 minimal fixture)
+- Modified: workspace/DOC-INDEX.md (regen ~153 new entries), workspace/programs/REGISTRY.json (regen; NO-OP for assets), workspace/memory/longterm/dispatch-index.json (rebuild; NO-OP for assets)
+- Full spec → 02-phases/phase-7a-asset-port-catalog.md
+
+### PR-007b — Asset port: prompt pack (69 files, minimal path rewrite)
+**Goal.** Bulk-copy the 69-file prompt pack (5 personas / 7 protocols / 6 tiers / 31 mode-family modifiers / 20 presets) into workspace/hr-team/prompts/ with exactly one one-line path rewrite (convener.md ref). No H1-fix needed. Low-risk complement to PR-007a. Source: ~/axon-hr-team/output/prompts/.
+
+- Size: S · Depends: PR-004
+- New: workspace/hr-team/prompts/personas/ (5), protocols/ (7), tiers/ (6), modes/families/ (31), modes/presets/ (20)
+- Modified: workspace/DOC-INDEX.md (regen ~69 new entries), workspace/programs/REGISTRY.json (regen; NO-OP), workspace/memory/longterm/dispatch-index.json (rebuild; NO-OP)
+- Full spec → 02-phases/phase-7b-asset-port-prompts.md
+
+### PR-007c — Asset port: handoff docs (optional)
+**Goal.** Port the 6-file handoff bundle + manifest.json into workspace/hr-team/handoff/ as read-only reference material, rewriting output/ path refs and regenerating checksums. OPTIONAL — runtime and asset packs are complete without it; defer or drop without consequence. Source: ~/axon-hr-team/output/handoff/.
+
+- Size: XS · Depends: PR-007b · OPTIONAL
+- New: workspace/hr-team/handoff/INDEX.md, HANDOFF.md, V-checklist.md + 3 companion docs, manifest.json, checksums.sha256 (or omit)
+- Modified: workspace/DOC-INDEX.md (regen ~7 new entries), workspace/programs/REGISTRY.json (regen; NO-OP)
+- Full spec → 02-phases/phase-7c-asset-port-handoff.md
 
 ### PR-008 — find-program: fold # dispatch-phrases into the scoring corpus (repo-wide routing-vocabulary unification)
 **Goal.** Extend the find-program neuron so its match corpus ALSO includes each program's `# dispatch-phrases:` line — the same opt-in routing vocabulary smart-dispatch already indexes (dispatch_index._PHRASES) and in-mode routing reads — so a query phrased in natural user vocabulary (e.g. "close out this task") surfaces the right program in find-program too, not only in smart-dispatch. This closes the latent footgun ADR-007 names: routing vocabulary currently must be duplicated into name/desc/PURPOSE for find-program to see it (ADR-007 rejected that local workaround explicitly). Ships as its OWN PR with its OWN test and review, fully decoupled from the axon-hr build (ADR-007 + D6: "SEPARATE small PR, NOT bundled with the hr-team build, keeps reviews decoupled").
@@ -78,11 +97,18 @@ Phase 2 · 8 PRs · bottom-up ACTIVE-with-tests (ADR-009)
 - Modified: workspace/programs/find-program.md
 - Full spec → 02-phases/phase-8-*.md
 
+### PR-009 — Docs/wiki closeout (FULLEST scope, merged LAST)
+**Goal.** Author the comprehensive hr-team documentation suite: workspace/wiki/hr-team.md (full reference), wiki/hr-team-catalog.md, wiki/hr-team-recipes.md (H1-H4 integration recipes + 6 worked examples), updates to wiki/INDEX.md and getting-started.md, regenerated AXON-DOCS.md + DOC-INDEX.md, CHANGELOG entry. Satisfies tests/test_wiki.py + tests/test_freshness_wiki.py. Merged LAST — after all runtime + asset + utility PRs are green and merged. ADR-011 owner directive: "more is better, quality matters."
+
+- Size: L · Depends: PR-001..008 + 007a/b/c all merged
+- New: workspace/wiki/hr-team.md, workspace/wiki/hr-team-catalog.md, workspace/wiki/hr-team-recipes.md, tests/test_wiki.py, tests/test_freshness_wiki.py
+- Modified: workspace/wiki/INDEX.md (add hr-team* entries), workspace/wiki/getting-started.md (HR-Team discovery blurb), workspace/AXON-DOCS.md (regen), workspace/DOC-INDEX.md (regen), CHANGELOG.md ([axon-hr] entry)
+- Full spec → 02-phases/phase-9-docs-wiki.md
+
 ## Plan amendment — 2026-06-18 (open-items resolved, ADR-010/011)
-PR-007 split → PR-007a (catalog/risk) · PR-007b (prompts) · PR-007c (handoff, optional).
-PR-009 ADDED (closeout, fullest docs/wiki — ADR-011): wiki/hr-team.md + hr-team-catalog.md +
-  hr-team-recipes.md + INDEX + getting-started blurb + AXON-DOCS/DOC-INDEX regen + CHANGELOG;
-  satisfies test_wiki + test_freshness_wiki. Merged LAST.
+PR-007 → SPLIT into PR-007a (catalog/risk) · PR-007b (prompts) · PR-007c (handoff, optional).
+PR-009 ADDED (closeout, fullest docs/wiki — ADR-011). Merged LAST.
 Final PR order: PR-001 selector · 002 convener · 003 deliberator · 004 router · 005 tool/seam ·
   006 menu[10]+dispatch · 007a catalog · 007b prompts · (007c handoff) · 008 find-program(decoupled) ·
   009 docs/wiki(last). PR-008 orderable anytime (depends_on=[]).
+All detail sections above reflect the amended plan; original PR-007 monolith superseded by 007a/b/c.

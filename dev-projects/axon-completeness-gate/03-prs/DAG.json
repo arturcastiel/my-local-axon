@@ -3,7 +3,7 @@
   "schema-version": "v1",
   "level": "plan",
   "owner": "axon-completeness-gate/plan",
-  "generated": "2026-06-18T18:42:38Z",
+  "generated": "2026-06-18T23:00:00Z",
   "generator": "tools/dag.py",
   "validated": true,
   "critical-path": [],
@@ -53,7 +53,7 @@
       "kind": "pr",
       "name": "workflow_run node outputs schema + verify",
       "label": "workflow_run node outputs schema + verify",
-      "status": "pending",
+      "status": "complete",
       "child-dag": null
     },
     {
@@ -85,7 +85,7 @@
       "kind": "pr",
       "name": "R9: _axon_io mandatory write primitive (lint)",
       "label": "R9: _axon_io mandatory write primitive (lint)",
-      "status": "pending",
+      "status": "complete",
       "child-dag": null
     },
     {
@@ -101,7 +101,7 @@
       "kind": "pr",
       "name": "Enforcement: identity-independent response/dont-do gate",
       "label": "Enforcement: identity-independent response/dont-do gate",
-      "status": "pending",
+      "status": "complete",
       "child-dag": null
     },
     {
@@ -109,7 +109,7 @@
       "kind": "pr",
       "name": "Enforcement: Stop-hook honest scope / gate-on-next-turn",
       "label": "Enforcement: Stop-hook honest scope / gate-on-next-turn",
-      "status": "pending",
+      "status": "complete",
       "child-dag": null
     },
     {
@@ -117,7 +117,7 @@
       "kind": "pr",
       "name": "Drift: wire dispatch_index into freshness+cron",
       "label": "Drift: wire dispatch_index into freshness+cron",
-      "status": "pending",
+      "status": "complete",
       "child-dag": null
     },
     {
@@ -125,7 +125,7 @@
       "kind": "pr",
       "name": "Drift: dag_consistency DAG-vs-PR + freshness/boot",
       "label": "Drift: dag_consistency DAG-vs-PR + freshness/boot",
-      "status": "pending",
+      "status": "complete",
       "child-dag": null
     },
     {
@@ -133,7 +133,7 @@
       "kind": "pr",
       "name": "Firing: reanchor hook re-ticks anticipate",
       "label": "Firing: reanchor hook re-ticks anticipate",
-      "status": "pending",
+      "status": "complete",
       "child-dag": null
     },
     {
@@ -141,7 +141,7 @@
       "kind": "pr",
       "name": "Firing: turn-log/prompt-log driven by a hook",
       "label": "Firing: turn-log/prompt-log driven by a hook",
-      "status": "pending",
+      "status": "complete",
       "child-dag": null
     },
     {
@@ -149,7 +149,7 @@
       "kind": "pr",
       "name": "Firing: emit-without-listener lint + triage",
       "label": "Firing: emit-without-listener lint + triage",
-      "status": "pending",
+      "status": "complete",
       "child-dag": null
     },
     {
@@ -157,7 +157,7 @@
       "kind": "pr",
       "name": "Resume: session-owner token instead of getppid",
       "label": "Resume: session-owner token instead of getppid",
-      "status": "pending",
+      "status": "complete",
       "child-dag": null
     }
   ],

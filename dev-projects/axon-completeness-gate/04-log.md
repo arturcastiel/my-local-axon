@@ -112,3 +112,64 @@ NEXT STEPS (after owner picks forks):
   2. Implement PR-13 (verify_stop + reanchor_store + KERNEL-SLIM edit if Fork C; tests/test_stop_hook_next_turn.py).
   3. Continue Wave D (PR-14/15) → Wave E (PR-16/17/18) → Wave F (PR-19).
 RESUME: code-dev load axon-completeness-gate → code-dev pr → implement PR-12 onward.
+
+## SESSION RESUME — 2026-06-19 (drift-fix: trackers reconciled to git ground-truth)
+The 2026-06-18 "SESSION PAUSE at Wave C" above was the LAST recorded entry, but implementation
+did NOT stop there — Waves C/D/E/F all landed that same evening and were never logged. This
+resume verified git ground-truth and reconciled the trackers. The owner's chosen forks (PR-12
+Fork B split-sentinel, PR-13 Fork C gate-on-next-turn + honest KERNEL scope) are reflected in
+the landed commits below.
+
+WAVES C/D/E/F — LANDED 2026-06-18 evening (verified ancestors of main HEAD 0dbf783):
+  c141d6f  PR-06 — workflow_run node outputs completeness gate (Wave A tail)
+  ee00fc1  PR-10 — axon-io-lint: raw write gate for tools/ (Wave B final, the deferred 165-tool item)
+  87a02b3  PR-12 — identity sentinel (.axon-governed, tracked) + identity-independent enforcement gates (Wave C, Fork B)
+  d69644e  PR-13/14/15 — gate-on-next-turn + dispatch_index & dag_consistency drift wiring (Wave C/D, PR-13 Fork C)
+  b5903c6  PR-16/17/18 — reanchor anticipate loop + turn-log hook + emit-without-listener lint (Wave E)
+  fac6d90  PR-19 — session-owner run-id token replaces getppid liveness key (Wave F)
+
+TRACKER RECONCILIATION (this pass, my-axon writes only — no code touched):
+  · 02-prs.md  — PR-06/10/12..19 flipped [TODO] → [DONE <hash>]; header note rewritten (was "NEXT: PR-05").
+  · DAG.json   — already 19/19 complete (was the only correct tracker).
+  · _phases.json — pr → done, log → active (implementation outran the phase machine — the exact
+                   terminal-transition-completeness bug class this project was built to kill; logged for the audit).
+
+STATUS: pr ✓ (all 19 PRs committed) · log (active, this entry) · audit (pending).
+REMAINING:
+  1. AUDIT phase (05-audit.md): verify each of the 18 arch-audit findings is ACTUALLY closed by the
+     landed code (not just "a PR exists") + structural/usefulness integrity pass. Tests NOT yet run this
+     session (human-gated) — audit should drive the green-bar confirmation.
+  2. Working-tree triage: uncommitted M axon/BOOT.md, tools/hr_team.py, tests/*, workspace/AXON-DOCS*,
+     workspace/audit/axon-lang.md + untracked memory/, axon/state/, .claude/workflows/, _policy.md,
+     episodic/* — appear to be newer follow-on work; classify in/out of this project before commit.
+RESUME: code-dev load axon-completeness-gate → code-dev audit  (or: triage working tree first).
+
+## STATE RECONSTRUCTION — 2026-06-19 (owner: "state possibly broken from old buggy AXON — fix, rebuild, sync dag")
+Deep integrity pass over ALL project state layers vs git ground-truth. Findings + fixes:
+
+CORRUPTION FOUND:
+  1. [self-inflicted, this session] _meta.md `phase: audit (complete)` — not a canonical phase id;
+     broke `phase_model check` (unknown phase). FIX: `phase: audit` + `status: complete` (completion
+     belongs in status, not decorated onto phase). check → ok:true.
+  2. [old-AXON drift] 12 of 19 per-PR spec files (03-prs/PR-NN.md) had stale `status: TODO` while
+     their code was landed in git (PR-05,06,10,11,12,13,14,15,16,17,18,19). The old flow updated
+     DAG.json node-status but never the spec `status:` field → 3-layer drift (spec vs DAG vs git).
+     FIX: each set to `DONE (merged <hash>)` against the verified commit map. spec ≡ DAG ≡ git now.
+
+NOT corruption (verified, left as-is):
+  · DAG.json 9 ORPHAN_NODE warnings = graph-isolated nodes (PR-07,09,12,14,15,16,17,18,19), all of
+    which legitimately declare `depends: none` and are depended-on by nothing. Real structure, not
+    drift — NOT silenced with invented edges. dag.py verify: 0 errors. dag_consistency: 0 errors.
+  · DAG node-set (19) reconciles exactly against 03-prs/PR-*.md (0 orphan, 0 missing via finding-#10 check).
+
+TOOLING NOTE (for future rebuilds): do NOT "rebuild" this DAG with `dag build-from-prs` (hardcodes
+  status="pending", tools/dag.py:154) or `plan_dag.run` (writes bare-string nodes, no status) — both
+  would wipe the verified-complete statuses. `dag.py sync`/`render` are the safe (verify/mirror) ops.
+
+FINAL COHERENT STATE (all green):
+  · 03-prs: 19 specs, all status DONE   · DAG: 19 nodes complete, 8 edges, 0 errors
+  · 02-prs.md: 19 DONE, 0 TODO          · _phases.json: study/plan/pr/log/audit all done
+  · _meta: phase=audit, status=complete · 05-audit.md present · DAG.md mirror regenerated
+OPEN PRs: none (all 19 landed). Cross-workspace: no other project has open [TODO] PR tags; git has
+  no open feature branch (122 branches are all backup/* snapshots). Project pipeline is empty.
+REMAINING (non-PR, from audit): green-bar test run (human-gated) + dirty working-tree triage.

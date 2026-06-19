@@ -1,0 +1,26 @@
+{
+  "call_id": "2026-06-19T125139Z-adversar-78e61ee3",
+  "task_hash": "sha256:78e61ee32650376f10df49f1bfa1ea9469d9c6df4161f5f1066a16a93fc4a471",
+  "invocation_mode": "M2",
+  "roster": [
+    "prompt-engineer",
+    "eval-engineer",
+    "challenger"
+  ],
+  "protocol": "adversarial",
+  "modes": {
+    "prompt-engineer": "default-deliberation",
+    "eval-engineer": "default-deliberation",
+    "challenger": "default-deliberation"
+  },
+  "budget": "",
+  "cost_actual": null,
+  "warnings": [],
+  "model_diversity": true,
+  "per_seat_model_variant": {
+    "prompt-engineer": "Haiku 4.5",
+    "eval-engineer": "Sonnet 4.6",
+    "challenger": "Opus 4.8"
+  },
+  "advisory_only": true
+}

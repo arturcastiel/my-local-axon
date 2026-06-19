@@ -6,14 +6,21 @@
   "generated": "2026-06-18T12:05:26Z",
   "generator": "tools/dag.py",
   "validated": true,
-  "critical-path": [],
+  "critical-path": [
+    "PR-001",
+    "PR-002",
+    "PR-003",
+    "PR-004",
+    "PR-005",
+    "PR-006"
+  ],
   "nodes": [
     {
       "id": "PR-001",
       "kind": "pr",
       "name": "hr-team-selector (+min _REGISTRY fixture)",
       "label": "hr-team-selector (+min _REGISTRY fixture)",
-      "status": "pending",
+      "status": "done",
       "child-dag": null
     },
     {
@@ -21,7 +28,7 @@
       "kind": "pr",
       "name": "hr-team-convener (run_seats seam, rich transcript)",
       "label": "hr-team-convener (run_seats seam, rich transcript)",
-      "status": "pending",
+      "status": "done",
       "child-dag": null
     },
     {

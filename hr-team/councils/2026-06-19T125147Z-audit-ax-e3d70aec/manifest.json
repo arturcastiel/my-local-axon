@@ -1,0 +1,26 @@
+{
+  "call_id": "2026-06-19T125147Z-audit-ax-e3d70aec",
+  "task_hash": "sha256:e3d70aec7052fa6f8b8c5aa9444484a029b44727518635361b48f278fa7acbad",
+  "invocation_mode": "M2",
+  "roster": [
+    "prompt-engineer",
+    "eval-engineer",
+    "challenger"
+  ],
+  "protocol": "adversarial",
+  "modes": {
+    "prompt-engineer": "default-deliberation",
+    "eval-engineer": "default-deliberation",
+    "challenger": "default-deliberation"
+  },
+  "budget": "",
+  "cost_actual": null,
+  "warnings": [],
+  "model_diversity": true,
+  "per_seat_model_variant": {
+    "prompt-engineer": "Haiku 4.5",
+    "eval-engineer": "Sonnet 4.6",
+    "challenger": "Opus 4.8"
+  },
+  "advisory_only": true
+}
