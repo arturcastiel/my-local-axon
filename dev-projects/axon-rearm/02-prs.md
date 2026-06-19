@@ -245,3 +245,18 @@ PRINCIPLE (audit): PROTECT-before-ARM, VERIFY-the-wire-before-ARM, RE-BASELINE-b
 - **STILL OPEN (owner): K3** (does residual model-drift bind to the procedural tool-order meter, or to
   cognition/persona drift in axon_drift_log.py) — blocks K2's threshold value + PR-T0-1's meter binding.
   **K4** (unknown→BLOCK scope: everywhere vs autonomous/merge-only) — blocks PR-T3-2.
+
+## OWNER ARBITRATIONS — K3, K4 RESOLVED 2026-06-19 (owner: "more conservative, harder to break")
+- **K3 = bind the verdict to COGNITION/PERSONA drift (b); instrument BOTH; calibration mandatory.**
+  The procedural tool-order meter (a) is circular — it subsides regardless of model behaviour (exactly what
+  file-backed state already fixes) → green-by-construction = the blind-instrument disease. PR-T0-1 must wire
+  axon_drift_log.py (persona-bleed/frame-slip) into a READ verdict and bind the HALT threshold (K2) to IT.
+  Instrument the procedural meter too as defense-in-depth (a divergence = diagnostic), but it NEVER alone
+  satisfies the verdict. M6 golden-trace calibration test is mandatory before T0-1 closes. UNBLOCKS K2's threshold.
+- **K4 = fail-closed EVERYWHERE, gated on M9 wire-is-live (loud-N/A when no live trace).**
+  A gate that fails OPEN on `unknown` is trivially bypassed (forge/blank the trace — red-teamer). Formally:
+  absence-of-evidence must not satisfy the guard. So unknown→BLOCK applies at the interactive gate TOO — but
+  ONLY when the wire is live (M9 precondition); when there is legitimately no trace, emit a LOUD N/A, never a
+  silent pass and never a brick. PR-T3-2 carries the wire-is-live precondition + the loud-N/A path; records the
+  decision against the PR-AUTO-213 rationale rather than editing past it.
+- ALL FOUR conflicts now resolved: K2 GATE · K3 cognition-bind+both · K4 fail-closed-everywhere+wire-gated · K5 fix-first.
