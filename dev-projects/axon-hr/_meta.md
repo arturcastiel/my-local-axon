@@ -25,4 +25,4 @@ updated:         2026-06-18
     ~/axon-hr-team/output/prompts/               (63-file copy-paste prompt pack)
 - The bundle is a SPEC + asset pack — no runnable code shipped. §13 of HANDOFF.md
   holds the H1–H4 AXON-native integration recipes; this project authors the runtime.
-- Next: code-dev study  → ingest handoff + map repo integration points (menu, programs/, REGISTRY).
+- Next: code-dev pr 1  → author 03-prs/PR-001.md (hr-team-selector, bottom-up, ACTIVE-with-tests).

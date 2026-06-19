@@ -3,14 +3,14 @@ slug:            axon-completeness-gate
 schema-version:  v4
 status:          active
 legacy:          false
-phase:           pr
+phase:           audit
 workflow-step:   build
 branch:          main
 codebase:        /home/arturcastiel/projects/new-axon/axon
 parent:          (none)
 sub-projects:    []
 created:         2026-06-18
-updated:         2026-06-18
+updated:         2026-06-19
 
 ## Working Context (RE-SCOPED 2026-06-18 — owner: "everything in this project, solve autonomously, top priority bug-free axon")
 - Umbrella: fix ALL 18 confirmed architecture findings from the audit
@@ -38,3 +38,12 @@ updated:         2026-06-18
 - HARD CONSTRAINT (owner, 2026-06-18): "gates cannot be broken" — no --force bypass, crucible-green
   before any test-execution (AEGIS green-only), and NO kernel (axon/) edits (inviolable floor).
 - Next: code-dev study (deep) -> read the sites, design the `# outputs:`-driven guard.
+
+## Working Context (REOPENED 2026-06-19 — hr-team audit found CRIT residual)
+- Council + 2 plan-auditors proved 4 findings only PARTIALLY closed: #1 (CRIT, Bash gate
+  interpreter/redirect bypass), #6 (HIGH, run-id never rotates), #5 (HIGH, partial fail-closed
+  carriage + clone-open), #11 (HIGH, _axon_io cwd-relative). Plus G5/G6 (test-ledger + hygiene).
+- WAVE G — residual hardening, redo-until-closed: each PR not DONE until the council's exact
+  exploit is re-run as an automated negative test and proven dead. Decisions: ADR-004 (R9
+  argv-gate + OS FS barrier, supersedes PR-07 denylist), ADR-005 (revise ADR-003 teeth reality).
+- Status downgraded complete->active; audit verdict: closed-with-CRIT-residuals.

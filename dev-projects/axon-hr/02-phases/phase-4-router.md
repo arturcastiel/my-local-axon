@@ -10,8 +10,8 @@ Author workspace/programs/hr-team.md: the ACTIVE router neuron of the hr-team pr
 - PR-003 (hr-team-deliberator neuron — consumes W:council-transcript, aggregates to W:deliberator-verdict per HANDOFF §4.3)
 
 ## Files — new
-- /home/arturcastiel/projects/new-axon/axon/workspace/programs/hr-team.md
-- /home/arturcastiel/projects/new-axon/axon/tests/test_hr_team_router.py
+- workspace/programs/hr-team.md
+- tests/test_hr_team_router.py
 
 ## Files — modified
 - none

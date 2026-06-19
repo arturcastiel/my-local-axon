@@ -1,8 +1,12 @@
 # PR list — AXON Bug-Free Hardening
 19 PRs
-<!-- reconciled 2026-06-18 vs codebase+git: PR-01..04 squash-landed on main as a6ec042
-     (old per-PR hashes 3df2ba1/c7724d3/5c3b35b were pre-squash branch commits, not on main).
-     PR-07=f055cae · PR-08/09=4b0fb8f. NEXT ready on critical path: PR-05. -->
+<!-- reconciled 2026-06-19 vs codebase+git (resume drift-fix): ALL 19 PRs LANDED on main.
+     PR-01..04=a6ec042 · PR-05=e07154c · PR-06=c141d6f · PR-07=f055cae · PR-08/09=4b0fb8f ·
+     PR-10=ee00fc1 · PR-11=592db96 · PR-12=87a02b3 · PR-13/14/15=d69644e ·
+     PR-16/17/18=b5903c6 · PR-19=fac6d90.
+     PRIOR DRIFT (corrected this pass): PR-06/10/12..19 were stuck at [TODO] though committed
+     2026-06-18 evening (Waves C/D/E/F); 04-log last entry "paused at Wave C" was stale.
+     Implementation phase complete — remaining: log reconcile + audit (verify 18 findings closed). -->
 
 
 ## PR-01 — phase_model mode-aware completeness gate  [DONE a6ec042]
@@ -30,7 +34,7 @@
 - change: RUNTIME/BLOCK/silent-until-flag rule (model r_state_surfaced): on :done resolve # emits, BLOCK if absent. Default-OFF.
 - test: tests/test_terminal_outputs.py
 
-## PR-06 — workflow_run node outputs schema + verify  [TODO]
+## PR-06 — workflow_run node outputs schema + verify  [DONE c141d6f]
 - wave A · findings L4 · depends PR-01
 - change: optional per-synapse outputs:; verify_node_outputs(); record_step downgrade; advance refuse. Backward-compat.
 - test: tests/test_workflow_node_outputs.py
@@ -50,7 +54,7 @@
 - change: anchor relative targets to AXON_ROOT not CWD in is_inside_axon.
 - test: tests/test_enforce_root_anchor.py
 
-## PR-10 — R9: _axon_io mandatory write primitive (lint)  [TODO]
+## PR-10 — R9: _axon_io mandatory write primitive (lint)  [DONE ee00fc1]
 - wave B · findings #4 · depends PR-08
 - change: lint forbidding raw open('w')/write_text in tools/ except whitelist; route offenders.
 - test: tests/test_axon_io_lint.py
@@ -60,42 +64,42 @@
 - change: crucible control running verify-only BLOCK rules over the tree at merge — the missing fail-closed runner.
 - test: tests/test_crucible_verify_carriage.py
 
-## PR-12 — Enforcement: identity-independent response/dont-do gate  [TODO]
+## PR-12 — Enforcement: identity-independent response/dont-do gate  [DONE 87a02b3]
 - wave C · findings #12 · depends —
 - change: tracked sentinel marking repo AXON-governed (or identity-independent gate) so fresh-clone/CI aren't allow-all.
 - test: tests/test_hook_identity_independent.py
 
-## PR-13 — Enforcement: Stop-hook honest scope / gate-on-next-turn  [TODO]
+## PR-13 — Enforcement: Stop-hook honest scope / gate-on-next-turn  [DONE d69644e]
 - wave C · findings #7 · depends PR-11
 - change: persist BLOCK + force rewrite/HALT next turn (not log-only); OR honestly reclassify the BLOCK label.
 - test: tests/test_stop_hook_next_turn.py
 
-## PR-14 — Drift: wire dispatch_index into freshness+cron  [TODO]
+## PR-14 — Drift: wire dispatch_index into freshness+cron  [DONE d69644e]
 - wave D · findings #9 · depends —
 - change: add dispatch_index to freshness._checks + _refresh_steps.
 - test: tests/test_freshness_dispatch_index.py
 
-## PR-15 — Drift: dag_consistency DAG-vs-PR + freshness/boot  [TODO]
+## PR-15 — Drift: dag_consistency DAG-vs-PR + freshness/boot  [DONE d69644e]
 - wave D · findings #10,#13,#16 · depends —
 - change: PR-file cross-check in dag_consistency; wire into freshness + boot tick.
 - test: tests/test_dag_pr_reconcile.py
 
-## PR-16 — Firing: reanchor hook re-ticks anticipate  [TODO]
+## PR-16 — Firing: reanchor hook re-ticks anticipate  [DONE b5903c6]
 - wave E · findings #14 · depends —
 - change: reanchor hook also runs anticipate --footer + refreshes W:orchestrator-last-tick.
 - test: tests/test_reanchor_anticipate.py
 
-## PR-17 — Firing: turn-log/prompt-log driven by a hook  [TODO]
+## PR-17 — Firing: turn-log/prompt-log driven by a hook  [DONE b5903c6]
 - wave E · findings #15 · depends —
 - change: drive turn-log+prompt-log from a PostToolUse/Stop hook so always-on logging fires.
 - test: tests/test_turn_log_hook.py
 
-## PR-18 — Firing: emit-without-listener lint + triage  [TODO]
+## PR-18 — Firing: emit-without-listener lint + triage  [DONE b5903c6]
 - wave E · findings #17 · depends —
 - change: triage 24 unhandled EMITs; wire intended ONs; add emit-without-listener lint.
 - test: tests/test_emit_listener_lint.py
 
-## PR-19 — Resume: session-owner token instead of getppid  [TODO]
+## PR-19 — Resume: session-owner token instead of getppid  [DONE fac6d90]
 - wave F · findings #6 · depends —
 - change: replace getppid liveness key with a stable boot-epoch/run-id token.
 - test: tests/test_session_recovery_token.py

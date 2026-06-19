@@ -1,0 +1,9 @@
+{"type": "protocol_started", "call_id": "2026-06-19T125139Z-adversar-78e61ee3", "seats": 3}
+{"type": "seat_invoked", "call_id": "2026-06-19T125139Z-adversar-78e61ee3", "seat": "prompt-engineer"}
+{"type": "seat_invoked", "call_id": "2026-06-19T125139Z-adversar-78e61ee3", "seat": "eval-engineer"}
+{"type": "seat_invoked", "call_id": "2026-06-19T125139Z-adversar-78e61ee3", "seat": "challenger"}
+{"type": "seat_responded", "call_id": "2026-06-19T125139Z-adversar-78e61ee3", "seat": "prompt-engineer", "valid_schema": true}
+{"type": "seat_responded", "call_id": "2026-06-19T125139Z-adversar-78e61ee3", "seat": "eval-engineer", "valid_schema": true}
+{"type": "seat_responded", "call_id": "2026-06-19T125139Z-adversar-78e61ee3", "seat": "challenger", "valid_schema": true}
+{"type": "aggregation_computed", "call_id": "2026-06-19T125139Z-adversar-78e61ee3", "algorithm": "WSV"}
+{"type": "protocol_completed", "call_id": "2026-06-19T125139Z-adversar-78e61ee3", "status": "resolved"}
