@@ -3,7 +3,7 @@ slug:            axon-rearm
 schema-version:  v4
 status:          active
 legacy:          false
-phase:           plan
+phase:           pr
 workflow-step:   build
 branch:          main
 codebase:        /home/arturcastiel/projects/new-axon/axon

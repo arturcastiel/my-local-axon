@@ -1,0 +1,336 @@
+{
+  "schema": "axon-dag",
+  "schema-version": "v1",
+  "level": "plan",
+  "owner": "arturcastiel",
+  "generated": "2026-06-19",
+  "generator": "tools/dag.py (axon-rearm plan, post-audit)",
+  "validated": null,
+  "critical-path": [],
+  "nodes": [
+    {
+      "id": "PR-T0-1",
+      "kind": "pr",
+      "name": "Instrument the drift detector (A1)",
+      "label": "Instrument the drift detector (A1)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T0-2",
+      "kind": "pr",
+      "name": "Arm the enforcement flags (A2 \u00b7 OD-1)",
+      "label": "Arm the enforcement flags (A2 \u00b7 OD-1)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T0-2a",
+      "kind": "pr",
+      "name": "Seed `# emits:` / `outputs:` SSOT (A2a)",
+      "label": "Seed `# emits:` / `outputs:` SSOT (A2a)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T0-3",
+      "kind": "pr",
+      "name": "Mechanical counters (A3)",
+      "label": "Mechanical counters (A3)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T1-1",
+      "kind": "pr",
+      "name": "One shared changeset base resolver (B1)",
+      "label": "One shared changeset base resolver (B1)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T1-2",
+      "kind": "pr",
+      "name": "CI fetch-depth + merge-base (B2)",
+      "label": "CI fetch-depth + merge-base (B2)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T1-3",
+      "kind": "pr",
+      "name": "Real CR-13 end-to-end test (B3)",
+      "label": "Real CR-13 end-to-end test (B3)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T1-4",
+      "kind": "pr",
+      "name": "Close R13 coverage loopholes (B4)",
+      "label": "Close R13 coverage loopholes (B4)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T1-5",
+      "kind": "pr",
+      "name": "Frozen shrink-only test-grandfather (OD-5)",
+      "label": "Frozen shrink-only test-grandfather (OD-5)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T2-1",
+      "kind": "pr",
+      "name": "Gate the dev-mode toggle (C1)",
+      "label": "Gate the dev-mode toggle (C1)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T2-2",
+      "kind": "pr",
+      "name": "Protect the enforcement core (C2)",
+      "label": "Protect the enforcement core (C2)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T2-clone",
+      "kind": "pr",
+      "name": "Clone/CI fail-closed (OD-6 \u00b7 Wave G G3-D2)",
+      "label": "Clone/CI fail-closed (OD-6 \u00b7 Wave G G3-D2)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T2-3",
+      "kind": "pr",
+      "name": "Build G1c or delete the claim (C3)",
+      "label": "Build G1c or delete the claim (C3)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T3-1",
+      "kind": "pr",
+      "name": "Prose-vs-wiring meta-rule (D1)",
+      "label": "Prose-vs-wiring meta-rule (D1)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T3-2",
+      "kind": "pr",
+      "name": "Drift-gate unknown \u2192 fail-closed (D2 \u00b7 OD-2)",
+      "label": "Drift-gate unknown \u2192 fail-closed (D2 \u00b7 OD-2)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T3-3",
+      "kind": "pr",
+      "name": "Unify the dual drift encoding (D3)",
+      "label": "Unify the dual drift encoding (D3)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T3-4",
+      "kind": "pr",
+      "name": "R_PHASE_TRACKED to a biting runner (D4)",
+      "label": "R_PHASE_TRACKED to a biting runner (D4)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T4-shadow",
+      "kind": "pr",
+      "name": "Investigate the 29 legacy programs (OD-4)",
+      "label": "Investigate the 29 legacy programs (OD-4)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T4-1",
+      "kind": "pr",
+      "name": "Fix the dead resume program (E1)",
+      "label": "Fix the dead resume program (E1)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T4-2",
+      "kind": "pr",
+      "name": "QUARANTINE prune + orphan gates (E2)",
+      "label": "QUARANTINE prune + orphan gates (E2)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T4-3",
+      "kind": "pr",
+      "name": "Test-or-delete below-radar drift tools (E3)",
+      "label": "Test-or-delete below-radar drift tools (E3)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T4-4",
+      "kind": "pr",
+      "name": "Registry status enum + alias_of (E4 \u00b7 OD-7 enabler)",
+      "label": "Registry status enum + alias_of (E4 \u00b7 OD-7 enabler)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T4-5",
+      "kind": "pr",
+      "name": "Fix workflow-run --name (E5 \u00b7 OD-7)",
+      "label": "Fix workflow-run --name (E5 \u00b7 OD-7)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T5-1",
+      "kind": "pr",
+      "name": "Reconcile self-models (F1)",
+      "label": "Reconcile self-models (F1)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T5-2",
+      "kind": "pr",
+      "name": "Menu link + count integrity (F2)",
+      "label": "Menu link + count integrity (F2)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T5-3",
+      "kind": "pr",
+      "name": "Naming conventions + authoring-guide section (F3 \u00b7 OD-7)",
+      "label": "Naming conventions + authoring-guide section (F3 \u00b7 OD-7)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T5-4",
+      "kind": "pr",
+      "name": "Generate the typed program graph (F4 \u00b7 OD-3)",
+      "label": "Generate the typed program graph (F4 \u00b7 OD-3)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T6-exp",
+      "kind": "pr",
+      "name": "Thin-kernel heavy-ceremony OFF-vs-ON (OD-8)",
+      "label": "Thin-kernel heavy-ceremony OFF-vs-ON (OD-8)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T4-hrteam",
+      "kind": "pr",
+      "name": "Wire the hr-team execution seam so AXON can ALWAYS convene a",
+      "label": "Wire the hr-team execution seam so AXON can ALWAYS convene a real council",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T2-anchor",
+      "kind": "pr",
+      "name": "Pin the R9 anchor to the .axon-governed sentinel (M4)",
+      "label": "Pin the R9 anchor to the .axon-governed sentinel (M4)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T2-devmode-default",
+      "kind": "pr",
+      "name": "dev-mode ships default-OFF (M4)",
+      "label": "dev-mode ships default-OFF (M4)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T2-loopreceipt",
+      "kind": "pr",
+      "name": "Constrain the R9 actor-whitelist to a PATH not an actor (M4)",
+      "label": "Constrain the R9 actor-whitelist to a PATH not an actor (M4)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T1-cihost",
+      "kind": "pr",
+      "name": "Resolve the gating CI pipeline (M5)",
+      "label": "Resolve the gating CI pipeline (M5)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-T2-flags",
+      "kind": "pr",
+      "name": "Protect the flag dir (M3)",
+      "label": "Protect the flag dir (M3)",
+      "status": "pending",
+      "child-dag": null
+    }
+  ],
+  "edges": [
+    {
+      "from": "PR-T0-2a",
+      "to": "PR-T0-2",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-T1-1",
+      "to": "PR-T1-2",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-T1-1",
+      "to": "PR-T1-3",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-T1-1",
+      "to": "PR-T1-4",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-T1-1",
+      "to": "PR-T1-5",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-T0-1",
+      "to": "PR-T3-2",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-T4-4",
+      "to": "PR-T4-5",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-T4-4",
+      "to": "PR-T5-3",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-T0-1",
+      "to": "PR-T6-exp",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-T0-3",
+      "to": "PR-T6-exp",
+      "kind": "depends"
+    }
+  ]
+}

@@ -160,3 +160,88 @@ FIRST SPRINT (council recommendation): PR-T0-1, T0-2, T0-2a, T0-3, T1-1, T1-2, T
 - change: a controlled comparison of drift outcomes with the heavy per-turn apparatus on vs off, measured by the
   now-instrumented drift detector. The one place "more enforcement" might be wrong — may re-scope the whole backlog.
 - test: (experiment) — a reproducible protocol + a written verdict with the drift deltas; preserved as an ADR.
+
+### PR-T4-hrteam — Wire the hr-team execution seam so AXON can ALWAYS convene a real council  [HIGH] · depends —
+- finding: tools/hr_team.py run_seats() BACKEND="fanout" is NOT wired to real cognition — it raises
+  NotImplementedError (or stubs fake verdicts with AXON_HR_TEAM_ALLOW_STUB=1). The SELECTOR/CONVENER/
+  DELIBERATOR are built; the per-seat execution seam is dormant → `hr-team --task` cannot fire a real
+  council. Textbook "wired but not firing" (handoff theme T1/T2). (owner: AXON must ALWAYS trigger hr-team.)
+- change: (a) add a roster-emitter mode to hr_team.py that runs SELECTOR+CONVENER and emits the per-seat
+  CATALOG-PERSONA-loaded prompts as JSON (no run_seats); (b) save a reusable named `hr-team-council`
+  workflow that consumes the roster, fans out real persona-seeded sub-agents, and feeds the DELIBERATOR;
+  (c) update workspace/programs/hr-team*.md so "convene the council" routes through the bridge.
+- test: roster-emitter returns N catalog-sourced seats incl. the mandatory process/challenger with their
+  persona content; a stubbed fan-out round produces a §4.3 advisory verdict (advisory_only:true,
+  verdict_distribution present). NO fabricated cognition in the tool path.
+- note: this is the durable fix for "AXON must always trigger hr-team"; the running plan-review workflow
+  (catalog-linked fan-out) is the working bridge until this lands.
+
+---
+# AUDIT AMENDMENTS (binding · pre-execution) — from plan-review/00-plan-audit.md (PROCEED-WITH-CHANGES 0.84)
+The 10 catalog-persona specialists + 4-seat audit council verified the plan at source and found the
+first sprint NOT executable as written. These amendments are binding before any PR opens. Each cites its M-item.
+
+## Amended existing PRs
+- **M1** → PR-T1-1/T1-3/T1-4 RE-BASELINE vs HEAD. The CR-13 empty-diff fail-open is ALREADY closed
+  (crucible.py:148 _changeset_base, :189-194 fail-closed). DELETE T1-3's "re-point test_crucible_failopen.py"
+  instruction (it would REVERT a correct passing test). Re-scope T1-1 to the residual: collapse
+  changed_files() inline base (:128-134) to call _changeset_base; verify 2>/dev/null parity; ADD a new
+  no-mock e2e test ALONGSIDE the existing one (do not touch it).
+- **M2** → PR-T0-2 SPLIT. Phase A flips ONLY flags whose rule registry._collect_rules() loads (22 rules):
+  r_state_surfaced, r_reasoning_trace, r_terminal_outputs. Phase B (r_phase_tracked, r_workflow_node_order,
+  r_no_orphan_tools) stays OFF until registered — flipping them today is FALSE-GREEN. Each Phase-A flag needs
+  a per-rule RED-before/GREEN-after test at the plane it arms (response vs changeset — they differ).
+- **M6** → PR-T0-1 pin tools/drift.py as THE module (3 encodings exist); add drift-init/ensure-trace; add the
+  NEW PostToolUse hook event + a Bash→canonical-tool resolver (tools run as Bash(python x.py)); add a
+  golden-trace CALIBRATION test (match→0, one-divergence→band, reorder→diverged), not just "trace gains a call".
+  T3-2 and T6-exp inherit an uncalibrated meter until this lands.
+- **M9** → PR-T3-2 gate on a WIRE-IS-LIVE precondition (not "meter exists"); "no active program / stale trace"
+  is the NORMAL interactive state → unknown→BLOCK bricks ~every turn. Record the bug-vs-policy decision against
+  the live PR-AUTO-213 rationale in r_drift_gate.py (do not edit past it silently). Scope = conflict K4 (owner).
+- **M7** → 03-prs/DAG.json regenerate with hard edges (T1-1↔T1-2 ATOMIC, T0-1→T2-2, T0-3→T2-2, T3-3→T2-2 so
+  protect-settings lands AFTER the files it freezes), populated critical-path, per-node dod/proves. Anti-self-lockout.
+- **M8** → T1-1, T2-1, T2-2, T2-clone, T3-2, T3-4 each gain a NAMED, tested, audited WARN-downgrade (off-switch).
+  A re-arm program with no disarm command is incomplete. Wave 0 = one-command flag-disarm; Wave 2 = break-glass.
+
+## New PRs (audit-surfaced)
+### PR-T2-anchor — Pin the R9 anchor to the .axon-governed sentinel (M4)  [CRIT] · DONE 781463a (Wave G follow-up)
+- $AXON_ROOT only honoured with the tracked sentinel; sentinel-less env rejected. Closed the live one-line bypass.
+### PR-T2-devmode-default — dev-mode ships default-OFF (M4)  [CRIT] · depends —
+- dev-mode.md currently reads value:true (master lock OPEN). Revert to default-OFF; test asserts it defaults OFF
+  AND reverts OFF (not just "true is denied"). T2-1 arms enforcement on an open master key today.
+### PR-T2-loopreceipt — Constrain the R9 actor-whitelist to a PATH not an actor (M4)  [CRIT] · depends —
+- _axon_io._R9_WHITELIST={"loop-receipt"} skips R9 for any caller passing _actor="loop-receipt" (lines 122/179).
+  Standing insider bypass. Constrain to a specific path, not an actor name.
+### PR-T1-cihost — Resolve the gating CI pipeline (M5)  [CRIT] · depends —
+- Only .github/workflows/ci.yml exists; remote is GitLab; NO .gitlab-ci.yml. fetch-depth:0 is a GitHub key.
+  Study sub-step: determine the authoritative gating pipeline; if GitLab, author the crucible job (GIT_DEPTH +
+  explicit fetch origin main). T1-1↔T1-2 co-merge or T1-1 alone bricks every shallow detached-HEAD MR.
+### PR-T2-flags — Protect the flag dir (M3)  [CRIT] · depends —
+- Fold workspace/memory/longterm/*-required.md + dev-mode.md into is_protected_path, co-land with T0-2 arming.
+  Armed-but-unprotected flags = an agent disarms them next turn with no rule firing.
+
+## REVISED FIRST SPRINT (audit-recommended; supersedes the original 8)
+1. M1 RE-BASELINE (T1-1 vs HEAD) · 2. VERIFY-THE-WIRE — pull PR-T3-1 (prose↔wiring) + PR-T3-3 (drift parser) +
+   PR-T0-1 (meter, pinned+calibrated) into Wave 0 · 3. PROTECT — PR-T2-anchor [DONE] + T2-devmode-default +
+   T2-loopreceipt + T2-flags · 4. ARM only registered flags (PR-T0-2 Phase A) · 5. CO-MERGE T1-1+T1-cihost
+   host-correct · 6. capture the cheap OFF baseline early (minimal PR-T6-exp before flags harden).
+PRINCIPLE (audit): PROTECT-before-ARM, VERIFY-the-wire-before-ARM, RE-BASELINE-before-fix.
+
+## OWNER-ONLY CONFLICTS (arbitrate before the affected PRs) — K2..K5
+- K2: who/what holds HALT-rights (the off-switch authority). K3: does "residual MODEL drift" even BIND to the
+  procedural tool-sequence meter (M6) — or is it the wrong instrument for the model question. K4: unknown→BLOCK
+  SCOPE — everywhere vs autonomous/merge-only. K5: the EXEC-parser miscompile (synapse_infer.py:48 mis-parses
+  EXEC(workspace/programs/X.md) → phantom 'workspace') — fix inside PR-T5-4 before the typed graph is trusted.
+
+## OWNER ARBITRATIONS — RESOLVED 2026-06-19
+- **K2 = GATE (pre-committed HALT).** OD-8 (thin-kernel experiment) can HALT the arming waves. PR-T6-exp-baseline
+  must define a failure threshold + self-abort: if post-Wave-0 instrumented drift does not improve below the
+  threshold, STOP the arming waves and re-open OD-8. The THRESHOLD VALUE is set after K3 (which meter) — the
+  governance is decided (gate), the number waits on K3. No "re-scope with no mechanism" (avoids dissent-as-theatre).
+- **K5 = FIX-FIRST + per-relation cycle policy.** PR-T5-4's FIRST sub-step lands the synapse_infer.py:48 RE_EXEC
+  regex fix (currently excludes `/` and `.` → path-form EXEC collapses to phantom `workspace`) + a fixture, before
+  any typed graph is trusted. Cycle policy: FATAL on the `depends` relation, LEGITIMATE on the `transition` relation
+  (programs loop by design, e.g. menu↔modes). Orphan/isolation counts are not authoritative until this lands.
+- **STILL OPEN (owner): K3** (does residual model-drift bind to the procedural tool-order meter, or to
+  cognition/persona drift in axon_drift_log.py) — blocks K2's threshold value + PR-T0-1's meter binding.
+  **K4** (unknown→BLOCK scope: everywhere vs autonomous/merge-only) — blocks PR-T3-2.
