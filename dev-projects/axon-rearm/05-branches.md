@@ -9,3 +9,11 @@
 - Active branch for the Re-Arm backlog is `fix/wave-g-residual-hardening` (inherited from parent
   axon-completeness-gate Wave G). `_meta.branch` synced to it 2026-06-22.
 - Working tree had uncommitted changes at reconcile time (see 04-log.md) — not yet attributed to a PR.
+
+## Commits 2026-06-22 (this session)
+| Commit | Group | Project | Note |
+|--------|-------|---------|------|
+| 01325dc | A | hr-team-improvements | run_seats fail-closed guard + contract test |
+| 966715a | B | axon-rearm (Wave 0)  | enforcement-flag integration tests |
+| e82bfc9 | C | maintenance          | regenerated docs/cron/audit |
+Pushed → MR !177. HELD: axon/BOOT.md (kernel), _policy.md (security floor).

@@ -52,3 +52,16 @@ Closed the council's 5-item track (4/5 fully autonomous; #1 commit is human):
 Re-verify: structure ✓0 · dag ok errors=0 (orphans 17, all genuine depends— ) · branch ✓ · dont-do prose=0.
 Remaining (human): commit the 10 WIP files to their homes (see _wip-register.md) → clears preflight Gate 2.
 Seeded sibling project: hr-team-improvements (parent of PR-T4-hrteam).
+
+## 2026-06-22 · commit + push (codebase)
+Autonomous-mode grant active (commit/push allowed). Committed + pushed the delegable WIP groups:
+- 01325dc fix(hr-team): run_seats fails closed by default — stub tests-only  (Group A → hr-team-improvements)
+- 966715a test(verify): integration tests for opt-in enforcement flags        (Group B → axon-rearm Wave 0)
+- e82bfc9 chore: regenerate workspace docs/cron/audit state                    (Group C → maintenance)
+Pushed 3497235..e82bfc9 → origin (GitLab) · MR !177 open.
+HELD (human-gated, NOT committed by AXON):
+- axon/BOOT.md  → kernel-change (grant deny-list + inviolable floor). Commit in dev-mode, human.
+- _policy.md    → AEGIS security-floor (autonomy policy). Human decision to track it.
+NOT done (AEGIS resolver = human, fail-closed):
+- test-execution → human. merge → human (MR !177). ⚠ GitLab has no .gitlab-ci.yml (PR-T1-cihost / M5) —
+  the crucible gate may not run there, so "green" needs a real signal before merge.
