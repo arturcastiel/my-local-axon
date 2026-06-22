@@ -10,7 +10,7 @@ codebase:        /home/arturcastiel/projects/new-axon/axon
 parent:          axon-completeness-gate
 sub-projects:    []
 current-pr:      PR-T2-anchor
-next-action:     "Closure track DONE (4/5 autonomous; see masterplan + _wip-register). ONLY human step left: commit the 10 WIP files to their homes (_wip-register.md) → clears preflight Gate 2. THEN build layer-1 write-time schema-version GATE (first compliance PR, with tests), THEN resume REVISED FIRST SPRINT (T3-1/T3-3/T0-1 → PROTECT → ARM T0-2 Phase A). Reconciled + ready; certification = the tested checker (layer-3)."
+next-action:     "RESUME: read SESSION-HANDOFF-2026-06-22.md. Session test/gate arc DONE (5 MRs merged: !177-!181; gate ~3:35 parallel+reliable). Open: BOOT.md in stash@{0} (human commit), stale branches, hr-team-improvements needs code-dev plan, axon-rearm next = VERIFY-THE-WIRE→PROTECT→ARM (02-prs revised sprint)."
 last-program:    code-dev-get-it-ready
 last-ts:         2026-06-22T08:22:00Z
 created:         2026-06-19
