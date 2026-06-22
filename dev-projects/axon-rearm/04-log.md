@@ -65,3 +65,14 @@ HELD (human-gated, NOT committed by AXON):
 NOT done (AEGIS resolver = human, fail-closed):
 - test-execution → human. merge → human (MR !177). ⚠ GitLab has no .gitlab-ci.yml (PR-T1-cihost / M5) —
   the crucible gate may not run there, so "green" needs a real signal before merge.
+
+## 2026-06-22 · autonomous test+commit → GREEN
+crucible gate passed:true (4708 pass / 0 fail / 15 skip). Two gate-reds were both ENVIRONMENTAL
+(not regressions): stale DOC-INDEX + a flaky non-hermetic receipts test polluted by this session's own
+verify receipts. Fixed both; committed + pushed:
+- 01325dc/966715a/e82bfc9 (earlier: hr-team guard, enforcement tests, docs chore)
+- 628c184 ← test(receipts) hermetic fix + DOC-INDEX regen + _policy.md (AEGIS policy tracked)
+AEGIS now resolves test-execution=TRUE (policy green-only + grant + gate green).
+HELD: axon/BOOT.md (kernel floor, human). Gate side-effects left dirty (coverage/AXON-DOCS/REGISTRY/cron
+= regenerated-artifact churn — the 'freshness' WARN). merge !177 = human.
+Note: 9-min serial gate (subprocess-bound) flagged as a re-arm candidate (parallelize/lane/de-subprocess).
