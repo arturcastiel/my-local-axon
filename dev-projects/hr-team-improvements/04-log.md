@@ -29,3 +29,6 @@ Verified 9/9 green cache-disabled (5 dedicated + 3 prior + 1 gate-context) vs 1 
 main gate now ~8:43 serial -> ~3:35 parallel (~2.4x), RELIABLE. Serial fallback (fix/gate-serial-restore)
 pushed as insurance, now superseded/unmerged. Lesson: gate the MERGED state, not just branches; and the
 diagnostic data (not a guess) found the cause.
+
+## SESSION END — 2026-06-22T12:40:00Z
+Context cleared. NEXT: code-dev plan (5 fix vectors -> PR backlog). Lead = propagate fail-closed run_seats guard to the for-use checkout. See ../axon-rearm/SESSION-HANDOFF-2026-06-22.md.
