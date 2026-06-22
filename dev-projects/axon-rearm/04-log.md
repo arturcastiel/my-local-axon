@@ -35,3 +35,8 @@ Headline: invert the instinct — (1) fail-closed write-time schema-version GATE
 (versioned manifest), (3) read-only `code-dev compliance` program auto-fixing ONLY derivable, escalating
 semantic, with no-false-green tests incl. dirty-tree-fails. axon-rearm not "compliant" until tested checker
 certifies it + flagged loose ends closed (dirty tree, stubs, _actions.log, co-merge edge, dod/proves).
+
+## 2026-06-22 · project saved (backup push)
+Encoded the council plan as project direction (_meta.next-action + masterplan "Compliance closure track").
+Removed 2 stub council bundles (fabricated verdicts). Pushed my-axon → origin/main (6383e09).
+State: reconciled-to-v4, plan adopted, NOT yet certified (closure track #1–#5 open).
