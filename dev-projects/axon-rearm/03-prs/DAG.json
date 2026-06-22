@@ -3,10 +3,10 @@
   "schema-version": "v1",
   "level": "plan",
   "owner": "arturcastiel",
-  "generated": "2026-06-19",
+  "generated": "2026-06-22T07:43:07Z",
   "generator": "tools/dag.py (axon-rearm plan, post-audit)",
-  "validated": null,
-  "critical-path": [],
+  "validated": "2026-06-22T07:43:07Z",
+  "critical-path": ["PR-T0-1", "PR-T2-2"],
   "nodes": [
     {
       "id": "PR-T0-1",
@@ -245,7 +245,7 @@
       "kind": "pr",
       "name": "Pin the R9 anchor to the .axon-governed sentinel (M4)",
       "label": "Pin the R9 anchor to the .axon-governed sentinel (M4)",
-      "status": "pending",
+      "status": "complete",
       "child-dag": null
     },
     {
@@ -330,6 +330,21 @@
     {
       "from": "PR-T0-3",
       "to": "PR-T6-exp",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-T0-1",
+      "to": "PR-T2-2",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-T0-3",
+      "to": "PR-T2-2",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-T3-3",
+      "to": "PR-T2-2",
       "kind": "depends"
     }
   ]
