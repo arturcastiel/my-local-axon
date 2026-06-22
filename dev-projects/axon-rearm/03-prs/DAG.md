@@ -2,11 +2,11 @@
 # DAG · plan · arturcastiel
 
 - schema-version: `v1`
-- generated:      `2026-06-22T07:43:07Z`
+- generated:      `2026-06-22T08:21:51Z`
 - generator:      `tools/dag.py (axon-rearm plan, post-audit)`
 - nodes:          34
-- edges:          13
-- critical-path:  PR-T0-2a → PR-T0-2
+- edges:          14
+- critical-path:  PR-T1-cihost → PR-T1-1 → PR-T1-2
 
 ## Nodes
 
@@ -64,3 +64,4 @@
 | PR-T0-1 | PR-T2-2 | depends |
 | PR-T0-3 | PR-T2-2 | depends |
 | PR-T3-3 | PR-T2-2 | depends |
+| PR-T1-cihost | PR-T1-1 | depends |

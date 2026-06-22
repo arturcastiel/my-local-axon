@@ -10,9 +10,9 @@ codebase:        /home/arturcastiel/projects/new-axon/axon
 parent:          axon-completeness-gate
 sub-projects:    []
 current-pr:      PR-T2-anchor
-next-action:     "Per COMPLIANCE-PLAN.md (council 2026-06-22): close the 5 flagged loose ends FIRST (1 dirty tree · 2 session-stubs · 3 _actions.log · 4 T1-1+T1-cihost co-merge edge · 5 per-node dod/proves), THEN layer-1 write-time schema-version gate, THEN REVISED FIRST SPRINT (T3-1/T3-3/T0-1 → PROTECT set → ARM T0-2 Phase A). axon-rearm is reconciled but NOT yet certified (no tested checker)."
-last-program:    code-dev-compliance-reconcile
-last-ts:         2026-06-22T07:43:07Z
+next-action:     "Closure track DONE (4/5 autonomous; see masterplan + _wip-register). ONLY human step left: commit the 10 WIP files to their homes (_wip-register.md) → clears preflight Gate 2. THEN build layer-1 write-time schema-version GATE (first compliance PR, with tests), THEN resume REVISED FIRST SPRINT (T3-1/T3-3/T0-1 → PROTECT → ARM T0-2 Phase A). Reconciled + ready; certification = the tested checker (layer-3)."
+last-program:    code-dev-get-it-ready
+last-ts:         2026-06-22T08:22:00Z
 created:         2026-06-19
 updated:         2026-06-22
 
