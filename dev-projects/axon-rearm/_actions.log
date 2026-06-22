@@ -1,0 +1,14 @@
+# Universal undo trail (v4 schema). Format: <iso-ts>  <action-id>  <op>  <target>  <snapshot|note>
+# Backfilled 2026-06-22 — the compliance-reconcile pre-dated this log. Pre-reconcile state is recoverable
+# via my-axon git history (commit 6383e09 and parents), so retro snapshots point there rather than fabricate files.
+2026-06-22T07:43:07Z  act-reconcile-01  edit    _meta.md                  git:pre-6383e09 (branch sync + v4 fields)
+2026-06-22T07:43:07Z  act-reconcile-02  set-status 03-prs/DAG.json        git:pre-6383e09 (T2-anchor pending->complete)
+2026-06-22T07:43:07Z  act-reconcile-03  add-edge 03-prs/DAG.json          git:pre-6383e09 (M7 edges T0-1/T0-3/T3-3 -> T2-2)
+2026-06-22T07:43:07Z  act-reconcile-04  create  _profile.md               (new file)
+2026-06-22T07:43:07Z  act-reconcile-05  create  _dont-do-seeds.md         (new file)
+2026-06-22T07:43:07Z  act-reconcile-06  create  masterplan.md             (new file)
+2026-06-22T07:43:07Z  act-reconcile-07  create  05-branches.md            (new file)
+2026-06-22T07:43:07Z  act-reconcile-08  create  phases/pr/* (9 files)     (new scaffold)
+2026-06-22T07:43:07Z  act-reconcile-09  edit    03-prs/PR-T2-anchor.md    git:pre-6383e09 (status OPEN->LANDED)
+2026-06-22T08:20:00Z  act-closure-10    create  _wip-register.md          (new file — dirty-tree attribution)
+2026-06-22T08:20:00Z  act-closure-11    create  shadow/README.md          (new file — de-hollow)

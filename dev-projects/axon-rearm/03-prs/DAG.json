@@ -3,10 +3,14 @@
   "schema-version": "v1",
   "level": "plan",
   "owner": "arturcastiel",
-  "generated": "2026-06-22T07:43:07Z",
+  "generated": "2026-06-22T08:21:51Z",
   "generator": "tools/dag.py (axon-rearm plan, post-audit)",
-  "validated": "2026-06-22T07:43:07Z",
-  "critical-path": ["PR-T0-1", "PR-T2-2"],
+  "validated": "2026-06-22T08:22:00Z",
+  "critical-path": [
+    "PR-T1-cihost",
+    "PR-T1-1",
+    "PR-T1-2"
+  ],
   "nodes": [
     {
       "id": "PR-T0-1",
@@ -14,15 +18,19 @@
       "name": "Instrument the drift detector (A1)",
       "label": "Instrument the drift detector (A1)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "PostToolUse hook fires → trace file gains the actual call; drift.py computes a non-empty verdict.",
+      "proof": "pending"
     },
     {
       "id": "PR-T0-2",
       "kind": "pr",
-      "name": "Arm the enforcement flags (A2 \u00b7 OD-1)",
-      "label": "Arm the enforcement flags (A2 \u00b7 OD-1)",
+      "name": "Arm the enforcement flags (A2 · OD-1)",
+      "label": "Arm the enforcement flags (A2 · OD-1)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "with flags on, each rule returns BLOCK on a violating fixture and PASS on a clean one (per-rule).",
+      "proof": "pending"
     },
     {
       "id": "PR-T0-2a",
@@ -30,7 +38,9 @@
       "name": "Seed `# emits:` / `outputs:` SSOT (A2a)",
       "label": "Seed `# emits:` / `outputs:` SSOT (A2a)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "every ladder/ownership program resolves a non-empty declared-outputs set; drift-lock (⊇) holds.",
+      "proof": "pending"
     },
     {
       "id": "PR-T0-3",
@@ -38,7 +48,9 @@
       "name": "Mechanical counters (A3)",
       "label": "Mechanical counters (A3)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "two simulated turns → turn-count advances without a model STORE; context-pressure reads real tokens.",
+      "proof": "pending"
     },
     {
       "id": "PR-T1-1",
@@ -46,7 +58,9 @@
       "name": "One shared changeset base resolver (B1)",
       "label": "One shared changeset base resolver (B1)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "end-to-end, single-commit repo, new untested tools/X.py, base=None → ok is False. NO monkeypatching.",
+      "proof": "pending"
     },
     {
       "id": "PR-T1-2",
@@ -54,7 +68,9 @@
       "name": "CI fetch-depth + merge-base (B2)",
       "label": "CI fetch-depth + merge-base (B2)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "CI-shaped checkout computes a non-trivial changeset; the gate is not forced-closed-on-every-PR.",
+      "proof": "pending"
     },
     {
       "id": "PR-T1-3",
@@ -62,7 +78,9 @@
       "name": "Real CR-13 end-to-end test (B3)",
       "label": "Real CR-13 end-to-end test (B3)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "(this PR is the test) + a meta-assert that no R13 test monkeypatches both resolvers.",
+      "proof": "pending"
     },
     {
       "id": "PR-T1-4",
@@ -70,7 +88,9 @@
       "name": "Close R13 coverage loopholes (B4)",
       "label": "Close R13 coverage loopholes (B4)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "add-only / rename-launder / typo-a-filename bypass fixtures all BLOCK.",
+      "proof": "pending"
     },
     {
       "id": "PR-T1-5",
@@ -78,7 +98,9 @@
       "name": "Frozen shrink-only test-grandfather (OD-5)",
       "label": "Frozen shrink-only test-grandfather (OD-5)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "adding an entry fails the gate; removing one passes; a new neuron not in the list still requires a test.",
+      "proof": "pending"
     },
     {
       "id": "PR-T2-1",
@@ -86,7 +108,9 @@
       "name": "Gate the dev-mode toggle (C1)",
       "label": "Gate the dev-mode toggle (C1)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "a programmatic dev-mode=true write is DENIED; the out-of-band path is ALLOWED.",
+      "proof": "pending"
     },
     {
       "id": "PR-T2-2",
@@ -94,15 +118,19 @@
       "name": "Protect the enforcement core (C2)",
       "label": "Protect the enforcement core (C2)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "Write/Bash into tools/rules/*.py and .claude/settings.json BLOCKED with dev-mode OFF; allowed ON.",
+      "proof": "pending"
     },
     {
       "id": "PR-T2-clone",
       "kind": "pr",
-      "name": "Clone/CI fail-closed (OD-6 \u00b7 Wave G G3-D2)",
-      "label": "Clone/CI fail-closed (OD-6 \u00b7 Wave G G3-D2)",
+      "name": "Clone/CI fail-closed (OD-6 · Wave G G3-D2)",
+      "label": "Clone/CI fail-closed (OD-6 · Wave G G3-D2)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "fresh-clone fixture (no working/) with the sentinel present → fail-closed; no-active-project → loud N/A, not silent pass.",
+      "proof": "pending"
     },
     {
       "id": "PR-T2-3",
@@ -110,7 +138,9 @@
       "name": "Build G1c or delete the claim (C3)",
       "label": "Build G1c or delete the claim (C3)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "interpreter computed-path write to axon/ DENIED by the OS with dev-mode OFF; axon/state/ writes still work.",
+      "proof": "pending"
     },
     {
       "id": "PR-T3-1",
@@ -118,15 +148,19 @@
       "name": "Prose-vs-wiring meta-rule (D1)",
       "label": "Prose-vs-wiring meta-rule (D1)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "an unregistered r_*.py or a kernel-named-but-unwired rule fails the meta-gate.",
+      "proof": "pending"
     },
     {
       "id": "PR-T3-2",
       "kind": "pr",
-      "name": "Drift-gate unknown \u2192 fail-closed (D2 \u00b7 OD-2)",
-      "label": "Drift-gate unknown \u2192 fail-closed (D2 \u00b7 OD-2)",
+      "name": "Drift-gate unknown → fail-closed (D2 · OD-2)",
+      "label": "Drift-gate unknown → fail-closed (D2 · OD-2)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "an unknown/stale trace → BLOCK; a real stable trace → PASS.",
+      "proof": "pending"
     },
     {
       "id": "PR-T3-3",
@@ -134,7 +168,9 @@
       "name": "Unify the dual drift encoding (D3)",
       "label": "Unify the dual drift encoding (D3)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "every kernel TOOL(drift,…) literal parses (exit 0) against the resolved tool's parser.",
+      "proof": "pending"
     },
     {
       "id": "PR-T3-4",
@@ -142,7 +178,9 @@
       "name": "R_PHASE_TRACKED to a biting runner (D4)",
       "label": "R_PHASE_TRACKED to a biting runner (D4)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "a program that takes the lock but never records a transition → BLOCK at the crucible gate.",
+      "proof": "pending"
     },
     {
       "id": "PR-T4-shadow",
@@ -150,7 +188,9 @@
       "name": "Investigate the 29 legacy programs (OD-4)",
       "label": "Investigate the 29 legacy programs (OD-4)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "(investigation) — output is an ADR + a reachability report; no silent merge/ignore.",
+      "proof": "pending"
     },
     {
       "id": "PR-T4-1",
@@ -158,7 +198,9 @@
       "name": "Fix the dead resume program (E1)",
       "label": "Fix the dead resume program (E1)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "an interrupted session is actually detected by `resume` (today it ~always says \"no interrupted sessions\").",
+      "proof": "pending"
     },
     {
       "id": "PR-T4-2",
@@ -166,7 +208,9 @@
       "name": "QUARANTINE prune + orphan gates (E2)",
       "label": "QUARANTINE prune + orphan gates (E2)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "post-prune registry/disk sync stays 0-drift; each former orphan gate is either invoked by a runner or gone.",
+      "proof": "pending"
     },
     {
       "id": "PR-T4-3",
@@ -174,23 +218,29 @@
       "name": "Test-or-delete below-radar drift tools (E3)",
       "label": "Test-or-delete below-radar drift tools (E3)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "rollback primitive has a real round-trip test; queue_tool registered + covered, or removed with callers migrated.",
+      "proof": "pending"
     },
     {
       "id": "PR-T4-4",
       "kind": "pr",
-      "name": "Registry status enum + alias_of (E4 \u00b7 OD-7 enabler)",
-      "label": "Registry status enum + alias_of (E4 \u00b7 OD-7 enabler)",
+      "name": "Registry status enum + alias_of (E4 · OD-7 enabler)",
+      "label": "Registry status enum + alias_of (E4 · OD-7 enabler)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "an -ALIAS-in-filename is rejected by a registry lint; alias resolution works via the field.",
+      "proof": "pending"
     },
     {
       "id": "PR-T4-5",
       "kind": "pr",
-      "name": "Fix workflow-run --name (E5 \u00b7 OD-7)",
-      "label": "Fix workflow-run --name (E5 \u00b7 OD-7)",
+      "name": "Fix workflow-run --name (E5 · OD-7)",
+      "label": "Fix workflow-run --name (E5 · OD-7)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "workflow-run --name <wf> resolves + runs; a program/workflow name collision is caught.",
+      "proof": "pending"
     },
     {
       "id": "PR-T5-1",
@@ -198,7 +248,9 @@
       "name": "Reconcile self-models (F1)",
       "label": "Reconcile self-models (F1)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "a self-model-drift check (version/host-cap/host-model vs reality) fails when they diverge.",
+      "proof": "pending"
     },
     {
       "id": "PR-T5-2",
@@ -206,23 +258,29 @@
       "name": "Menu link + count integrity (F2)",
       "label": "Menu link + count integrity (F2)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "a dead menu link or a stale-green dashboard fixture fails the menu-integrity check.",
+      "proof": "pending"
     },
     {
       "id": "PR-T5-3",
       "kind": "pr",
-      "name": "Naming conventions + authoring-guide section (F3 \u00b7 OD-7)",
-      "label": "Naming conventions + authoring-guide section (F3 \u00b7 OD-7)",
+      "name": "Naming conventions + authoring-guide section (F3 · OD-7)",
+      "label": "Naming conventions + authoring-guide section (F3 · OD-7)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "a name violating the convention is flagged; the reporter scorecards every lint/audit rule across the corpus.",
+      "proof": "pending"
     },
     {
       "id": "PR-T5-4",
       "kind": "pr",
-      "name": "Generate the typed program graph (F4 \u00b7 OD-3)",
-      "label": "Generate the typed program graph (F4 \u00b7 OD-3)",
+      "name": "Generate the typed program graph (F4 · OD-3)",
+      "label": "Generate the typed program graph (F4 · OD-3)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "the cycle/orphan checks fire on the known defects; the ~38%-isolated count is surfaced (not hidden by \"0 errors\").",
+      "proof": "pending"
     },
     {
       "id": "PR-T6-exp",
@@ -230,7 +288,9 @@
       "name": "Thin-kernel heavy-ceremony OFF-vs-ON (OD-8)",
       "label": "Thin-kernel heavy-ceremony OFF-vs-ON (OD-8)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "(experiment) — a reproducible protocol + a written verdict with the drift deltas; preserved as an ADR.",
+      "proof": "pending"
     },
     {
       "id": "PR-T4-hrteam",
@@ -238,7 +298,9 @@
       "name": "Wire the hr-team execution seam so AXON can ALWAYS convene a",
       "label": "Wire the hr-team execution seam so AXON can ALWAYS convene a real council",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "roster-emitter returns N catalog-sourced seats incl. the mandatory process/challenger with their",
+      "proof": "pending"
     },
     {
       "id": "PR-T2-anchor",
@@ -246,7 +308,9 @@
       "name": "Pin the R9 anchor to the .axon-governed sentinel (M4)",
       "label": "Pin the R9 anchor to the .axon-governed sentinel (M4)",
       "status": "complete",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "$AXON_ROOT only honoured with the tracked sentinel; sentinel-less env rejected. Closed the live one-line bypass.",
+      "proof": "781463a + 3497235 (landed)"
     },
     {
       "id": "PR-T2-devmode-default",
@@ -254,7 +318,9 @@
       "name": "dev-mode ships default-OFF (M4)",
       "label": "dev-mode ships default-OFF (M4)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "dev-mode.md currently reads value:true (master lock OPEN). Revert to default-OFF; test asserts it defaults OFF",
+      "proof": "pending"
     },
     {
       "id": "PR-T2-loopreceipt",
@@ -262,7 +328,9 @@
       "name": "Constrain the R9 actor-whitelist to a PATH not an actor (M4)",
       "label": "Constrain the R9 actor-whitelist to a PATH not an actor (M4)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "_axon_io._R9_WHITELIST={\"loop-receipt\"} skips R9 for any caller passing _actor=\"loop-receipt\" (lines 122/179).",
+      "proof": "pending"
     },
     {
       "id": "PR-T1-cihost",
@@ -270,7 +338,9 @@
       "name": "Resolve the gating CI pipeline (M5)",
       "label": "Resolve the gating CI pipeline (M5)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "Only .github/workflows/ci.yml exists; remote is GitLab; NO .gitlab-ci.yml. fetch-depth:0 is a GitHub key.",
+      "proof": "pending"
     },
     {
       "id": "PR-T2-flags",
@@ -278,7 +348,9 @@
       "name": "Protect the flag dir (M3)",
       "label": "Protect the flag dir (M3)",
       "status": "pending",
-      "child-dag": null
+      "child-dag": null,
+      "dod": "M6 golden-trace calibration test is mandatory before T0-1 closes.",
+      "proof": "pending"
     }
   ],
   "edges": [
@@ -345,6 +417,11 @@
     {
       "from": "PR-T3-3",
       "to": "PR-T2-2",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-T1-cihost",
+      "to": "PR-T1-1",
       "kind": "depends"
     }
   ]

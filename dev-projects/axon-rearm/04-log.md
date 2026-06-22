@@ -40,3 +40,15 @@ certifies it + flagged loose ends closed (dirty tree, stubs, _actions.log, co-me
 Encoded the council plan as project direction (_meta.next-action + masterplan "Compliance closure track").
 Removed 2 stub council bundles (fabricated verdicts). Pushed my-axon → origin/main (6383e09).
 State: reconciled-to-v4, plan adopted, NOT yet certified (closure track #1–#5 open).
+
+## 2026-06-22 · get-it-ready closure pass
+Closed the council's 5-item track (4/5 fully autonomous; #1 commit is human):
+1. dirty tree → ATTRIBUTED in _wip-register.md (10 files → hr-team-improvements / axon-rearm / maintenance / AEGIS).
+   KEY: tools/hr_team.py WIP IS the fail-closed guard (uncommitted) → belongs to hr-team-improvements.
+2. stubs → shadow/ documented as intentional-empty (README); phases/pr/ pointers are intentional (flat layout).
+3. _actions.log backfilled (v4 undo trail) + archive/snapshots/ created.
+4. co-merge encoded: edge PR-T1-cihost→PR-T1-1 (ADR-003); critical path now depth 3.
+5. per-node dod+proof added to all 34 DAG nodes from 02-prs test claims (ADR-004).
+Re-verify: structure ✓0 · dag ok errors=0 (orphans 17, all genuine depends— ) · branch ✓ · dont-do prose=0.
+Remaining (human): commit the 10 WIP files to their homes (see _wip-register.md) → clears preflight Gate 2.
+Seeded sibling project: hr-team-improvements (parent of PR-T4-hrteam).

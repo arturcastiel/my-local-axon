@@ -42,3 +42,11 @@ Close in order before resuming the re-arm sprint:
 5. Add per-node dod/proves to the 34 DAG nodes (M7) + a meta-test failing on any empty node.
 Then: layer-1 write-time schema-version GATE → manifest (schema-as-data) → read-only `code-dev compliance`
 program (auto-fix derivable only, escalate semantic, no-false-green tests incl. dirty-tree-fails).
+
+### Closure status (2026-06-22 get-it-ready)
+[✓] 1 dirty tree — attributed (_wip-register.md); physical commit pending (human)
+[✓] 2 stubs — shadow/ documented intentional-empty; pointers intentional
+[✓] 3 _actions.log backfilled
+[✓] 4 co-merge edge encoded (ADR-003)
+[✓] 5 per-node dod/proof on 34 nodes (ADR-004)
+NEXT: build layer-1 write-time schema-version GATE, then resume REVISED FIRST SPRINT.
