@@ -5,14 +5,14 @@ status:          active
 legacy:          false
 phase:           pr
 workflow-step:   build
-branch:          fix/wave-g-residual-hardening
+branch:          main  # fix/wave-g-residual-hardening MERGED to main 2026-06-22 (anchor 781463a,3497235 on main)
 codebase:        /home/arturcastiel/projects/new-axon/axon
 parent:          axon-completeness-gate
 sub-projects:    []
-current-pr:      PR-T2-anchor
-next-action:     "RESUME: read SESSION-HANDOFF-2026-06-22.md. Session test/gate arc DONE (5 MRs merged: !177-!181; gate ~3:35 parallel+reliable). Open: BOOT.md in stash@{0} (human commit), stale branches, hr-team-improvements needs code-dev plan, axon-rearm next = VERIFY-THE-WIRE→PROTECT→ARM (02-prs revised sprint)."
-last-program:    code-dev-get-it-ready
-last-ts:         2026-06-22T08:22:00Z
+current-pr:      —  # PR-T2-anchor MERGED; no PR mid-flight. Next wave = VERIFY-THE-WIRE specs
+next-action:     "RECONCILED 2026-06-22: DAG synced (35 nodes = backlog; PR-T2-anchor MERGED to main; added PR-T6-exp-baseline). branch=main. WIP tree resolved (only 5 regen maintenance files dirty — Group C). NEXT = REVISED FIRST SPRINT: (1) M1 re-baseline T1-1 vs HEAD, (2) VERIFY-THE-WIRE write+exec specs PR-T3-1 + PR-T3-3 + PR-T0-1, (3) PROTECT T2-devmode-default + T2-loopreceipt + T2-flags, (4) ARM T0-2 PhaseA. BLOCKER: PR-T1-cihost (no .gitlab-ci.yml; gating pipeline unresolved). HUMAN-ONLY (DONE 2026-06-22 via finish-loose-ends.sh): BOOT.md committed 53fe62c; regen committed c288274; 3 stale branches pruned (archive/pre-prune/* tags); stash dropped. CROSS-PROJECT URGENT: hr-team-improvements code-dev plan → propagate fail-closed run_seats to FOR-USE checkout (fail-OPEN there)."
+last-program:    code-dev-state-resume (+ reconcile-sync)
+last-ts:         2026-06-22T13:55:00Z
 created:         2026-06-19
 updated:         2026-06-22
 
