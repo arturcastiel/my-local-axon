@@ -1,5 +1,5 @@
 # PR-T2-anchor — Pin the R9 anchor to the .axon-governed sentinel (close the AXON_ROOT bypass)
-status: OPEN
+status: LANDED   # code 781463a + test-contract 3497235 both committed on fix/wave-g-residual-hardening; not yet merged to main
 wave: 2 (security floor, pulled into Wave 0b — protect-before-arm)
 findings: arch-audit M4 (red-team), plan-review/00-plan-audit.md
 depends: none
@@ -27,4 +27,6 @@ agent runs `AXON_ROOT=/tmp <tool>` and the R9 path classifier believes the real 
 
 ## Status notes
 - Code change landed 781463a on fix/wave-g-residual-hardening (off-workflow — anchored retroactively by
-  this spec). The test-contract fix (test_tools_kernel.py) is the in-flight remainder; closes on its push.
+  this spec). The test-contract fix (test_tools_kernel.py) landed 3497235.
+- 2026-06-22: marked LANDED + DAG status=complete. Remaining: merge fix/wave-g-residual-hardening → main
+  (human), confirm full suite + crucible green at merge.

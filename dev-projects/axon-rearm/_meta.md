@@ -5,12 +5,16 @@ status:          active
 legacy:          false
 phase:           pr
 workflow-step:   build
-branch:          main
+branch:          fix/wave-g-residual-hardening
 codebase:        /home/arturcastiel/projects/new-axon/axon
 parent:          axon-completeness-gate
 sub-projects:    []
+current-pr:      PR-T2-anchor
+next-action:     "Per COMPLIANCE-PLAN.md (council 2026-06-22): close the 5 flagged loose ends FIRST (1 dirty tree · 2 session-stubs · 3 _actions.log · 4 T1-1+T1-cihost co-merge edge · 5 per-node dod/proves), THEN layer-1 write-time schema-version gate, THEN REVISED FIRST SPRINT (T3-1/T3-3/T0-1 → PROTECT set → ARM T0-2 Phase A). axon-rearm is reconciled but NOT yet certified (no tested checker)."
+last-program:    code-dev-compliance-reconcile
+last-ts:         2026-06-22T07:43:07Z
 created:         2026-06-19
-updated:         2026-06-19
+updated:         2026-06-22
 
 ## Working Context — owner-scoped from the 8-council report-state handoff (2026-06-19)
 - GOAL: move AXON from "disarmed and blind" to "armed and instrumented." The 8 councils found a strong,
