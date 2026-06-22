@@ -1,4 +1,10 @@
 # WIP register — axon-rearm (uncommitted working-tree, attributed)
+## RESOLUTION 2026-06-22 (reconcile)
+> STATUS: largely RESOLVED. Group A (hr-team guard) committed 01325dc → MR !177 (merged main). Group B (enforcement-flag integration tests) committed 966715a → !177. Group D (_policy.md) now TRACKED/committed. Only **Group C** remains: 5 regenerated maintenance files still dirty in the working tree (tests/coverage.json, workspace/AXON-DOCS.md, workspace/_dashboards/axon-code-map.md, workspace/programs/REGISTRY.json, workspace/scheduler/cron.json) — disposition unchanged: commit as `chore(regen)` or discard. HUMAN decision.
+
+---
+_Original snapshot (2026-06-22 pre-merge) preserved below for audit:_
+
 > Council closure #1: the dirty tree is not unattributed noise — every file maps to a thread.
 > Committing is HUMAN (commit not in the AEGIS grant; spans projects). Commands proposed per group.
 > Snapshot at reconcile: 2026-06-22 · branch fix/wave-g-residual-hardening.

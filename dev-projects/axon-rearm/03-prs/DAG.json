@@ -3,9 +3,9 @@
   "schema-version": "v1",
   "level": "plan",
   "owner": "arturcastiel",
-  "generated": "2026-06-22T08:21:51Z",
-  "generator": "tools/dag.py (axon-rearm plan, post-audit)",
-  "validated": "2026-06-22T08:22:00Z",
+  "generated": "2026-06-22T13:58:01Z",
+  "generator": "tools/dag.py (axon-rearm plan; reconcile-sync 2026-06-22 post-merge)",
+  "validated": "2026-06-22T13:55:00Z",
   "critical-path": [
     "PR-T1-cihost",
     "PR-T1-1",
@@ -19,14 +19,14 @@
       "label": "Instrument the drift detector (A1)",
       "status": "pending",
       "child-dag": null,
-      "dod": "PostToolUse hook fires → trace file gains the actual call; drift.py computes a non-empty verdict.",
+      "dod": "PostToolUse hook fires \u2192 trace file gains the actual call; drift.py computes a non-empty verdict.",
       "proof": "pending"
     },
     {
       "id": "PR-T0-2",
       "kind": "pr",
-      "name": "Arm the enforcement flags (A2 · OD-1)",
-      "label": "Arm the enforcement flags (A2 · OD-1)",
+      "name": "Arm the enforcement flags (A2 \u00b7 OD-1)",
+      "label": "Arm the enforcement flags (A2 \u00b7 OD-1)",
       "status": "pending",
       "child-dag": null,
       "dod": "with flags on, each rule returns BLOCK on a violating fixture and PASS on a clean one (per-rule).",
@@ -39,7 +39,7 @@
       "label": "Seed `# emits:` / `outputs:` SSOT (A2a)",
       "status": "pending",
       "child-dag": null,
-      "dod": "every ladder/ownership program resolves a non-empty declared-outputs set; drift-lock (⊇) holds.",
+      "dod": "every ladder/ownership program resolves a non-empty declared-outputs set; drift-lock (\u2287) holds.",
       "proof": "pending"
     },
     {
@@ -49,7 +49,7 @@
       "label": "Mechanical counters (A3)",
       "status": "pending",
       "child-dag": null,
-      "dod": "two simulated turns → turn-count advances without a model STORE; context-pressure reads real tokens.",
+      "dod": "two simulated turns \u2192 turn-count advances without a model STORE; context-pressure reads real tokens.",
       "proof": "pending"
     },
     {
@@ -59,7 +59,7 @@
       "label": "One shared changeset base resolver (B1)",
       "status": "pending",
       "child-dag": null,
-      "dod": "end-to-end, single-commit repo, new untested tools/X.py, base=None → ok is False. NO monkeypatching.",
+      "dod": "end-to-end, single-commit repo, new untested tools/X.py, base=None \u2192 ok is False. NO monkeypatching.",
       "proof": "pending"
     },
     {
@@ -125,11 +125,11 @@
     {
       "id": "PR-T2-clone",
       "kind": "pr",
-      "name": "Clone/CI fail-closed (OD-6 · Wave G G3-D2)",
-      "label": "Clone/CI fail-closed (OD-6 · Wave G G3-D2)",
+      "name": "Clone/CI fail-closed (OD-6 \u00b7 Wave G G3-D2)",
+      "label": "Clone/CI fail-closed (OD-6 \u00b7 Wave G G3-D2)",
       "status": "pending",
       "child-dag": null,
-      "dod": "fresh-clone fixture (no working/) with the sentinel present → fail-closed; no-active-project → loud N/A, not silent pass.",
+      "dod": "fresh-clone fixture (no working/) with the sentinel present \u2192 fail-closed; no-active-project \u2192 loud N/A, not silent pass.",
       "proof": "pending"
     },
     {
@@ -155,11 +155,11 @@
     {
       "id": "PR-T3-2",
       "kind": "pr",
-      "name": "Drift-gate unknown → fail-closed (D2 · OD-2)",
-      "label": "Drift-gate unknown → fail-closed (D2 · OD-2)",
+      "name": "Drift-gate unknown \u2192 fail-closed (D2 \u00b7 OD-2)",
+      "label": "Drift-gate unknown \u2192 fail-closed (D2 \u00b7 OD-2)",
       "status": "pending",
       "child-dag": null,
-      "dod": "an unknown/stale trace → BLOCK; a real stable trace → PASS.",
+      "dod": "an unknown/stale trace \u2192 BLOCK; a real stable trace \u2192 PASS.",
       "proof": "pending"
     },
     {
@@ -169,7 +169,7 @@
       "label": "Unify the dual drift encoding (D3)",
       "status": "pending",
       "child-dag": null,
-      "dod": "every kernel TOOL(drift,…) literal parses (exit 0) against the resolved tool's parser.",
+      "dod": "every kernel TOOL(drift,\u2026) literal parses (exit 0) against the resolved tool's parser.",
       "proof": "pending"
     },
     {
@@ -179,7 +179,7 @@
       "label": "R_PHASE_TRACKED to a biting runner (D4)",
       "status": "pending",
       "child-dag": null,
-      "dod": "a program that takes the lock but never records a transition → BLOCK at the crucible gate.",
+      "dod": "a program that takes the lock but never records a transition \u2192 BLOCK at the crucible gate.",
       "proof": "pending"
     },
     {
@@ -189,7 +189,7 @@
       "label": "Investigate the 29 legacy programs (OD-4)",
       "status": "pending",
       "child-dag": null,
-      "dod": "(investigation) — output is an ADR + a reachability report; no silent merge/ignore.",
+      "dod": "(investigation) \u2014 output is an ADR + a reachability report; no silent merge/ignore.",
       "proof": "pending"
     },
     {
@@ -225,8 +225,8 @@
     {
       "id": "PR-T4-4",
       "kind": "pr",
-      "name": "Registry status enum + alias_of (E4 · OD-7 enabler)",
-      "label": "Registry status enum + alias_of (E4 · OD-7 enabler)",
+      "name": "Registry status enum + alias_of (E4 \u00b7 OD-7 enabler)",
+      "label": "Registry status enum + alias_of (E4 \u00b7 OD-7 enabler)",
       "status": "pending",
       "child-dag": null,
       "dod": "an -ALIAS-in-filename is rejected by a registry lint; alias resolution works via the field.",
@@ -235,8 +235,8 @@
     {
       "id": "PR-T4-5",
       "kind": "pr",
-      "name": "Fix workflow-run --name (E5 · OD-7)",
-      "label": "Fix workflow-run --name (E5 · OD-7)",
+      "name": "Fix workflow-run --name (E5 \u00b7 OD-7)",
+      "label": "Fix workflow-run --name (E5 \u00b7 OD-7)",
       "status": "pending",
       "child-dag": null,
       "dod": "workflow-run --name <wf> resolves + runs; a program/workflow name collision is caught.",
@@ -265,8 +265,8 @@
     {
       "id": "PR-T5-3",
       "kind": "pr",
-      "name": "Naming conventions + authoring-guide section (F3 · OD-7)",
-      "label": "Naming conventions + authoring-guide section (F3 · OD-7)",
+      "name": "Naming conventions + authoring-guide section (F3 \u00b7 OD-7)",
+      "label": "Naming conventions + authoring-guide section (F3 \u00b7 OD-7)",
       "status": "pending",
       "child-dag": null,
       "dod": "a name violating the convention is flagged; the reporter scorecards every lint/audit rule across the corpus.",
@@ -275,8 +275,8 @@
     {
       "id": "PR-T5-4",
       "kind": "pr",
-      "name": "Generate the typed program graph (F4 · OD-3)",
-      "label": "Generate the typed program graph (F4 · OD-3)",
+      "name": "Generate the typed program graph (F4 \u00b7 OD-3)",
+      "label": "Generate the typed program graph (F4 \u00b7 OD-3)",
       "status": "pending",
       "child-dag": null,
       "dod": "the cycle/orphan checks fire on the known defects; the ~38%-isolated count is surfaced (not hidden by \"0 errors\").",
@@ -289,7 +289,7 @@
       "label": "Thin-kernel heavy-ceremony OFF-vs-ON (OD-8)",
       "status": "pending",
       "child-dag": null,
-      "dod": "(experiment) — a reproducible protocol + a written verdict with the drift deltas; preserved as an ADR.",
+      "dod": "(experiment) \u2014 a reproducible protocol + a written verdict with the drift deltas; preserved as an ADR.",
       "proof": "pending"
     },
     {
@@ -307,10 +307,10 @@
       "kind": "pr",
       "name": "Pin the R9 anchor to the .axon-governed sentinel (M4)",
       "label": "Pin the R9 anchor to the .axon-governed sentinel (M4)",
-      "status": "complete",
+      "status": "merged",
       "child-dag": null,
       "dod": "$AXON_ROOT only honoured with the tracked sentinel; sentinel-less env rejected. Closed the live one-line bypass.",
-      "proof": "781463a + 3497235 (landed)"
+      "proof": "781463a + 3497235 merged to main (fix/wave-g-residual-hardening merged; verified ancestor of main)"
     },
     {
       "id": "PR-T2-devmode-default",
@@ -350,6 +350,16 @@
       "status": "pending",
       "child-dag": null,
       "dod": "M6 golden-trace calibration test is mandatory before T0-1 closes.",
+      "proof": "pending"
+    },
+    {
+      "id": "PR-T6-exp-baseline",
+      "kind": "pr",
+      "name": "Cheap OFF baseline + K2 self-abort threshold (pre-arming gate)",
+      "label": "Cheap OFF baseline + K2 self-abort threshold (pre-arming gate)",
+      "status": "pending",
+      "child-dag": null,
+      "dod": "minimal OFF-state drift/cost baseline captured BEFORE flags harden; defines K2 failure threshold + self-abort (if instrumented drift does not improve below threshold post-Wave-0, HALT arming).",
       "proof": "pending"
     }
   ],

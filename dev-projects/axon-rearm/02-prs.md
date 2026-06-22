@@ -242,9 +242,7 @@ PRINCIPLE (audit): PROTECT-before-ARM, VERIFY-the-wire-before-ARM, RE-BASELINE-b
   regex fix (currently excludes `/` and `.` → path-form EXEC collapses to phantom `workspace`) + a fixture, before
   any typed graph is trusted. Cycle policy: FATAL on the `depends` relation, LEGITIMATE on the `transition` relation
   (programs loop by design, e.g. menu↔modes). Orphan/isolation counts are not authoritative until this lands.
-- **STILL OPEN (owner): K3** (does residual model-drift bind to the procedural tool-order meter, or to
-  cognition/persona drift in axon_drift_log.py) — blocks K2's threshold value + PR-T0-1's meter binding.
-  **K4** (unknown→BLOCK scope: everywhere vs autonomous/merge-only) — blocks PR-T3-2.
+- ~~STILL OPEN (owner): K3 … K4 …~~  **SUPERSEDED 2026-06-19** — see the section below ("K3, K4 RESOLVED"). ALL FOUR conflicts (K2/K3/K4/K5) are now resolved; PR-T0-1 binds to cognition/persona drift (K3), PR-T3-2 is unblocked with fail-closed-everywhere+wire-gated (K4).
 
 ## OWNER ARBITRATIONS — K3, K4 RESOLVED 2026-06-19 (owner: "more conservative, harder to break")
 - **K3 = bind the verdict to COGNITION/PERSONA drift (b); instrument BOTH; calibration mandatory.**

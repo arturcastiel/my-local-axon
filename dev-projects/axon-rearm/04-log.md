@@ -79,3 +79,31 @@ Note: 9-min serial gate (subprocess-bound) flagged as a re-arm candidate (parall
 
 ## SESSION END — 2026-06-22T12:40:00Z
 Context cleared for restart. Resume: SESSION-HANDOFF-2026-06-22.md. Test/gate arc complete (5 MRs on main, gate parallel+reliable). Open items in handoff.
+
+## SESSION RESUME — 2026-06-22T13:51:00Z
+project:         axon-rearm
+phase:           pr
+workflow-step:   build
+branch:          fix/wave-g-residual-hardening  (git: main  ⚠ drift)
+shadow:          fresh:0 stale:0 branch-stale:0
+reviewer:        no PR in review (PR-T2-anchor LANDED on branch, unmerged-to-main contract)
+prohibitions:    8 active (seeds)
+
+## 2026-06-22T14:00:02Z · RECONCILE — dag sync + loose-end fix + organize
+- DAG: PR-T2-anchor status complete→**merged** (781463a+3497235 verified ancestors of main); added missing node
+  **PR-T6-exp-baseline** (K2 self-abort baseline, was referenced in prose only). 34→**35 nodes = 35 backlog IDs (0 drift)**.
+  Refreshed validated ts + generator note; re-rendered DAG.md; `dag verify` ok (orphan-warns only = independent PRs).
+- _meta: branch fix/wave-g-residual-hardening→**main** (merged); current-pr PR-T2-anchor→**—** (none mid-flight);
+  next-action rewritten to REVISED FIRST SPRINT; last-program/last-ts refreshed.
+- PR-T2-anchor.md status LANDED→**MERGED**. 05-branches.md: landed→merged + stale-branch prune list + BOOT.md-stash hold.
+- _wip-register.md: resolution banner — Groups A/B/D committed(!177)/tracked; only Group C (5 regen files) dirty.
+- _deviations.md ADR-002 (dirty tree) → closed. 02-prs.md: stale "K3/K4 STILL OPEN" marked SUPERSEDED (all 4 resolved).
+- Verified live git: on main; fix/wave-g merged; 5 modified files = regen maintenance churn; stash@{0}=BOOT.md(human).
+- NOT done (out of scope / human-only): branch pruning (destructive git), BOOT.md commit (kernel floor), writing the 34 unwritten PR specs.
+
+## 2026-06-22T14:14:17Z · CLOSEOUT — human loose-ends 1-3 executed (finish-loose-ends.sh)
+- BOOT.md kernel-floor doc (orchestrator-tick sync) committed → **53fe62c** on main (pre-commit hooks: path-lint + AXON-trailer PASSED).
+- 5 regenerated maintenance files committed as chore(regen) → **c288274** (owner chose [c]; keeps REGISTRY.json synced, avoids cron-counter rollback).
+- 3 stale branches force-deleted: fix/gate-serial-restore, chore/test-council-actions, perf/xdist-parallel — restore tags archive/pre-prune/*.
+- stash@{0} (BOOT.md WIP) dropped. Working tree CLEAN. (Pre-existing 2026-05-27 stash remains, unrelated.)
+- Item 4 (KERNEL-SLIM per-change confirm) = standing gate, no pending edit. Script: my-axon/.../scripts/finish-loose-ends.sh (idempotent, --dry-run).

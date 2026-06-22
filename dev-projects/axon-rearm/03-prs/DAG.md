@@ -2,9 +2,9 @@
 # DAG · plan · arturcastiel
 
 - schema-version: `v1`
-- generated:      `2026-06-22T08:21:51Z`
-- generator:      `tools/dag.py (axon-rearm plan, post-audit)`
-- nodes:          34
+- generated:      `2026-06-22T13:58:01Z`
+- generator:      `tools/dag.py (axon-rearm plan; reconcile-sync 2026-06-22 post-merge)`
+- nodes:          35
 - edges:          14
 - critical-path:  PR-T1-cihost → PR-T1-1 → PR-T1-2
 
@@ -41,11 +41,12 @@
 | PR-T5-4 | pr | Generate the typed program graph (F4 · OD-3) | Generate the typed program graph (F4 · OD-3) | pending |
 | PR-T6-exp | pr | Thin-kernel heavy-ceremony OFF-vs-ON (OD-8) | Thin-kernel heavy-ceremony OFF-vs-ON (OD-8) | pending |
 | PR-T4-hrteam | pr | Wire the hr-team execution seam so AXON can ALWAYS convene a | Wire the hr-team execution seam so AXON can ALWAYS convene a real council | pending |
-| PR-T2-anchor | pr | Pin the R9 anchor to the .axon-governed sentinel (M4) | Pin the R9 anchor to the .axon-governed sentinel (M4) | complete |
+| PR-T2-anchor | pr | Pin the R9 anchor to the .axon-governed sentinel (M4) | Pin the R9 anchor to the .axon-governed sentinel (M4) | merged |
 | PR-T2-devmode-default | pr | dev-mode ships default-OFF (M4) | dev-mode ships default-OFF (M4) | pending |
 | PR-T2-loopreceipt | pr | Constrain the R9 actor-whitelist to a PATH not an actor (M4) | Constrain the R9 actor-whitelist to a PATH not an actor (M4) | pending |
 | PR-T1-cihost | pr | Resolve the gating CI pipeline (M5) | Resolve the gating CI pipeline (M5) | pending |
 | PR-T2-flags | pr | Protect the flag dir (M3) | Protect the flag dir (M3) | pending |
+| PR-T6-exp-baseline | pr | Cheap OFF baseline + K2 self-abort threshold (pre-arming gate) | Cheap OFF baseline + K2 self-abort threshold (pre-arming gate) | pending |
 
 ## Edges
 
