@@ -1,0 +1,159 @@
+{
+  "schema": "axon-dag",
+  "schema-version": "v1",
+  "level": "plan",
+  "owner": "project:axon-hr-ui",
+  "generated": "2026-06-22T21:41:15Z",
+  "generator": "tools/dag.py",
+  "validated": true,
+  "critical-path": [],
+  "nodes": [
+    {
+      "id": "PR-001",
+      "kind": "pr",
+      "name": "phase_model add subcommand + wire code-dev-phase-new",
+      "label": "phase_model add subcommand + wire code-dev-phase-new",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-002",
+      "kind": "pr",
+      "name": "Relabel SHADOW GATE advisory + enforcement-posture boot line",
+      "label": "Relabel SHADOW GATE advisory + enforcement-posture boot line",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-003",
+      "kind": "pr",
+      "name": "OS-STATE nominal-collapse to one line",
+      "label": "OS-STATE nominal-collapse to one line",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-004",
+      "kind": "pr",
+      "name": "kv-store --raw / JSON-fallback",
+      "label": "kv-store --raw / JSON-fallback",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-005",
+      "kind": "pr",
+      "name": "synapse-infer dedup + synapse-validate lint",
+      "label": "synapse-infer dedup + synapse-validate lint",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-006",
+      "kind": "pr",
+      "name": "code-dev start entry-point program",
+      "label": "code-dev start entry-point program",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-007",
+      "kind": "pr",
+      "name": "boot re-entry summary / resume-truth",
+      "label": "boot re-entry summary / resume-truth",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-008",
+      "kind": "pr",
+      "name": "FOUNDATION phase state real AND visible",
+      "label": "FOUNDATION phase state real AND visible",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-009",
+      "kind": "pr",
+      "name": "adaptive-loop semantic exit",
+      "label": "adaptive-loop semantic exit",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-010",
+      "kind": "pr",
+      "name": "reanchor cadence (not suppression)",
+      "label": "reanchor cadence (not suppression)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-011",
+      "kind": "pr",
+      "name": "severity-gated audit->fix + promote/replay verb",
+      "label": "severity-gated audit->fix + promote/replay verb",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-012",
+      "kind": "pr",
+      "name": "single save/sync verb",
+      "label": "single save/sync verb",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-013",
+      "kind": "pr",
+      "name": "GATE cold-start stranger test",
+      "label": "GATE cold-start stranger test",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-014",
+      "kind": "pr",
+      "name": "GATED fast-boot + first-run + discoverability rank",
+      "label": "GATED fast-boot + first-run + discoverability rank",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-015",
+      "kind": "pr",
+      "name": "DEFERRED component grammar internal contract",
+      "label": "DEFERRED component grammar internal contract",
+      "status": "pending",
+      "child-dag": null
+    }
+  ],
+  "edges": [
+    {
+      "from": "PR-001",
+      "to": "PR-008",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-008",
+      "to": "PR-011",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-013",
+      "to": "PR-014",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-003",
+      "to": "PR-015",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-008",
+      "to": "PR-015",
+      "kind": "depends"
+    }
+  ]
+}

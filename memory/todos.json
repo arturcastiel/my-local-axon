@@ -150,5 +150,32 @@
     "bindings": [],
     "created": "2026-06-11",
     "done_ts": ""
+  },
+  {
+    "id": "94fdedab",
+    "text": "O2 axon-hr-ui \u2014 COLD-START STRANGER TEST: sit a real NON-AUTHOR (TNO colleague/junior/AI researcher) at a fresh terminal, they boot AXON cold with ZERO coaching from you; then run my-axon/dev-projects/axon-hr-ui/O2-stranger-test.sh in a NORMAL terminal (not via !) to log time-to-first-task / confusion / abandonment. Gates the onboarding tier (PR-014). Only matters if AXON will be shared beyond you \u2014 if it stays author-only, drop O2 + the onboarding tier instead.",
+    "due": "",
+    "status": "open",
+    "bindings": [],
+    "created": "2026-06-23",
+    "done_ts": ""
+  },
+  {
+    "id": "0362e33a",
+    "text": "axon-hr-ui FLAKY GATE: crucible pytest control (python3 -m pytest tests/ -n auto -q -p no:cacheprovider) is non-deterministic \u2014 false RED on a verifiably-green tree (4819 passed on re-run, same cmd). Blocks valid merges + undermines ship.sh. Root: test pollution under xdist parallel workers (shared compiled artifacts / dispatch index / episodic logs), beyond the already-disabled cache. FIX: isolate the polluting tests (tmp_path / per-worker dirs) OR mark the gate retry-once-on-flake. On-theme: a gate giving false signal is exactly what this project hunts.",
+    "due": "",
+    "status": "open",
+    "bindings": [],
+    "created": "2026-06-23",
+    "done_ts": ""
+  },
+  {
+    "id": "b3b5aea3",
+    "text": "PR-019 (axon-hr-ui) ROOT CAUSE (precise, 2026-06-23): code-dev-study.md:92-95 dispatches modes subsystem/deep/targeted/compare to code-dev-study-area then DONE() \u2014 EXITING before the phase-manifest advance at line 528. So the ladder advance ONLY runs on the no-flag interactive path; under mode flags the manifest never advances (the real rank-3 false-negative, NOT just an emits/header mismatch). Compounding: mode path writes study/<mode>.md but manifest output (from '# emits: 01-study.md') is 01-study.md (root) \u2014 different file+dir. FIX (3 parts, back-compat-sensitive: 01-study.md read at lines 118/521): (a) advance the manifest on the mode-dispatch path too (likely inside code-dev-study-area after its write, mode-aware output); (b) reconcile outputs \u2014 needs OR-semantics (01-study.md OR study/*.md) which _missing_outputs lacks, OR unify the output location; (c) program-execution test (needs a markdown runner \u2014 gap-find flagged this gap). Do as a FOCUSED effort, not marathon-tail. Lower-risk W1 alt: PR-009b (termination tests + Skip-to-next no-op fix).",
+    "due": "",
+    "status": "open",
+    "bindings": [],
+    "created": "2026-06-23",
+    "done_ts": ""
   }
 ]

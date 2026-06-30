@@ -1,0 +1,82 @@
+name:           code-dev
+version:        1
+domain:         code-dev
+
+# Canonical code-dev workflow (PR-118). Domain-agnostic skeleton followed by
+# language-/library-specific overlays (python-code-dev, cpp-code-dev).
+
+execution-mode: fixed
+
+default-goal:
+  statement: "Ship a code-dev PR end-to-end (study → plan → implement → self-review → safety-audit → merge)."
+  measurement:
+    - "phase.has(03-prs/PR-*.md) AND all_prs_implemented()"
+    - "tests.pass()"
+    - "audit.open-findings == 0"
+  acceptance-criterion: "audit.open-findings == 0 AND tests.pass()"
+  rejection-criterion:  "tests.fail() OR audit.critical-issues > 0"
+
+triggers:
+  - kind: keyword
+    when: "user said one of [code-dev, ship a pr, code dev cycle]"
+  - kind: explicit
+    when: "workflow run code-dev"
+
+allow-suggestions:  true
+allow-deviation:    false
+suggestion-channel: [footer]
+
+start: s1
+
+synapses:
+  # graphify-obsidian pr-7: study opens with the S0 GRAPHIFY-MAP block — the
+  # target-repo graph is built ONCE here (persisted at <project>/graph/graph.json,
+  # fail-degrade when graphify is absent) and reused by every later phase. S0 lives
+  # INSIDE code-dev-study rather than as a separate node: a second node naming the
+  # same program would execute study twice in a fixed run.
+  - id:   s1
+    name: code-dev-study
+    role: reader
+    on-complete:
+      - next: s2
+
+  - id:   s2
+    name: code-dev-plan
+    role: mutator
+    on-complete:
+      - next: s3
+
+  - id:   s3
+    name: code-dev-pr-create
+    role: mutator
+    on-complete:
+      - next: s4
+
+  - id:   s4
+    name: code-dev-review-self
+    role: gate
+    on-complete:
+      - if:   "review.passes()"
+        next: s5
+      - if:   "review.has-objections()"
+        next: s3
+
+  - id:   s5
+    name: code-dev-knowledge-shadow
+    role: mutator
+    on-complete:
+      - next: s6
+
+  - id:   s6
+    name: code-dev-safety-audit
+    role: gate
+    on-complete:
+      - if:   "audit.open-findings == 0"
+        next: s7
+      - if:   "audit.open-findings > 0"
+        next: s2
+
+  - id:   s7
+    name: code-dev-merge
+    role: mutator
+    on-complete: []

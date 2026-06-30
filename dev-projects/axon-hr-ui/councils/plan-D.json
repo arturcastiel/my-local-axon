@@ -1,0 +1,243 @@
+{
+  "advisory_only": true,
+  "executive_summary": "Three upstream councils triangulate on ONE defect class: AXON's phase/ladder state is written but neither advanced, truthfully labeled, nor legibly surfaced — so gates guard phantom manifests, the menu re-emits full nominal noise every turn, and enforcement labels overstate guarantees that only exist when the Stop-hook is installed. The D transcript (21 entries) converges on a subtraction-first plan resolved by kernel constraint, not vote-count: SURFACE state, do NOT enforce it (resolving A-vs-C); ship truthful labels, not gate-deepening; and gate ALL persona-driven onboarding behind one real cold-start stranger test (C#5) because every persona is invented (only the author is observed). Quick-wins are mechanical, single-file, kernel-trivial fixes nearly every D seat independently ratified — phase_model.py `add` is the only undisputed data-corruption bug. Foundation folds A's \"advance the ladder\" + B's OS-STATE collapse/ActiveProgramStrip + C's resume-truth into ONE initiative: \"phase state that is real AND visible.\" Larger overhauls (component grammar, discoverability rank() rewrite, the full forward-ladder auto-advance refactor) are deferred or gated, carrying live dissent. Reanchor ceremony is reshaped by deterministic cadence, never by context-suppression, because suppression silently disarms every advisory gate. This plan is advisory only; the owner runs all builds and decides scope.",
+  "initiatives": [
+    {
+      "rank": 1,
+      "title": "Add phase_model.py `add` subcommand and call it from code-dev-phase-new",
+      "area": "state-model",
+      "problem": "code-dev-phase-new writes masterplan.md + DAG.json but never _phases.json, and phase_model.py has no add/insert subcommand, so the phase-registry is split-brain and node-order gates usually guard an empty/frozen manifest. This is the single undisputed data-corruption bug — ratified by all eight A-seats and every D-seat across three rounds.",
+      "proposal": "Add `phase_model.py add --project --id --name --after <dep>` that loads/seeds the manifest, asserts the id is not already present, derives deps from the predecessors input (not manual entry), inserts the node, and persists to _phases.json. Call it from code-dev-phase-new.md immediately after the DAG add-node step. Ship ONLY the add subcommand here; carve the forward-ladder auto-advance refactor (A#2) out into the foundation tier.",
+      "impact": "high",
+      "effort": "S",
+      "sources": [
+        "A",
+        "C"
+      ],
+      "phase": "quick-wins"
+    },
+    {
+      "rank": 2,
+      "title": "Relabel SHADOW GATE to advisory and surface enforcement posture at boot/menu",
+      "area": "workflows",
+      "problem": "'SHADOW GATE (enforced)' is a prose label over an advisory LOG+STORE that only fires on stale>0 and is silent on the empty/unindexed-source case; response/shadow/node-order gates are advisory unless the Stop-hook is installed, but nothing surfaces 'advisory' at boot/menu. The label overstates a mechanical guarantee that mostly does not exist (enforcement theater).",
+      "proposal": "Relabel 'SHADOW GATE (enforced)' to 'SHADOW GATE (advisory · fail-open)' in source (A#3 option a). Add a boot/menu enforcement-posture StateLine sourced from verify.py status: 'ENFORCEMENT: advisory (hook not installed) — run scripts/enable-enforcement.sh to enable mechanical gates.' Do NOT build the hard-halt enforcement (A#3 option b) — this resolves A-vs-C in C's favor by kernel constraint: surface state, do not enforce it.",
+      "impact": "high",
+      "effort": "S",
+      "sources": [
+        "A"
+      ],
+      "phase": "quick-wins"
+    },
+    {
+      "rank": 3,
+      "title": "OS-STATE nominal-collapse to one severity-escalated line",
+      "area": "menu-ui",
+      "problem": "The OS-STATE block emits the full nominal signal list every turn under the per-turn reanchor hook, with catastrophic signal-to-noise that crushes the token budget and buries actionable information. Council C's #8/#3 ceremony-fatigue pain compounds it.",
+      "proposal": "In the menu render path, check max OS-STATE signal severity. When all nominal, emit one rollup line ('OS: nominal (health·infer·cov·mem·backup·drift·igap ok)'); escalate to per-signal StateLines only on non-nominal. Ship as a literal fixed-format string, NOT via a formal component grammar (that is deferred). Resolves B's ADD-vs-CUT conflict toward the collapse.",
+      "impact": "high",
+      "effort": "S",
+      "sources": [
+        "B",
+        "A",
+        "C"
+      ],
+      "phase": "quick-wins"
+    },
+    {
+      "rank": 4,
+      "title": "kv-store --raw flag / JSON-fallback for bare scalar strings",
+      "area": "tooling",
+      "problem": "kv-store rejects bare scalar strings with an opaque json.loads error and no escape, crashing on a common operation with an unhelpful message.",
+      "proposal": "In kv_store.py set action, wrap json.loads in try/except json.JSONDecodeError. Add a --raw flag (store value verbatim as string); on parse failure either honor --raw or auto-fallback to storing the literal string with a one-line note. Test with bare scalar, quoted string, and valid JSON.",
+      "impact": "medium",
+      "effort": "S",
+      "sources": [
+        "A"
+      ],
+      "phase": "quick-wins"
+    },
+    {
+      "rank": 5,
+      "title": "synapse-infer ASSERT dedup + synapse-validate semantic lint",
+      "area": "tooling",
+      "problem": "synapse-infer concatenates ASSERT bodies with zero dedup (11x-repeated precondition, truncated dead synapse, stale counts); synapse-validate only checks parse-ability and rubber-stamps it. Pure data-layer, kernel-safe.",
+      "proposal": "One-line generator fix at synapse_infer.py:276 — join over an order-preserving de-duplicated list (dict.fromkeys / sorted(set)). Add a synapse-validate WARN when any precondition conjunct repeats. Also fix IDENTITY LOCK STORE + DONE() labels to canonical program names (A#7) and add an invariant that STORE(W:active-program,X) equals the program's own header name.",
+      "impact": "medium",
+      "effort": "S",
+      "sources": [
+        "A"
+      ],
+      "phase": "quick-wins"
+    },
+    {
+      "rank": 6,
+      "title": "Ship a 'code-dev start' entry-point program (dedupe A#10 ≡ C#2)",
+      "area": "onboarding",
+      "problem": "The 88/156-program surface (count disputed) has no operator-surfaced taxonomy; 18 alias stubs create a 3-hop dispatch chain that obscures ACTIVE programs, and there is no in-session discoverability beyond list-programs. A#10 and C#2 are the same finding.",
+      "proposal": "Ship ONE 'code-dev start' entry-point program rendering current project state + the 5-phase ladder as a numbered checklist with the recommended next step, plus a --status=active filter on list-programs to hide alias stubs. This traces to a real defect (the alias dispatch chain) and is persona-independent. Explicitly DEFER the orchestrator rank()/per-step suggestion rewrite (the persona-dependent half of C#2) behind the stranger-test gate.",
+      "impact": "medium",
+      "effort": "M",
+      "sources": [
+        "A",
+        "C"
+      ],
+      "phase": "quick-wins"
+    },
+    {
+      "rank": 7,
+      "title": "Cheap re-entry summary block at boot (resume-truth, persona-independent)",
+      "area": "state-model",
+      "problem": "Returning-after-gap users must reconstruct AXON's state model with no re-entry summary; the ladder checkpoint contract is write-once (programs STORE active-phase=':pre-write' but never flip to ':done' or clear), so the resume badge lies after clean runs and is absent for 3 of 5 phases.",
+      "proposal": "Add a re-entry summary block to boot output: last session date, active project, phase status from _phases.json, synapse entry count, shadow-file last-updated. Pair with the A#8 read-only fix: make :pre-write a true write-ahead marker every program overwrites with :done or CLEARs on the success path. This is the cheap, traceable subset of C#7 — ship it now; the rest of onboarding is gated.",
+      "impact": "medium",
+      "effort": "S",
+      "sources": [
+        "C",
+        "A"
+      ],
+      "phase": "quick-wins"
+    },
+    {
+      "rank": 8,
+      "title": "FOUNDATION: phase state that is real AND visible (fold A#2 + B#8/B#1 + C#7)",
+      "area": "state-model",
+      "problem": "Councils A (state not advanced), B (state not surfaced), and C (state not resumable) are three faces of ONE defect. The forward study->plan->pr->log->audit ladder never advances _phases.json (only done/back/skip mutate it), and there is no persistent active-program/phase strip across re-emits, so the operator cannot tell where they are.",
+      "proposal": "One initiative, ordered commits: (1) make each forward sub-program (study, plan, pr, log, audit) call TOOL(phase-model, done, --phase <self>) on its existing output-completeness DONE() gate (A#2); (2) overwrite {name}:pre-write with :done or CLEAR on success (A#8); (3) emit a one-line ActiveProgramStrip pinned after the reanchor header when W:current-program is set ('[ code-dev-plan · PHASE 3/7 · satisfied ]', B#8), reading phase/score from the now-truthful manifest; (4) collapse the strip when nominal (B#1). Single source of truth = _phases.json + W:active-phase.",
+      "impact": "high",
+      "effort": "L",
+      "sources": [
+        "A",
+        "B",
+        "C"
+      ],
+      "phase": "foundation"
+    },
+    {
+      "rank": 9,
+      "title": "Reshape reanchor ceremony by deterministic cadence, never by context-suppression",
+      "area": "workflows",
+      "problem": "Machine-enforced ceremony (per-prompt reanchor hook, AskUserQuestion friction) is C's single hardest-evidenced user pain. But C#3's proposed fix — suppress re-injection when AXON identity is already in-context — silently disarms every advisory gate, because the gates ride on the reanchor.",
+      "proposal": "Split ceremony into 'identity re-anchor' vs 'gate/state re-anchor'. Implement ceremony reduction as a deterministic every-Nth-turn cadence (e.g. full reanchor turn 1 + every 5th turn, a 1-line marker between), NOT context-conditional suppression. Keep gate/state re-anchor persistent. Add typed input-prompt labels (B#9: [GATE]/[SELECT]/[INSTRUCT]/[ANSWER]) and typed fail_render disambiguation (B#7: BLOCKED vs FAIL) to cut ceremony confusion without touching the hook's gate-carrying role.",
+      "impact": "high",
+      "effort": "M",
+      "sources": [
+        "C",
+        "B",
+        "A"
+      ],
+      "phase": "workflow-overhaul"
+    },
+    {
+      "rank": 10,
+      "title": "Adaptive-loop semantic exit: write goal.rejection.met so the loop can terminate before the 25-step cap",
+      "area": "workflows",
+      "problem": "The adaptive-free-text loop terminates only on the hard 25-step cap; goal.rejection.met() is implemented in predicate.py but has no production writer, so it is permanently false. Several D seats explicitly moved this OUT of quick-wins (it is not a trivial one-file fix), and challenger dissents it may already be 'genuinely fixed' by the steps>25 short-circuit.",
+      "proposal": "In the adaptive tick, after each program fires, evaluate the rejection criterion against current goal state via TOOL(goal, …) and STORE the boolean to W:goal.rejection.met so the predicate gate can exit; OR make the predicate self-evaluating. Treat as foundation, not quick-win. Verify against challenger's claim that PR-5.1's in-loop steps>25 short-circuit already covers this BEFORE building.",
+      "impact": "medium",
+      "effort": "M",
+      "sources": [
+        "A"
+      ],
+      "phase": "foundation"
+    },
+    {
+      "rank": 11,
+      "title": "Severity-gated audit->fix branch instead of full audit->plan re-loop",
+      "area": "workflows",
+      "problem": "The canonical gate s6 loops audit->plan over the entire chain for ANY open finding; there is no severity-gated intermediate fix node, so non-critical findings trigger a full expensive re-loop.",
+      "proposal": "Add a severity-gated branch: route open-findings>0 to the s2/full re-loop only when audit.critical-issues>0; for non-critical findings, route to a dedicated intermediate code-dev-fix node. Surface the existing-but-undiscoverable adaptive->fixed promote/replay loop (A#6) via a 'workflow promote <run-id>' menu verb — but verify challenger's dissent that promote/replay IS already surfaced after every adaptive run before adding the verb.",
+      "impact": "medium",
+      "effort": "M",
+      "sources": [
+        "A"
+      ],
+      "phase": "workflow-overhaul"
+    },
+    {
+      "rank": 12,
+      "title": "Two-repo / multi-tree split hidden behind a single AXON-native save/sync verb",
+      "area": "state-model",
+      "problem": "The axon vs my-axon vs workspace multi-tree split creates ownership confusion and git friction; users hand-manage two git trees.",
+      "proposal": "Hide the split behind a single AXON-native 'save'/'sync' verb that commits my-axon without hand-managing two trees; add a 'defer backup' option to my-axon-init; refactor SETUP.md to one versioned getting-started path. Medium-evidence (product-manager, challenger, andragogy-designer all at medium); sequence after foundation since it touches state ownership.",
+      "impact": "medium",
+      "effort": "M",
+      "sources": [
+        "C"
+      ],
+      "phase": "workflow-overhaul"
+    },
+    {
+      "rank": 13,
+      "title": "GATE: run one real cold-start stranger test before funding persona-driven onboarding",
+      "area": "onboarding",
+      "problem": "The first-time/returning/power personas are invented — the only observed user is the author. Every persona-keyed onboarding initiative (C#1 fast-boot, the C#2 rank() rewrite, progressive-disclosure gates, boot-lite) rests on this unvalidated foundation. The program count itself is disputed (88 vs ~79 active vs ~30 core vs 156 total).",
+      "proposal": "Make C#5 a hard PHASE-0 PRECONDITION, not a line item: one screen-recorded cold-start by a non-author (TNO colleague / junior dev / AI researcher) booting from startup.md or menu.md with zero coaching; measure time-to-first-task, point of confusion, abandonment point. Do NOT merge any onboarding/boot-lite/fast-path/persona-specific UX until E:stranger-test-run contains >=1 recorded session. This is a gate that BLOCKS the items below it, not buildable work itself.",
+      "impact": "high",
+      "effort": "S",
+      "sources": [
+        "C"
+      ],
+      "phase": "later"
+    },
+    {
+      "rank": 14,
+      "title": "GATED: fast-boot path + first-run onboarding restore + program discoverability rank()",
+      "area": "onboarding",
+      "problem": "Boot ceremony is front-loaded (value deferred to step 4-5, full menu every boot); first-run onboarding is misrouted/orphaned and the real getting-started artifact is unreachable; the [1]-[4] mode render lines are reported missing (orphaned ELSE at L233) though this render-bug claim itself carries dissent. These are real-sounding but persona-dependent.",
+      "proposal": "AFTER the stranger test validates the pain: add a fast-boot/boot-lite path for returning users (W:boot-count>1 -> single status line + 'type menu'); auto-run an onboarding quickstart for first-time users gated on L:first-run-complete; restore the [1]-[4] mode render lines IF the render bug is confirmed (verify the orphaned-ELSE claim first — challenger disputes it); build the orchestrator rank()/per-step program suggestion (the deferred half of C#2). Scope each item to the specific pain the recording surfaces.",
+      "impact": "medium",
+      "effort": "L",
+      "sources": [
+        "C",
+        "A"
+      ],
+      "phase": "later"
+    },
+    {
+      "rank": 15,
+      "title": "DEFERRED: component grammar (GRAMMAR.md) demoted to an internal render contract",
+      "area": "menu-ui",
+      "problem": "B's component grammar (frozen ASCII primitives referenced by ID in the reanchor hook) is architecturally sound but carries the council's LOWEST seat confidence (design-systems-architect 0.61), depends on a unified state schema not yet live, and adds compliance/specification debt. data-visualization-engineer rebuts the grammar frame outright; challenger calls it 'the B-track the owner will most regret.'",
+      "proposal": "Do NOT ship GRAMMAR.md as a public API or foundation item. Ship the CONCRETE instances it would have standardized — OS-STATE collapse (already rank 3) and ActiveProgramStrip (already rank 8) — as literal fixed-format strings. Demote the grammar to an INTERNAL render contract only, revisited AFTER the foundation state schema is live. Also defer B#12 CapabilityTable and standalone ASCII viz (progress bars/sparklines) — challenger's encoding dissent against per-turn ASCII re-emission cost is unresolved.",
+      "impact": "low",
+      "effort": "L",
+      "sources": [
+        "B"
+      ],
+      "phase": "later"
+    }
+  ],
+  "sequencing": [
+    "FIRST (quick-wins, ~1-2 weeks, mechanical/single-file/kernel-trivial, near-universal D ratification): rank 1 phase_model.py add — the only undisputed data-corruption bug; rank 2 shadow-gate relabel + enforcement-posture boot line; rank 3 OS-STATE nominal-collapse; rank 4 kv-store --raw; rank 5 synapse dedup + canonical identity lint; rank 6 code-dev start entry-point (dedupe A#10/C#2); rank 7 cheap re-entry summary + resume-truth :done flip.",
+    "SECOND (foundation, ~3-4 weeks, the compound state-truth spine): rank 8 'phase state that is real AND visible' (forward-ladder done side effects + ActiveProgramStrip + pre-write/:done marker), which the quick-win phase_model.add unblocks; rank 10 adaptive-loop semantic exit (verify challenger's already-fixed claim first).",
+    "THIRD (workflow overhaul, after foundation stabilizes): rank 9 reanchor cadence reshape + typed input/fail labels; rank 11 severity-gated audit->fix branch + promote/replay menu verb (verify discoverability dissent first); rank 12 single save/sync verb hiding the two-repo split.",
+    "GATE (Phase-0 precondition blocking the 'later' onboarding tier): rank 13 run one real cold-start stranger test — nothing persona-driven merges until E:stranger-test-run has >=1 recorded session.",
+    "LATER (only after the gate clears or the grammar's state-schema dependency is met): rank 14 fast-boot + first-run restore + discoverability rank() rewrite, each scoped to recorded pain; rank 15 component grammar demoted to internal render contract, CapabilityTable and standalone ASCII viz deferred."
+  ],
+  "risks": [
+    "Building enforcement instead of surfacing it would violate AXON's surface-don't-enforce kernel reality and collide with the advisory/fail-open posture; the plan deliberately ships A#3 option (a) labeling, NOT option (b) hard-halt.",
+    "Implementing C#3 as context-conditional reanchor suppression would silently disarm every advisory gate that rides on the reanchor hook; rank 9 mandates deterministic cadence instead — a wrong implementation here is a safety regression, not just a UX miss.",
+    "The discoverability/onboarding ROI rests on an unverified program count (88 vs ~79 active vs ~30 core vs 156 total) and invented personas; funding the rank() rewrite or fast-boot before the stranger test risks building for a user who does not exist.",
+    "The foundation forward-ladder auto-advance (A#2) is contested as over-scoped by challenger/harness-designer/completer-finisher; shipping only phase_model.add first (rank 1) de-risks this, but the foundation initiative must not silently re-expand into the full state-machine deepening those seats warned against.",
+    "Two render-bug / orphaned-feature claims are disputed within the upstream councils — the mode [1]-[4] orphaned-ELSE at L233 and the promote/replay 'undiscoverable' framing. Verify both against the live repo BEFORE building rank 11/14, or risk fixing a non-bug.",
+    "challenger's adaptive-loop dissent (rank 10): the loop may already terminate via the PR-5.1 steps>25 short-circuit; building a goal.rejection.met writer on top of an already-working exit would add dead complexity.",
+    "Per-turn ASCII re-emission cost (challenger's encoding dissent) means any viz/table primitive multiplies token spend every turn; deferring B#3/B#12/sparklines mitigates but the OS-STATE collapse line itself must stay minimal.",
+    "Two Council C seats (ux-researcher, andragogy-designer) declined round 1 because the AXON context was injected as the literal string 'undefined'; several C findings are grounded in general cognitive-load research rather than AXON artifacts, so C-sourced impact estimates carry epistemic uncertainty."
+  ],
+  "dissent": [
+    "Council A — challenger (R1/R2/R3) and harness-designer (R2/R3) and completer-finisher (R2): the node-order / fixed-mode rigidity is over-engineered; the 'make the gates real/enforced' cluster is over-scoped and should be cut, not built. This plan adopts their position (surface, do not enforce) but preserves their objection that even the foundation must not deepen the state machine.",
+    "Council A — challenger (R2/R3): the adaptive-free-text loop (A#5/rank 10) is 'genuinely fixed' by the in-loop steps>25 short-circuit (PR-5.1), contradicting the 'no semantic exit' framing. Build is gated on disproving this first.",
+    "Council A — challenger (R2): the adaptive->fixed promote/replay loop (A#6/rank 11) IS surfaced after every adaptive run, rebutting the 'orphaned/undiscoverable' framing. The menu-verb work is gated on disproving this.",
+    "Council A — the mode-menu render bug (modes [1]-[4] vanish, orphaned ELSE at L233) was reported HIGH by observability/ui-architect/auditor but challenger disputes it; treated as verify-before-build, not a confirmed defect.",
+    "Council A — harness-designer (R2, conf 0.42): several R1 high-severity findings were misreads of intentional design or stale repo state (e.g. _axon_paths centralization is exemplary, not debt). Preserved as a caution that some 'debt' may be intended design.",
+    "Council A — completer-finisher RETRACTED its own R1 'three-incompatible-file-schemes / aspirational phase-layout' framing and challenger's R1 'manifest never written' claim; the surviving claim is the narrower phase_model.add gap (rank 1), not a wholesale schema-incompatibility story.",
+    "Council B — challenger (opus, 0.64) ENCODING DISSENT (unresolved): ALL ASCII progress bars, score-gap glyphs, sparklines, and box-drawn tables must be banned as per-turn token tax. Honored by deferring B#3/B#12 and keeping rank-3 collapse minimal.",
+    "Council B — challenger (opus, both rounds) ADD-vs-CUT DISSENT (unresolved): the binding constraint is re-emission cost; the fix is FEWER panels + a panel budget (~25-line default view), not more rendering primitives.",
+    "Council B — data-visualization-engineer (sonnet, 0.81) GRAMMAR-PRIMACY DISSENT: rebuts the component-grammar frame — 'a grammar without a concrete instance is premature.' Reinforced by the council's note that the two highest-strategic-weight proposals (component grammar) carry the LOWEST seat confidence (0.61).",
+    "Council C — challenger (opus, 0.62/0.60) and andragogy-designer (R2, 0.73): the personas are invented; AXON has untested RISK, not demonstrated pain; the program count (88) is inflated vs ~30 core, weakening the discoverability case. This is the basis for the rank-13 hard gate.",
+    "Council C — ux-researcher (R1, 0.80) and andragogy-designer (R1, 0.95) DECLINED to deliver R1 findings because AXON context was injected as the literal 'undefined'; cultural-anthropologist (R1 0.52) notes findings rest on general cognitive-load research, not AXON artifacts. C-sourced confidence is caveated throughout.",
+    "Council C — product-manager (R2) PARTIAL CONCESSION to challenger: but argues a system built for eventual public distribution (GitHub README, quickstart, AGENTS.md) that only one person has run still warrants the cheap re-entry/entry-point surface now — which is why ranks 6-7 ship un-gated while the heavier onboarding (rank 14) is gated.",
+    "Council D internal — challenger (R1/R2/R3, 0.66) sustained: the consolidated plan is over-scoped on three tracks the owner will regret (enforcement-deepening, component grammar, onboarding buildout); the fix is subtraction, not vote-counting. This minority framing shaped the entire quick-wins-only-if-mechanical and gate-the-rest structure."
+  ]
+}
