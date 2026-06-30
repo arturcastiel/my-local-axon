@@ -1,0 +1,920 @@
+{
+  "key": "A",
+  "title": "A · Discovery",
+  "protocol": "adversarial",
+  "rounds": 3,
+  "seats": [
+    {
+      "slug": "harness-designer",
+      "variant": "haiku"
+    },
+    {
+      "slug": "agentic-workflow-designer",
+      "variant": "sonnet"
+    },
+    {
+      "slug": "agent-observability-engineer",
+      "variant": "opus"
+    },
+    {
+      "slug": "ui-architect",
+      "variant": "haiku"
+    },
+    {
+      "slug": "auditor",
+      "variant": "opus"
+    },
+    {
+      "slug": "completer-finisher",
+      "variant": "opus"
+    },
+    {
+      "slug": "challenger",
+      "variant": "opus"
+    }
+  ],
+  "verdict": {
+    "summary": "Council A (Discovery) deliberated over 3 rounds / 21 entries (8 seats: harness-designer, agentic-workflow-designer, agent-observability-engineer, ui-architect, auditor, completer-finisher, challenger) on where AXON's code-dev harness and workflow system are weak, over-engineered, or under-built. The deliberation converged hard on UNDER-INTEGRATION and CONTRACT/LEGIBILITY debt rather than over-engineering: the harness's 88-program surface and node-order rigidity are largely defended, while the phase-manifest, gate-labeling, and synapse-metadata layers are where operators actually get hurt. Severity migrated downward across rounds for several R1 claims (god-node centralization, node-order rigidity, phase-manifest \"aspirational\") as seats verified them against the live tree and retracted; severity stayed high or rose for the phase-registry split-brain, the advisory-gate-labeled-as-enforced mismatch, and the synapse-infer/validate contract gaps. The five most-supported, surviving defects: (1) phase-manifest split-brain — code-dev-phase-new writes masterplan.md+DAG.json but never _phases.json (the done/back/skip gating SSOT), and phase_model.py has no add/insert subcommand; (2) the forward study->plan->pr->log->audit ladder never advances _phases.json, so the node-order gate guards a usually-empty/frozen manifest; (3) \"SHADOW GATE (enforced)\" is a prose label over an advisory LOG+STORE that only fires on stale>0 and is silent on the empty-index case — a verified prose/contract mismatch; (4) synapse-infer concatenates ASSERT bodies with no dedup (11x-repeated preconditions, truncated dead synapse 'code-dev-phase-') and synapse-validate rubber-stamps it; (5) the adaptive-free-text loop terminates only on a hard 25-step cap because goal.rejection.met() has no production writer — a bandaid, not a fix. The adaptive->fixed promote/replay loop is built but operator-undiscoverable (one seat disputes, claiming it IS surfaced post-run). The home-screen mode-menu render bug was reported HIGH across rounds but the challenger and observability seats verified in R3 that it is FIXED (menu renders all modes; the council was quoting a fix-scar comment) — preserved as dissent. Over-engineering critiques of node-order rigidity did NOT survive challenge in any round.",
+    "verdict_distribution": [
+      {
+        "position": "Harness is under-integrated / under-finished (contract+legibility debt), NOT over-engineered — fix the wiring/labeling seams",
+        "share": 0.72,
+        "seats": [
+          "agentic-workflow-designer",
+          "agent-observability-engineer",
+          "ui-architect",
+          "auditor",
+          "completer-finisher",
+          "harness-designer(R3)"
+        ]
+      },
+      {
+        "position": "Most over-engineering targets survive challenge and should be left alone; only a small set of concrete wiring/aliasing defects are real",
+        "share": 0.16,
+        "seats": [
+          "challenger",
+          "harness-designer(R2)"
+        ]
+      },
+      {
+        "position": "Several R1 high-severity claims were misreads of intentional design / stale repo state and should be downgraded or retracted",
+        "share": 0.12,
+        "seats": [
+          "harness-designer(R2)",
+          "completer-finisher(R2-retraction)",
+          "agent-observability-engineer(R3-retractions)"
+        ]
+      }
+    ],
+    "ranked_findings": [
+      {
+        "rank": 1,
+        "title": "Phase-registry split-brain: code-dev-phase-new writes masterplan.md + DAG.json but never _phases.json, and phase_model.py has no add/insert subcommand",
+        "area": "state-model",
+        "severity": "high",
+        "rationale": "Highest support x severity. Independently surfaced/sharpened by auditor (R3), completer-finisher (R3), agent-observability-engineer (R2/R3), ui-architect (R2), harness-designer (R3), and challenger (R3) as 'the real fragmentation.' _phases.json is the actual SSOT for the done/back/skip node-order gate, but custom phases can never reach it, so a phase-new project emits an unresolvable PHASE SPLIT-BRAIN warning and the gate guards a frozen ladder.",
+        "proposal": "Add `phase_model.py add --project --id --name --after <dep>` (deriving deps from the same predecessors input) and call it from code-dev-phase-new.md immediately after the DAG add-node step; recompute order+deps on insert. Pick ONE phase authority so single- and multi-phase projects share one SSOT.",
+        "support": "6 of 8 seats (auditor 0.85, completer-finisher 0.83, agent-observability-engineer 0.82, harness-designer 0.62, ui-architect 0.79, challenger 0.78)"
+      },
+      {
+        "rank": 2,
+        "title": "Forward study->plan->pr->log->audit ladder never advances _phases.json — only done/back/skip mutate it, so the node-order gate usually guards an empty/frozen manifest",
+        "area": "workflows",
+        "severity": "high",
+        "rationale": "Verified by auditor (R2/R3), completer-finisher (R3), challenger (R3), agent-observability-engineer (R3), ui-architect (R3). The phase_model advance()/done()/stale_downstream() functions are fully coded but never invoked by the ACTIVE ladder programs, leaving the manifest a read-only artifact. This is the mechanism that makes the node-order gate (defended as good design) operate on stale state.",
+        "proposal": "Make phase advancement a side effect of the ladder: have each forward sub-program call TOOL(phase-model, done, --phase <self>) on its own DONE() gated by the existing output-completeness check (not forced), so completing 'plan' actually advances the manifest. Then the gate guards real state.",
+        "support": "5 of 8 seats (auditor 0.85, completer-finisher 0.83, agent-observability-engineer 0.82, ui-architect 0.79, challenger 0.78)"
+      },
+      {
+        "rank": 3,
+        "title": "'SHADOW GATE (enforced)' is a prose label over an advisory LOG+STORE that only fires on stale>0 and is silent on the empty/unindexed-source case",
+        "area": "state-model",
+        "severity": "high",
+        "rationale": "Verified prose/contract mismatch raised by auditor (R1/R2/R3), agent-observability-engineer (R1/R2/R3), challenger (R2/R3), completer-finisher (R3), ui-architect (R2), agentic-workflow-designer (R2 'enforcement theater'), harness-designer (R2). The gate over-claims enforcement, never HALTs, and is invisible on the highest-risk case (fresh-but-unindexed / empty index = source read raw). Severity split high/medium across seats.",
+        "proposal": "Either (a) relabel to 'SHADOW GATE (advisory · fail-open)' to stop overstating, or (b) make it real behind L:shadow-gate-enforce: route source READs through a TOOL(shadow, read) that HALTs/redirects on stale/unindexed targets. Regardless, make the panel state-complete: render a line in EVERY case including 'SHADOW NOT BUILT — run: code-dev shadow build' for total==0.",
+        "support": "7 of 8 seats; severity high (auditor, observability, ui-architect, agentic-workflow-designer) / medium (challenger, completer-finisher)"
+      },
+      {
+        "rank": 4,
+        "title": "synapse-infer concatenates ASSERT bodies with zero dedup (11x-repeated precondition, truncated dead synapse 'code-dev-phase-', stale counts); synapse-validate only checks parse-ability and rubber-stamps it",
+        "area": "tooling",
+        "severity": "high",
+        "rationale": "Auditor's anchor finding across all 3 rounds (0.82-0.85), corroborated by completer-finisher (R2/R3), agentic-workflow-designer (R2), ui-architect (R3), harness-designer (R2 flagged as unverifiable against snapshot — see dissent). The validator accepts ~20% garbage by design; the truncated next-suggests name 'code-dev-phase-' ships and breaks dispatch.",
+        "proposal": "One-line generator fix at synapse_infer.py:276 — join over an order-preserving de-duplicated list (dict.fromkeys / sorted(set)). Add a synapse-validate semantic lint: WARN when any precondition conjunct appears >2x; FAIL on next-suggests/next-conditional names that don't resolve to a real programs/*.md (reject truncated '<known>-' prefixes). Recompute inputs/outputs counts each pass.",
+        "support": "5 of 8 seats (auditor 0.85, completer-finisher 0.83, agentic-workflow-designer 0.74, ui-architect 0.79); 1 seat (harness-designer) flags as unverifiable"
+      },
+      {
+        "rank": 5,
+        "title": "Adaptive-free-text loop terminates only on the hard 25-step cap — goal.rejection.met() is implemented in predicate.py but has no production writer, so it is permanently false",
+        "area": "workflows",
+        "severity": "high",
+        "rationale": "agentic-workflow-designer traced this precisely across R2/R3 (predicate.py:400-402 implements the function; nothing ever writes ctx['goal']['rejection']['met']); the steps>25 short-circuit is the only real exit (the OR's right operand stays broken). Corroborated by completer-finisher and agent-observability-engineer (uniform deliberation cost, ceiling not goal logic). Challenger argues the in-loop steps>25 short-circuit means it is 'genuinely fixed' — see dissent.",
+        "proposal": "Add a writer to the adaptive tick: after each program fires, evaluate the rejection criterion and STORE the result to W:goal.rejection.met so the predicate gate can actually exit; OR make the predicate engine raise on an unresolvable state reference in a termination criterion instead of safe-null-bypassing. Surface 'step N/25 · acceptance: not met' and a --max-steps param.",
+        "support": "3 of 8 seats high (agentic-workflow-designer 0.74, completer-finisher 0.79, agent-observability-engineer 0.82); challenger dissents on severity"
+      },
+      {
+        "rank": 6,
+        "title": "Adaptive->fixed promote/replay loop is built but operator-undiscoverable; no menu surface and the source file even carries a stale 'invoked by NOTHING' scar comment",
+        "area": "workflows",
+        "severity": "medium",
+        "rationale": "agent-observability-engineer (R1/R3), harness-designer (R3), agentic-workflow-designer (R2/R3) all flag the rigidity escape-hatch as undiscoverable. Direct DISPUTE: challenger (R2) states it IS surfaced after every adaptive run, rebutting observability's R1, and notes the 'invoked by NOTHING' comment is itself stale (the same file invokes promote). Net: the code works; the operator-visibility is the gap.",
+        "proposal": "Add a 'workflow promote <run-id>' verb to the WORKFLOWS menu block and the v4 power-user table in WORKFLOW.md sec 11, backed by code-dev-workflow-promote.md reading the trajectory ledger; emit a numbered post-run offer ('↪ promote this trajectory to a reusable fixed draft? [P]'). Delete the stale 'invoked by NOTHING' comment.",
+        "support": "4 seats flag (agent-observability-engineer, harness-designer, agentic-workflow-designer); challenger disputes discoverability claim"
+      },
+      {
+        "rank": 7,
+        "title": "Canonical programs self-identify by their own deprecated aliases (code-dev-knowledge-shadow STOREs 'code-dev-shadow'; safety-audit; state-save mislabel), corrupting the state they report",
+        "area": "code-dev",
+        "severity": "medium",
+        "rationale": "completer-finisher (R1), challenger (R1/R2), agent-observability-engineer (R2). One seat (observability R3) retracted the state-save instance specifically (it STOREs its correct name; 'code-dev-tag' is a separate program), so the invariant holds but the specific count is narrower than R2 claimed.",
+        "proposal": "Fix IDENTITY LOCK STORE and all DONE() labels to the canonical program name. Add an axon-audit/synapse-validate invariant: a program's STORE(W:active-program,X) must equal its own PROGRAM header name (or declared canonical), failing CI otherwise; extend test_programs_tier_a.",
+        "support": "3 seats (completer-finisher, challenger, agent-observability-engineer); 1 partial retraction on the state-save instance"
+      },
+      {
+        "rank": 8,
+        "title": "Ladder checkpoint/resume contract is write-once: programs STORE active-phase=':pre-write' but never transition to ':done' or clear it, so the resume badge lies after clean runs and is absent for 3 of 5 phases",
+        "area": "state-model",
+        "severity": "high",
+        "rationale": "agent-observability-engineer's sharpened R2/R3 anchor (0.82-0.83). The :pre-write marker is never overwritten on the success path, so the menu resume badge is unreliable. Compounded by the 'resume' verb being overloaded across an ACTIVE meta program and a DEPRECATED code-dev alias (ambiguous recovery path).",
+        "proposal": "Make :pre-write a true write-ahead marker: every program that writes '{name}:pre-write' before a mutation MUST overwrite it with '{name}:done' (or CLEAR W:active-phase) on the success path. Collapse 'resume' to one canonical entrypoint that emits the exact disambiguated command.",
+        "support": "1 seat sustained high across 2 rounds (agent-observability-engineer 0.82-0.83)"
+      },
+      {
+        "rank": 9,
+        "title": "Canonical gate s6 loops audit->plan over the entire chain for ANY open finding; no severity-gated intermediate fix node",
+        "area": "workflows",
+        "severity": "medium",
+        "rationale": "auditor (R2), completer-finisher (R1). Non-critical findings trigger a full re-loop of the whole ladder, which is disproportionate; the rejection-criterion already declares critical-issues>0 as the real bar.",
+        "proposal": "Add a severity-gated branch: route open-findings>0 to s2/full re-loop only when audit.critical-issues>0; for non-critical findings, route to an intermediate fix node (e.g. a dedicated code-dev-fix synapse or s3 pr-create) instead.",
+        "support": "2 seats (auditor 0.83, completer-finisher 0.74)"
+      },
+      {
+        "rank": 10,
+        "title": "88-program surface has no operator-surfaced taxonomy/grouping; ladder onboarding relies on WORKFLOW.md prose; 18 alias stubs create a 3-hop dispatch chain that obscures ACTIVE programs",
+        "area": "onboarding",
+        "severity": "medium",
+        "rationale": "agentic-workflow-designer (R1/R2/R3), agent-observability-engineer (onboarding), completer-finisher (R1 alias dead-output). Operator orientation failure across the surface; the alias stubs also carry dead post-DONE output and stale 'removed next release' promises.",
+        "proposal": "Add a 'code-dev start' entry-point program rendering current project state + the 5-phase ladder as a numbered checklist with the recommended next step. Add a status filter to code-dev help/list-programs: 'ACTIVE (70) | ALIAS (18) | default ACTIVE only' and collapse aliases. Strip unreachable post-DONE ## OUTPUT blocks from alias stubs.",
+        "support": "3 seats (agentic-workflow-designer, agent-observability-engineer, completer-finisher)"
+      },
+      {
+        "rank": 11,
+        "title": "Enforcement posture is invisible: response/shadow/node-order gates are advisory unless the Stop-hook is installed, but nothing surfaces 'advisory' at boot/menu",
+        "area": "code-dev",
+        "severity": "medium",
+        "rationale": "agentic-workflow-designer (R2/R3 'enforcement theater'), harness-designer (R2 'enforcement-mode visibility when default-off'). Distinct from the shadow-label finding: this is the global posture (KERNEL-SLIM self-documents gates are advisory without the hook). Genuinely uncertain mechanism per harness-designer.",
+        "proposal": "Add a boot-time enforcement posture check that surfaces at menu render: 'ENFORCEMENT: advisory (hook not installed) — run scripts/enable-enforcement.sh to enable mechanical gates.' Run verify.py status in health-check and warn when posture is advisory.",
+        "support": "2 seats (agentic-workflow-designer, harness-designer)"
+      },
+      {
+        "rank": 12,
+        "title": "kv-store rejects bare scalar strings with an opaque json.loads error and no --raw escape",
+        "area": "tooling",
+        "severity": "medium",
+        "rationale": "completer-finisher (R1 and R3, stable). A concrete first-run papercut: storing a literal string fails with a raw exception.",
+        "proposal": "Add a --raw flag (store value verbatim as a string) or auto-fallback: try json.loads, on failure store the literal string with a one-line note; replace the bare exception with 'value is not valid JSON; wrap in quotes or use --raw'.",
+        "support": "1 seat, stable across 2 rounds (completer-finisher 0.74-0.83)"
+      },
+      {
+        "rank": 13,
+        "title": "code-dev.md dispatcher carries synapse-infer scar tissue: an 11x-repeated 'project != null | FAIL' precondition conjunct and ~25x duplicated FAIL boilerplate",
+        "area": "code-dev",
+        "severity": "medium",
+        "rationale": "agent-observability-engineer (R1), completer-finisher (R3 confirmed 'live legibility papercut'). A downstream symptom of finding #4 (no dedup), but also independently fixable at the dispatcher.",
+        "proposal": "Collapse the per-route 'project != null | FAIL(...)' into one PROJECT-GUARD gate evaluated once before the ROUTE table; routes assume project loaded. Fix at the generator (dedup) so the scar doesn't regenerate.",
+        "support": "2 seats (agent-observability-engineer, completer-finisher)"
+      },
+      {
+        "rank": 14,
+        "title": "_axon_paths god-node (degree 95) couples ~59% of the codebase; gate subsystems (shadow/phase/crucible) lack an orchestration layer; rule registry collects but doesn't compose",
+        "area": "code-dev",
+        "severity": "medium",
+        "rationale": "harness-designer's R1 thesis (0.65), but the SAME seat RETRACTED it in R2 (0.42), reframing _axon_paths as exemplary separation-of-concerns and gate centralization as intentional. Preserved at reduced rank because no other seat re-raised it and the originating seat reversed. See dissent.",
+        "proposal": "If pursued: extract _axon_paths into a versioned namespace with 3-5 typed public APIs; add a gate manifest (YAML) + 'axon gate run' single entry point. NOTE: originating seat now recommends NO change.",
+        "support": "1 seat R1 (harness-designer 0.65), self-retracted R2 (0.42)"
+      }
+    ],
+    "dissent": [
+      "Mode-menu render bug (modes [1]-[4] vanish, orphaned ELSE at L233) was reported HIGH by agent-observability-engineer (R1/R2), ui-architect (R2), and auditor (R3) — but challenger (R3) and agent-observability-engineer (R3, self-retraction) verified against the live tree that menu.md renders all modes via explicit IF/ELSE (R3: L67-80; challenger: L244-257) and that the council was quoting a fix-scar comment (L106) as if it were a live bug. Net council position: this HIGH finding is DEAD / a fixed bug; only a CHANGELOG-comment cleanup remains. Preserved because it was high-support before verification killed it.",
+      "Over-engineering critique of node-order / fixed-mode rigidity: challenger (R1/R2/R3) and harness-designer (R2/R3) and completer-finisher (R2) explicitly hold that the node-order advance-guard is correctly WARN/--allow-deviation gated, surfaces its own escape hatch, and is already complemented by adaptive/hybrid modes + the promote loop. Their recommendation: DO NOT add dependency-graph syntax or loosen the gate; new syntax would add churn for marginal gain. This rebuts the R1 proposals from harness-designer and agentic-workflow-designer to add depends_on/retry_if syntax and input-hash memoization.",
+      "harness-designer (R2, conf 0.42) dissents that several R1 high-severity findings were misreads of intentional design or stale repo state: _axon_paths centralization is exemplary separation-of-concerns (not a god-node defect), phase-manifest is substantively implemented (not aspirational), and the synapse-infer precondition claim is UNVERIFIABLE because synapse_infer.py was absent from that seat's repo snapshot — possibly resolved by refactor. This directly contests rank #1, #4, and #14.",
+      "challenger (R2/R3) dissents on the adaptive-free-text loop (rank #5): argues it is 'genuinely fixed' by the in-loop steps>25 short-circuit (PR-5.1), not special-cased — contradicting agentic-workflow-designer's position that goal.rejection.met() remains a broken OR-operand. Both agree the hard cap works; they disagree on whether the undefined predicate is a residual defect or acceptable.",
+      "challenger (R2) disputes the 'promote/replay is orphaned/undiscoverable' framing (rank #6): claims it IS surfaced after every adaptive run, rebutting agent-observability-engineer's R1. The disagreement is about operator-visibility surfacing, not whether the code exists (both agree it is wired).",
+      "completer-finisher (R2, conf 0.79) RETRACTED its own R1 'three-incompatible-file-schemes / aspirational phase-layout' framing AND the challenger's R1 'manifest never written' claim, affirming _phases.json is now the enforced SSOT for done/back/skip. This refines (does not negate) the split-brain findings #1/#2 — the manifest IS used for those verbs, just not for forward-ladder advancement or phase-new registration.",
+      "Severity spread on the shadow-gate label (rank #3): auditor, agent-observability-engineer, ui-architect, and agentic-workflow-designer rate it HIGH (enforcement theater / silent on highest-risk case); challenger and completer-finisher rate it MEDIUM (a prose/label fix). Reported verbatim rather than averaged."
+    ],
+    "advisory_only": true,
+    "confidence": 0.79
+  },
+  "transcript": [
+    {
+      "seat": "harness-designer",
+      "round": 1,
+      "variant": "haiku",
+      "confidence": 0.65,
+      "answer": "AXON's code-dev harness is architecturally sound but operationally inefficient. The core weakness is **uncontrolled centralization** — specifically, _axon_paths (degree 95) and _axon_paths:default_workspace (degree 85) are god-nodes creating hidden coupling across 59% of the codebase. Secondary weak…",
+      "findings": [
+        {
+          "title": "Uncontrolled C0 gravity: _axon_paths god-node couples 95+ functions",
+          "area": "code-dev",
+          "severity": "high"
+        },
+        {
+          "title": "Gate subsystems lack orchestration layer; manual sequencing required",
+          "area": "workflows",
+          "severity": "high"
+        },
+        {
+          "title": "Rule registry is a collector, not an orchestrator; 20+ rule modules lack composition",
+          "area": "code-dev",
+          "severity": "medium"
+        },
+        {
+          "title": "dual_agent_eval reimplements harness primitives; 85-node island is decoupled from I/O core",
+          "area": "code-dev",
+          "severity": "medium"
+        },
+        {
+          "title": "Workflow node-order is rigidly enforced (rules.r_workflow_node_order) without explicit dependency syntax",
+          "area": "workflows",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "agentic-workflow-designer",
+      "round": 1,
+      "variant": "sonnet",
+      "confidence": 0.52,
+      "answer": "The code-dev harness suffers most from ladder opacity and the shadow gate acting as a silent failure mode, while the workflow system's Fixed/Hybrid node rigidity creates compounding re-entry cost when mid-workflow state changes. These are structural issues, not surface polish. The 25-step adaptive l…",
+      "findings": [
+        {
+          "title": "Shadow gate is a silent kill switch with no observable failure contract",
+          "area": "code-dev",
+          "severity": "high"
+        },
+        {
+          "title": "88 sub-programs with no surfaced taxonomy creates operator orientation failure",
+          "area": "code-dev",
+          "severity": "high"
+        },
+        {
+          "title": "25-step adaptive loop applies uniform deliberation cost to tasks that do not need it",
+          "area": "workflows",
+          "severity": "medium"
+        },
+        {
+          "title": "Fixed and Hybrid node-order rigidity creates high re-entry cost when upstream state changes",
+          "area": "workflows",
+          "severity": "medium"
+        },
+        {
+          "title": "Adaptive free-text input lacks schema enforcement, making intent validation downstream and late",
+          "area": "workflows",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "agent-observability-engineer",
+      "round": 1,
+      "variant": "opus",
+      "confidence": 0.78,
+      "answer": "AXON's code-dev/workflow harness is conceptually strong (durable study→plan→pr→log→audit artifacts, a real edit-distance drift tool, a deterministic node-jump advance-guard) but the operator-legibility layer is where it actually hurts. The home-screen mode menu has a broken render path (orphaned ELS…",
+      "findings": [
+        {
+          "title": "Home-screen mode menu has a broken render branch — modes [1]-[4] vanish, [5] opens with an orphaned ELSE",
+          "area": "menu-ui",
+          "severity": "high"
+        },
+        {
+          "title": "Project state-legibility (drift / stale-marker / shadow) is reimplemented 3x with divergent thresholds — no single source of truth",
+          "area": "state-model",
+          "severity": "high"
+        },
+        {
+          "title": "Shadow gate only surfaces when stale>0 — a fresh-but-empty or all-fresh index is invisible to the operator",
+          "area": "workflows",
+          "severity": "medium"
+        },
+        {
+          "title": "workflow promote/replay (the adaptive→fixed improvement loop) is built but orphaned — the rigidity escape hatch is undiscoverable",
+          "area": "tooling",
+          "severity": "medium"
+        },
+        {
+          "title": "code-dev.md dispatcher carries synapse-infer scar tissue: an 11x-repeated precondition conjunct and ~25x duplicated FAIL boilerplate",
+          "area": "code-dev",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "ui-architect",
+      "round": 1,
+      "variant": "haiku",
+      "confidence": 0.72,
+      "answer": "AXON's code-dev UX has 5 concrete weak points rooted in discovery/transparency, not over-engineering. The menu is correctly dense per spec; numeric interaction is sound. The real friction: mode-switching context is implicit (users don't know what's loaded after [1]→[2]); phase-locking errors surface…",
+      "findings": [
+        {
+          "title": "Mode-switch context is implicit, not visually tracked",
+          "area": "menu-ui",
+          "severity": "medium"
+        },
+        {
+          "title": "Phase-locking rule violation errors are documentation-sourced, not runtime-surfaced",
+          "area": "state-model",
+          "severity": "high"
+        },
+        {
+          "title": "Suggestions footer is computed but unexplained in UI",
+          "area": "menu-ui",
+          "severity": "medium"
+        },
+        {
+          "title": "Orchestrator workflow mode (fixed/adaptive/free-text) is invisible in OS-STATE panel",
+          "area": "state-model",
+          "severity": "high"
+        },
+        {
+          "title": "code-dev context loss during mode switch is silent; no before/after snapshot",
+          "area": "workflows",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "auditor",
+      "round": 1,
+      "variant": "opus",
+      "confidence": 0.82,
+      "answer": "AXON's code-dev harness is weakest not in the 88-program surface but in its auto-generated synapse metadata, which the validator never sanity-checks. synapse-infer concatenates every ASSERT body into `precondition`, so code-dev.md's header repeats `project ≠ ∅` eleven times, ships a truncated `code-…",
+      "findings": [
+        {
+          "title": "synapse-infer emits duplicated/garbage preconditions that synapse-validate rubber-stamps",
+          "area": "tooling",
+          "severity": "high"
+        },
+        {
+          "title": "next-suggests contains a truncated, non-existent synapse `code-dev-phase-`",
+          "area": "state-model",
+          "severity": "medium"
+        },
+        {
+          "title": "Shadow gate labeled 'enforced' but is purely advisory",
+          "area": "state-model",
+          "severity": "high"
+        },
+        {
+          "title": "Stale inputs-count/outputs-count in program headers",
+          "area": "tooling",
+          "severity": "low"
+        },
+        {
+          "title": "Adaptive workflow references a non-existent synapse and ping-pongs through a single coarse node",
+          "area": "workflows",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "completer-finisher",
+      "round": 1,
+      "variant": "opus",
+      "confidence": 0.74,
+      "answer": "AXON's code-dev harness is strongest at its shadow index and gate semantics but is dragged down by half-finished migration debt that hits the operator on the first real study→plan→pr→log→audit run. The single worst issue is a three-way layout fracture: the domain manifest declares phases/{n-name}/ a…",
+      "findings": [
+        {
+          "title": "Phase-manifest layout is aspirational — ACTIVE ladder writes three incompatible file schemes",
+          "area": "state-model",
+          "severity": "high"
+        },
+        {
+          "title": "kv-store rejects bare scalar strings with an opaque json.loads error and no --raw escape",
+          "area": "tooling",
+          "severity": "medium"
+        },
+        {
+          "title": "18 alias stubs carry dead post-DONE output and 24 stale 'removed next release' promises",
+          "area": "code-dev",
+          "severity": "medium"
+        },
+        {
+          "title": "knowledge-shadow and safety-audit misreport their own program name into state and DONE()",
+          "area": "code-dev",
+          "severity": "medium"
+        },
+        {
+          "title": "Canonical gate loops audit→plan over the full chain for any open finding; python overlay duplicates instead of inheriting",
+          "area": "workflows",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "challenger",
+      "round": 1,
+      "variant": "opus",
+      "confidence": 0.66,
+      "answer": "Most of the charge's targets survive challenge: the WARN-first node-order gate, the additive v4 surface, and the alias shims are defensible deprecation hygiene, not over-engineering — attacking them would add churn for marginal gain. But two defects are real and not cosmetic: the phase-manifest subs…",
+      "findings": [
+        {
+          "title": "Phase manifest is enforced but never written — orphaned subsystem",
+          "area": "state-model",
+          "severity": "high"
+        },
+        {
+          "title": "study→plan→pr→log→audit ladder terminates in a deprecated alias",
+          "area": "workflows",
+          "severity": "medium"
+        },
+        {
+          "title": "Canonical shadow program self-identifies by its own deprecated alias",
+          "area": "code-dev",
+          "severity": "medium"
+        },
+        {
+          "title": "adaptive-free-text ships a known infinite-loop cycle the tooling must special-case",
+          "area": "workflows",
+          "severity": "low"
+        },
+        {
+          "title": "Node-order gate / over-engineering critique does NOT survive challenge",
+          "area": "tooling",
+          "severity": "low"
+        }
+      ]
+    },
+    {
+      "seat": "harness-designer",
+      "round": 2,
+      "variant": "haiku",
+      "confidence": 0.42,
+      "answer": "Prior rounds overstated severity on 4–5 findings by misidentifying intentional design choices as defects (workflow rigidity for determinism, centralized path resolution for cwd independence, phase-manifest which IS written). The genuinely weak areas are: (1) enforcement-mode visibility when features…",
+      "findings": [
+        {
+          "title": "Phase-manifest system substantively implemented, not aspirational",
+          "area": "code-dev",
+          "severity": "low"
+        },
+        {
+          "title": "Centralized path resolution via _axon_paths.py is intentional architecture, not god-node overreach",
+          "area": "tooling",
+          "severity": "low"
+        },
+        {
+          "title": "Workflow node-order rigidity is intentional determinism + supported re-entry, not a design flaw",
+          "area": "workflows",
+          "severity": "low"
+        },
+        {
+          "title": "Shadow gate enforcement visibility: advisory by default but mechanically enforced when enabled",
+          "area": "code-dev",
+          "severity": "medium"
+        },
+        {
+          "title": "Synapse-infer precondition claim unverifiable—referenced code absent from repo snapshot",
+          "area": "code-dev",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "agentic-workflow-designer",
+      "round": 2,
+      "variant": "sonnet",
+      "confidence": 0.71,
+      "answer": "The code-dev harness's most verified structural weaknesses in round 2 are: (1) the adaptive-free-text 25-step loop had a confirmed infinite-loop defect (F-D4-003, PR-5.1 fix) where rejection-criterion was evaluated post-loop and predicate.eval lacked --ctx, meaning \"goal.rejection.met()\" remains an …",
+      "findings": [
+        {
+          "title": "Adaptive loop termination is a bandaid: goal.rejection.met() remains undefined",
+          "area": "workflows",
+          "severity": "high"
+        },
+        {
+          "title": "Enforcement layer is theater: all response-gate rules are advisory without the Stop-hook",
+          "area": "code-dev",
+          "severity": "high"
+        },
+        {
+          "title": "Synapse corpus validation accepts 20% garbage by design; precondition concatenation not sanity-checked",
+          "area": "code-dev",
+          "severity": "medium"
+        },
+        {
+          "title": "Adaptive→fixed promote path is wired but operator-invisible: no menu surface or discoverability path",
+          "area": "workflows",
+          "severity": "medium"
+        },
+        {
+          "title": "18 alias stubs create a three-hop dispatch chain that the 88-program taxonomy obscures from operators",
+          "area": "menu-ui",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "agent-observability-engineer",
+      "round": 2,
+      "variant": "opus",
+      "confidence": 0.83,
+      "answer": "Holding my r1 seat position but sharpening it: AXON's state-legibility layer is undermined by checkpoint markers the ladder never maintains, gate labels that overstate enforcement, and a still-broken mode-menu render branch. The single worst issue this round is the resume/checkpoint contract: code-d…",
+      "findings": [
+        {
+          "title": "Ladder checkpoint marker is write-once and never cleared — resume badge lies after clean runs and is absent for 3 of 5 phases",
+          "area": "state-model",
+          "severity": "high"
+        },
+        {
+          "title": "\"SHADOW GATE (enforced)\" label overstates a gate that only LOG(INFO)+STOREs and surfaces ⚠ solely when stale>0",
+          "area": "state-model",
+          "severity": "high"
+        },
+        {
+          "title": "Home-screen mode-menu render branch is still broken: modes [1]-[4] never render and [5] opens with an orphaned ELSE",
+          "area": "menu-ui",
+          "severity": "high"
+        },
+        {
+          "title": "The 'resume' verb is overloaded across an ACTIVE meta program and a DEPRECATED code-dev alias — the primary recovery path is ambiguous and warns",
+          "area": "onboarding",
+          "severity": "medium"
+        },
+        {
+          "title": "State programs self-misidentify, corrupting the very state they report (code-dev-state-save STOREs active-program='code-dev-tag')",
+          "area": "state-model",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "ui-architect",
+      "round": 2,
+      "variant": "haiku",
+      "confidence": 0.68,
+      "answer": "AXON's code-dev harness has three critical defects that survive adversarial challenge: (1) phase-manifest enforcement is aspirational—declared but never invoked by the study→plan→pr→log→audit ladder, (2) home-screen mode menu contains unreachable ELSE code indicating incomplete refactoring, (3) syna…",
+      "findings": [
+        {
+          "title": "Phase-manifest enforcement is aspirational; ACTIVE ladder never writes it",
+          "area": "state-model",
+          "severity": "high"
+        },
+        {
+          "title": "Home-screen mode menu has unreachable ELSE code (orphaned render branch)",
+          "area": "menu-ui",
+          "severity": "high"
+        },
+        {
+          "title": "Synapse metadata missing reference; next-suggests broken at dispatch",
+          "area": "code-dev",
+          "severity": "high"
+        },
+        {
+          "title": "Shadow gate semantics are misaligned; labeled 'enforced' but acts advisory",
+          "area": "workflows",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "auditor",
+      "round": 2,
+      "variant": "opus",
+      "confidence": 0.83,
+      "answer": "AXON's code-dev harness is not over-built at the 88-program surface; it is under-validated at the metadata/contract layer and its phase-manifest \"source of truth\" is bypassed by the documented happy path. The single highest-leverage fix is making synapse-validate semantically reject the garbage syna…",
+      "findings": [
+        {
+          "title": "synapse-infer omits dedup ONLY for preconditions; synapse-validate has no semantic check to catch it",
+          "area": "tooling",
+          "severity": "high"
+        },
+        {
+          "title": "next-suggests validation soft-passes unknown names, so the truncated synapse 'code-dev-phase-' ships",
+          "area": "tooling",
+          "severity": "medium"
+        },
+        {
+          "title": "Shadow gate is advisory and only fires on stale>0 — fresh-but-unindexed source is invisible and never HALTs",
+          "area": "state-model",
+          "severity": "high"
+        },
+        {
+          "title": "The forward ladder never advances _phases.json; only done/back/skip do — so the node-order gate guards a usually-empty manifest",
+          "area": "workflows",
+          "severity": "high"
+        },
+        {
+          "title": "Canonical gate s6 loops audit→plan over the whole chain for ANY open finding",
+          "area": "workflows",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "completer-finisher",
+      "round": 2,
+      "variant": "opus",
+      "confidence": 0.79,
+      "answer": "Strongest weakness is a half-built migration edge: _phases.json is now the SSOT for done/back/skip gating, but phase_model.py has no add/insert subcommand and load() freezes to the seeded default ladder, so code-dev phase new cannot register a new phase and code-dev load then emits an unresolvable P…",
+      "findings": [
+        {
+          "title": "code-dev phase new cannot extend the phase manifest; split-brain has a detector but no fix path",
+          "area": "state-model",
+          "severity": "high"
+        },
+        {
+          "title": "Retract r1 aspirational-manifest claim; _phases.json is the enforced source of truth",
+          "area": "state-model",
+          "severity": "low"
+        },
+        {
+          "title": "synapse-infer scar tissue confirmed in code-dev.md; live legibility papercut",
+          "area": "tooling",
+          "severity": "medium"
+        },
+        {
+          "title": "adaptive-free-text infinite loop patched only by a runtime --ctx workaround",
+          "area": "workflows",
+          "severity": "medium"
+        },
+        {
+          "title": "Node-order rigidity / over-engineering critique does NOT survive challenge",
+          "area": "workflows",
+          "severity": "low"
+        }
+      ]
+    },
+    {
+      "seat": "challenger",
+      "round": 2,
+      "variant": "opus",
+      "confidence": 0.72,
+      "answer": "Most of the charge's \"over-engineering\" targets survive challenge and should NOT be touched: the node-order advance-guard is correctly WARN/--allow-deviation gated and surfaces its own escape hatch; the promote/replay improvement loop is wired and surfaced after every adaptive run (rebutting observa…",
+      "findings": [
+        {
+          "title": "phase-model render() seeds instead of returning ∅, killing the promised un-migrated fallback",
+          "area": "state-model",
+          "severity": "high"
+        },
+        {
+          "title": "'SHADOW GATE (enforced)' is a static prose label with no enforcement mechanism",
+          "area": "menu-ui",
+          "severity": "high"
+        },
+        {
+          "title": "Canonical code-dev-knowledge-shadow self-identifies under its own deprecated alias",
+          "area": "tooling",
+          "severity": "medium"
+        },
+        {
+          "title": "Stale scar-comment in workflow-run claims promote is 'invoked by NOTHING' while the same file invokes it",
+          "area": "workflows",
+          "severity": "low"
+        },
+        {
+          "title": "Over-engineering critique of node-order rigidity does NOT survive — leave it alone",
+          "area": "workflows",
+          "severity": "low"
+        }
+      ]
+    },
+    {
+      "seat": "harness-designer",
+      "round": 3,
+      "variant": "haiku",
+      "confidence": 0.62,
+      "answer": "AXON's code-dev harness has moved from \"over-engineered ceremony\" to \"under-integrated tooling.\" The phase-manifest and node-order systems are correctly designed for determinism and backward-cascade invalidation, but two high-leverage gaps remain: (1) the workflow promote/adaptive→fixed path is buil…",
+      "findings": [
+        {
+          "title": "Workflow promote/replay is wired but undiscoverable (operator visibility)",
+          "area": "workflows",
+          "severity": "high"
+        },
+        {
+          "title": "Phase-model CLI lacks add/insert subcommand (blocks custom phase registration)",
+          "area": "code-dev",
+          "severity": "high"
+        },
+        {
+          "title": "Phase-gate enforcement is correctly warn/enforce but label doesn't reflect actual behavior",
+          "area": "menu-ui",
+          "severity": "medium"
+        },
+        {
+          "title": "Adaptive loop termination was fixed (PR-5.1) but fix is only in predicate/workflow-run, not generalized",
+          "area": "workflows",
+          "severity": "medium"
+        },
+        {
+          "title": "Synapse precondition dedup claim unverifiable (auditability gap)",
+          "area": "state-model",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "agentic-workflow-designer",
+      "round": 3,
+      "variant": "sonnet",
+      "confidence": 0.74,
+      "answer": "In round 3, four findings survive adversarial challenge with direct code evidence. The most critical is that the adaptive loop's termination predicate goal.rejection.met() is permanently false in any live run: predicate.py implements the function (line 400-402) but no production code ever writes ctx…",
+      "findings": [
+        {
+          "title": "Adaptive loop termination predicate goal.rejection.met() has no writer — permanently false",
+          "area": "workflows",
+          "severity": "high"
+        },
+        {
+          "title": "Enforcement is theater: KERNEL-SLIM self-documents that all response gates are advisory unless Stop-hook is installed",
+          "area": "workflows",
+          "severity": "high"
+        },
+        {
+          "title": "phase_model.py has no add subcommand; code-dev phase new is documented but unimplemented",
+          "area": "code-dev",
+          "severity": "high"
+        },
+        {
+          "title": "Adaptive→fixed promote path has no operator-discoverable surface",
+          "area": "workflows",
+          "severity": "medium"
+        },
+        {
+          "title": "88-program taxonomy has no operator-surfaced grouping; code-dev ladder onboarding relies on WORKFLOW.md prose",
+          "area": "onboarding",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "agent-observability-engineer",
+      "round": 3,
+      "variant": "opus",
+      "confidence": 0.82,
+      "answer": "AXON's code-dev harness is conceptually strong but its state-legibility layer is undermined by contract violations that the validator and operator never see. After attacking my own prior findings, two r2 claims die: the home-screen mode menu is now fixed (menu.md L67-80 render all modes via explicit…",
+      "findings": [
+        {
+          "title": "Resume badge lies after clean runs: 5 ladder programs never write the contract-mandated :done checkpoint",
+          "area": "state-model",
+          "severity": "high"
+        },
+        {
+          "title": "'SHADOW GATE (enforced)' overstates a gate that never HALTs and is silent on the highest-risk case",
+          "area": "menu-ui",
+          "severity": "high"
+        },
+        {
+          "title": "Phase manifest split-brain: phase_model.py cannot register a phase, so the node-order gate guards a frozen ladder",
+          "area": "workflows",
+          "severity": "high"
+        },
+        {
+          "title": "Adaptive→fixed promote loop is wired but has no setter surface — escape hatch is undiscoverable and the file lies about it",
+          "area": "workflows",
+          "severity": "medium"
+        },
+        {
+          "title": "adaptive-free-text terminates on a hardcoded step ceiling, not goal logic — uniform deliberation cost",
+          "area": "workflows",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "ui-architect",
+      "round": 3,
+      "variant": "haiku",
+      "confidence": 0.79,
+      "answer": "AXON's code-dev harness has two critical, distinct defects that survive adversarial challenge: (1) the phase-model subsystem is fully coded but completely orphaned—advance(), done(), and stale_downstream() are never invoked by the harness, leaving the manifest a read-only artifact that never gates f…",
+      "findings": [
+        {
+          "title": "Phase-model subsystem is orphaned—never invoked by the study→plan→pr→log→audit ladder",
+          "area": "code-dev",
+          "severity": "high"
+        },
+        {
+          "title": "Home-screen mode-switch loses visible context—no before/after project/phase snapshot",
+          "area": "menu-ui",
+          "severity": "high"
+        },
+        {
+          "title": "Phase-locking rule violations are documentation-sourced, not runtime-enforced",
+          "area": "workflows",
+          "severity": "high"
+        },
+        {
+          "title": "Phase-model.render() is never called—no integration to OS-STATE or dashboard",
+          "area": "state-model",
+          "severity": "medium"
+        },
+        {
+          "title": "Synapse-infer precondition deduplication is unverified—next-suggests truncates unknown synapse names",
+          "area": "tooling",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "auditor",
+      "round": 3,
+      "variant": "opus",
+      "confidence": 0.85,
+      "answer": "AXON's code-dev is not over-engineered at its 88-program surface; it is under-validated at the metadata/contract layer and split-brained at the phase-model layer. The single highest-leverage real defect is that \"code-dev phase new\" registers a custom phase in masterplan.md and DAG.json but never in …",
+      "findings": [
+        {
+          "title": "phase-new writes masterplan+DAG but never _phases.json — the gate's SSOT can't see custom phases",
+          "area": "state-model",
+          "severity": "high"
+        },
+        {
+          "title": "synapse-infer concatenates ASSERT bodies with zero dedup; synapse-validate only checks parse-ability",
+          "area": "tooling",
+          "severity": "high"
+        },
+        {
+          "title": "next-suggests ships a truncated dead synapse 'code-dev-phase-' that no validator catches",
+          "area": "tooling",
+          "severity": "medium"
+        },
+        {
+          "title": "'SHADOW GATE (enforced)' label overstates an advisory LOG that only fires on stale>0",
+          "area": "menu-ui",
+          "severity": "medium"
+        },
+        {
+          "title": "Home menu has an orphaned ELSE; modes [1]-[4] never render in the top-level switcher",
+          "area": "menu-ui",
+          "severity": "high"
+        }
+      ]
+    },
+    {
+      "seat": "completer-finisher",
+      "round": 3,
+      "variant": "opus",
+      "confidence": 0.83,
+      "answer": "AXON's code-dev harness is not over-built at the 88-program surface; it is under-finished at three seams that bite on the first real run. The single worst is a phase-registry split-brain: code-dev-phase-new writes masterplan.md + a project DAG.json via the dag tool and never calls phase-model, while…",
+      "findings": [
+        {
+          "title": "Phase-registry split-brain: code-dev-phase-new bypasses the gating manifest entirely",
+          "area": "state-model",
+          "severity": "high"
+        },
+        {
+          "title": "Forward ladder never advances _phases.json -- the gate guards a usually-empty manifest",
+          "area": "workflows",
+          "severity": "high"
+        },
+        {
+          "title": "kv-store rejects bare scalar strings with an opaque json.loads error and no --raw escape",
+          "area": "tooling",
+          "severity": "medium"
+        },
+        {
+          "title": "'SHADOW GATE (enforced)' is a prose label over an advisory LOG+STORE that only warns when stale>0",
+          "area": "menu-ui",
+          "severity": "medium"
+        },
+        {
+          "title": "next-suggests synapse ships a truncated, non-existent program 'code-dev-phase-'",
+          "area": "tooling",
+          "severity": "low"
+        }
+      ]
+    },
+    {
+      "seat": "challenger",
+      "round": 3,
+      "variant": "opus",
+      "confidence": 0.78,
+      "answer": "Most of the council's repeated high-severity findings do NOT survive round-3 verification against the live tree. The \"home-screen mode menu is still broken (modes [1]-[5] vanish)\" claim is dead: menu.md renders all seven modes unconditionally (lines 244-257) and the council has been quoting a C5 *fi…",
+      "findings": [
+        {
+          "title": "'Mode menu still broken' does NOT survive — it is a fixed-bug scar comment",
+          "area": "menu-ui",
+          "severity": "low"
+        },
+        {
+          "title": "Three disconnected phase subsystems share vocabulary — the real fragmentation",
+          "area": "state-model",
+          "severity": "high"
+        },
+        {
+          "title": "Forward ladder never advances _phases.json — the node-order gate guards an empty manifest",
+          "area": "workflows",
+          "severity": "high"
+        },
+        {
+          "title": "SHADOW GATE '(enforced)' label is advisory mechanism — verified prose/contract mismatch",
+          "area": "code-dev",
+          "severity": "medium"
+        },
+        {
+          "title": "Node-order rigidity / over-engineering critique still does NOT survive — leave it alone",
+          "area": "workflows",
+          "severity": "low"
+        }
+      ]
+    }
+  ]
+}

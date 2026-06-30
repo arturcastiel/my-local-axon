@@ -1,0 +1,399 @@
+{
+  "schema": "axon-dag",
+  "schema-version": "v1",
+  "level": "plan",
+  "owner": "project:axon-hr-ui",
+  "generated": "2026-06-23T12:05:24Z",
+  "generator": "code-dev sync (AXON dev instance) — reconciled to BUILD-STATE.md + git origin/main f9c90f1 + GAPFIND.json + this session's commits",
+  "validated": "2026-06-23T15:48:20+00:00",
+  "note": "PR numbering is the BUILD-STATE/git numbering (the real build), NOT the masterplan 15-initiative numbering. Status vocab: merged=on origin/main · todo=autonomous, not started · todo-stage=AXON builds a branch, OWNER merges (kernel floor) · deferred=spun to a new project · dropped/folded · gated=blocked on an owner gate · done=gate satisfied · owner-open=gate awaiting owner. | 2026-06-23: retro-registered AXON-COLDBOOT work (PR-014a-coldboot, PR-T0-bootflow, PR-DAG-LEDGER) after a code-first drift — code built before DAG nodes; corrected node-first going forward.",
+  "critical-path": [
+    "PR-019",
+    "PR-008b",
+    "GATE-STRANGER"
+  ],
+  "nodes": [
+    {
+      "id": "PR-001",
+      "kind": "pr",
+      "name": "phase_model add subcommand — fix phase-registry split-brain",
+      "label": "phase_model add",
+      "status": "merged",
+      "commit": "04bf90c",
+      "child-dag": null
+    },
+    {
+      "id": "PR-004",
+      "kind": "pr",
+      "name": "kv-store --raw flag + actionable non-JSON error",
+      "label": "kv-store --raw",
+      "status": "merged",
+      "commit": "6d6ca28",
+      "child-dag": null
+    },
+    {
+      "id": "PR-005",
+      "kind": "pr",
+      "name": "synapse-infer precondition dedup (the 11x repeat)",
+      "label": "synapse dedup",
+      "status": "merged",
+      "commit": "5ad6eee",
+      "child-dag": null
+    },
+    {
+      "id": "PR-016-017",
+      "kind": "pr",
+      "name": "R9 hook->enforce integration + R_GROUNDED_CLAIMS two-tier tests",
+      "label": "enforcement tests",
+      "status": "merged",
+      "commit": "3de09fc",
+      "child-dag": null
+    },
+    {
+      "id": "PR-008",
+      "kind": "pr",
+      "name": "forward ladder advances the phase manifest (real node-order state)",
+      "label": "ladder advances manifest",
+      "status": "merged",
+      "commit": "3d48d49",
+      "child-dag": null
+    },
+    {
+      "id": "PR-018",
+      "kind": "pr",
+      "name": "phase_model distinguish done() reasons (reason_code) + reject normalized-collision ids",
+      "label": "phase_model reason_code",
+      "status": "merged",
+      "commit": "1451370",
+      "child-dag": null
+    },
+    {
+      "id": "PR-003",
+      "kind": "pr",
+      "name": "OS-STATE nominal-collapse + code-dev replay menu surface (folds PR-011)",
+      "label": "OS-STATE collapse",
+      "status": "merged",
+      "commit": "b6c6392",
+      "ruling": "owner (a) rule-OK 2026-06-23; recompiled menu.cmp.md; crucible green",
+      "child-dag": null
+    },
+    {
+      "id": "PR-011",
+      "kind": "pr",
+      "name": "surface code-dev-replay menu verb",
+      "label": "replay surface",
+      "status": "merged",
+      "disposition": "folded into PR-003 (b6c6392) — shipped",
+      "child-dag": null
+    },
+    {
+      "id": "FIX-FRESHNESS",
+      "kind": "pr",
+      "name": "regenerate DOC-INDEX + program registry + code-map after the menu change (PR-003 follow-on)",
+      "label": "freshness artifacts",
+      "status": "merged",
+      "commit": "b137a38",
+      "child-dag": null
+    },
+    {
+      "id": "PR-002a-relabel",
+      "kind": "pr",
+      "name": "code-dev SHADOW GATE label 'enforced' -> 'advisory · fail-open' (truthful posture) + recompiled mirror",
+      "label": "shadow-gate relabel",
+      "status": "merged",
+      "commit": "94ab42a",
+      "child-dag": null
+    },
+    {
+      "id": "FIX-FLAKY-GATE",
+      "kind": "pr",
+      "name": "crucible pytest control retries the suite once on failure (xdist flakiness mitigation) + guard test",
+      "label": "flaky-gate fix",
+      "status": "merged",
+      "commit": "f9c90f1",
+      "note": "false-RED'd a 4819/0 tree; cmd||cmd — real failure fails both, flake passes retry. Proper fix (isolate polluters) = todo 0362e33a.",
+      "child-dag": null
+    },
+    {
+      "id": "PR-002a-boot",
+      "kind": "pr",
+      "name": "enforcement-posture boot line in axon/BOOT.md (after 'Boot complete.', sourced from verify status)",
+      "label": "enforcement-posture boot line",
+      "status": "merged",
+      "gate": "owner: kernel merge (axon/BOOT.md) — AXON stages the branch, OWNER runs ship.sh",
+      "child-dag": null,
+      "disposition": "STAGED 2026-06-23 on branch axon-hr-ui/PR-002a-boot (crucible GREEN). Kernel — OWNER runs ship.sh axon-hr-ui/PR-002a-boot to merge (inviolable floor).",
+      "commit": "80f5b1f"
+    },
+    {
+      "id": "PR-007",
+      "kind": "pr",
+      "name": "resume-truth re-entry + :done marker normalization (kernel slice)",
+      "label": "resume-truth marker",
+      "status": "merged",
+      "gate": "owner: kernel merge (KERNEL-SLIM/BOOT.md) — AXON stages, OWNER merges",
+      "child-dag": null,
+      "disposition": "STAGED 2026-06-23 on branch axon-hr-ui/PR-007 (crucible GREEN). Kernel — OWNER runs ship.sh axon-hr-ui/PR-007 (floor).",
+      "commit": "cf00b87"
+    },
+    {
+      "id": "PR-019",
+      "kind": "pr",
+      "name": "code-dev-study mode-dispatch skips the manifest advance (line 92-95 DONE before line 528) + emits/WRITE drift (01-study.md vs study/<mode>.md) -> ladder silently never advances under mode flags. Multi-file, back-compat-sensitive (01-study.md read at 118/521); needs OR-semantics outputs + a program-exec test (markdown runner). ROOT CAUSE in todo b3b5aea3.",
+      "label": "PR-019 ladder-advance fix",
+      "status": "merged",
+      "note": "FOCUSED effort, not marathon-tail. Gap-find rank 2/3.",
+      "child-dag": null,
+      "commit": "cd3ca04"
+    },
+    {
+      "id": "PR-008b",
+      "kind": "pr",
+      "name": "resume/code-dev-next reads _phases.json (visible consumer) — close the _meta vs _phases dual-SSOT + behavioral e2e ladder test",
+      "label": "PR-008b visible consumer",
+      "status": "merged",
+      "child-dag": null,
+      "commit": "3f18d25"
+    },
+    {
+      "id": "PR-009b",
+      "kind": "pr",
+      "name": "adaptive-loop termination tests for the 4 exits + the 'Skip to next iteration' no-op fix (PR-009 dropped: loop already terminates via UNTIL max-iter=3 + KERNEL-SLIM:155)",
+      "label": "PR-009b termination tests",
+      "status": "deferred",
+      "note": "lower-risk W1 alt to PR-019 (mostly test-addition).",
+      "child-dag": null,
+      "disposition": "DEFERRED 2026-06-23 (minimal-finish): was the lower-risk ALT to PR-019 (now merged cd3ca04); the 'skip-to-next-iteration no-op' target does not exist in the tree; termination already covered by PR-5.1 test_workflow_termination.py. Marginal unique value."
+    },
+    {
+      "id": "PR-005bc",
+      "kind": "pr",
+      "name": "on-disk precondition scrub + recompile + synapse-validate semantic lint + unbalanced-paren clamp",
+      "label": "PR-005b/c hygiene",
+      "status": "merged",
+      "child-dag": null,
+      "commit": "abcb96a"
+    },
+    {
+      "id": "GAP-HARDENING",
+      "kind": "pr",
+      "name": "gap-find residue: phase-new cascade pre-filter, R_TOOL_CALL_EXISTS phase-model blindspot, compiled-staleness hash-based, kv --raw TTL test",
+      "label": "gap-find hardening batch",
+      "status": "merged",
+      "child-dag": null,
+      "commit": "9d752ba"
+    },
+    {
+      "id": "PR-010",
+      "kind": "pr",
+      "name": "reanchor cadence knob (kernel G-02) — deterministic, never context-suppression",
+      "label": "reanchor cadence",
+      "status": "deferred",
+      "disposition": "spin to new project: axon-ceremony",
+      "child-dag": null
+    },
+    {
+      "id": "PR-012",
+      "kind": "pr",
+      "name": "single save/sync verb hiding the two-repo split — needs repo-scoping design",
+      "label": "save/sync verb",
+      "status": "deferred",
+      "disposition": "spin to new project",
+      "child-dag": null
+    },
+    {
+      "id": "PR-015",
+      "kind": "pr",
+      "name": "component grammar demoted to internal render contract",
+      "label": "component grammar",
+      "status": "deferred",
+      "disposition": "spin to new project (lowest seat confidence 0.61)",
+      "child-dag": null
+    },
+    {
+      "id": "PR-006",
+      "kind": "pr",
+      "name": "code-dev start front door",
+      "label": "code-dev start",
+      "status": "dropped",
+      "disposition": "redundant with no-arg code-dev dashboard (audit-dropped)",
+      "child-dag": null
+    },
+    {
+      "id": "PR-013",
+      "kind": "pr",
+      "name": "stranger-test gate tool (standalone)",
+      "label": "stranger-test gate",
+      "status": "dropped",
+      "disposition": "orphan (liveness-flagged); folded into PR-014 as a wired preflight",
+      "child-dag": null
+    },
+    {
+      "id": "PR-014",
+      "kind": "pr",
+      "name": "fast-boot + first-run onboarding + discoverability rank() — GATED on a real stranger session. Owner share-decision = SHARE -> onboarding KEPT as a future project.",
+      "label": "fast-boot/discoverability",
+      "status": "gated",
+      "gate": "mechanical boot-conformance (GATE-STRANGER redefined) — NOT a human session",
+      "child-dag": null,
+      "disposition": "2026-06-23 deep-council: PR-014's EXECUTABILITY work gates on the mechanical conformance gate (buildable, ownerless) + PR-T0-bootflow. The PERSONA-DRIVEN sub-items (first-run persona onboarding, human-tuned discoverability rank()) have NO honest measurement source under 'no other humans' → CUT to a new deferred project 'axon-onboarding' (created at track-start). O2-stranger-test.sh kept as OPTIONAL post-share telemetry, NOT a gate."
+    },
+    {
+      "id": "GATE-SUITE",
+      "kind": "gate",
+      "name": "full crucible/pytest suite green on origin/main — gate reliability fixed (FIX-FLAKY-GATE). Green at f9c90f1.",
+      "label": "suite-green",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "GATE-RULE12",
+      "kind": "gate",
+      "name": "Core Rule 12 ruling for PR-003 — OWNER RULED (a) rule-OK 2026-06-23 ('I gate ok'). PR-003 merged.",
+      "label": "Core Rule 12 ruling",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "GATE-STRANGER",
+      "kind": "gate",
+      "name": "REDEFINED 2026-06-23 (deep HR council, owner constraint: no human but the owner). Renamed from a 'stranger test' (a label that claimed a de-biased human signal it never had) to a MECHANICAL BOOT-CONFORMANCE gate: satisfied when `run.sh --live` shows Layer-0 boot-friction green AND every reached task passes the FABRICATION-HARDENED grader (>=3 reached) AND PR-T0-bootflow (the my-axon-gate halt) is resolved. The author satisfies this by running the benchmark — the naive AI is the subject, not a human. HONEST ADMISSION (written per the adversary seat): under 'no human but the owner', the non-author DESIRE/abandonment signal is UNOBTAINABLE (an instruction-follower complies where a human quits; the author cannot un-know AXON's idiom). We are NOT measuring it and we accept we are blind to whether a stranger would WANT to continue. The desire half is DROPPED as a blocker (see PR-014).",
+      "label": "boot-conformance gate (was 'stranger')",
+      "status": "owner-open",
+      "child-dag": null,
+      "disposition": "Mechanical half is AXON-satisfiable (run the hardened benchmark). Desire half honestly dropped, not faked."
+    },
+    {
+      "id": "PR-014a-coldboot",
+      "kind": "pr",
+      "name": "AXON-COLDBOOT mechanical preflight — boot-friction Layer 0 (static boot-path audit) + cold_stranger Layer 1 (naive-agent harness) + robustness fixes (per-run credential refresh, 5xx/overloaded retry, honest reached/auth/skip tally). Realizes dropped PR-013 as the WIRED preflight; author-runnable, does NOT need the owner stranger session.",
+      "label": "coldboot preflight (L0+L1)",
+      "status": "merged",
+      "disposition": "RETRO-REGISTERED 2026-06-23 (code-first drift correction): built+tested (26 green) + documented, uncommitted. Next: branch axon-hr-ui/PR-014a-coldboot -> crucible -> squash-merge (autonomous, non-kernel). · MERGED d4f6ba3 (CRUCIBLE GREEN)",
+      "child-dag": null,
+      "commit": "d4f6ba3"
+    },
+    {
+      "id": "PR-T0-bootflow",
+      "kind": "finding",
+      "name": "First-run boot HALTS at the my-axon [F/C/S] gate before rendering banner+menu — a newcomer sees a setup prompt, not the home screen. Surfaced by AXON-COLDBOOT T0. DESIGN: render menu FIRST then offer my-axon setup, or auto-Fresh->menu. Kernel boot-flow (BOOT.md / KERNEL G-10) -> owner-merged.",
+      "label": "T0 menu-first boot finding",
+      "status": "owner-open",
+      "gate": "owner: boot-flow design call",
+      "disposition": "RETRO-REGISTERED 2026-06-23. Rubric LEFT AS-IS (it correctly caught menu-never-rendered). Feeds PR-014 onboarding tier.",
+      "child-dag": null
+    },
+    {
+      "id": "PR-DAG-LEDGER",
+      "kind": "pr",
+      "name": "code-dev status DAG-aware PR ledger — tools/dag.py summarize()/cmd_summary() exposed as TOOL(dag,summary) + code-dev-state-status.md DAG ledger line. Fixes the glob-only PR count reading v4 DAG-only projects (PRs tracked in DAG.json, 0 standalone PR-*.md) as empty. STANDALONE — unrelated to coldboot.",
+      "label": "dag-summary ledger",
+      "status": "merged",
+      "disposition": "RETRO-REGISTERED 2026-06-23 (code-first drift correction): built+tested, uncommitted. Next: own branch axon-hr-ui/dag-summary-ledger -> crucible -> squash-merge (autonomous). · MERGED 14f1ace (CRUCIBLE GREEN)",
+      "child-dag": null,
+      "commit": "14f1ace"
+    },
+    {
+      "id": "PR-014b-coldboot-grader",
+      "kind": "pr",
+      "name": "Non-fabrication grader for the cold-start benchmark — corroborate boot-state claims against the checkout's REGISTRY.json ground truth so a confabulated boot (the live '162 ACTIVE tools while python3 sandboxed', real=160) scores failure_kind:fabricated, never a pass. Makes the mechanical gate trustworthy (Core Rule 6).",
+      "label": "non-fabrication grader",
+      "status": "merged",
+      "disposition": "Built 2026-06-23 (deep HR council). 25 cold_stranger tests green; crucible verifying. AXON autonomous, non-kernel.",
+      "child-dag": null,
+      "commit": "30cd99a"
+    }
+  ],
+  "edges": [
+    {
+      "from": "PR-001",
+      "to": "PR-008",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-001",
+      "to": "PR-018",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-008",
+      "to": "PR-018",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-003",
+      "to": "FIX-FRESHNESS",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-018",
+      "to": "PR-019",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-019",
+      "to": "PR-008b",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-008",
+      "to": "PR-008b",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-005",
+      "to": "PR-005bc",
+      "kind": "depends"
+    },
+    {
+      "from": "GATE-RULE12",
+      "to": "PR-003",
+      "kind": "gates"
+    },
+    {
+      "from": "GATE-STRANGER",
+      "to": "PR-014",
+      "kind": "gates"
+    },
+    {
+      "from": "PR-013",
+      "to": "PR-014",
+      "kind": "folds-into"
+    },
+    {
+      "from": "PR-011",
+      "to": "PR-003",
+      "kind": "folds-into"
+    },
+    {
+      "from": "PR-013",
+      "to": "PR-014a-coldboot",
+      "kind": "folds-into"
+    },
+    {
+      "from": "PR-014a-coldboot",
+      "to": "PR-014",
+      "kind": "informs"
+    },
+    {
+      "from": "PR-014a-coldboot",
+      "to": "PR-T0-bootflow",
+      "kind": "informs"
+    },
+    {
+      "from": "PR-T0-bootflow",
+      "to": "PR-014",
+      "kind": "informs"
+    },
+    {
+      "from": "PR-014b-coldboot-grader",
+      "to": "GATE-STRANGER",
+      "kind": "informs"
+    },
+    {
+      "from": "PR-T0-bootflow",
+      "to": "GATE-STRANGER",
+      "kind": "informs"
+    }
+  ]
+}

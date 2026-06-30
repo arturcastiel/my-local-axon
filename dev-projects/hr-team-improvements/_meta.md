@@ -3,16 +3,16 @@ slug:            hr-team-improvements
 schema-version:  v4
 status:          active
 legacy:          false
-phase:           study
+phase:           3-pr
 workflow-step:   build
 branch:          fix/wave-g-residual-hardening
 codebase:        /home/arturcastiel/projects/new-axon/axon
 parent:          axon-rearm
 sub-projects:    []
 current-pr:
-next-action:     "Study DONE at seed. Next: code-dev plan → PRs. Lead PR = propagate fail-closed run_seats guard to the for-use checkout (urgent safety), then wire CONVENER→sub-agent fan-out."
-last-program:    code-dev-new (hand-seeded)
-last-ts:         2026-06-22T08:20:00Z
+next-action:     "PLAN v2 (council-revised, 16 PRs) + STUDY re-grounded (§11). Council graded plan B-/study A-; all 10 suggestions adopted; for-use premise CORRECTED (289 behind, never had hr_team.py). NEXT: owner review of v2, then code-dev pr PR-003 (mechanical neuron fail-closed) or PR-004 (collapse keystone)."
+last-program:    code-dev-study (scope-expansion, owner directive)
+last-ts:         2026-06-22T14:30:00Z
 created:         2026-06-22
 updated:         2026-06-22
 

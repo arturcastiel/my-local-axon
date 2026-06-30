@@ -1,0 +1,195 @@
+{
+  "seats": [
+    {
+      "seat": "test-coverage-auditor",
+      "gap_count": 6
+    },
+    {
+      "seat": "correctness-auditor",
+      "gap_count": 5
+    },
+    {
+      "seat": "completer-finisher",
+      "gap_count": 6
+    },
+    {
+      "seat": "harness-designer",
+      "gap_count": 6
+    },
+    {
+      "seat": "auditor",
+      "gap_count": 6
+    },
+    {
+      "seat": "challenger",
+      "gap_count": 6
+    }
+  ],
+  "backlog": {
+    "advisory_only": true,
+    "executive_summary": "GROUNDING CAVEAT (read first): I could not independently re-verify any seat finding against the actual axon-hr-ui build. The only axon tree reachable in this environment is /mnt/c/Users/castielreisdesouzaa/Downloads/axon-main, an unrelated upstream snapshot (not a git repo). It lacks workspace/programs/, all seat-cited test files (test_phase_ladder_advances.py, test_kv_store.py, test_enforce_hook_r9_integration.py), every cited commit (3d48d49, 5ad6eee, 6d6ca28, 614a717..HEAD), and every tracking doc (FOLLOWUPS.md, KERNEL-TAPS.md, BUILD-STATE.md, REPLAN.md). Critically, its tools/phase_model.py done() (line 106) carries only the single 'deps not done' ValueError and has no add(), no normalize(), and no --best-effort branch — meaning the dual-ValueError/output-completeness logic that the entire highest-severity PR-008 critique rests on is not present in any file I can open; tools/synapse_infer.py has no scrub_preconditions/_dedup_conjuncts; tools/kv_store.py has no --raw. Per my mandate to 'drop any gap not grounded in a real file/commit,' I am being honest: the deliberator's own grounding pass FAILED for this backlog. What follows is therefore a synthesis ranked by the seats' stated severity and by cross-seat corroboration (the strongest signal available — four independent seats converging on the same file:line is itself evidence they read a real tree), NOT a deliberator-verified ledger. Treat each item's grounding as 'asserted by N seats, unverified here.' Substantively, the build is internally coherent but the council converges hard on one theme: PR-008's forward-ladder advance is the riskiest change and the least integration-tested — done(--best-effort) demotes the 2026-06-18 output-completeness gate to a silent WARN, no test executes a ladder program end-to-end (all coverage is static grep), and the advanced _phases.json has zero observable consumer (resume reads _meta.md). PR-001's add() relocates rather than eliminates split-brain (no normalize() on its own id; manifest cascade hard-raises after the DAG node is written; custom phases never advance and never gate). Secondary: scrub_preconditions() is built-but-dead while code-dev.md still carries the 11x repeat on disk, compiled artifacts are stale (test_compiled_not_stale failing), and every user-visible payoff is deferred to owner-gated kernel taps. Recommend the owner: (1) re-run this deliberation in the actual axon-hr-ui checkout so findings can be grounded; (2) treat PR-008 as the priority hardening target; (3) fix the harness arg bug (REPLAN.md:5 'undefined') so discovery councils evaluate real input.",
+    "backlog": [
+      {
+        "rank": 1,
+        "title": "PR-008 done(--best-effort) demotes the output-completeness gate to a silent WARN on the auto-advance path",
+        "area": "phase_model / ladder wiring",
+        "severity": "high",
+        "why": "Corroborated by 4 seats (correctness-auditor, challenger, test-coverage-auditor, completer). done() raises the SAME ValueError type for benign 'deps not done' and real 'declared output(s) missing'; --best-effort (phase_model.py:388-396) swallows BOTH and exits 0, so the 2026-06-18 post-mortem completeness gate (phase_model.py:40-61) — built to stop a phase being stamped done with outputs absent — is re-opened at the ladder layer as a non-blocking WARN. The program then prints success. HIGHEST tractability among high-sev items: the fix is a reason-code split. NOTE: not verifiable in this environment (the reachable phase_model.py done() has only one ValueError and no --best-effort).",
+        "action": "Distinguish 'deps-not-done' (legit opportunistic no-op) from 'declared-outputs-missing' (real defect): give done() a distinguishable reason code; have --best-effort swallow ONLY the deps case and surface output-missing as ok:false; branch the ladder to LOG(ERROR)/halt on the missing-output reason so the auto path is not weaker than the explicit `code-dev done` path. Re-ground against the real tree first."
+      },
+      {
+        "rank": 2,
+        "title": "No end-to-end test proves any ladder program actually executes its advance — all PR-008 coverage is static string-grep",
+        "area": "test strategy / PR-008",
+        "severity": "high",
+        "why": "Corroborated by 4 seats (challenger named it THE defect class the discovery councils never surfaced; test-coverage-auditor, completer, harness-designer concur). The 'static contract' tests assert only that the call STRING exists in .md source; the 'behavioral' tests exercise phase_model.py's CLI in isolation, never a program run. If runtime {W:...}/{project} interpolation is wrong the manifest is never updated and the suite stays green. A future refactor of the advance idiom passes grep while doing nothing. High tractability: PR-016's real unmocked integration pattern (test_enforce_hook_r9_integration.py) already exists and just needs to be applied to the ladder.",
+        "action": "Add a behavioral test that synthesizes a minimal project dir, drives a ladder program (or its interpreted advance block), and asserts _phases.json['phases'][n]['status'] flips to 'done'. Extend test_best_effort_advances_when_ready across all 5 phases sequentially to exercise the chained dep-advance path."
+      },
+      {
+        "rank": 3,
+        "title": "Live false-negative: emits/WRITE drift in code-dev-study.md makes study's auto-advance silently never fire under mode flags",
+        "area": "code-dev-study emits SSOT",
+        "severity": "high",
+        "why": "Raised by challenger with empirical detail; compounds ranks 1-2 into a concrete user-visible failure. code-dev-study.md:15 declares `# emits: 01-study.md` (the SSOT for seed-outputs --from-emits) but line 41/480 WRITE the mode-aware `study/<mode>.md` on the flagged path. With mode flags the real artifact never matches the seeded gate output, _missing_outputs reports 01-study.md missing, best-effort no-ops, study never advances — while the program prints success. Single-seat but high-confidence and high-impact; tractable (reconcile one header).",
+        "action": "Reconcile the `# emits:` header with the actual mode-aware WRITE target (glob study/*.md or list both paths); add a ladder test that seeds via --from-emits, produces the real emitted artifact, and asserts the phase flips to done."
+      },
+      {
+        "rank": 4,
+        "title": "PR-001 add() relocates split-brain: no normalize() on its own id, and manifest cascade hard-raises AFTER the DAG node is written",
+        "area": "phase_model add() / code-dev-phase-new cascade",
+        "severity": "high",
+        "why": "Two seats (correctness-auditor, challenger) found distinct facets of one bug class. (a) add() validates pid shape and literal uniqueness but never runs it through normalize(), so `--id 1-study` coexists with default `study` — re-introducing the exact phase split-brain normalize() (phase_model.py:151-154 comment) was built to prevent. (b) code-dev-phase-new.md:124 passes ALL predecessors to add() which raises on any unknown pred (phase_model.py:271), but runs AFTER `dag add-node` (line 106) with no error handling — leaving DAG.json with the node and _phases.json without it: a fresh split-brain, inverse semantics to the DAG cascade two lines above. Tractable: normalize-on-insert + pre-filter the manifest cascade.",
+        "action": "In add(), compute canon = normalize(m, pid) and reject collisions under normalization, not just literal equality. Apply the same `IF TRIM(pred) ∈ phase-nodes` pre-filter to the manifest cascade (or wrap add() with a fallback). Add a phase-new test with an absent predecessor asserting both stores stay consistent."
+      },
+      {
+        "rank": 5,
+        "title": "PR-008's 'real' half drives nothing visible or behavioral — written _phases.json status has zero consumer",
+        "area": "honesty / dead-state / observability",
+        "severity": "high",
+        "why": "Three seats (auditor, harness-designer, completer) converge. The node-order rule (r_workflow_node_order.py) only fires on out-of-band edits producing active/done-with-undone-deps — a shape the in-order, done-only ladder can never create, so the gate guards the same states whether the advance fires or not. The user-facing resume path (code-dev-next.md) reads _meta.md, not _phases.json status. So commit/test framing 'gate guards REAL state' overstates impact, and the write is latent dead code creating a second phase SSOT (_meta.md vs _phases.json) — the very split-brain PR-001 fixed. Medium tractability (reword claim is trivial; making it real requires PR-008b decoupling).",
+        "action": "Down-scope the commit/test claim to 'records real phase completion so out-of-band tampering is detectable,' and add a test demonstrating the gate catching a hand-edited out-of-order _phases.json. Then decouple ActiveProgramStrip from the menu recompile (standalone code-dev-phase-status program reading _phases.json) so code-dev-next consumes the status and the two SSOTs reconcile."
+      },
+      {
+        "rank": 6,
+        "title": "PR-001 add() and PR-008 ladder don't compose: custom phases are added but never advanced and never gate anything",
+        "area": "phase_model add() x ladder advance",
+        "severity": "high",
+        "why": "correctness-auditor (verified empirically): add() appends a dangling tail leaf (deps:[pred]) but makes no EXISTING phase depend on it; the 5 ladder programs each hardcode one default phase id, so a custom phase stays pending forever while audit is marked done. r_workflow_node_order.py gates on deps only, so it guards a node outside the advance path. PR-001's stated goal ('custom phases actually reach the gate') is half-met. Lower in rank only because it overlaps ranks 4-5 and is less tractable (requires DAG-wiring or a terminal completeness check).",
+        "action": "Either have code-dev-phase-new wire the new phase into an existing phase's deps (so it blocks a downstream default phase), or add a manifest-completeness check at audit/terminal time that FAILS loudly if any phase is still pending when audit is marked done."
+      },
+      {
+        "rank": 7,
+        "title": "Compiled artifacts stale after PR-008 (menu.cmp.md, code-dev.cmp.md) — test_compiled_not_stale failing in the working tree",
+        "area": "compile pipeline / CI",
+        "severity": "high",
+        "why": "Two seats (completer, harness-designer) report the suite is RED now: menu.md mtime 07:06 > menu.cmp.md 06:59 (test_compile_write.py:73-79). This blocks CI. Highest mechanical tractability of any item — just regenerate and commit. Ranked below behavioral-bug items because it is purely mechanical, but it should be cleared immediately to unblock the suite. NOTE: unverifiable here (no workspace/programs/ or .cmp.md present).",
+        "action": "Run the compile_write tool to regenerate menu.cmp.md + code-dev.cmp.md and commit together. Structural follow-up: investigate a lightweight menu 'extension slot' so small additions don't force a full 22KB recompile (the menu-as-gate choke point)."
+      },
+      {
+        "rank": 8,
+        "title": "scrub_preconditions() is dead code; code-dev.md still carries 11x 'project ≠ ∅' on disk",
+        "area": "source hygiene / synapse consistency",
+        "severity": "medium",
+        "why": "Corroborated by 4 seats (test-coverage-auditor, completer, harness-designer, plus the dedup bug from correctness-auditor). The on-disk-scrub function is implemented and tested but never called from main() or any pipeline hook; read-time _dedup_conjuncts neutralizes the functional hazard but the source rot persists and re-ingests into any corpus/diff snapshot. Deferred as PR-005b to avoid mtime->stale-cmp churn — but that churn (rank 7) is already due, so the excuse is gone. Tractable: idempotent, tested scrub + recompile in one commit.",
+        "action": "Run scrub_preconditions() on the 6 named files (code-dev.md, code-dev-plan, code-dev-pr-create, code-dev-state-undo, code-dev-study, glossary), regenerate code-dev.cmp.md in the SAME commit (bundling with rank 7), and add a test pinning the live code-dev.md to contain 'project ≠ ∅' exactly once so a future re-introduction is caught."
+      },
+      {
+        "rank": 9,
+        "title": "PR-005 dedup silently fails on unbalanced parentheses — a single stray paren defeats the 11x-collapse",
+        "area": "synapse_infer _split_top_level_and / _dedup_conjuncts",
+        "severity": "medium",
+        "why": "correctness-auditor verified empirically: _split_top_level_and decrements depth on ')' with no floor, so `'a) AND b AND b'` returns one unsplit chunk and the duplicate survives; an unclosed '(' keeps depth>0 and never splits. A single malformed paren in a hand-written declared block passes garbage through — and scrub_preconditions() (once wired, rank 8) would no-op on exactly the files that most need it. Tractable: clamp depth at 0.",
+        "action": "Clamp depth = max(0, depth-1) so a stray close-paren can't poison subsequent splits, or fall back to a whitespace ' AND ' split when paren count is unbalanced. Add a test case with unbalanced parens."
+      },
+      {
+        "rank": 10,
+        "title": "Ladder done(--best-effort) is effectively unfirable in real seeded projects — only tested on unseeded manifests",
+        "area": "correctness / test coverage",
+        "severity": "medium",
+        "why": "Two seats (auditor, test-coverage-auditor). Real projects seed per-phase outputs via code-dev-new.md (seed-outputs --from-emits); done() then raises 'declared output(s) missing' unless every artifact exists at terminal time. Tests only cover an UNSEEDED tmp manifest, so the seeded real-world path — the one that actually runs — is untested and likely no-ops to WARN every run. Also covers the untested second catch-arm of --best-effort. Overlaps ranks 1/3 but adds the seeded-path test gap specifically.",
+        "action": "Add a test that seeds outputs --from-emits (mirroring code-dev-new.md), marks deps done, runs without the output file, and asserts ok:false / 'output' in reason; then a positive case asserting status flips to done once artifacts exist. If it can't fire in practice, reconsider where in the lifecycle done() is called (e.g. on entry of the next program, not terminal of the current)."
+      },
+      {
+        "rank": 11,
+        "title": "R_TOOL_CALL_EXISTS scanner permanently blind to all phase_model subcommands",
+        "area": "static analysis / rule coverage",
+        "severity": "medium",
+        "why": "harness-designer verified `_subcommands_of('phase_model')` returns []: the loop-built `add` parser leaves zero string literals for the AST scanner, so r_tool_call_exists.py:88 skips phase_model entirely. 10 programs call TOOL(phase-model,...) across 8 subcommands; a typo in any passes all static checks silently. The CLI self-test (test_phase_model.py:220) guards the CLI but not cross-program call correctness. Tractable via an interrogable subcommand list.",
+        "action": "Expose a _SUBCOMMANDS set or `--list-subcommands` flag and add a test asserting every TOOL(phase-model, X) call in programs/ matches that set, independent of the AST scanner."
+      },
+      {
+        "rank": 12,
+        "title": "PR-005c semantic lint dropped — no recurrence guard; ghost truncated 'code-dev-phase-' ref passes synapse_validate silently",
+        "area": "validation / synapse graph integrity",
+        "severity": "medium",
+        "why": "Two seats (completer, harness-designer). The 11x repeat recurred AT COMMIT TIME, caught only by read-time dedup not prevented at source. synapse_validate has NO check over the next-suggests flat list, so a truncated 'code-dev-phase-' entry in code-dev.md (no such file) validates clean and surfaces a non-existent program as a suggestion. PR-005c (WARN on >2x repeat, FAIL/WARN on unresolvable suggest names) was dropped to keep PR-005 atomic.",
+        "action": "Implement PR-005c standalone: add a next-suggests resolver in synapse_validate.validate() emitting WARN (escalatable to FAIL via --strict) for unknown names, plus WARN-on-repeated-conjunct. Wire into pre-commit/CI. Separately fix the truncated entry to 'code-dev-phase-new'."
+      },
+      {
+        "rank": 13,
+        "title": "R9 hook integration test covers only the Write tool path — Edit/MultiEdit/NotebookEdit/Bash write-paths untested",
+        "area": "test coverage",
+        "severity": "medium",
+        "why": "test-coverage-auditor: enforce_pretooluse.py:22 gates {Write,Edit,NotebookEdit,MultiEdit} plus a separate _bash_r9_check(); the new integration test hardcodes tool_name='Write' for all four cases, leaving Edit (the most common kernel-file mutation tool) and Bash (its own gate_check logic) untested end-to-end. The PR itself acknowledged the Write/Edit/Notebook match without testing Bash. Tractable: two parameterized cases. Also flagged by auditor: add a negative ungoverned-root case to pin the .axon-governed sentinel as load-bearing (else the M4 guard could regress to no-op undetected).",
+        "action": "Add parameterized cases for tool_name='Edit' (axon/ file, dev-mode OFF, expect exit 2) and tool_name='Bash' (command writing to axon/KERNEL-SLIM.md, dev-mode OFF, expect exit 2); plus a negative case where an UNGOVERNED temp root (no .axon-governed) writing to axon/ is NOT blocked."
+      },
+      {
+        "rank": 14,
+        "title": "code-dev-phase-new.md TOOL(phase-model, add) is fire-and-forget — re-run on an existing phase silently halts the program",
+        "area": "program robustness / idempotency",
+        "severity": "medium",
+        "why": "test-coverage-auditor: line 120 has no '←' binding and no IF result.ok guard; add() raises ValueError('already exists') on a duplicate id, main() exits 1, and an unbound non-zero TOOL call halts the program. Re-running phase-new for the same project/phase is a realistic idempotency scenario. PR-008's ladder advances DO use the correct bound-result idiom, but it wasn't applied here. Overlaps rank 4 (same line region) but is the idempotency facet.",
+        "action": "Change line 120 to the bound-result pattern (add-result ← TOOL(...); IF not ok AND 'already exists' ∈ error → LOG(WARN); ELSE IF not ok → FAIL), or add a --skip-if-exists flag. Add a static contract test asserting code-dev-phase-new.md uses a bound-result for the add call."
+      },
+      {
+        "rank": 15,
+        "title": "PR-001 split-brain fix is one-directional — no reconcile/backfill for projects already split",
+        "area": "completeness / migration",
+        "severity": "medium",
+        "why": "auditor: code-dev-phase-new now cascades new custom phases into _phases.json, but add() raises on duplicate id and there is no repair path for projects whose DAG.json already contains custom phases absent from _phases.json (the pre-fix state the code comment describes as already happening). No backfill task in KERNEL-TAPS/FOLLOWUPS. The gate never runs on a phase missing from the manifest, so existing splits stay invisible.",
+        "action": "Add a one-shot reconcile (phase_model reconcile-from-dag) or surface the divergence in code-dev-next so already-split projects are detected and healed, not just prevented going forward."
+      },
+      {
+        "rank": 16,
+        "title": "kv_store --raw lacks a TTL-interaction test and a non-set-action rejection test",
+        "area": "test coverage",
+        "severity": "low",
+        "why": "test-coverage-auditor: 7 new tests, none combine --raw with --ttl, none assert --raw is ignored/rejected on get/delete/list/exists/clear (argparse accepts the global flag everywhere), and the non-JSON error JSON's 'key' field isn't pinned to the submitted key. Low: unlikely to mask a production bug, but leaves the new surface partially uncovered.",
+        "action": "Add (1) a set --raw --ttl 1 test verifying the value is stored as a string and TTL honored; (2) a test verifying the error JSON 'key' matches --key on non-JSON rejection."
+      },
+      {
+        "rank": 17,
+        "title": "kv-store.md kernel doc diverged from the merged --raw implementation; no staleness test",
+        "area": "kernel doc / doc-to-code coherence",
+        "severity": "low",
+        "why": "Two seats (harness-designer, challenger). kv_store.py merged --raw + the actionable error, but axon/tools/kv-store.md doesn't mention --raw (only --help reflects it). The doc is the contract agents reason from; it's Layer-1 kernel so owner-gated, but with no automated divergence signal it can stay stale indefinitely. Low severity, but a trivial usage-block sync is a poor candidate for owner-gating — bundle doc-with-code next time.",
+        "action": "Apply the KERNEL-TAPS.md kv-store.md tap (add --raw + actionable error to the RESULT/usage block). Add a lightweight test that parses each tool's --help and asserts every flag also appears in its axon/tools/<name>.md doc, making kernel-doc divergence a CI failure."
+      },
+      {
+        "rank": 18,
+        "title": "add() order is cosmetic-but-misleading — custom phases render at the tail regardless of dependency position",
+        "area": "display / dashboard ordering",
+        "severity": "low",
+        "why": "correctness-auditor: add() defaults order to max(order)+1 (tail); the node-order gate ignores order (deps-only), but as_list sorts the dashboard / PR-7 state line by order, so a phase depending on study (logically ~1.5) renders after audit. The ActiveProgramStrip/state line will present a topologically-wrong sequence even when the gate is satisfied. Lowest severity: cosmetic, no correctness impact.",
+        "action": "When order is omitted but --after is given, derive order from max(predecessor.order)+epsilon (or renumber) so display order reflects the dependency DAG, not insertion time."
+      },
+      {
+        "rank": 19,
+        "title": "Build economics: the eval council never evaluated the PRs (harness arg bug) and all user-visible value is deferred to owner-gated taps",
+        "area": "planning provenance / process",
+        "severity": "medium",
+        "why": "Two seats (challenger, auditor). REPLAN.md:5-10 — the eval council received the plan as literal string 'undefined' and did NOT evaluate PR bodies ('no objection ≠ endorsement'). What shipped is ~172 LOC across 3 tools with 2 of 5 commits tests-only; every user-facing item (PR-003 menu, PR-008b strip, PR-007 resume-truth) is in the gated queue. This wave hardened internal coherence but shipped nothing the owner can SEE. Advisory/process, not a code defect — hence not top-ranked, but materially affects whether the next wave is worth the process cost.",
+        "action": "Fix the harness arg-passing bug so the next discovery council actually evaluates its input. Tell the owner plainly the visible payoff is entirely in the gated queue, and decide explicitly whether the next wave clears owner taps (PR-003/007/008b) before more inward tool work. Also reconcile the PR ledger: state the PR-016+PR-017 squash into commit 3de09fc in BUILD-STATE.md so dropped-vs-squashed is distinguishable."
+      }
+    ],
+    "strengths": [
+      "The merged code is honest and well-commented, and the council's own auditor confirmed every merged PR traces to a real, repo-verified finding — the DROP/DEFER calls (PR-006 redundant, PR-009 no-op, PR-012 deferred) are each grounded against the live repo and are correct, not dodged work.",
+      "The deliberate loop-built `add` subcommand (phase_model.py) was a conscious move to preserve the R_TOOL_CALL_EXISTS scanner contract rather than an accident — the engineering intent is documented even where it created the rank-11 blind spot.",
+      "The kv_store --raw fix correctly implements the Core-Rule-6 anti-silent-coerce behavior with an actionable JSON error instead of silently coercing a non-JSON value — a real robustness improvement.",
+      "The quote/paren-aware synapse dedup is the right design for balanced input (it only fails on the unbalanced-paren edge case in rank 9), and read-time dedup genuinely neutralizes the functional hazard of the on-disk repeat even though the source scrub was deferred.",
+      "PR-016 shipped a real, unmocked hook integration test (test_enforce_hook_r9_integration.py) that runs the actual enforce subprocess instead of monkeypatching subprocess.run — this is the correct integration-testing pattern and is exactly the template the ladder coverage (rank 2) should adopt.",
+      "PR-008's ladder advances DO use the correct bound-result idiom (adv ← TOOL(...); IF adv.ok ≠ true → LOG(WARN)), demonstrating the team knows the right pattern — the gap is that it wasn't applied to code-dev-phase-new's add() call (rank 14).",
+      "The build stayed honestly within its autonomous scope and tracked every deferral (FOLLOWUPS.md, KERNEL-TAPS.md) rather than silently dropping work, and correctly refused to auto-merge kernel-touching changes (PR-003/007/010) without owner adjudication — the governance discipline held."
+    ]
+  }
+}

@@ -1,0 +1,509 @@
+{
+  "key": "C",
+  "title": "C · User perspectives",
+  "protocol": "debate",
+  "rounds": 2,
+  "seats": [
+    {
+      "slug": "ux-researcher",
+      "variant": "haiku"
+    },
+    {
+      "slug": "product-manager",
+      "variant": "sonnet"
+    },
+    {
+      "slug": "technical-writer",
+      "variant": "opus"
+    },
+    {
+      "slug": "andragogy-designer",
+      "variant": "haiku"
+    },
+    {
+      "slug": "cultural-anthropologist",
+      "variant": "sonnet"
+    },
+    {
+      "slug": "challenger",
+      "variant": "opus"
+    }
+  ],
+  "verdict": {
+    "summary": "Council C mapped how real users experience AXON (onboarding, discoverability of the 88 code-dev programs / 160 tools, learning curve, ceremony fatigue, abandonment). The transcript splits sharply on epistemics: two seats (ux-researcher, andragogy-designer) refused round 1 because the \"AXON context\" field was injected as the literal string \"undefined,\" then re-entered in round 2 once on-disk evidence (hooks, fixtures, BOOT.md, menu.md, KERNEL-SLIM) was treated as the factual floor. The challenger seat held throughout that the only observed user is the author (Dr. Castiel), so the first-time / returning / power-user personas are constructed, not evidenced — a position partially conceded by product-manager, cultural-anthropologist, and andragogy-designer in round 2. Across seats the most-supported EVIDENCED pains are machine-enforced ceremony (per-prompt reanchor hook / AskUserQuestion friction / identity lock) and structural onboarding front-loading (boot defers value until ~step 4-5; full menu renders every boot). The most-supported but UNMEASURED pains are catalog overwhelm (88-182 programs, no in-session discovery beyond list-programs) and the two-repo split. Several seats flag that the charge's own counts are disputed (88 claimed vs ~30 core actual per andragogy-designer; program total cited variously as 182/237). Banned-phrase note: distributions are reported verbatim; no consensus language asserted.",
+    "verdict_distribution": [
+      {
+        "position": "AXON has structural/evidenced user pain that warrants fixes now (onboarding front-loading, machine-enforced ceremony, discoverability gap)",
+        "share": 0.5,
+        "seats": [
+          "product-manager",
+          "technical-writer",
+          "cultural-anthropologist"
+        ]
+      },
+      {
+        "position": "Pain is real but largely UNMEASURED/untested risk; the sole evidenced user is the author, so validate with a real cold-start study before investing",
+        "share": 0.33,
+        "seats": [
+          "challenger",
+          "andragogy-designer"
+        ]
+      },
+      {
+        "position": "Cannot deliver grounded findings without system context (round 1 refusal), later resolved by treating on-disk artifacts as the factual floor (round 2 participation)",
+        "share": 0.17,
+        "seats": [
+          "ux-researcher"
+        ]
+      }
+    ],
+    "ranked_findings": [
+      {
+        "rank": 1,
+        "title": "Boot ceremony is front-loaded: value deferred until step 4-5, full menu renders every boot",
+        "area": "onboarding",
+        "severity": "high",
+        "rationale": "Highest cross-seat support. The boot sequence defers value delivery past completion and Core Rule 12 mandates a full menu render on every boot, creating plausible ceremony fatigue for first-time and returning users. Challenger marks the abandonment claim itself unevidenced, so severity is bounded by lack of measurement.",
+        "proposal": "Add a fast-boot / 'boot-lite' / 'express-onboarding' path: for returning users (W:boot-count>1) surface a single status line and 'type menu to expand'; for first-time users auto-run an onboarding quickstart card showing the 3-5 most common programs in natural language, deferring boot steps 2-3 until after the first command.",
+        "support": "product-manager (R1 high, R2 high), technical-writer (R1 high), cultural-anthropologist (R1 high, R2 high), andragogy-designer (R2 high), ux-researcher (R2 high); confidence 0.68-0.82"
+      },
+      {
+        "rank": 2,
+        "title": "No in-session discoverability for the program catalog beyond list-programs (88 / 160 tools / disputed total)",
+        "area": "menu-ui",
+        "severity": "high",
+        "rationale": "Multiple seats report catalog overwhelm and that discovery requires already knowing to call list-programs. Challenger and andragogy-designer flag the overwhelm claim and the counts as unverified (88 claimed vs ~30 core; total cited as 182/237), so the fix should be paired with empirical confirmation of whether the menu renders the full catalog or dispatch.py's TF-IDF router is the real entry path.",
+        "proposal": "Wire program suggestions into the orchestrator rank()/dispatch path: surface top-3 programs matching the current goal at every step (not just boot), add a search-programs / 'what can I do with my project?' natural-language entry, and add a task-type prompt at code-dev entry (new feature / bug / review / refactor) that branches to 5-8 relevant programs. First confirm actual catalog size via freshness refresh.",
+        "support": "product-manager (R1 high, R2 medium), cultural-anthropologist (R1, R2 high), ux-researcher (R2 medium), challenger (R1 medium, R2 medium — disputes magnitude), andragogy-designer (R2 medium — disputes counts)"
+      },
+      {
+        "rank": 3,
+        "title": "Machine-enforced ceremony is the single hardest-evidenced user pain (per-prompt reanchor hook, AskUserQuestion friction, identity/cognition lock)",
+        "area": "workflows",
+        "severity": "high",
+        "rationale": "Challenger names the axon-reanchor.sh hook firing on every UserPromptSubmit as the one machine-enforced, on-disk evidenced pain. Challenger R1 and cultural-anthropologist independently flag AskUserQuestion ceremony-against-consent as the one evidenced workflow pain. Product-manager and ux-researcher flag the AXON-LANG/identity/Core-Rule-11 cognition lock as systematic reasoning friction. Strongest evidence base of any cluster, though scoped to the author's own sessions.",
+        "proposal": "Make reanchor adaptive (suppress re-injection when AXON identity is already in-context; fire only every Nth turn); bind blanket-consent to direction questions so AskUserQuestion is routed to autonomous execution when L:inference-mode>=8 or a standing 'don't ask' directive exists; scope the AXON-LANG reasoning mandate to the internal cognition layer and add a workflow mode selector (collaborative vs autonomous) at code-dev entry.",
+        "support": "challenger (R1 high, R2 high), cultural-anthropologist (R1, R2 medium), product-manager (R2 high), ux-researcher (R2 high)"
+      },
+      {
+        "rank": 4,
+        "title": "First-run onboarding is misrouted/orphaned and the real getting-started artifact is unreachable",
+        "area": "onboarding",
+        "severity": "high",
+        "rationale": "Technical-writer (opus) gives the most concrete on-disk findings: menu.md omits the [1]CHAT/[2]BUILD/[3]RUN/[4]MEMORY mode lines users are told to press (truncated Mode-menu block); the real Day-1 welcome (onboarding.py) is orphaned and never shown on first boot; BOOT.md step 4 nudges quickstart instead of the better, test-guarded getting-started.md, which is unreachable from menu/faq/quickstart.",
+        "proposal": "Restore the [1]-[4] mode render lines at the top of the Mode-menu block; gate boot on L:first-run-complete to show onboarding on first session; fork the first-run nudge so 'start' runs getting-started and 'tour' runs quickstart; add a wiki program and list getting-started in the menu DISCOVER section.",
+        "support": "technical-writer (R1 opus 0.82, R2 opus 0.70); reinforced by cultural-anthropologist R2 (mode selectors above the fold) and challenger R1 (task-first on-ramp)"
+      },
+      {
+        "rank": 5,
+        "title": "The three personas (first-time / returning / power) are invented; the only observed user is the author — validate before investing",
+        "area": "onboarding",
+        "severity": "high",
+        "rationale": "Challenger's core thesis, partially conceded by product-manager, cultural-anthropologist (design monoculture / founder cognitive model), and andragogy-designer (untested risk, not demonstrated pain). This is both a finding and a process caveat: it caps the confidence of every other finding in this council, since the evidence is one user who is also the architect.",
+        "proposal": "Run one real cold-start 'stranger test': a non-author (TNO colleague / junior dev / AI researcher) boots from startup.md or menu.md with no coaching, screen-recorded; measure time-to-first-task, points of confusion, abandonment. Add an install-time distinct-install counter / opt-in telemetry so a second user can be detected before further onboarding investment.",
+        "support": "challenger (R1 high, R2 high), andragogy-designer (R2 critical), cultural-anthropologist (R2 high), product-manager (R2 — partial concession), ux-researcher (R2 medium)"
+      },
+      {
+        "rank": 6,
+        "title": "Two-repo / multi-tree split (axon vs my-axon vs workspace) creates ownership confusion and git friction",
+        "area": "state-model",
+        "severity": "medium",
+        "rationale": "Raised by product-manager (R1, R2), challenger (R2, framed as owner-facing and evidenced), and andragogy-designer (R2, documented contradictorily in SETUP.md). Challenger notes it is owner-facing rather than a first-time-user blocker, lowering severity.",
+        "proposal": "Hide the split behind a single AXON-native 'save'/'sync' verb that commits my-axon without hand-managing two git trees; add a 'defer backup' option to my-axon-init; refactor SETUP.md to one versioned flow fronted by a decision tree; add a one-line 'where to add things' guide to the menu.",
+        "support": "product-manager (R1 medium, R2 medium), challenger (R2 medium), andragogy-designer (R2 high)"
+      },
+      {
+        "rank": 7,
+        "title": "Returning-after-gap users must reconstruct AXON's state model; no re-entry summary",
+        "area": "state-model",
+        "severity": "medium",
+        "rationale": "Cultural-anthropologist (R1, R2) and challenger raise re-entry ceremony / state opacity; users cannot tell what AXON remembers. Lower support count than top findings.",
+        "proposal": "Add a re-entry summary block to the menu boot (last session date, active project, synapse entry count, shadow-file last-updated) and a 'Resume from step N' card for workflows >50% complete in a prior session; add a persistent 'current context' panel exportable as plain text.",
+        "support": "cultural-anthropologist (R1 medium, R2 medium); related to product-manager fast-boot and challenger sync findings"
+      },
+      {
+        "rank": 8,
+        "title": "Output/status layer appended to every response adds persistent overhead with no default off-switch",
+        "area": "menu-ui",
+        "severity": "low",
+        "rationale": "Single-seat finding (product-manager R2), low severity, included for completeness.",
+        "proposal": "Disable L:output-layer for the first 5 turns of a new session and surface a one-time 'type status to enable' prompt.",
+        "support": "product-manager (R2 low)"
+      }
+    ],
+    "dissent": [
+      "challenger (both rounds, opus, conf 0.62/0.60): The first-time / returning / power-user personas are invented. On the evidence in the repo there is exactly ONE observed user — the author, who is simultaneously creator, only power user, and protagonist of the only real session log. The menu-overwhelm and abandonment claims are plausible but UNMEASURED; the only machine-enforced, on-disk evidenced pain is the per-prompt axon-reanchor.sh hook. Do not redesign the menu on a hunch — instrument first.",
+      "andragogy-designer (R2, conf 0.73): AXON has untested risk, not demonstrated pain. The charge's program count is inflated (88 claimed vs ~30 actual in core), making the discoverability claim partly untestable until counts are verified via freshness refresh.",
+      "ux-researcher (R1, haiku, conf 0.80) and andragogy-designer (R1, haiku, conf 0.95): Declined to deliver findings — the AXON context was injected as the literal string 'undefined,' and fabricating pain points would violate the grounding rule; requested system documentation / a bounded scope before proceeding. (Challenger R2 explicitly judged these refusals 'the wrong call,' since concrete evidence — installed hooks and pytest fixtures — existed on disk and should not anchor R2; preserved here as a process dispute.)",
+      "cultural-anthropologist (R1, conf 0.52; R2, conf 0.67): Findings are grounded in the charge's structural facts plus general cognitive-load research, NOT in AXON system artifacts (none were available to this seat in R1). R2 reframes author-as-only-user as itself an anthropologically significant datum: a design monoculture calibrated to a single cognitive model.",
+      "product-manager (R2): Partial concession to challenger — but argues a system built for eventual distribution (public GitHub README, quickstart, AGENTS.md) that only one person has navigated is evidence that first-time pain is undiscovered, not imagined."
+    ],
+    "advisory_only": true,
+    "confidence": 0.66
+  },
+  "transcript": [
+    {
+      "seat": "ux-researcher",
+      "round": 1,
+      "variant": "haiku",
+      "confidence": 0.8,
+      "answer": "I cannot responsibly deliver council findings on AXON's UX without the foundational system context. The charge requires grounding in concrete menu sections, 88 code-dev programs, 160 tools, and specific user flows—but \"AXON context = undefined.\" Fabricating pain points would violate the grounding ru…",
+      "findings": [
+        {
+          "title": "Missing System Context Blocks Grounded Analysis",
+          "area": "other",
+          "severity": "critical"
+        },
+        {
+          "title": "Scope Negotiation Needed Before Council Round 1",
+          "area": "onboarding",
+          "severity": "high"
+        }
+      ]
+    },
+    {
+      "seat": "product-manager",
+      "round": 1,
+      "variant": "sonnet",
+      "confidence": 0.78,
+      "answer": "AXON's user value proposition is real and specific: it solves a genuine problem (context loss + instruction drift across multi-session AI coding) with a concrete scaffold (shadow files, 5-phase code-dev workflow, synapse registry). But the delivery surface between that value and the actual first-tim…",
+      "findings": [
+        {
+          "title": "Cold-start requires a codebase — first-time users have nothing to study",
+          "area": "onboarding",
+          "severity": "critical"
+        },
+        {
+          "title": "Boot ceremony is 5 mandatory steps with no value delivery until Step 5",
+          "area": "onboarding",
+          "severity": "high"
+        },
+        {
+          "title": "237 programs with no in-session discoverability path beyond list-programs",
+          "area": "menu-ui",
+          "severity": "high"
+        },
+        {
+          "title": "Two-repo split (axon + my-axon) creates git friction that blocks returning value",
+          "area": "state-model",
+          "severity": "medium"
+        },
+        {
+          "title": "code-dev-plan imposes PR design rules that conflict with real-world PR constraints",
+          "area": "workflows",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "technical-writer",
+      "round": 1,
+      "variant": "opus",
+      "confidence": 0.82,
+      "answer": "Taking the user's side: AXON's onboarding artifacts are well-written in isolation (quickstart, faq, glossary are genuinely good), but the actual first-contact surface is broken or buried. The home screen (menu.md) never lists the four primary entry modes [1]CHAT/[2]BUILD/[3]RUN/[4]MEMORY — the Mode-…",
+      "findings": [
+        {
+          "title": "Home screen omits the four primary modes [1]–[4] users are told to press",
+          "area": "menu-ui",
+          "severity": "critical"
+        },
+        {
+          "title": "The real Day-1 welcome (onboarding.py) is orphaned — never shown on first boot",
+          "area": "onboarding",
+          "severity": "high"
+        },
+        {
+          "title": "first-run-complete read path contradicts the kernel's own scope rule",
+          "area": "state-model",
+          "severity": "medium"
+        },
+        {
+          "title": "Default menu drowns first/returning users in governance ceremony",
+          "area": "menu-ui",
+          "severity": "high"
+        },
+        {
+          "title": "Onboarding docs teach mode-by-number but offer no single 'verbs' map; glossary is 46 terms with no AXON-symbol cheat row in the new-user path",
+          "area": "onboarding",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "andragogy-designer",
+      "round": 1,
+      "variant": "haiku",
+      "confidence": 0.95,
+      "answer": "I cannot deliver a credible C-seat advisory response without the AXON specification and interaction context. The prompt defines my role as grounded in concrete AXON-specific findings (menu sections, 88 code-dev programs, 160 tools, gates, flows), but the system specification is undefined. To avoid w…",
+      "findings": [
+        {
+          "title": "Missing System Specification Blocks Credible Analysis",
+          "area": "other",
+          "severity": "critical"
+        },
+        {
+          "title": "Role Charter Requires Grounding in Concrete Artifacts",
+          "area": "onboarding",
+          "severity": "critical"
+        }
+      ]
+    },
+    {
+      "seat": "cultural-anthropologist",
+      "round": 1,
+      "variant": "sonnet",
+      "confidence": 0.52,
+      "answer": "Note: the AXON context field was injected as the literal string \"undefined,\" meaning no system documentation, screenshots, or behavioral logs were available for this analysis. The findings below are therefore grounded in the structural facts stated in the council charge (88 code-dev programs, 160 to…",
+      "findings": [
+        {
+          "title": "Catalog overwhelm at the entry point: 88 programs surface simultaneously",
+          "area": "menu-ui",
+          "severity": "critical"
+        },
+        {
+          "title": "Tool-to-program ratio creates invisible dependency map",
+          "area": "code-dev",
+          "severity": "high"
+        },
+        {
+          "title": "Returning-after-gap users hit ceremony fatigue at re-entry gates",
+          "area": "workflows",
+          "severity": "high"
+        },
+        {
+          "title": "Onboarding assumes a 'first run is the real run' model that real users reject",
+          "area": "onboarding",
+          "severity": "high"
+        },
+        {
+          "title": "State-model opacity: users cannot tell what AXON remembers about them",
+          "area": "state-model",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "challenger",
+      "round": 1,
+      "variant": "opus",
+      "confidence": 0.62,
+      "answer": "Take the user's side, yes — but first establish who the user actually is. On the evidence in this repo there is exactly ONE observed AXON user: the owner (Dr. Castiel), who is simultaneously the author, the only power user, and the protagonist of the only real session log. The \"first-time user\" and …",
+      "findings": [
+        {
+          "title": "The only real user is the author — 'first-time user' is an invented persona",
+          "area": "onboarding",
+          "severity": "high"
+        },
+        {
+          "title": "Ceremony-against-consent is the one EVIDENCED pain — and it's about AskUserQuestion, not the menu",
+          "area": "workflows",
+          "severity": "high"
+        },
+        {
+          "title": "quickstart.md onboards into AXON internals, not into getting a task done",
+          "area": "onboarding",
+          "severity": "medium"
+        },
+        {
+          "title": "Menu renders ~10 dashboard sections every boot — ceremony fatigue is plausible but unmeasured",
+          "area": "menu-ui",
+          "severity": "medium"
+        },
+        {
+          "title": "56 code-dev subcommands across 109 files — discoverability load is real but the abandonment claim is unevidenced",
+          "area": "code-dev",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "ux-researcher",
+      "round": 2,
+      "variant": "haiku",
+      "confidence": 0.68,
+      "answer": "AXON's onboarding pain is STRUCTURAL, not invented. The boot sequence defers value delivery until step 4. Core Rule 11 (cognition locked to AXON-LANG ops) imposes reasoning discipline that contradicts how LLMs work, creating systematic load independent of user count. The 182-program catalog has no d…",
+      "findings": [
+        {
+          "title": "Cold-start value delivery is deferred past boot completion",
+          "area": "onboarding",
+          "severity": "high"
+        },
+        {
+          "title": "Cognition-frame lock (Core Rule 11) creates systematic reasoning friction for LLMs",
+          "area": "state-model",
+          "severity": "high"
+        },
+        {
+          "title": "Program discoverability relies on list-programs; 182 programs with no in-session ranking",
+          "area": "menu-ui",
+          "severity": "medium"
+        },
+        {
+          "title": "Dr. Castiel is the only observed user, and he is the system architect",
+          "area": "onboarding",
+          "severity": "medium"
+        },
+        {
+          "title": "Menu rendering is not visible in repo artifacts; discoverability surface is unknown",
+          "area": "menu-ui",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "product-manager",
+      "round": 2,
+      "variant": "sonnet",
+      "confidence": 0.72,
+      "answer": "Round 2 position: The challenger seat's steelman from R1 — that AXON's sole real user is the author — is the strongest opposing view and deserves a partial concession. But it undersells the product risk: a system built for eventual distribution (README is public on GitHub, quickstart exists, AGENTS.…",
+      "findings": [
+        {
+          "title": "Boot ceremony is structurally front-loaded: 5 mandatory steps + full menu render before any user task",
+          "area": "onboarding",
+          "severity": "high"
+        },
+        {
+          "title": "Identity lock generates refusal noise for any natural-language interaction pattern",
+          "area": "state-model",
+          "severity": "high"
+        },
+        {
+          "title": "list-programs is the only in-session discovery path, but it requires knowing to call it",
+          "area": "menu-ui",
+          "severity": "medium"
+        },
+        {
+          "title": "Output layer appended to every response adds persistent visual overhead with no user-configurable off-switch in the default path",
+          "area": "menu-ui",
+          "severity": "low"
+        },
+        {
+          "title": "Two-repo split (axon/ vs workspace/ vs my-axon/) creates cognitive ownership confusion for any non-author user",
+          "area": "onboarding",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "technical-writer",
+      "round": 2,
+      "variant": "opus",
+      "confidence": 0.7,
+      "answer": "Onboarding is misrouted, not broken: BOOT.md Step 4 nudges quickstart instead of the better, test-guarded getting-started.md, which is unreachable from menu/faq/quickstart.",
+      "findings": [
+        {
+          "title": "First-run nudge routes to wrong artifact",
+          "area": "onboarding",
+          "severity": "high"
+        },
+        {
+          "title": "getting-started.md unreachable from any user surface",
+          "area": "onboarding",
+          "severity": "high"
+        }
+      ]
+    },
+    {
+      "seat": "andragogy-designer",
+      "round": 2,
+      "variant": "haiku",
+      "confidence": 0.73,
+      "answer": "AXON's onboarding has untested risk, not demonstrated pain. The challenger correctly identifies that first-time-user personas are empirically unsupported — Dr. Castiel is the only observed user, and logs show no multi-session user studies. However, this is not \"therefore harmless.\" AXON was intentio…",
+      "findings": [
+        {
+          "title": "Boot ceremony lacks early value signaling; no data on abandonment",
+          "area": "onboarding",
+          "severity": "high"
+        },
+        {
+          "title": "Two-repo design documented twice contradictorily; new users cannot tell which to follow",
+          "area": "onboarding",
+          "severity": "high"
+        },
+        {
+          "title": "Program count inflated in council charge (88 claimed, ~30 actual in core); discoverability claim untestable",
+          "area": "menu-ui",
+          "severity": "medium"
+        },
+        {
+          "title": "No empirical first-user validation; Challenger's point is structurally correct but incomplete",
+          "area": "onboarding",
+          "severity": "critical"
+        },
+        {
+          "title": "Menu fullness obligation (Core Rule 12) may exceed cognitive load for newcomers; no justification stated for why partial render is blocked",
+          "area": "menu-ui",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "cultural-anthropologist",
+      "round": 2,
+      "variant": "sonnet",
+      "confidence": 0.67,
+      "answer": "Round 2 synthesis: The challenger's strongest point — that the only evidenced user is the author, making \"first-time user\" a constructed persona — must be conceded partially but not fully. Persona fabrication is a real methodological risk; I hold that the author-as-only-user condition is itself an a…",
+      "findings": [
+        {
+          "title": "Design monoculture: AXON's UX is calibrated to a single cognitive model",
+          "area": "onboarding",
+          "severity": "high"
+        },
+        {
+          "title": "Menu ceremony front-loads governance over task entry — misaligns with actual user motivation",
+          "area": "menu-ui",
+          "severity": "high"
+        },
+        {
+          "title": "88 code-dev programs with no in-session discovery path creates catalog paralysis",
+          "area": "code-dev",
+          "severity": "high"
+        },
+        {
+          "title": "Returning-after-gap re-entry requires reconstructing AXON's state model from scratch",
+          "area": "state-model",
+          "severity": "medium"
+        },
+        {
+          "title": "AskUserQuestion friction is the one evidenced ceremony pain — and it points at a deeper consent model problem",
+          "area": "workflows",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "challenger",
+      "round": 2,
+      "variant": "opus",
+      "confidence": 0.6,
+      "answer": "Two seats (ux-researcher, andragogy-designer) refused round 1 for lack of context; that refusal is itself wrong, because concrete AXON evidence does exist on disk — the installed hooks and pytest fixtures — it just wasn't in the prose block. The single hardest-evidenced user pain is not the menu or …",
+      "findings": [
+        {
+          "title": "The per-prompt reanchor hook is the only machine-enforced, evidenced user pain",
+          "area": "workflows",
+          "severity": "high"
+        },
+        {
+          "title": "The three personas (first-time / returning / power) are invented; one user is still all the evidence supports",
+          "area": "onboarding",
+          "severity": "high"
+        },
+        {
+          "title": "The 88-programs / 160-tools overwhelm claim is unverified on the evidence that reached this seat",
+          "area": "menu-ui",
+          "severity": "medium"
+        },
+        {
+          "title": "Two-repo split (axon / my-axon) is a real, evidenced structural cost — and it's owner-facing",
+          "area": "state-model",
+          "severity": "medium"
+        },
+        {
+          "title": "r1 refusals by ux-researcher and andragogy-designer were the wrong call and should not anchor r2",
+          "area": "other",
+          "severity": "low"
+        }
+      ]
+    }
+  ]
+}

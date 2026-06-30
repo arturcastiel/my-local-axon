@@ -1,0 +1,179 @@
+{
+  "schema": "axon-dag",
+  "schema-version": "v1",
+  "level": "plan",
+  "owner": "project:axon-code-dev-improve",
+  "generated": "2026-06-30T07:45:58Z",
+  "generator": "code-dev plan (AXON dev instance) — from 01-study.md locked sequence (D-001/D-002)",
+  "note": "Foundation-first. Reconciler is the load-bearing center (PR-004). Statuses use the dag.py v1 enum. Authored via dag.py-compatible schema, NOT plan_dag.py (the incompatible emitter PR-001 fixes).",
+  "critical-path": [
+    "PR-001",
+    "PR-002",
+    "PR-003",
+    "PR-004",
+    "PR-007",
+    "PR-008"
+  ],
+  "nodes": [
+    {
+      "id": "PR-000",
+      "kind": "pr",
+      "name": "Step-0 source re-verification of council claims",
+      "label": "re-verify",
+      "status": "complete",
+      "child-dag": null
+    },
+    {
+      "id": "CYCLE0-BOUNDARY",
+      "kind": "finding",
+      "name": "Cycle-0 kernel/adapter boundary spec (AXON deliverable, awaits owner ratification): names phase-ladder adapter as the render landing zone so PR-S0 needs no later migration",
+      "label": "Cycle-0 boundary spec",
+      "status": "complete",
+      "child-dag": null
+    },
+    {
+      "id": "PR-S0",
+      "kind": "pr",
+      "name": "FELT-VALUE SLICE (harmonize council w4vzc426j): study-phase entry-render of per-phase GOAL + how-to block, in the phase-ladder ADAPTER, reads existing goal.py/phase_model metadata, warn-first, flag-gated. Foundation-INDEPENDENT — no schema/reconciler/kernel edit. Precondition: Cycle-0 kernel/adapter boundary spec ratified. Leads the human delivery queue (NOT on the technical critical path).",
+      "label": "PR-S0 entry-render (felt value)",
+      "status": "merged",
+      "child-dag": null,
+      "commit": "5e44b07"
+    },
+    {
+      "id": "PR-001",
+      "kind": "pr",
+      "name": "Invisible prerequisite refactor: plan_dag.py emits via dag.py primitives; phase_model.stale_downstream delegates to dag.cascade_stale; reconcile workflow_dag.py registry/test",
+      "label": "consolidate duplicates",
+      "status": "merged",
+      "child-dag": null,
+      "commit": "133b08b"
+    },
+    {
+      "id": "PR-002",
+      "kind": "pr",
+      "name": "Widen dag.py node schema (commit, origin:machine|human, disposition, goal-id) as a tested+migrated PR (enum edits + SCHEMA_VERSION bump + workspace migrate); wire _axon_rollback.snapshot() into every DAG write path",
+      "label": "schema + snapshot",
+      "status": "merged",
+      "child-dag": null,
+      "commit": "321d9b4"
+    },
+    {
+      "id": "PR-003",
+      "kind": "pr",
+      "name": "One-time DAG baseline/acknowledge pass (with snapshot): normalize existing DAGs to widened schema; reconciler reports only NEW drift; distinguishes SCHEMA_MISMATCH from GIT_DAG_DRIFT",
+      "label": "baseline pass",
+      "status": "skipped",
+      "child-dag": null,
+      "disposition": "ABSORBED into PR-004 (D-019)"
+    },
+    {
+      "id": "PR-004",
+      "kind": "pr",
+      "name": "READ-ONLY git<->DAG reconciler + pre-written CONFLICT-HUMAN-EDIT policy: 3 drift classes, structured JSON, exit-nonzero-on-drift, advisory WARN in crucible one cycle, NO --fix (R2 + R4-detect + R5-detect)",
+      "label": "reconciler",
+      "status": "merged",
+      "child-dag": null,
+      "commit": "773a5bf"
+    },
+    {
+      "id": "PR-005",
+      "kind": "pr",
+      "name": "R3: render goal + how-to guidance at phase ENTRY via constraints-checklist template + goal-define.md auto-suggest (anchoring-aware, edit-vs-accept telemetry); goal-id presence WARN at done() only after phase_gate wired",
+      "label": "R3 entry-render+warn",
+      "status": "merged",
+      "child-dag": null,
+      "commit": "953a542",
+      "disposition": "entry-render shipped (all phases); warn+accept-rate metric backend deferred until auto-suggest emits events (D-009)"
+    },
+    {
+      "id": "PR-006",
+      "kind": "pr",
+      "name": "R1: instantiate canonical workflow at scaffold (file exists); load-time WARN existing, hard-gate NEW projects only; validate parseable+referentially-valid not mere presence",
+      "label": "R1 workflow-file",
+      "status": "merged",
+      "child-dag": null,
+      "commit": "033ef9d"
+    },
+    {
+      "id": "PR-007",
+      "kind": "pr",
+      "name": "R4 write-half: detected demands -> DAG with origin tagging; require source-id; fail-open on machine/untagged origin; gate human-origin acknowledgment only",
+      "label": "R4 demand->DAG",
+      "status": "merged",
+      "child-dag": null,
+      "commit": "d0dc5e5",
+      "disposition": "ADDITIVE write-half only (CODE_FIRST_DRIFT->add-node); overwrite repair is PR-008 (still held)"
+    },
+    {
+      "id": "PR-008",
+      "kind": "pr",
+      "name": "R5 repair — MUTATION RE-ENTRY (--fix code cut from v1 per D-006): snapshot + idempotency + CONFLICT-HUMAN-EDIT branch tests are CORE exit criteria; behind a NAMED go/no-go",
+      "label": "R5 repair (mutation re-entry)",
+      "status": "pending",
+      "child-dag": null
+    }
+  ],
+  "edges": [
+    {
+      "from": "PR-000",
+      "to": "PR-001",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-001",
+      "to": "PR-002",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-002",
+      "to": "PR-003",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-003",
+      "to": "PR-004",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-002",
+      "to": "PR-005",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-002",
+      "to": "PR-006",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-004",
+      "to": "PR-007",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-002",
+      "to": "PR-007",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-004",
+      "to": "PR-008",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-007",
+      "to": "PR-008",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-S0",
+      "to": "PR-005",
+      "kind": "informs"
+    },
+    {
+      "from": "CYCLE0-BOUNDARY",
+      "to": "PR-S0",
+      "kind": "depends"
+    }
+  ]
+}

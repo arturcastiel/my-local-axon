@@ -1,0 +1,73 @@
+{
+  "schema": "v1",
+  "phases": [
+    {
+      "id": "study",
+      "name": "Study",
+      "order": 1,
+      "deps": [],
+      "status": "done",
+      "outputs": [
+        "01-study.md",
+        "councils/verdict-A.json",
+        "councils/verdict-B.json",
+        "councils/verdict-C.json",
+        "councils/plan-D.json"
+      ]
+    },
+    {
+      "id": "plan",
+      "name": "Plan",
+      "order": 2,
+      "deps": [
+        "study"
+      ],
+      "status": "done",
+      "outputs": [
+        "masterplan.md",
+        "03-prs/DAG.json",
+        "03-prs/DAG.md"
+      ]
+    },
+    {
+      "id": "pr",
+      "name": "PR-specs",
+      "order": 3,
+      "deps": [
+        "plan"
+      ],
+      "status": "active",
+      "outputs": [
+        "BUILD-STATE.md",
+        "councils/KERNEL-TAPS.md",
+        "councils/FOLLOWUPS.md"
+      ]
+    },
+    {
+      "id": "log",
+      "name": "Log",
+      "order": 4,
+      "deps": [
+        "pr"
+      ],
+      "status": "pending",
+      "outputs": [
+        "04-log.md"
+      ]
+    },
+    {
+      "id": "audit",
+      "name": "Audit",
+      "order": 5,
+      "deps": [
+        "log"
+      ],
+      "status": "pending",
+      "outputs": [
+        "05-audit.md",
+        "councils/GAPFIND.json"
+      ]
+    }
+  ],
+  "updated": "2026-06-23T12:05:24Z"
+}

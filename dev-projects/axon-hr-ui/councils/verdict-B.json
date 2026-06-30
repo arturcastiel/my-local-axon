@@ -1,0 +1,591 @@
+{
+  "key": "B",
+  "title": "B · UI ideation",
+  "protocol": "debate",
+  "rounds": 2,
+  "seats": [
+    {
+      "slug": "product-designer",
+      "variant": "haiku"
+    },
+    {
+      "slug": "interaction-designer",
+      "variant": "sonnet"
+    },
+    {
+      "slug": "design-systems-architect",
+      "variant": "opus"
+    },
+    {
+      "slug": "information-architect",
+      "variant": "haiku"
+    },
+    {
+      "slug": "data-visualization-engineer",
+      "variant": "sonnet"
+    },
+    {
+      "slug": "challenger",
+      "variant": "opus"
+    }
+  ],
+  "verdict": {
+    "summary": "Council B (\"UI ideation\") ran 12 entries across 2 rounds with 6 seats (product-designer/haiku, interaction-designer/sonnet, design-systems-architect/opus, information-architect/haiku, data-visualization-engineer/sonnet, challenger/opus). Within the hard constraint that AXON renders as TEXT re-emitted every turn under the UserPromptSubmit reanchor hook, the transcript triangulates on one diagnosis from multiple angles: AXON's menu/state output is a stateless, ~151-line full re-emit with no priority hierarchy, no mode-awareness, and no canonical component grammar. The dominant convergent proposals are (a) collapse/suppress OS-STATE when nominal and escalate non-nominal lines, (b) signal mode transitions — especially the autonomous_mode/autonomy_breaker boundary — as a distinct visual break, (c) gate menu sections on orchestrator/precondition state, and (d) promote buried action items (reminders, igap) into an ATTENTION block. Two genuine cross-cutting tensions remain unresolved and are preserved: (1) ADD richer surfacing/layered headers (product-designer, information-architect, interaction-designer) vs. CUT to a panel budget and cache TOOL() calls (challenger), and (2) encode state visually with ASCII bars/sparklines/badges (data-visualization-engineer) vs. ban all bars/glyphs as per-turn token tax that drifts and corrupts on reflow, using deterministic numeric tokens instead (challenger, design-systems-architect partly aligned via ASCII-only/72-col constraint). The design-systems-architect frames a frozen component grammar (GRAMMAR.md referenced by ID in the reanchor hook) as the carrier all other fixes presuppose; the challenger independently endorses naming ~4 canonical components, giving the grammar idea the broadest cross-seat backing. Confidence ranged 0.61-0.81; data-viz (0.78-0.81) and information-architect (0.73-0.75) highest, design-systems-architect (0.61-0.62) and challenger (0.64-0.66) lowest.",
+    "verdict_distribution": [
+      {
+        "position": "Both add-and-cut needed: layer/gate signal (progressive disclosure, ATTENTION block, gated sections) under a component grammar AND impose a panel budget / cache TOOL() calls",
+        "share": 0.5,
+        "seats": [
+          "product-designer",
+          "interaction-designer",
+          "information-architect"
+        ]
+      },
+      {
+        "position": "Frozen component grammar (GRAMMAR.md, ASCII-only, 72-col, named-by-ID in reanchor hook) is the root carrier; all other fixes presuppose stable atomic primitives",
+        "share": 0.25,
+        "seats": [
+          "design-systems-architect",
+          "challenger"
+        ]
+      },
+      {
+        "position": "Primary defect is OS-STATE flat rendering; fix is concrete two-tier severity-sorted reflow with visual encoding, not abstract grammar",
+        "share": 0.17,
+        "seats": [
+          "data-visualization-engineer"
+        ]
+      },
+      {
+        "position": "Binding constraint is re-emission cost, not under-surfacing; cut panels, suppress green lines, ban ASCII bars/glyphs, cache state",
+        "share": 0.08,
+        "seats": [
+          "challenger"
+        ]
+      }
+    ],
+    "ranked_findings": [
+      {
+        "rank": 1,
+        "title": "OS-STATE nominal-collapse with severity-escalated rendering",
+        "area": "menu-ui / state-model",
+        "severity": "high",
+        "rationale": "Highest support×severity: every seat touched the OS-STATE flat-list problem. The merged proposal — emit only non-nominal lines, sort blockers (x/!) above warnings (~) above a single nominal rollup line — reconciles the add and cut camps because it reduces lines while preserving signal. data-viz, challenger, product-designer, information-architect, interaction-designer all proposed a variant.",
+        "proposal": "When all signals nominal, collapse OS-STATE to one badge/rollup line (e.g. 'OS: nominal (health·infer·cov·mem·backup·drift·igap all ok)' or '[ OS OK | inf:L4 | mem:12W | backup:fresh ]'). When any signal fires, render a CRITICAL rail of non-nominal lines first, warnings next, and collapse the stable lines to a single 'N items nominal — expand: status' line. Sort rows by severity tier at render time.",
+        "support": "5 seats (product-designer, interaction-designer, information-architect, data-visualization-engineer, challenger); confidence 0.64-0.81"
+      },
+      {
+        "rank": 2,
+        "title": "Mode-transition / autonomy boundary visual signaling",
+        "area": "state-model / menu-ui",
+        "severity": "critical",
+        "rationale": "Carried the only unrebutted CRITICAL severity from r1 (interaction-designer: autonomous_mode/autonomy_breaker boundary not signaled) and was independently re-raised as CRITICAL by product-designer (r2) and data-viz (r2). The autonomy/gate state is the highest-stakes surface the user is actually inside and is currently invisible at transition.",
+        "proposal": "Wrap every autonomous_mode grant_on/grant_off (and every menu emit) with a distinct boundary. Two convergent forms offered: (a) a full-width dashed rule + centered banner '--- AUTONOMOUS MODE ---' at transitions via a new _axon_response:emit_boundary; (b) a fixed 3-slot status bar prepended to every emit '[MODE:GUIDED | AUTO:OFF | GATE:OPEN]'. Recommend the persistent status bar as default with the dashed boundary reserved for the transition turn itself.",
+        "support": "3 seats marked critical (interaction-designer, product-designer, data-visualization-engineer); unrebutted; confidence 0.68-0.81"
+      },
+      {
+        "rank": 3,
+        "title": "Frozen component grammar referenced by ID in the reanchor hook",
+        "area": "state-model / tooling",
+        "severity": "high",
+        "rationale": "Framed as the carrier all other fixes presuppose (design-systems-architect, both rounds) and independently endorsed by the challenger ('component grammar is the carrier — make it the convergence point'). This cross-camp agreement (opus architect + opus challenger) is notable given they disagree on add-vs-cut. Severity high; directly addresses run-to-run drift, the text-OS-specific failure mode.",
+        "proposal": "Add a boot file (GRAMMAR.md) defining ~4 ASCII-only primitives — StateLine (`<sev> <key>: <value>`), Panel (titled, fixed line-order, collapsed = one header+count line), KVTable/Table (3 fixed columns for capability/autonomy only), Badge (closed token set) — with a 72-column hard cap and no Unicode box-drawing (use '— PANEL —' headers). Change the reanchor hook to name these components by ID rather than re-describe 'output format'.",
+        "support": "2 seats, both opus (design-systems-architect lead, challenger concurs); confidence 0.61-0.66; NOTE low absolute confidence despite high strategic weight"
+      },
+      {
+        "rank": 4,
+        "title": "Gate menu sections on orchestrator / precondition state (collapse, don't omit)",
+        "area": "menu-ui",
+        "severity": "high",
+        "rationale": "Repeated by information-architect (both rounds) and product-designer (r2) for CODE DEVELOPMENT / WORKFLOWS sections. Reduces the 151-line scroll while preserving CORE RULE 12 (section visibility) by replacing unmet-precondition content with a one-line stub. Directly buildable against W:code-dev-project / W:active-gates / W:current-phase.",
+        "proposal": "In render_menu, query orchestrator gates per section before emitting. Render CODE DEVELOPMENT only if codebase_loaded/gate unlocked AND phase in scope; otherwise emit a one-line stub. Same for WORKFLOWS. Promote phase-matching sections to top when W:active-phase is set; highlight 'Resume' as first affordance.",
+        "support": "2 seats (information-architect both rounds, product-designer r2); confidence 0.68-0.75"
+      },
+      {
+        "rank": 5,
+        "title": "ATTENTION / action-items block — conditional, suppression-gated",
+        "area": "menu-ui",
+        "severity": "medium",
+        "rationale": "information-architect and product-designer want reminders/igap promoted to a primary ATTENTION surface; the challenger explicitly conditions support on a suppression gate ('don't promote above OS STATE without a suppression gate, cap at top-2 ranked items'). Merged proposal incorporates that constraint, resolving the tension.",
+        "proposal": "Render an ATTENTION block immediately after OS-STATE ONLY when it has content. Cap at the top 2 orchestrator-ranked action items as StateLines (unread reminders, igap closure, active gate blocks), remainder reachable via 'more'. Sort by urgency/gate-criticality.",
+        "support": "3 seats with a constraint negotiated (information-architect, product-designer pro; challenger conditional); confidence 0.64-0.75"
+      },
+      {
+        "rank": 6,
+        "title": "Mode-menu demotion to a single active StateLine that always shows the exit path",
+        "area": "menu-ui / workflows",
+        "severity": "medium",
+        "rationale": "product-designer, information-architect, and challenger all flagged the 7-mode equal-weight list as redundant when the user is already in a mode. The challenger adds the load-bearing constraint: never hide the exit path. Merged form satisfies both progressive-disclosure and safety.",
+        "proposal": "Replace the full 7-mode list with one line: 'MODE: code-dev (exit: <cmd> · switch: <cmd>)' showing the active mode plus its two escape commands inline; render the full reachable-mode list only on the mode-switcher screen or 'menu --full'.",
+        "support": "3 seats (product-designer, information-architect, challenger); confidence 0.66-0.75"
+      },
+      {
+        "rank": 7,
+        "title": "Typed failure disambiguation in fail_render (gate-blocked vs logic-failed)",
+        "area": "code-dev / workflows",
+        "severity": "high",
+        "rationale": "interaction-designer raised this at high severity in both rounds and no seat rebutted it. Distinguishes a governance/gate halt (recoverable by unlock) from a program logic failure, which are currently visually identical.",
+        "proposal": "Define two fail_render header formats selected by a fail_class argument. GATE: '[ BLOCKED ] code-dev-plan halted at phase 2 — autonomy_breaker: requires explicit user unlock'. LOGIC: '[ FAIL ] ...'. Optionally a third DEGRADED class.",
+        "support": "1 seat across both rounds (interaction-designer), unrebutted; confidence 0.71-0.74"
+      },
+      {
+        "rank": 8,
+        "title": "Persistent active-program / phase-progress strip across re-emits",
+        "area": "code-dev / state-model",
+        "severity": "critical",
+        "rationale": "interaction-designer (r2, critical) and product-designer/data-viz proposed pinning a one-line program/phase strip so the user stays oriented during multi-turn programs (solves 'disappearing satisfaction scores'). Marked critical by interaction-designer but encoding contested (see dissent), so ranked below the grammar that would standardize it.",
+        "proposal": "Define a one-line ActiveProgramStrip emitted only when W:current-program is set, pinned as the first line after the reanchor header: '[ code-dev-plan · PHASE 3/7 · satisfied ]'. Persist phase/score via W:active-* keys. Use deterministic numeric tokens (PHASE 3/7), not ASCII bars, to survive reflow.",
+        "support": "3 seats (interaction-designer critical, product-designer, data-visualization-engineer); confidence 0.68-0.81"
+      },
+      {
+        "rank": 9,
+        "title": "Typed input-prompt label before the cursor",
+        "area": "menu-ui",
+        "severity": "high",
+        "rationale": "interaction-designer (r2) — a one-line PromptTypeLabel from a closed vocabulary signals expected response class before the user types. Single-seat but high severity and cheaply buildable; no rebuttal.",
+        "proposal": "Render one line above the input cursor from a closed set: [GATE: confirm y/n], [SELECT: 1-N], [INSTRUCT: free text], [ANSWER: ...]. Maps directly onto the four interaction modes already present.",
+        "support": "1 seat (interaction-designer); confidence 0.74"
+      },
+      {
+        "rank": 10,
+        "title": "Cache boot-time TOOL() calls via a boot snapshot",
+        "area": "tooling",
+        "severity": "medium",
+        "rationale": "challenger (r1) — every boot fires ~10 live TOOL() calls; read from W:boot-last-snapshot (already referenced) refreshed by a boot/cron tick instead. Reduces per-turn cost. Single-seat, orthogonal to the rendering debate, broadly compatible with all camps.",
+        "proposal": "Extend the existing W:boot-last-snapshot so one boot/cron tick writes health/inference/coverage/drift/etc., and the menu reads the snapshot rather than recomputing live each emit.",
+        "support": "1 seat (challenger); confidence 0.66"
+      },
+      {
+        "rank": 11,
+        "title": "Onboarding progressive-disclosure gate (suppress full menu until first mode set)",
+        "area": "onboarding",
+        "severity": "medium",
+        "rationale": "interaction-designer and information-architect both proposed gating the full 151-line menu behind a first-run check (W:current-mode / onboarding_version), emitting a ~10-line BootPrompt for new/cleared sessions. Two seats, low-risk.",
+        "proposal": "In onboarding:main / render_menu, check W:current-mode (or onboarding_version key). If unset, emit only a 10-line BootPrompt (version, 3-line orientation, mode picker); otherwise render the standard (collapsed) menu.",
+        "support": "2 seats (interaction-designer, information-architect); confidence 0.73-0.75"
+      },
+      {
+        "rank": 12,
+        "title": "Capability/autonomy policy as the single Table primitive (highest-stakes surface)",
+        "area": "state-model / menu-ui",
+        "severity": "high",
+        "rationale": "design-systems-architect (both rounds) — the capability/autonomy table is the highest-stakes surface and is currently unstyled; reserve the one Table primitive for it exclusively with a deterministic badge mapping. Depends on the grammar (rank 3) landing first.",
+        "proposal": "Ship one CapabilityTable: fixed 3 columns ACTION | MODE-GATE | STATE, ASCII pipes, max 4 rows visible, remainder collapsed to '+N gates'. Deterministic badge map: grant→[●grant], green-only→[◐green], auto→[▶auto], human→[■HUMAN] (or ASCII equivalents per width constraint).",
+        "support": "1 seat (design-systems-architect, both rounds); confidence 0.61-0.62"
+      }
+    ],
+    "dissent": [
+      "ENCODING DISSENT (unresolved): challenger (opus, 0.64) holds that ALL ASCII progress bars, score-gap glyphs, sparklines, and box-drawn tables must be banned — they are a per-turn token tax that drifts and corrupts on narrow-terminal reflow — and should be replaced by deterministic numeric tokens the model reproduces verbatim (e.g. 'PHASE 3/7 · satisfied', ranked plain lists). This directly contradicts data-visualization-engineer (sonnet, 0.81), who holds the OS-STATE flat list is the single highest-leverage defect and proposes concrete visual encodings: 4-5 char ASCII confidence/score bars in the suggestions footer, a 3-char drift sparkline 'DRIFT:▁▃█ +2.1', and severity glyphs. design-systems-architect partially sides with the challenger via an ASCII-only / 72-col / no-box-drawing grammar constraint. NOT SUPPRESSED — the visual-encoding proposals remain on the table as a minority position.",
+      "ADD-vs-CUT DISSENT (unresolved): challenger (opus, both rounds) holds the binding constraint is re-emission cost and the fix is fewer panels + a panel budget (default ~25-line view, opt-in 'menu --full') + suppression, explicitly rejecting product-designer's r2 'three-tier persistent header' as the wrong direction ('reject the reductive cut strategy' / countered by 'too much surfacing'). product-designer (haiku, 0.68) holds the inverse: signal depth is load-bearing and overload should be solved by LAYERING not deletion, via a fixed 6-10 line persistent header. The majority (information-architect, interaction-designer) treats these as complementary (cache AND gate), but the framing disagreement between the two opus/haiku poles is preserved, not collapsed into the 'both' position.",
+      "GRAMMAR-PRIMACY DISSENT: data-visualization-engineer (sonnet, 0.81) explicitly rebuts the design-systems-architect's component-grammar frame, arguing 'a grammar without a concrete visual encoding for the STATE panel's severity is empty' — i.e. the grammar is necessary but not the highest-leverage intervention; the concrete OS-STATE two-tier reflow is. Preserved against the architect+challenger position that the grammar is the root carrier.",
+      "CONFIDENCE CAVEAT: the two proposals with the broadest strategic weight (component grammar, rank 3) carry the LOWEST seat confidence in the council (design-systems-architect 0.61-0.62, challenger 0.64-0.66), while the narrower OS-STATE encoding proposals carry the highest (data-viz 0.78-0.81). This inverse relationship between cross-seat support and per-seat confidence is preserved and not averaged away."
+    ],
+    "advisory_only": true,
+    "confidence": 0.71
+  },
+  "transcript": [
+    {
+      "seat": "product-designer",
+      "round": 1,
+      "variant": "haiku",
+      "confidence": 0.72,
+      "answer": "AXON's menu is informationally complete but cognitively overloaded. Four concrete fixes: (1) mode-aware menu variants that hide non-active modes when W:current-mode is set; (2) OS-STATE panel subsection collapse (critical/alerts/optional layers); (3) standardized icon vocabulary (●/○/▶/✓/⚠/✗) with l…",
+      "findings": [
+        {
+          "title": "Mode-Aware Menu Variants — Hide Irrelevant Context",
+          "area": "menu-ui",
+          "severity": "medium"
+        },
+        {
+          "title": "OS-STATE Panel Subsection Collapse — Layer Critical vs. Diagnostic vs. Optional",
+          "area": "state-model",
+          "severity": "high"
+        },
+        {
+          "title": "Icon Vocabulary Standardization — Enforce Symbol-to-Meaning Mapping",
+          "area": "menu-ui",
+          "severity": "medium"
+        },
+        {
+          "title": "Phase-Progress Visualization in Code-Dev Workflow — Visual Anchoring in Pipeline",
+          "area": "workflows",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "interaction-designer",
+      "round": 1,
+      "variant": "sonnet",
+      "confidence": 0.71,
+      "answer": "Based on the AXON code-map (1865 nodes, 89 communities), the most impactful UI/UX interventions are at the five junctions where the user directly reads or responds to AXON output in the terminal: skip_guard/render_menu, onboarding, phase_model/render, fail_render, and the autonomous_mode/autonomy_br…",
+      "findings": [
+        {
+          "title": "skip_guard render_menu lacks a persistent OS-STATE strip",
+          "area": "menu-ui",
+          "severity": "high"
+        },
+        {
+          "title": "onboarding render path has no progressive-disclosure gating",
+          "area": "onboarding",
+          "severity": "medium"
+        },
+        {
+          "title": "fail_render does not distinguish gate-blocked failures from program logic failures",
+          "area": "code-dev",
+          "severity": "high"
+        },
+        {
+          "title": "phase_model:render is not surfaced at program entry points",
+          "area": "state-model",
+          "severity": "medium"
+        },
+        {
+          "title": "autonomous_mode and autonomy_breaker state boundary is not visually signaled at mode transition",
+          "area": "state-model",
+          "severity": "critical"
+        }
+      ]
+    },
+    {
+      "seat": "design-systems-architect",
+      "round": 1,
+      "variant": "opus",
+      "confidence": 0.62,
+      "answer": "AXON's UI is not a rendered screen — it is text the model re-emits every turn under the UserPromptSubmit reanchor hook, which today only says \"follow output format from boot files\" without pinning an actual component grammar. That is the core defect: with no canonical, byte-level component spec, pan…",
+      "findings": [
+        {
+          "title": "Reanchor names a format but not a component grammar — panels drift every turn",
+          "area": "state-model",
+          "severity": "high"
+        },
+        {
+          "title": "Capability/autonomy policy has no canonical table component — the highest-stakes surface is unstyled",
+          "area": "menu-ui",
+          "severity": "high"
+        },
+        {
+          "title": "EMIT events have a program-internal syntax but no human-facing StateBlock rendering",
+          "area": "workflows",
+          "severity": "medium"
+        },
+        {
+          "title": "No defined width budget or narrow-terminal degradation — box-drawing corrupts on reflow",
+          "area": "tooling",
+          "severity": "medium"
+        },
+        {
+          "title": "SessionStart and Footer don't surface the governance sandbox state the user is actually inside",
+          "area": "onboarding",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "information-architect",
+      "round": 1,
+      "variant": "haiku",
+      "confidence": 0.73,
+      "answer": "AXON's menu is domain-organized but stateless and orchestrator-ignorant. Inject orchestrator ranking into visibility (highlight active phases, collapse irrelevant sections). Promote action items (reminders, igap) to \"ATTENTION\" block after OS STATE. Gate CODE DEVELOPMENT/WORKFLOWS on project-load pr…",
+      "findings": [
+        {
+          "title": "Menu is stateless — orchestrator ranking ignored; suggestions footer is sole ranking surface",
+          "area": "menu-ui",
+          "severity": "high"
+        },
+        {
+          "title": "Action items (reminders, igap closure) buried in menu; need primary positioning",
+          "area": "menu-ui",
+          "severity": "medium"
+        },
+        {
+          "title": "Mode menu (lines 227–240) lists all 7 modes equally; user already in one — redundant presentation",
+          "area": "menu-ui",
+          "severity": "medium"
+        },
+        {
+          "title": "CODE DEVELOPMENT and WORKFLOWS sections gate-unaware; rendered full even when preconditions unmet",
+          "area": "menu-ui",
+          "severity": "medium"
+        },
+        {
+          "title": "DISCOVER, SELF-OBSERVE, META TOOLS sections (lines 312–340) undifferentiated by task relevance — 30 programs in 1D list",
+          "area": "menu-ui",
+          "severity": "low"
+        }
+      ]
+    },
+    {
+      "seat": "data-visualization-engineer",
+      "round": 1,
+      "variant": "sonnet",
+      "confidence": 0.78,
+      "answer": "The OS STATE panel in menu.md is a flat list of 15+ independent status lines with no visual hierarchy — health, inference mode, compiled coverage, memory keys, backup, drift, and igap are all rendered at equal weight. This works when everything is green, but when three or four warning signals fire s…",
+      "findings": [
+        {
+          "title": "OS STATE panel: flat list hides signal priority under warning load",
+          "area": "menu-ui",
+          "severity": "high"
+        },
+        {
+          "title": "code-dev-plan iteration loop: satisfaction scores disappear between turns",
+          "area": "code-dev",
+          "severity": "medium"
+        },
+        {
+          "title": "suggestions footer: ranked candidates lack any visual encoding of score gap",
+          "area": "menu-ui",
+          "severity": "medium"
+        },
+        {
+          "title": "active-program interrupt gate: progress line is string-only, cannot orient the user spatially",
+          "area": "workflows",
+          "severity": "medium"
+        },
+        {
+          "title": "status.md memory dump: W: key list truncated at 10 with no sort order",
+          "area": "state-model",
+          "severity": "low"
+        }
+      ]
+    },
+    {
+      "seat": "challenger",
+      "round": 1,
+      "variant": "opus",
+      "confidence": 0.66,
+      "answer": "AXON's real UI risk is too much surfacing. menu.md emits ~151 lines across 12 panels and fires 10 live TOOL() calls every boot, a 2-3 screenful scroll. Conceding a text OS has no collapse affordance, I hold the fix is boot-time progressive disclosure and a panel budget, not more panels.",
+      "findings": [
+        {
+          "title": "Menu is a 151-line scroll: impose a panel budget",
+          "area": "menu-ui",
+          "severity": "high"
+        },
+        {
+          "title": "OS STATE renders unconditionally when nominal",
+          "area": "state-model",
+          "severity": "medium"
+        },
+        {
+          "title": "Inference label collapses 11 levels into 6, making the badge ambiguous",
+          "area": "state-model",
+          "severity": "medium"
+        },
+        {
+          "title": "SELF-OBSERVE/SELF-IMPROVEMENT panels chase meta-novelty over the user's task",
+          "area": "workflows",
+          "severity": "medium"
+        },
+        {
+          "title": "Every boot fires 10 live TOOL() calls; cache state instead",
+          "area": "tooling",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "product-designer",
+      "round": 2,
+      "variant": "haiku",
+      "confidence": 0.68,
+      "answer": "Reject the Challenger's reductive \"cache and cut\" strategy. Instead, implement a three-tier persistent header (OS-STATE + Mode Banner + ATTENTION block; 6–10 lines fixed) with gated menu sections below. This preserves the signal depth that prior rounds identified as load-bearing (orchestrator state,…",
+      "findings": [
+        {
+          "title": "Persistent Header Pattern (OS-STATE + Mode Banner + ATTENTION)",
+          "area": "menu-ui",
+          "severity": "high"
+        },
+        {
+          "title": "Mode Transition Boundary Signaling (CRITICAL visual break)",
+          "area": "menu-ui",
+          "severity": "critical"
+        },
+        {
+          "title": "Menu Gating on Orchestrator Prerequisites (collapse irrelevant sections)",
+          "area": "menu-ui",
+          "severity": "high"
+        },
+        {
+          "title": "Phase Progress Anchoring in code-dev-plan Render (solve disappearing satisfaction scores)",
+          "area": "state-model",
+          "severity": "medium"
+        },
+        {
+          "title": "Action Items (Reminders, IGap Closure) Promotion to ATTENTION Block",
+          "area": "menu-ui",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "interaction-designer",
+      "round": 2,
+      "variant": "sonnet",
+      "confidence": 0.74,
+      "answer": "Round 2 convergence: the prior-round findings from all seats triangulate on one root cause — AXON's terminal output is a stateless, full-re-emit every turn with no component grammar, no priority hierarchy, and no mode-awareness. My r1 finding that autonomous_mode/autonomy_breaker transitions are not…",
+      "findings": [
+        {
+          "title": "Persistent Active-Program Header Strip Across Re-Emits",
+          "area": "code-dev",
+          "severity": "critical"
+        },
+        {
+          "title": "Typed Input-Prompt Taxonomy — Signal Expected Response Class Before the User Types",
+          "area": "menu-ui",
+          "severity": "high"
+        },
+        {
+          "title": "OS-STATE Nominal-Collapse with Fault-Escalation Strip",
+          "area": "state-model",
+          "severity": "high"
+        },
+        {
+          "title": "Gate-Blocked vs. Logic-Failed Failure Disambiguation in fail_render",
+          "area": "workflows",
+          "severity": "high"
+        },
+        {
+          "title": "Onboarding Progressive-Disclosure Gate — Suppress Full Menu Until First W:current-mode is Set",
+          "area": "onboarding",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "design-systems-architect",
+      "round": 2,
+      "variant": "opus",
+      "confidence": 0.61,
+      "answer": "I hold my r1 position and sharpen it: AXON's defect is not panel count, it is the absence of a frozen component grammar that the UserPromptSubmit reanchor hook can reference by ID. Every fix the other B seats want — mode-aware menu variants (product-designer), orchestrator-ranked collapse (informati…",
+      "findings": [
+        {
+          "title": "Reanchor hook must reference a frozen GRAMMAR.md by component ID, not re-describe format",
+          "area": "state-model",
+          "severity": "high"
+        },
+        {
+          "title": "StateBlock primitive resolves the OS-STATE flat-list and warning-hierarchy debate at the atomic level",
+          "area": "menu-ui",
+          "severity": "high"
+        },
+        {
+          "title": "A single Table primitive is the only safe home for the capability/autonomy policy — the highest-stakes surface",
+          "area": "state-model",
+          "severity": "high"
+        },
+        {
+          "title": "Width budget and ASCII-only glyphs as a hard grammar constraint, conceding the challenger on tokens",
+          "area": "tooling",
+          "severity": "medium"
+        },
+        {
+          "title": "EMIT events need a human-facing StateBlock projection, not a second rendering path",
+          "area": "workflows",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "information-architect",
+      "round": 2,
+      "variant": "haiku",
+      "confidence": 0.75,
+      "answer": "\nAXON's menu UX fails on two orthogonal axes: (1) volume (151 lines + 10 TOOL() calls; Challenger correct), and (2) relevance/signal (buried actions, flat OS-STATE, stateless sections; my R1 position). The fix requires both systems (cache TOOL() calls) and IA intervention (progressive disclosure gat…",
+      "findings": [
+        {
+          "title": "Progressive Disclosure Gate: Boot-Time Critical-Path Menu",
+          "area": "menu-ui",
+          "severity": "high"
+        },
+        {
+          "title": "Demote Mode Menu, Highlight Active Mode",
+          "area": "menu-ui",
+          "severity": "medium"
+        },
+        {
+          "title": "ATTENTION Block: Promote Action Items to Primary Surface",
+          "area": "menu-ui",
+          "severity": "medium"
+        },
+        {
+          "title": "OS-STATE Subsection Collapse: Layer Critical/Active/Optional",
+          "area": "state-model",
+          "severity": "high"
+        },
+        {
+          "title": "CODE-DEVELOPMENT and WORKFLOWS: Gate-Aware Rendering",
+          "area": "menu-ui",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "data-visualization-engineer",
+      "round": 2,
+      "variant": "sonnet",
+      "confidence": 0.81,
+      "answer": "Round 2 position: I hold my r1 finding that the OS STATE panel's flat rendering is the highest-leverage visualization defect, and I now strengthen it with a concrete two-tier layout proposal. I concede to the challenger that panel budget matters — my proposals must not add lines. I rebut the design-…",
+      "findings": [
+        {
+          "title": "OS STATE Two-Tier Reflow: Critical Rail Above Nominal Rail",
+          "area": "menu-ui",
+          "severity": "high"
+        },
+        {
+          "title": "Mode-Transition Header Strip: Absorb autonomous_mode Visual Gap",
+          "area": "state-model",
+          "severity": "critical"
+        },
+        {
+          "title": "Suggestions Footer: Score-Gap Encoding via ASCII Bar Differential",
+          "area": "menu-ui",
+          "severity": "medium"
+        },
+        {
+          "title": "code-dev-plan Iteration Header: Persistent Phase-Score Strip",
+          "area": "code-dev",
+          "severity": "medium"
+        },
+        {
+          "title": "Drift Inline Trend: 3-Turn ASCII Sparkline in OS STATE Critical Rail",
+          "area": "state-model",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "seat": "challenger",
+      "round": 2,
+      "variant": "opus",
+      "confidence": 0.64,
+      "answer": "I hold my round-1 thesis: AXON's binding UI constraint is not under-surfacing but re-emission cost — every panel is text the model regenerates each turn under the reanchor hook, so any added \"encoding\" (ASCII bars, score-gap glyphs, box-drawn tables, phase-progress visuals) is a per-turn token tax t…",
+      "findings": [
+        {
+          "title": "Ban ASCII progress bars / score-gap glyphs — they drift and corrupt on reflow",
+          "area": "state-model",
+          "severity": "high"
+        },
+        {
+          "title": "OS-STATE: suppress green lines, don't add a collapse layer",
+          "area": "menu-ui",
+          "severity": "high"
+        },
+        {
+          "title": "Component grammar is the carrier — make it the convergence point, fold the other seats into it",
+          "area": "tooling",
+          "severity": "high"
+        },
+        {
+          "title": "Mode-aware menu variants must never hide the exit path",
+          "area": "workflows",
+          "severity": "medium"
+        },
+        {
+          "title": "Don't promote an ATTENTION block above OS STATE without a suppression gate",
+          "area": "menu-ui",
+          "severity": "medium"
+        }
+      ]
+    }
+  ]
+}
