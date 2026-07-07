@@ -1,4 +1,5 @@
 # PR-007 — FULL PORT of the hr-team asset packs (catalog + prompts + optional handoff) into workspace/hr-team/
+**Parent-plan**: [02-plan.md](../02-plan.md)
 Phase 2 plan detail · size L
 
 ## Goal

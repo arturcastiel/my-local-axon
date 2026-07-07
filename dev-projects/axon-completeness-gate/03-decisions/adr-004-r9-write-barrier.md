@@ -56,3 +56,7 @@ computed-path residual) is DEFERRED to its own reviewed iteration per owner, giv
 by an interpreter with dev-mode OFF is not statically catchable by the argv gate. Mitigations active now:
 the PreToolUse hook + G1a literal-vector blocking + dev-mode being OFF-by-default-safe. Status of this ADR
 remains `accepted`; G1c is the open follow-up action.
+
+## Related
+
+- Plan: [`../02-plan.md`](../02-plan.md)

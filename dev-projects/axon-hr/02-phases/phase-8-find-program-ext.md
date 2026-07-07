@@ -1,4 +1,5 @@
 # PR-008 — find-program: fold # dispatch-phrases into the scoring corpus (repo-wide routing-vocabulary unification)
+**Parent-plan**: [02-plan.md](../02-plan.md)
 Phase 2 plan detail · size S
 
 ## Goal

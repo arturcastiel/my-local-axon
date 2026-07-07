@@ -1,4 +1,5 @@
 # PR-004 — hr-team router neuron — standalone + workflow-embeddable advisory-council dispatcher
+**Parent-plan**: [02-plan.md](../02-plan.md)
 Phase 2 plan detail · size M
 
 ## Goal

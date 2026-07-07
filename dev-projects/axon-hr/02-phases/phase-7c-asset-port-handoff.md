@@ -1,4 +1,5 @@
 # PR-007c — Asset port: handoff docs (optional)
+**Parent-plan**: [02-plan.md](../02-plan.md)
 Phase 2 plan detail · size XS · OPTIONAL  (split from PR-007 per ADR-010 #2)
 
 ## Goal

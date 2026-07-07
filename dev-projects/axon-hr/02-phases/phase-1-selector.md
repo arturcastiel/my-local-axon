@@ -1,4 +1,5 @@
 # PR-001 — hr-team-selector neuron — Layer-1 roster/mode/protocol/tier selection + validation (ACTIVE + router-style test)
+**Parent-plan**: [02-plan.md](../02-plan.md)
 Phase 2 plan detail · size M
 
 ## Goal

@@ -1,4 +1,5 @@
 # PR-006 — menu [10] HR TEAM section + dispatch-phrases + dispatch-index rebuild
+**Parent-plan**: [02-plan.md](../02-plan.md)
 Phase 2 plan detail · size S
 
 ## Goal

@@ -25,3 +25,7 @@ without a process model AXON does not have.
 - KERNEL-SLIM.md's scheduler section stops overselling; what it now claims is mechanically true.
 - Re-scoping preemption later = a real design project starting from this ADR (needs a process
   model + checkpoint/restore substrate, not just queue fields).
+
+## Related
+
+- Plan: [`../02-plan.md`](../02-plan.md)

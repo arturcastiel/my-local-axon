@@ -1,4 +1,5 @@
 # PR-007a — Asset port: catalog (151 rows + H1-fix + cross-link resolver + slug-uniqueness)
+**Parent-plan**: [02-plan.md](../02-plan.md)
 Phase 2 plan detail · size M  (split from PR-007 per ADR-010 #2)
 
 ## Goal

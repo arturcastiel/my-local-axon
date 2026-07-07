@@ -1,4 +1,5 @@
 # PR-002 — hr-team-convener neuron — fragment assembly + parallel sealed Round 1 orchestration via run_seats seam
+**Parent-plan**: [02-plan.md](../02-plan.md)
 Phase 2 plan detail · size M
 
 ## Goal
