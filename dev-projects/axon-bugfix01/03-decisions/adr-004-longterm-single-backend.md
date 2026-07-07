@@ -31,3 +31,7 @@ with no current writer (health.py wrote the kv side).
 ## Follow-up (out of scope)
 - W: keys in kv-store would be the same class; the working scope's canonical home is
   workspace/memory/working/*.md. Guard if a real consumer appears.
+
+## Related
+
+- Plan: [`../02-plan.md`](../02-plan.md)

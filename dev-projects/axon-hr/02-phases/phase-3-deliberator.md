@@ -1,4 +1,5 @@
 # PR-003 — hr-team-deliberator neuron — schema-validate seats, BPC + WSV aggregation, dissent re-round, emit §4.3 advisory verdict
+**Parent-plan**: [02-plan.md](../02-plan.md)
 Phase 2 plan detail · size M
 
 ## Goal

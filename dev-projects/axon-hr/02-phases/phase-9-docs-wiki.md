@@ -1,4 +1,5 @@
 # PR-009 — Docs/wiki closeout (FULLEST scope, merged LAST)
+**Parent-plan**: [02-plan.md](../02-plan.md)
 Phase 2 plan detail · size L · ADR-011
 
 ## Goal

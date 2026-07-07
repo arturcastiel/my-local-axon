@@ -1,4 +1,5 @@
 # PR-007b — Asset port: prompt pack (69 files, minimal path rewrite)
+**Parent-plan**: [02-plan.md](../02-plan.md)
 Phase 2 plan detail · size S  (split from PR-007 per ADR-010 #2)
 
 ## Goal

@@ -1,4 +1,5 @@
 # PR-005 — tools/hr_team.py (CLI + run_seats seam + audit-bundle writer) + tools/REGISTRY.json entry
+**Parent-plan**: [02-plan.md](../02-plan.md)
 Phase 2 plan detail · size M
 
 ## Goal

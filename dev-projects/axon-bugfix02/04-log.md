@@ -40,3 +40,11 @@ project: axon-bugfix02 · phase: study · goal: residual-surface audit, iterate 
   docgen_verify red = axon-hr's old phase files missing plan links; dispatch-index
   166/170 = 4 helper stubs (code-dev-actions/dry-run/examples/finalize) unindexed.
 - Phases: pr ✓ log ✓ → next: 05-audit (code-dev audit) when the owner wants it.
+
+- AUDIT COMPLETE 2026-07-07: crucible gate 37 controls PASSED / 0 blocking (1 pre-owned WARN);
+  suite 5250/0/16; freshness + docgen-verify --strict GREEN (first time on record — 17 missing
+  parent-plan links repaired across axon-hr/bugfix01/completeness-gate; W-KEYS doc gained its
+  Guarded-by block citing the lint that mechanized its rule). Audit-phase find: dispatch-index
+  status()/rebuild() exclusion asymmetry (fixed+pinned, 11163b7). Drift trace re-armed (stable).
+  All findings closed or reason-deferred; 2 audit LOWs REVERSED on evidence. PROJECT CLOSED —
+  remaining queue items are owned by general-bugfix (residue-lint) and bugfix01 (quarantine).

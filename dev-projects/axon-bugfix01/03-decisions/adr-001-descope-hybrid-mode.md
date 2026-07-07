@@ -28,3 +28,7 @@ zero implementing logic anywhere (no shipped workflow even used it). Authoring s
 ## Consequences
 - Re-scoping hybrid later = a real design + implementation project, starting from this ADR.
 - Doc claims (workflow-run.md header) corrected to describe what adaptive actually is.
+
+## Related
+
+- Plan: [`../02-plan.md`](../02-plan.md)

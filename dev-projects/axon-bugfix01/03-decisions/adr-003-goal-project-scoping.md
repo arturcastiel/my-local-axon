@@ -25,3 +25,7 @@ even a fixed reader could not be project-specific.
 - A required project field: global/OS-level goals (axon self-improvement) are legitimate.
 - Per-project goals.yml files: a single index with a filter is simpler and keeps `goal audit`
   (which already traverses projects) unchanged.
+
+## Related
+
+- Plan: [`../02-plan.md`](../02-plan.md)
