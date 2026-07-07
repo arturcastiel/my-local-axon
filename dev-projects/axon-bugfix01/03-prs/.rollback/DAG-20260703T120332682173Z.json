@@ -1,0 +1,12 @@
+{
+  "schema": "axon-dag",
+  "schema-version": "v1",
+  "level": "plan",
+  "owner": "project:axon-bugfix01",
+  "generated": "2026-07-03T12:02:48Z",
+  "generator": "tools/dag.py",
+  "validated": true,
+  "critical-path": [],
+  "nodes": [],
+  "edges": []
+}

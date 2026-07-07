@@ -1,0 +1,329 @@
+{
+  "schema": "axon-dag",
+  "schema-version": "v1",
+  "level": "plan",
+  "owner": "project:axon-bugfix01",
+  "generated": "2026-07-03T12:03:32Z",
+  "generator": "tools/dag.py",
+  "validated": true,
+  "critical-path": [],
+  "nodes": [
+    {
+      "id": "PR-001",
+      "kind": "pr",
+      "name": "Enforce destructive-git-op gating in the live write path",
+      "label": "Enforce destructive-git-op gating in the live write path",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-002",
+      "kind": "pr",
+      "name": "Consult the AEGIS test-execution policy in test_runner",
+      "label": "Consult the AEGIS test-execution policy in test_runner",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-003",
+      "kind": "pr",
+      "name": "Fix synapse-suggest corpus and confidence math",
+      "label": "Fix synapse-suggest corpus and confidence math",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-004",
+      "kind": "pr",
+      "name": "Make the orchestrator fire step real; conformance covers orchestrator.md",
+      "label": "Make the orchestrator fire step real; conformance covers orchestrator.md",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-005",
+      "kind": "pr",
+      "name": "Reconcile predicate vocabulary; fail loud on undefined predicates",
+      "label": "Reconcile predicate vocabulary; fail loud on undefined predicates",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-006",
+      "kind": "pr",
+      "name": "Populate the predicate eval ctx with real state",
+      "label": "Populate the predicate eval ctx with real state",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-007",
+      "kind": "pr",
+      "name": "Wire check-stale + check-templating into workflow validate",
+      "label": "Wire check-stale + check-templating into workflow validate",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-008",
+      "kind": "pr",
+      "name": "Repair adaptive-free-text.yml",
+      "label": "Repair adaptive-free-text.yml",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-009",
+      "kind": "pr",
+      "name": "Rewrite library-dev.canonical.yml against real library-dev programs",
+      "label": "Rewrite library-dev.canonical.yml against real library-dev programs",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-010",
+      "kind": "pr",
+      "name": "Differentiate fixed/adaptive modes; descope hybrid via ADR",
+      "label": "Differentiate fixed/adaptive modes; descope hybrid via ADR",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-011",
+      "kind": "pr",
+      "name": "Two-token subcommand router for code-dev and library-dev",
+      "label": "Two-token subcommand router for code-dev and library-dev",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-012",
+      "kind": "pr",
+      "name": "Route check-structure to the actual structure checker",
+      "label": "Route check-structure to the actual structure checker",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-013",
+      "kind": "pr",
+      "name": "Router debt cleanup",
+      "label": "Router debt cleanup",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-014",
+      "kind": "pr",
+      "name": "Unify the L: memory scope to a single backend (ADR)",
+      "label": "Unify the L: memory scope to a single backend (ADR)",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-015",
+      "kind": "pr",
+      "name": "Queue integrity: pop, deps, clear semantics",
+      "label": "Queue integrity: pop, deps, clear semantics",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-016",
+      "kind": "pr",
+      "name": "Scheduler-doc honesty: descope preemption claims",
+      "label": "Scheduler-doc honesty: descope preemption claims",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-017",
+      "kind": "pr",
+      "name": "Unstick force-skip",
+      "label": "Unstick force-skip",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-018",
+      "kind": "pr",
+      "name": "Goal system: envelope bug, wire the writer, scoping ADR",
+      "label": "Goal system: envelope bug, wire the writer, scoping ADR",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-019",
+      "kind": "pr",
+      "name": "Make hr-team audit bundles real",
+      "label": "Make hr-team audit bundles real",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-020",
+      "kind": "pr",
+      "name": "Wire hr-team filters and weights",
+      "label": "Wire hr-team filters and weights",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-021",
+      "kind": "pr",
+      "name": "hr-team deliberation flow repairs + LOW sweep",
+      "label": "hr-team deliberation flow repairs + LOW sweep",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-022",
+      "kind": "pr",
+      "name": "Fix simulate .md-CLI contract",
+      "label": "Fix simulate .md-CLI contract",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-023",
+      "kind": "pr",
+      "name": "quickstart dispatcher + run-tests scope fix",
+      "label": "quickstart dispatcher + run-tests scope fix",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-024",
+      "kind": "pr",
+      "name": "library-dev report type, ingest handoff, articles scan",
+      "label": "library-dev report type, ingest handoff, articles scan",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-025",
+      "kind": "pr",
+      "name": "Cron reconciliation",
+      "label": "Cron reconciliation",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-026",
+      "kind": "pr",
+      "name": "dispatch-index status field + synapse fallback honesty",
+      "label": "dispatch-index status field + synapse fallback honesty",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-027",
+      "kind": "pr",
+      "name": "Misc verified breakage sweep",
+      "label": "Misc verified breakage sweep",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-028",
+      "kind": "pr",
+      "name": "Liveness/reachability lint (pattern-7 guard)",
+      "label": "Liveness/reachability lint (pattern-7 guard)",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-029",
+      "kind": "pr",
+      "name": "Inline-EXEC-args lint + pr-ready preflight fix",
+      "label": "Inline-EXEC-args lint + pr-ready preflight fix",
+      "status": "done",
+      "child-dag": null
+    },
+    {
+      "id": "PR-030",
+      "kind": "pr",
+      "name": "Doc/registry honesty sweep",
+      "label": "Doc/registry honesty sweep",
+      "status": "done",
+      "child-dag": null
+    }
+  ],
+  "edges": [
+    {
+      "from": "PR-003",
+      "to": "PR-004",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-005",
+      "to": "PR-006",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-003",
+      "to": "PR-008",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-004",
+      "to": "PR-008",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-007",
+      "to": "PR-008",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-005",
+      "to": "PR-009",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-006",
+      "to": "PR-009",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-007",
+      "to": "PR-009",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-006",
+      "to": "PR-010",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-011",
+      "to": "PR-012",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-011",
+      "to": "PR-013",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-015",
+      "to": "PR-016",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-020",
+      "to": "PR-021",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-003",
+      "to": "PR-026",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-016",
+      "to": "PR-030",
+      "kind": "depends"
+    }
+  ]
+}
