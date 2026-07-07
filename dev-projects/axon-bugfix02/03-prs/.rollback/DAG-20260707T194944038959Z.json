@@ -1,0 +1,201 @@
+{
+  "schema": "axon-dag",
+  "schema-version": "v1",
+  "level": "plan",
+  "owner": "project:axon-bugfix02",
+  "generated": "2026-07-07T19:49:44Z",
+  "generator": "tools/dag.py",
+  "validated": true,
+  "critical-path": [],
+  "nodes": [
+    {
+      "id": "PR-001",
+      "kind": "pr",
+      "name": "Grow output_manifest.json over the reporting-layer tools",
+      "label": "Grow output_manifest.json over the reporting-layer tools",
+      "status": "merged",
+      "child-dag": null
+    },
+    {
+      "id": "PR-002",
+      "kind": "pr",
+      "name": "Memory-key reader/writer lint (ERROR+allowlist+baseline)",
+      "label": "Memory-key reader/writer lint (ERROR+allowlist+baseline)",
+      "status": "merged",
+      "child-dag": null
+    },
+    {
+      "id": "PR-003",
+      "kind": "pr",
+      "name": "Repair session-summary: path, digest patterns, dead lines",
+      "label": "Repair session-summary: path, digest patterns, dead lines",
+      "status": "merged",
+      "child-dag": null
+    },
+    {
+      "id": "PR-004",
+      "kind": "pr",
+      "name": "Rebuild resume detection over persisted working memory",
+      "label": "Rebuild resume detection over persisted working memory",
+      "status": "merged",
+      "child-dag": null
+    },
+    {
+      "id": "PR-005",
+      "kind": "pr",
+      "name": "Gain: honest rebuild over data that exists",
+      "label": "Gain: honest rebuild over data that exists",
+      "status": "merged",
+      "child-dag": null
+    },
+    {
+      "id": "PR-006",
+      "kind": "pr",
+      "name": "Board: rewire aggregation to the real PR store (D1)",
+      "label": "Board: rewire aggregation to the real PR store (D1)",
+      "status": "merged",
+      "child-dag": null
+    },
+    {
+      "id": "PR-007",
+      "kind": "pr",
+      "name": "workspace-backup: structured result checks + human-handoff on BLOCK (D3)",
+      "label": "workspace-backup: structured result checks + human-handoff on BLOCK (D3)",
+      "status": "merged",
+      "child-dag": null
+    },
+    {
+      "id": "PR-008",
+      "kind": "pr",
+      "name": "my-axon-init: close the data-loss windows",
+      "label": "my-axon-init: close the data-loss windows",
+      "status": "merged",
+      "child-dag": null
+    },
+    {
+      "id": "PR-009",
+      "kind": "pr",
+      "name": "Shell-result lint: no substring success-sniffing after TOOL(shell)",
+      "label": "Shell-result lint: no substring success-sniffing after TOOL(shell)",
+      "status": "merged",
+      "child-dag": null
+    },
+    {
+      "id": "PR-010",
+      "kind": "pr",
+      "name": "Menu + snapshot contract repair (parity-tested)",
+      "label": "Menu + snapshot contract repair (parity-tested)",
+      "status": "merged",
+      "child-dag": null
+    },
+    {
+      "id": "PR-011",
+      "kind": "pr",
+      "name": "status + stats: real drift source, real queue shape, orphan retirement",
+      "label": "status + stats: real drift source, real queue shape, orphan retirement",
+      "status": "merged",
+      "child-dag": null
+    },
+    {
+      "id": "PR-012",
+      "kind": "pr",
+      "name": "undo: align the rollback contract + run-id-bound manifest",
+      "label": "undo: align the rollback contract + run-id-bound manifest",
+      "status": "merged",
+      "child-dag": null
+    },
+    {
+      "id": "PR-013",
+      "kind": "pr",
+      "name": "list-tools: registry honesty",
+      "label": "list-tools: registry honesty",
+      "status": "merged",
+      "child-dag": null
+    },
+    {
+      "id": "PR-014",
+      "kind": "pr",
+      "name": "find-program: excise the half-deprecated semantic-search block",
+      "label": "find-program: excise the half-deprecated semantic-search block",
+      "status": "merged",
+      "child-dag": null
+    },
+    {
+      "id": "PR-015",
+      "kind": "pr",
+      "name": "axon-docs-gen: drop the phantom .compiled read",
+      "label": "axon-docs-gen: drop the phantom .compiled read",
+      "status": "merged",
+      "child-dag": null
+    },
+    {
+      "id": "PR-016",
+      "kind": "pr",
+      "name": "Metrics ADR + honest-starvation banners (D2)",
+      "label": "Metrics ADR + honest-starvation banners (D2)",
+      "status": "merged",
+      "child-dag": null
+    },
+    {
+      "id": "PR-017",
+      "kind": "pr",
+      "name": "loop-contract: receipts land in the canonical ledger",
+      "label": "loop-contract: receipts land in the canonical ledger",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-018",
+      "kind": "pr",
+      "name": "LOW / doc-honesty sweep",
+      "label": "LOW / doc-honesty sweep",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-019",
+      "kind": "pr",
+      "name": "Mutating-path test conversion + crucible registration",
+      "label": "Mutating-path test conversion + crucible registration",
+      "status": "pending",
+      "child-dag": null
+    }
+  ],
+  "edges": [
+    {
+      "from": "PR-001",
+      "to": "PR-010",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-001",
+      "to": "PR-012",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-001",
+      "to": "PR-015",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-002",
+      "to": "PR-019",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-009",
+      "to": "PR-019",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-012",
+      "to": "PR-019",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-017",
+      "to": "PR-019",
+      "kind": "depends"
+    }
+  ]
+}
