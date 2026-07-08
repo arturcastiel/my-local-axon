@@ -1,7 +1,7 @@
 slug:            doctrine-fix
 schema-version:  v4
-status:          active
-phase:           study
+status:          complete
+phase:           complete
 workflow-step:   code-dev-study
 branch:          (none)
 codebase:        (none)

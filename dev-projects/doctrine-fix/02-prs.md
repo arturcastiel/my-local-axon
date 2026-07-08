@@ -66,20 +66,20 @@ H3 = NARROW (owner, 2026-07-08).
   check it documents, AND validates edge/start referential integrity (catches M2 dangling
   edges at validation, before a run). Tests for each.
 
-## PR-11 — Arming reads real run evidence
-- **Status:** not-started · **Wave:** 3 · **Fixes:** H2, M3
+## PR-11 [MERGED] — Arming reads real run evidence
+- **Status:** merged · **Wave:** 3 · **Fixes:** H2, M3
 - record_clean_run takes the run's state + filters receipts by run_id; a halted or
   receiptless run is REFUSED as evidence; run-scoped, not the global ledger. Test: a halted
   run is not counted; a fabricated run-id is rejected.
 
-## PR-12 — Chain + host-mirror honesty
-- **Status:** not-started · **Wave:** 3 · **Fixes:** M5, L3
+## PR-12 [MERGED] — Chain + host-mirror honesty
+- **Status:** merged · **Wave:** 3 · **Fixes:** M5, L3
 - Either make the host-mirror (Stop-hook, agent-unreachable) the row verify_chain actually
   consults for unattended evidence, or narrow the "tamper-evident" claim to naive-tamper +
   document the re-chaining limit. host-mirror is consumed-or-cut (no decorative code).
 
-## PR-13 — Real-path tests + program behavioral test
-- **Status:** not-started · **Wave:** 3 · **Fixes:** test-quality root-cause, L1
+## PR-13 [MERGED] — Real-path tests + program behavioral test
+- **Status:** merged · **Wave:** 3 · **Fixes:** test-quality root-cause, L1
 - Replace monkeypatch-run_active in security tests with fixtures that build a real grant in
   the myaxon _resolve_myaxon actually finds, so run_active is genuinely True; add a behavioral
   test that drives the doctrine-run PROGRAM (not just the tool) through a happy + a halt path;
