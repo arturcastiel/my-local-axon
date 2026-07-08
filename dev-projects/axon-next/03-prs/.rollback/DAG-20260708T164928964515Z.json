@@ -109,7 +109,7 @@
       "kind": "pr",
       "name": "Derived DAG ledger + mermaid fluxogram",
       "label": "Derived DAG ledger + mermaid fluxogram",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -117,7 +117,7 @@
       "kind": "pr",
       "name": "Doctrine runner: bound execution, receipts, the wall",
       "label": "Doctrine runner: bound execution, receipts, the wall",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {

@@ -3,7 +3,7 @@
   "schema-version": "v1",
   "level": "plan",
   "owner": "project:axon-next",
-  "generated": "2026-07-08T16:39:14Z",
+  "generated": "2026-07-08T16:49:29Z",
   "generator": "tools/dag.py",
   "validated": true,
   "critical-path": [],
@@ -101,7 +101,7 @@
       "kind": "pr",
       "name": "Validation preflight + activation stage 2",
       "label": "Validation preflight + activation stage 2",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -109,7 +109,7 @@
       "kind": "pr",
       "name": "Derived DAG ledger + mermaid fluxogram",
       "label": "Derived DAG ledger + mermaid fluxogram",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -117,7 +117,7 @@
       "kind": "pr",
       "name": "Doctrine runner: bound execution, receipts, the wall",
       "label": "Doctrine runner: bound execution, receipts, the wall",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -125,7 +125,7 @@
       "kind": "pr",
       "name": "S7b current-node op-class gate + scope binding",
       "label": "S7b current-node op-class gate + scope binding",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -133,7 +133,7 @@
       "kind": "pr",
       "name": "Unattended arming: evidence-gated promotion",
       "label": "Unattended arming: evidence-gated promotion",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {

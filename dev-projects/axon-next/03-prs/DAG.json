@@ -3,7 +3,7 @@
   "schema-version": "v1",
   "level": "plan",
   "owner": "project:axon-next",
-  "generated": "2026-07-08T16:39:14Z",
+  "generated": "2026-07-08T16:49:29Z",
   "generator": "tools/dag.py",
   "validated": true,
   "critical-path": [],
@@ -125,7 +125,7 @@
       "kind": "pr",
       "name": "S7b current-node op-class gate + scope binding",
       "label": "S7b current-node op-class gate + scope binding",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -133,7 +133,7 @@
       "kind": "pr",
       "name": "Unattended arming: evidence-gated promotion",
       "label": "Unattended arming: evidence-gated promotion",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -141,7 +141,7 @@
       "kind": "pr",
       "name": "External-repo E2E proof + docs + v2 stub",
       "label": "External-repo E2E proof + docs + v2 stub",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     }
   ],
