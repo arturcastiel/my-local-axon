@@ -18,7 +18,7 @@
       "deps": [
         "study"
       ],
-      "status": "pending",
+      "status": "done",
       "outputs": [
         "02-plan.md",
         "02-prs.md",
@@ -62,5 +62,5 @@
       ]
     }
   ],
-  "updated": "2026-07-08T07:30:45.184661+00:00"
+  "updated": "2026-07-08T12:03:28.311881+00:00"
 }

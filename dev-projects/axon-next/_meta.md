@@ -3,7 +3,7 @@ slug:            axon-next
 schema-version:  v4
 status:          active
 legacy:          false
-phase:           study
+phase:           pr
 workflow-step:   build
 branch:          main
 codebase:        /home/arturcastiel/projects/new-axon/axon
@@ -54,4 +54,14 @@ updated:         2026-07-08
   format (dag.py + typed nodes + conditional edges) bound by workflow_run.advance +
   loop_contract; fail-closed activation is NEW enforcement (G1); TTL must deny via
   authorized() without disarming unattended enforcement (G6 tension).
-- Next: code-dev plan (council pass per standing rigor) when the owner is ready.
+- PLAN COMPLETE 2026-07-08 (owner: "continue"; council-REBUILT). 02-plan.md + 02-prs.md
+  (17 PRs / 4 waves) + 02-phases/ + 03-prs/DAG.json (17 nodes, verify ok) + ADR-001
+  (D1 FORMAT FLIP: doctrine graph authored as workflow YAML, DAG.json a one-way derived
+  ledger — council overturned the study's extend-dag.py lean with source evidence).
+  Locked: D2 unattended = evidence-gated promotion (3 clean attended runs) · D3 deviation
+  v1 = halt-and-handoff only · D4 budget unit = node-completions. Council blockers all
+  in-plan: grant⟷doctrine binding (PR-008), real G1c barrier (PR-002), S7b node-op-class
+  gate (PR-015), hash-chained receipts + host mirror (PR-004/016), human-only TTL renew
+  (PR-003), integrity manifest covers AUTONOMY.md (PR-005, gates the spine), walking
+  skeleton (PR-009). Step-0 reversal recorded: aegis resolve() HAS 2 production callers.
+- Next: code-dev pr 1 / implementation (waves A→D, full suite per PR, per the drill).
