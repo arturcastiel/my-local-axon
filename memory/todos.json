@@ -137,10 +137,10 @@
     "id": "1b03a09c",
     "text": "general-bugfix follow-up A: migrate the 27 literal _meta REPLACE call-sites to TOOL(meta, set), then flip residue-lint WARN\u2192BLOCK (its promotes_on condition). Census: residue-lint report.",
     "due": "",
-    "status": "open",
+    "status": "done",
     "bindings": [],
     "created": "2026-06-11",
-    "done_ts": ""
+    "done_ts": "2026-07-07"
   },
   {
     "id": "481824b2",
