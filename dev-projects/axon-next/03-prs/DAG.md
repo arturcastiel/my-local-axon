@@ -2,7 +2,7 @@
 # DAG · plan · project:axon-next
 
 - schema-version: `v1`
-- generated:      `2026-07-08T12:03:28Z`
+- generated:      `2026-07-08T14:00:32Z`
 - generator:      `tools/dag.py`
 - nodes:          17
 - edges:          23
@@ -12,11 +12,11 @@
 
 | id | kind | name | label | status |
 |----|------|------|-------|--------|
-| PR-001 | pr | Deletion-verb gate coverage: verbs, wrappers, interpreters, bulk threshold | Deletion-verb gate coverage: verbs, wrappers, interpreters, bulk threshold | pending |
-| PR-002 | pr | Build G1c for real: the cited write-barrier | Build G1c for real: the cited write-barrier | pending |
-| PR-003 | pr | Grant TTL + human-only renewal + ledger reconciliation | Grant TTL + human-only renewal + ledger reconciliation | pending |
-| PR-004 | pr | Receipts v1.1: one enum bump, hash-chain, destructive wrapping | Receipts v1.1: one enum bump, hash-chain, destructive wrapping | pending |
-| PR-005 | pr | Program-integrity manifest incl. AUTONOMY.md + run graphs | Program-integrity manifest incl. AUTONOMY.md + run graphs | pending |
+| PR-001 | pr | Deletion-verb gate coverage: verbs, wrappers, interpreters, bulk threshold | Deletion-verb gate coverage: verbs, wrappers, interpreters, bulk threshold | merged |
+| PR-002 | pr | Build G1c for real: the cited write-barrier | Build G1c for real: the cited write-barrier | merged |
+| PR-003 | pr | Grant TTL + human-only renewal + ledger reconciliation | Grant TTL + human-only renewal + ledger reconciliation | merged |
+| PR-004 | pr | Receipts v1.1: one enum bump, hash-chain, destructive wrapping | Receipts v1.1: one enum bump, hash-chain, destructive wrapping | merged |
+| PR-005 | pr | Program-integrity manifest incl. AUTONOMY.md + run graphs | Program-integrity manifest incl. AUTONOMY.md + run graphs | merged |
 | PR-006 | pr | AUTONOMY.md format, template, parser, anchor | AUTONOMY.md format, template, parser, anchor | pending |
 | PR-007 | pr | Activation interview: four-artifact transaction | Activation interview: four-artifact transaction | pending |
 | PR-008 | pr | Fail-closed activation stage 1 + grant-doctrine binding | Fail-closed activation stage 1 + grant-doctrine binding | pending |
