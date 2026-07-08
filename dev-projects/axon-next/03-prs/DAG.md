@@ -2,7 +2,7 @@
 # DAG · plan · project:axon-next
 
 - schema-version: `v1`
-- generated:      `2026-07-08T16:39:14Z`
+- generated:      `2026-07-08T16:49:29Z`
 - generator:      `tools/dag.py`
 - nodes:          17
 - edges:          23
@@ -26,9 +26,9 @@
 | PR-012 | pr | Validation preflight + activation stage 2 | Validation preflight + activation stage 2 | merged |
 | PR-013 | pr | Derived DAG ledger + mermaid fluxogram | Derived DAG ledger + mermaid fluxogram | merged |
 | PR-014 | pr | Doctrine runner: bound execution, receipts, the wall | Doctrine runner: bound execution, receipts, the wall | merged |
-| PR-015 | pr | S7b current-node op-class gate + scope binding | S7b current-node op-class gate + scope binding | pending |
-| PR-016 | pr | Unattended arming: evidence-gated promotion | Unattended arming: evidence-gated promotion | pending |
-| PR-017 | pr | External-repo E2E proof + docs + v2 stub | External-repo E2E proof + docs + v2 stub | pending |
+| PR-015 | pr | S7b current-node op-class gate + scope binding | S7b current-node op-class gate + scope binding | merged |
+| PR-016 | pr | Unattended arming: evidence-gated promotion | Unattended arming: evidence-gated promotion | merged |
+| PR-017 | pr | External-repo E2E proof + docs + v2 stub | External-repo E2E proof + docs + v2 stub | merged |
 
 ## Edges
 

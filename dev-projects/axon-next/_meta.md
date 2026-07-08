@@ -1,9 +1,9 @@
 # Project: AXON Next — council follow-ups
 slug:            axon-next
 schema-version:  v4
-status:          active
+status:          complete
 legacy:          false
-phase:           pr
+phase:           complete
 workflow-step:   build
 branch:          main
 codebase:        /home/arturcastiel/projects/new-axon/axon
