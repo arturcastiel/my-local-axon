@@ -37,7 +37,7 @@
       "kind": "pr",
       "name": "Receipts v1.1: one enum bump, hash-chain, destructive wrapping",
       "label": "Receipts v1.1: one enum bump, hash-chain, destructive wrapping",
-      "status": "merged",
+      "status": "pending",
       "child-dag": null
     },
     {
@@ -45,7 +45,7 @@
       "kind": "pr",
       "name": "Program-integrity manifest incl. AUTONOMY.md + run graphs",
       "label": "Program-integrity manifest incl. AUTONOMY.md + run graphs",
-      "status": "merged",
+      "status": "pending",
       "child-dag": null
     },
     {
