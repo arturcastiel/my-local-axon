@@ -23,27 +23,27 @@ H3 = NARROW (owner, 2026-07-08).
   the RUN (not "every op"); barrier/arming/chain claims scoped to what a test proves. M7:
   autonomy_doc.parse strips inline header comments (`.split("#")[0]`).
 
-## PR-04 — Arm the G1c barrier for real
-- **Status:** not-started · **Wave:** 1 · **Fixes:** C2
+## PR-04 [MERGED] — Arm the G1c barrier for real
+- **Status:** merged · **Wave:** 1 · **Fixes:** C2
 - sitecustomize.py arms write_barrier when AXON_WB_ARM=1 (runs for `python -c`/-m, unlike
   PYTHONSTARTUP); shell.cmd_exec sets the flag for unattended runs. write_barrier._protected_hit
   uses path-segment matching (not `/axon` substring). Real test: a child through cmd_exec runs
   a computed-path shutil.rmtree of a protected dir → refused, non-zero exit.
 
-## PR-05 — Move the node-gate state out of agent-writable space
-- **Status:** not-started · **Wave:** 1 · **Fixes:** H4a
+## PR-05 [MERGED] — Move the node-gate state out of agent-writable space
+- **Status:** merged · **Wave:** 1 · **Fixes:** H4a
 - doctrine-current-node.json → axon/state via the _axon_io whitelisted-actor write (like
   loop_receipt), so the agent can't forge op_class. shell._enforce_doctrine_node reads the
   gated location.
 
-## PR-06 — S7b engages for any active doctrine run
-- **Status:** not-started · **Wave:** 1 · **Fixes:** H4b
+## PR-06 [MERGED] — S7b engages for any active doctrine run
+- **Status:** merged · **Wave:** 1 · **Fixes:** H4b
 - _enforce_doctrine_node fires when a doctrine run is active (attended OR unattended), keyed
   on the (gated) current-node record + a live run — not on run_active alone. Real-run test
   (no monkeypatch): start a run at a read-class node, assert a write raises doctrine-node.
 
-## PR-07 — Integrity: fail on injected adds + cover the real artifacts
-- **Status:** not-started · **Wave:** 1 · **Fixes:** M6, M10
+## PR-07 [MERGED] — Integrity: fail on injected adds + cover the real artifacts
+- **Status:** merged · **Wave:** 1 · **Fixes:** M6, M10
 - program_integrity: an unblessed NEW power-file under a covered root is a FAILURE (not just
   advisory); fix the globs to the actual run artifacts (run-*.dag.json) and resolve the
   DAG.json schema collision (doctrine ledger keeps its own name/schema, never 03-prs/DAG.json).
