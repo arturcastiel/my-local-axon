@@ -38,5 +38,20 @@ updated:         2026-07-08
     Substrate to reuse: autonomous_mode grants, AEGIS _policy, tools/dag.py, workflow-runner
     rigid traversal + kernel R_WORKFLOW_NODE_ORDER, phase_model, loop receipts.
     T3's guards (deletion verbs, TTL, integrity tripwire) = the doctrine's mechanical floor.
-- Next: owner answers the 4 doctrine design questions → code-dev study (autonomy stack +
-  T3 surfaces + DAG/workflow substrate) → plan.
+  DESIGN LOCKED (owner answers, 2026-07-08):
+    Q1 granularity → AXON-CONTROLLED: owner gives the mission input; AXON proposes the
+      autonomy routine and translates it into the DAG; the DAG is VALIDATED against the
+      program/project itself; if valid, the run proceeds UNTIL END.
+    Q2 execution mode → ALL: attended AND unattended both in scope.
+    Q3 deviation policy → in scope, per-project configurable: the interview lets the user
+      set it, AXON suggests defaults (default = bounded self-repair for reversible ops,
+      mandatory halt-and-handoff for risk-tiered ops).
+    Q4 doc lifetime → standing AUTONOMY.md per project + per-run DAG instances.
+- STUDY COMPLETE 2026-07-08 (self-grade 9/10, one fan-out round; 2 load-bearing claims
+  re-verified at synthesis). 01-study.md: substrate map (doctrine ≈70% assembly), 12-entry
+  verified gap register (G1-G12), 10 extension seams (S1-S10), 5 plan priorities.
+  Headline: extend autonomy-contract into the four-artifact transaction; ONE doctrine graph
+  format (dag.py + typed nodes + conditional edges) bound by workflow_run.advance +
+  loop_contract; fail-closed activation is NEW enforcement (G1); TTL must deny via
+  authorized() without disarming unattended enforcement (G6 tension).
+- Next: code-dev plan (council pass per standing rigor) when the owner is ready.

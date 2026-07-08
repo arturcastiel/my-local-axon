@@ -6,7 +6,7 @@
       "name": "Study",
       "order": 1,
       "deps": [],
-      "status": "pending",
+      "status": "done",
       "outputs": [
         "01-study.md"
       ]
@@ -62,5 +62,5 @@
       ]
     }
   ],
-  "updated": "2026-07-07T20:09:52.852973+00:00"
+  "updated": "2026-07-08T07:30:45.184661+00:00"
 }
