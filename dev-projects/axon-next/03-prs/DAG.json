@@ -3,7 +3,7 @@
   "schema-version": "v1",
   "level": "plan",
   "owner": "project:axon-next",
-  "generated": "2026-07-08T14:00:32Z",
+  "generated": "2026-07-08T14:23:03Z",
   "generator": "tools/dag.py",
   "validated": true,
   "critical-path": [],
@@ -53,7 +53,7 @@
       "kind": "pr",
       "name": "AUTONOMY.md format, template, parser, anchor",
       "label": "AUTONOMY.md format, template, parser, anchor",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -61,7 +61,7 @@
       "kind": "pr",
       "name": "Activation interview: four-artifact transaction",
       "label": "Activation interview: four-artifact transaction",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -69,7 +69,7 @@
       "kind": "pr",
       "name": "Fail-closed activation stage 1 + grant-doctrine binding",
       "label": "Fail-closed activation stage 1 + grant-doctrine binding",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -77,7 +77,7 @@
       "kind": "pr",
       "name": "Walking skeleton: one tiny mission end-to-end",
       "label": "Walking skeleton: one tiny mission end-to-end",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
