@@ -49,19 +49,19 @@ H3 = NARROW (owner, 2026-07-08).
   DAG.json schema collision (doctrine ledger keeps its own name/schema, never 03-prs/DAG.json).
   Staged promotion note updated.
 
-## PR-08 — The proposer: a run can actually start
-- **Status:** not-started · **Wave:** 2 · **Fixes:** B1
+## PR-08 [MERGED] — The proposer: a run can actually start
+- **Status:** merged · **Wave:** 2 · **Fixes:** B1
 - A proposer step/tool authors a routine YAML from the project (or accepts an owner-supplied
   one) and STOREs W:doctrine-routine; wire it as the first FLOW step of doctrine-run.md so the
   program no longer HALTs on line 1. A test drives propose→routine-exists.
 
-## PR-09 — Program run-head fixes
-- **Status:** not-started · **Wave:** 2 · **Fixes:** B2, M4, M9
+## PR-09 [MERGED] — Program run-head fixes
+- **Status:** merged · **Wave:** 2 · **Fixes:** B2, M4, M9
 - doctrine-run.md: derive `project-dir ← "{W:myaxon-dev-projects}/{RETRIEVE(W:code-dev-project)}"`;
   phase-ledger calls carry --program; CLEAR the current-node record at run end (teardown).
 
-## PR-10 — Preflight completeness
-- **Status:** not-started · **Wave:** 2 · **Fixes:** M1
+## PR-10 [MERGED] — Preflight completeness
+- **Status:** merged · **Wave:** 2 · **Fixes:** M1
 - doctrine_preflight runs the schema check (workflow-file.schema) + the _dont-do prohibition
   check it documents, AND validates edge/start referential integrity (catches M2 dangling
   edges at validation, before a run). Tests for each.
