@@ -32,3 +32,12 @@ project: axon-next · phase: study (pending T4 scope conversation) · source: st
   OBEYED) + evidence-gated arming + host-mirror receipts + e2e proof + docs + v2 stub (D).
   code-graph exporter caught 2 real self-bugs mid-run. doctrine-v2 project stub carries all
   deferrals. DONE.
+
+- AUDIT 2026-07-08: 4-seat adversarial council over the SHIPPED doctrine + AXON Step-0
+  re-verify. Found 21 real defects (B1-B2 blocker, C1-C3 critical, H1-H4 high, M1-M10, L1-L3);
+  the sharpest Step-0-confirmed: bulk-delete gate INVERTED (truthiness), G1c barrier DEAD
+  CODE (preamble consumed by nothing), anti-self-renew misses grant_on (self-mint master
+  key), W:doctrine-routine never set (run DOA), arming gate hollow (empty ws arms).
+  Deterministic tool layer holds; unattended-arming GUARANTEES defeated. Seat scores
+  2/4/4/1. 05-audit.md written. Recommendation: dedicated bugfix project; retract
+  unattended claims meanwhile. The completion summary oversold — retracted.
