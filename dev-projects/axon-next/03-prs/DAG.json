@@ -3,7 +3,7 @@
   "schema-version": "v1",
   "level": "plan",
   "owner": "project:axon-next",
-  "generated": "2026-07-08T14:23:03Z",
+  "generated": "2026-07-08T16:39:14Z",
   "generator": "tools/dag.py",
   "validated": true,
   "critical-path": [],
@@ -85,7 +85,7 @@
       "kind": "pr",
       "name": "Workflow schema: outputs legalized, typed node kinds",
       "label": "Workflow schema: outputs legalized, typed node kinds",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -93,7 +93,7 @@
       "kind": "pr",
       "name": "Goal-ctx bridge + deterministic resolve-next",
       "label": "Goal-ctx bridge + deterministic resolve-next",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -101,7 +101,7 @@
       "kind": "pr",
       "name": "Validation preflight + activation stage 2",
       "label": "Validation preflight + activation stage 2",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -109,7 +109,7 @@
       "kind": "pr",
       "name": "Derived DAG ledger + mermaid fluxogram",
       "label": "Derived DAG ledger + mermaid fluxogram",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -117,7 +117,7 @@
       "kind": "pr",
       "name": "Doctrine runner: bound execution, receipts, the wall",
       "label": "Doctrine runner: bound execution, receipts, the wall",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {

@@ -3,7 +3,7 @@
   "schema-version": "v1",
   "level": "plan",
   "owner": "project:axon-next",
-  "generated": "2026-07-08T14:23:03Z",
+  "generated": "2026-07-08T16:39:14Z",
   "generator": "tools/dag.py",
   "validated": true,
   "critical-path": [],
@@ -61,7 +61,7 @@
       "kind": "pr",
       "name": "Activation interview: four-artifact transaction",
       "label": "Activation interview: four-artifact transaction",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -69,7 +69,7 @@
       "kind": "pr",
       "name": "Fail-closed activation stage 1 + grant-doctrine binding",
       "label": "Fail-closed activation stage 1 + grant-doctrine binding",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -77,7 +77,7 @@
       "kind": "pr",
       "name": "Walking skeleton: one tiny mission end-to-end",
       "label": "Walking skeleton: one tiny mission end-to-end",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -85,7 +85,7 @@
       "kind": "pr",
       "name": "Workflow schema: outputs legalized, typed node kinds",
       "label": "Workflow schema: outputs legalized, typed node kinds",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -93,7 +93,7 @@
       "kind": "pr",
       "name": "Goal-ctx bridge + deterministic resolve-next",
       "label": "Goal-ctx bridge + deterministic resolve-next",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
