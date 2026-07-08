@@ -2,7 +2,7 @@
 # DAG · plan · project:axon-next
 
 - schema-version: `v1`
-- generated:      `2026-07-08T14:00:32Z`
+- generated:      `2026-07-08T14:23:03Z`
 - generator:      `tools/dag.py`
 - nodes:          17
 - edges:          23
@@ -17,10 +17,10 @@
 | PR-003 | pr | Grant TTL + human-only renewal + ledger reconciliation | Grant TTL + human-only renewal + ledger reconciliation | merged |
 | PR-004 | pr | Receipts v1.1: one enum bump, hash-chain, destructive wrapping | Receipts v1.1: one enum bump, hash-chain, destructive wrapping | merged |
 | PR-005 | pr | Program-integrity manifest incl. AUTONOMY.md + run graphs | Program-integrity manifest incl. AUTONOMY.md + run graphs | merged |
-| PR-006 | pr | AUTONOMY.md format, template, parser, anchor | AUTONOMY.md format, template, parser, anchor | pending |
-| PR-007 | pr | Activation interview: four-artifact transaction | Activation interview: four-artifact transaction | pending |
-| PR-008 | pr | Fail-closed activation stage 1 + grant-doctrine binding | Fail-closed activation stage 1 + grant-doctrine binding | pending |
-| PR-009 | pr | Walking skeleton: one tiny mission end-to-end | Walking skeleton: one tiny mission end-to-end | pending |
+| PR-006 | pr | AUTONOMY.md format, template, parser, anchor | AUTONOMY.md format, template, parser, anchor | merged |
+| PR-007 | pr | Activation interview: four-artifact transaction | Activation interview: four-artifact transaction | merged |
+| PR-008 | pr | Fail-closed activation stage 1 + grant-doctrine binding | Fail-closed activation stage 1 + grant-doctrine binding | merged |
+| PR-009 | pr | Walking skeleton: one tiny mission end-to-end | Walking skeleton: one tiny mission end-to-end | merged |
 | PR-010 | pr | Workflow schema: outputs legalized, typed node kinds | Workflow schema: outputs legalized, typed node kinds | pending |
 | PR-011 | pr | Goal-ctx bridge + deterministic resolve-next | Goal-ctx bridge + deterministic resolve-next | pending |
 | PR-012 | pr | Validation preflight + activation stage 2 | Validation preflight + activation stage 2 | pending |

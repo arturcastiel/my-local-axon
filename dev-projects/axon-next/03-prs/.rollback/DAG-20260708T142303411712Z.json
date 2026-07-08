@@ -3,7 +3,7 @@
   "schema-version": "v1",
   "level": "plan",
   "owner": "project:axon-next",
-  "generated": "2026-07-08T14:00:32Z",
+  "generated": "2026-07-08T14:23:03Z",
   "generator": "tools/dag.py",
   "validated": true,
   "critical-path": [],
@@ -29,7 +29,7 @@
       "kind": "pr",
       "name": "Grant TTL + human-only renewal + ledger reconciliation",
       "label": "Grant TTL + human-only renewal + ledger reconciliation",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -37,7 +37,7 @@
       "kind": "pr",
       "name": "Receipts v1.1: one enum bump, hash-chain, destructive wrapping",
       "label": "Receipts v1.1: one enum bump, hash-chain, destructive wrapping",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -45,7 +45,7 @@
       "kind": "pr",
       "name": "Program-integrity manifest incl. AUTONOMY.md + run graphs",
       "label": "Program-integrity manifest incl. AUTONOMY.md + run graphs",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -53,7 +53,7 @@
       "kind": "pr",
       "name": "AUTONOMY.md format, template, parser, anchor",
       "label": "AUTONOMY.md format, template, parser, anchor",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
@@ -61,7 +61,7 @@
       "kind": "pr",
       "name": "Activation interview: four-artifact transaction",
       "label": "Activation interview: four-artifact transaction",
-      "status": "pending",
+      "status": "merged",
       "child-dag": null
     },
     {
