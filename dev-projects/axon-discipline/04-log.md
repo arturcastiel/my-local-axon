@@ -15,3 +15,4 @@ lesson, the mechanical-vs-judgment diagnosis, the existing-substrate inventory, 
 7-principle methodology, and the 4-phase adoption path. Nothing built yet — `code-dev study`/`plan`/`pr`
 have not run. Seed material: phases/1-foundations/01-study.md; charter: masterplan.md; constraints:
 _dont-do-seeds.md.
+- 2026-07-09: pointer-repair (axon-stale-pointers): custom phase '1-foundations' registered in _phases.json (was split-brain: meta named a phase the manifest never knew)

@@ -1,0 +1,101 @@
+---
+tags: [code, file]
+path: tools/predicate.py
+---
+
+# tools/predicate.py
+
+> 88 symbol(s) · 1 outbound file dependency(ies)
+
+## Symbols
+- `.__init__()`
+- `.__init__()`
+- `.__init__()`
+- `.accept()`
+- `.comparison()`
+- `.conjunction()`
+- `.disjunction()`
+- `.eat()`
+- `.ident_expr()`
+- `.implication()`
+- `.list_literal()`
+- `.negation()`
+- `.parse()`
+- `.peek()`
+- `.value()`
+- `And`
+- `Any`
+- `Call`
+- `Cmp`
+- `EvalError`
+- `Implies`
+- `Lit`
+- `Not`
+- `Or`
+- `ParseError`
+- `Parser`
+- `Ref`
+- `Token`
+- `True iff a ctest run passed (mirrors tests.passing but for cmake/ctest).`
+- `True iff a tests run completed AND no tests failed.      Reads ctx['tests'] whic`
+- `True iff at least one ctest test failed.`
+- `True iff at least one test failed in the most recent run.`
+- `True iff breaking changes exist WITHOUT a matching major version bump.`
+- `True iff ctx['audit']['complete'] or ctx['audit'] == 'complete'.`
+- `True iff ctx['build']['status'] == 'green' or ctx['build'] == 'green'.`
+- `True iff ctx['goal']['acceptance']['met'] is truthy.`
+- `True iff ctx['goal']['rejection']['met'] is truthy.`
+- `True iff ctx['review']['passed'] or ctx['review'] == 'passed'.`
+- `True iff every planned PR is implemented/merged. ctx['prs'] may be     {total, i`
+- `True iff the api-diff reports no breaking changes.`
+- `True iff the changelog was updated for this change-set.`
+- `True iff the last build failed. NOT simply `not build.green` — an ABSENT     bui`
+- `True iff the lint run passed (ruff/clang-tidy/etc — tool-agnostic ctx['lint']).`
+- `True iff the lint run reported at least one error.`
+- `True iff the review recorded at least one objection / requested changes.`
+- `TypeMismatch`
+- `Walk ctx by dotted path; return _truthy(value) or False on miss.`
+- `_builtin_api_diff_breaking_unbumped()`
+- `_builtin_api_diff_compatible()`
+- `_builtin_audit_complete()`
+- `_builtin_build_failing()`
+- `_builtin_build_green()`
+- `_builtin_changelog_updated()`
+- `_builtin_count()`
+- `_builtin_ctest_failing()`
+- `_builtin_ctest_passing()`
+- `_builtin_dir_exists()`
+- `_builtin_file_contains()`
+- `_builtin_file_exists()`
+- `_builtin_file_mtime()`
+- `_builtin_file_readable()`
+- `_builtin_file_size()`
+- `_builtin_file_writable()`
+- `_builtin_glob_all()`
+- `_builtin_glob_first()`
+- `_builtin_goal_acceptance_met()`
+- `_builtin_goal_rejection_met()`
+- `_builtin_lint_failing()`
+- `_builtin_lint_passing()`
+- `_builtin_prs_all_implemented()`
+- `_builtin_review_has_objections()`
+- `_builtin_review_passed()`
+- `_builtin_tests_failing()`
+- `_builtin_tests_passing()`
+- `_constant()`
+- `_ctx_path_truthy()`
+- `_ctx_path_value()`
+- `_interpolate()`
+- `_resolve_ref()`
+- `_truthy()`
+- `_unquote()`
+- `evaluate()`
+- `evaluate_expr()`
+- `main()`
+- `parse()`
+- `predicate — parser + AST + evaluator for AXON predicate language v1.1.  Implemen`
+- `predicate.py`
+- `tokenize()`
+
+## Depends on
+- [[_unknown_]]

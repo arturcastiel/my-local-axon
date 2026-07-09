@@ -41,3 +41,4 @@ project: axon-next · phase: study (pending T4 scope conversation) · source: st
   Deterministic tool layer holds; unattended-arming GUARANTEES defeated. Seat scores
   2/4/4/1. 05-audit.md written. Recommendation: dedicated bugfix project; retract
   unattended claims meanwhile. The completion summary oversold — retracted.
+- 2026-07-09: pointer-repair (axon-stale-pointers): pending phases retro-stamped done --force — RATIONALE: this log records delivery/completion; the manifest was never advanced at the time (the silent-pending class). Force is recorded here per repair rules.

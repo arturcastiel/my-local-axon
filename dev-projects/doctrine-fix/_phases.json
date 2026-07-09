@@ -24,7 +24,7 @@
       "deps": [
         "plan"
       ],
-      "status": "pending"
+      "status": "done"
     },
     {
       "id": "log",
@@ -33,7 +33,7 @@
       "deps": [
         "pr"
       ],
-      "status": "pending"
+      "status": "done"
     },
     {
       "id": "audit",
@@ -42,8 +42,8 @@
       "deps": [
         "log"
       ],
-      "status": "pending"
+      "status": "done"
     }
   ],
-  "updated": "2026-07-08T19:23:29.246847+00:00"
+  "updated": "2026-07-09T11:04:01.725594+00:00"
 }

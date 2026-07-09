@@ -1,0 +1,2 @@
+- 2026-07-09: pointer-repair (axon-stale-pointers): _meta status complete->active — the complete claim had NO delivery evidence in this log and 5/5 manifest phases pending; claim withdrawn rather than retro-stamped.
+- 2026-07-09: pointer-repair: custom phase '3-resweep-fixes' registered in _phases.json (second split-brain behind the withdrawn complete claim).

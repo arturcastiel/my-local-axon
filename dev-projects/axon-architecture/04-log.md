@@ -88,3 +88,5 @@ without an execution-test safety net for the program layer, solo-forcing them vi
 - Escalate `verify_stop` log-only → `exit 2` (one line) for hard per-turn BLOCK, once false-positive-free.
 - Decide whether the repo-wide hook should gate non-AXON sessions (currently persona-scoped off).
 - The 3 flags are ON in this checkout (runtime/per-deployment); set them in any other deployment to enforce.
+- 2026-07-09: pointer-repair (axon-stale-pointers): _meta.phase advanced to 'audit' (was behind a done phase)
+- 2026-07-09: pointer-repair (axon-stale-pointers): status active->complete — MANIFEST-BACKED closeout (every phase done); the project was finished but never closed out (the inverse of the unbacked-claim class).

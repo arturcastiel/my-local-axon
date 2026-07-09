@@ -1,0 +1,64 @@
+{
+  "schema": "axon-dag",
+  "schema-version": "v1",
+  "level": "plan",
+  "owner": "project:axon-stale-pointers",
+  "generated": "2026-07-09T07:46:24Z",
+  "generator": "tools/dag.py",
+  "validated": true,
+  "critical-path": [],
+  "nodes": [
+    {
+      "id": "PR-001",
+      "kind": "pr",
+      "name": "Add pointer-coherence sweep to self-care",
+      "label": "Add pointer-coherence sweep to self-care",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-002",
+      "kind": "pr",
+      "name": "Surface lint at menu + guard resume offer",
+      "label": "Surface lint at menu + guard resume offer",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-003",
+      "kind": "pr",
+      "name": "Loud completion: complete route + escalation",
+      "label": "Loud completion: complete route + escalation",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-004",
+      "kind": "pr",
+      "name": "conftest.py test-run stamp",
+      "label": "conftest.py test-run stamp",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-005",
+      "kind": "pr",
+      "name": "Repair stale records + docs/changelog",
+      "label": "Repair stale records + docs/changelog",
+      "status": "pending",
+      "child-dag": null
+    }
+  ],
+  "edges": [
+    {
+      "from": "PR-001",
+      "to": "PR-002",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-001",
+      "to": "PR-005",
+      "kind": "depends"
+    }
+  ]
+}

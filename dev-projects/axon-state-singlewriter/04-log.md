@@ -26,3 +26,5 @@ was never polluted. Lesson reinforced: **branch BEFORE the first edit, every tim
 A broad static "no raw longterm write anywhere" scanner was considered for PR-3 and rejected as fragile
 (L: paths are constructed too many ways to match robustly). The behavioural parity test (format) + the
 targeted delegation lock (the two known writers) are the regression net.
+- 2026-07-09: pointer-repair (axon-stale-pointers): _meta.phase advanced to 'audit' (was behind a done phase)
+- 2026-07-09: pointer-repair (axon-stale-pointers): status active->complete — MANIFEST-BACKED closeout (every phase done); the project was finished but never closed out (the inverse of the unbacked-claim class).

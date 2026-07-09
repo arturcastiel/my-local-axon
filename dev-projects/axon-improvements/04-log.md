@@ -1,0 +1,1 @@
+- 2026-07-09: pointer-repair (axon-stale-pointers): custom phase 'tracking' registered in _phases.json (was split-brain: meta named a phase the manifest never knew)

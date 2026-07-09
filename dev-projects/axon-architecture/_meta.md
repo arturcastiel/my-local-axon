@@ -1,9 +1,9 @@
 # Project: AXON Architecture — flawless, maintainable, enforcement-real
 slug:            axon-architecture
 schema-version:  v4
-status:          active
+status:          complete
 legacy:          false
-phase:           1-study
+phase:           audit
 workflow-step:   study
 branch:          main
 codebase:        /home/arturcastiel/projects/new-axon/axon

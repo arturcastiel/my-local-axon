@@ -1,8 +1,8 @@
 # Project: axon-compile-decision
 slug:            axon-compile-decision
 schema-version:  v4
-status:          active
-phase:           1-study
+status:          complete
+phase:           audit
 workflow-step:   study
 branch:          main
 codebase:        /home/arturcastiel/projects/new-axon/axon

@@ -1,0 +1,113 @@
+---
+tags: [code, file]
+path: workspace/programs/workflow-run.md
+---
+
+# workspace/programs/workflow-run.md
+
+> 100 symbol(s) · 0 outbound file dependency(ies)
+
+## Symbols
+- `"workspace" is the same`
+- `#2 — after an ADAPTIVE run, surface the always-available promote path so a good ad-hoc`
+- `(R_STATE_SURFACED discipline): which step of how many · the synapse role · WHY this node`
+- `(workflow-file schema) and is what workflow-validate cross-checks; relying on`
+- `- Example (manual nested invocation, normally done by the parent loop):`
+- `- Honours execution-mode: fixed (strict traversal) and adaptive (deviation allowance +`
+- `- When a synapse declares `sub-workflow: <name>`, the LOOP body re-enters`
+- `A `--name` run resolves `path` into this LOCAL only; STORE it back so any later W:_workflow-run-path`
+- `ACCEPTANCE-CHECK`
+- `ACCEPTANCE-PREFLIGHT`
+- `AXON binds each flag to W:_<prog>-<flag>, so `--dry` arrives as W:_workflow-run-dry.`
+- `Banner + per-step trace + final status line rendered through OUTPUT.`
+- `C2/C3: a LOOPING parent passes a per-lap visit index so each lap's nested run gets its own`
+- `Concrete workspace root for the run-trajectory store (record-step / promote / advance key off it).`
+- `DRY MODE — `--dry` is the documented alias for workflow-simulate (HELP above).`
+- `EXECUTE`
+- `Enter at the AUTHORED start node, not array order. `start` is a required field`
+- `Fall back to synapses[0] only when start is unset (legacy/start-less files); a SET`
+- `Fixed literal: the old working-key read here was never a defined path-var (lint-path-vars) —`
+- `HELP`
+- `Hybrid descope (ADR-001, axon-bugfix01/H4): hybrid never had implementing logic.`
+- `IDENTITY LOCK`
+- `LOAD + VALIDATE`
+- `NESTED-WORKFLOW CONTEXT (PR-mcd · sub-goal G)`
+- `OUTPUT → PYTHON_FAST · doc`
+- `PR-4.1 (ADR-007) — clear bridge keys so the next free-text turn doesn't`
+- `PR-5.1 — also build ctx for the post-loop check so the result is consistent`
+- `PR-mcd sub-goal G: when invoked as a NESTED workflow-run (parent-run-id+parent-node passed),`
+- `PROGRAM: workflow-run`
+- `PROMOTE MODE (axon-workflow-discipline #2) — tracked adaptive run → proposed FIXED workflow draft`
+- `RESOLVE PATH`
+- `Surfaces workflow_run.promote (built + tested in PR-11 but invoked by NOTHING — a latent`
+- `When a parent workflow-run dispatches a synapse whose `sub-workflow:` field`
+- `Without this branch the flag was silently ignored and the EXECUTE loop below ran a`
+- `Without this, sub-workflow runs would record under their OWN ephemeral`
+- `as adaptive with a WARN, never silently.`
+- `axon workflow-run --name <name>          — look up in workspace/workflows/`
+- `axon workflow-run --name <name> --dry    — same as workflow-simulate`
+- `axon workflow-run --name <sub> --parent-run-id <PRID> --parent-node <PNODE>`
+- `axon workflow-run --name code-dev --parent-run-id mcd-run-42 --parent-node s2`
+- `axon-plus pr-20 — run visibility. The per-step render was a bare one-liner ("→ step: X");`
+- `axon-workflow-discipline #2 — stable per-run id so each step is recorded into a persistent`
+- `budget:`
+- `but unresolvable start FAILs rather than silently running synapses[0].`
+- `cache-prefix: 1024`
+- `contract-version: neuron-contract v1.1`
+- `desc:    Execute a workflow file end-to-end — walks the synapse DAG, dispatching each synapse per its on-complete predicates.`
+- `desc:  Run a workflow file. Reads YAML, walks synapses by on-complete predicates.`
+- `deterministic builder as the in-loop ctx — acceptance criteria read`
+- `dispatch-phrases: run a workflow · execute the workflow · walk the synapse DAG · kick off the flow`
+- `domain: workflow`
+- `family: [workflow]`
+- `full REAL, side-effecting run (EXEC dispatches mutator synapses) — the opposite of`
+- `function-level orphan). A tracked adaptive trajectory (recorded per run-id in EXECUTE below) is`
+- `glossary: AXON-GLOSSARY v2`
+- `guard inspects: workspace/memory/episodic/workflow-traj/{prid}__{pnode}__{wf.name}.json.`
+- `input-cap:    3000`
+- `inputs-count: 3`
+- `invocation_source: [program, user]`
+- `is set, it re-enters workflow-run with --parent-run-id and --parent-node so`
+- `lands at the path workflow-runner's anti-skip guard inspects on the`
+- `next-suggests: [workflow-list, workflow-simulate, workflow-explain]`
+- `nodes). hybrid is DESCOPED (ADR-001, axon-bugfix01/H4) — a hybrid-tagged file runs`
+- `notes:`
+- `on by default — without --parent-run-id/--parent-node the teeth sheath.`
+- `one without the other FAILs). The child derives its run-id from`
+- `output-cap:   1500`
+- `outputs-count: 4`
+- `own edges, so a wrong-but-edge-consistent start runs to completion undetected).`
+- `parent's next advance(). This is what makes the sub-workflow enforcement`
+- `per-step ranked suggestions + orchestrator bridge tick + role:orchestrator dynamic`
+- `precondition: "L:cognition-frame ≡ \"AXON-OS\" AND workflow-path ≠ ∅ AND FILE-EXISTS(workflow-path)"`
+- `promoted into a PROPOSED fixed-workflow draft for human review — the "propose improvements to`
+- `reader sees the resolved file instead of ∅ (an empty W key crashed the advance-guard on --name runs).`
+- `role: composer`
+- `root the tool's own --workspace default resolves to.`
+- `run at the wrong node (and the advance-guard then validates the corrupted graph's`
+- `run-id and the parent's advance s2→s3 would still be refused — the teeth`
+- `so the parent's anti-skip guard finds the recorded trajectory at the path it inspects.`
+- `status: ACTIVE`
+- `sub-trajectory (lap-1 and non-looping nodes leave this ∅ → the bare id, unchanged).`
+- `surface stale workflow candidates in PR-112's suggestion footer.`
+- `synapse:`
+- `tests/audit/prs state, which the old state-only literal never carried.`
+- `the Goal-E pain was "visibility of stuff was bad". Replace it with a narrated state block`
+- `the recorded trajectory lands at the canonical path the runner's anti-skip`
+- `the simulation the user asked for. Route to workflow-simulate (zero EXEC) and stop.`
+- `trajectory (replay + promote). Set ONCE at run start; reused for every record-step below.`
+- `trajectory can become a proposed fixed workflow (the improvement loop fixed-rigidity forces).`
+- `usage: axon workflow-run --path <wf.yml>`
+- `use the canonical sub-trajectory id `{parent}::{node}::{wf.name}` instead of a fresh clock id`
+- `was chosen (fixed=declared / adaptive=ranker / predicate) · what comes next.`
+- `wf.synapses[0] lets an edit that reorders/prepends a synapse silently begin the`
+- `with the in-loop rejection evaluation. axon-bugfix01 (C1 ctx-half): same`
+- `workflow-run with --parent-run-id + --parent-node (the two are paired —`
+- `workflow-run.md`
+- `workflows" capability (R4). The draft is NEVER auto-activated.`
+- `would bite the runner that just did the work.`
+- `{parent-run-id}::{parent-node}::{wf.name} so the recorded trajectory`
+- `— nested invocation (PR-mcd · sub-goal G/H)`
+
+## Depends on
+- (none)

@@ -1650,3 +1650,4 @@ current-pr (none)→PR-9.
   change is OUTSIDE the autonomous grant + outward-facing/irreversible →
   human action (or explicit one-off). gh repo edit ... --visibility public.
 
+- 2026-07-09: pointer-repair (axon-stale-pointers): custom phase '2-faults' registered in _phases.json (was split-brain: meta named a phase the manifest never knew)

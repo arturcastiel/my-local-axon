@@ -1,0 +1,249 @@
+---
+tags: [code, file]
+path: tests/test_tools_kernel.py
+---
+
+# tests/test_tools_kernel.py
+
+> 235 symbol(s) · 2 outbound file dependency(ies)
+
+## Symbols
+- `._add_overdue_job()`
+- `._enable()`
+- `._load()`
+- `._load()`
+- `._load()`
+- `._load()`
+- `._load()`
+- `._probe_headroom()`
+- `._record()`
+- `._seed_drift()`
+- `._seed_index()`
+- `._seed_progs()`
+- `._seed_stable()`
+- `._seed_target()`
+- `._seed_trace()`
+- `._seed_w_keys()`
+- `.test_action_filter()`
+- `.test_active_count_matches_registry()`
+- `.test_add_daily_job()`
+- `.test_append_episodic()`
+- `.test_atomic_write_creates_file()`
+- `.test_atomic_write_creates_parents()`
+- `.test_atomic_write_json_roundtrip()`
+- `.test_atomic_write_no_temp_files_left()`
+- `.test_atomic_write_replaces_existing()`
+- `.test_audit_record_creates_entry()`
+- `.test_audit_record_unknown_actor_fails()`
+- `.test_auto_tune_toggle_off_by_default()`
+- `.test_auto_tune_toggle_on_adjusts_threshold()`
+- `.test_axon_audit_probe_ok()`
+- `.test_boot_no_snapshot_returns_null()`
+- `.test_boot_surfaces_snapshot_summary()`
+- `.test_boot_surfaces_tick()`
+- `.test_check_clean_program()`
+- `.test_check_handles_legacy_list_schema()`
+- `.test_check_returns_overdue_field()`
+- `.test_clean_program_passes()`
+- `.test_clear()`
+- `.test_clear_working()`
+- `.test_compile_write_probe_ok()`
+- `.test_consent_after_asked_flag()`
+- `.test_consent_after_enable()`
+- `.test_consent_default_state()`
+- `.test_correlate_continuation_records_yes()`
+- `.test_correlate_drift_halt_records_no()`
+- `.test_correlate_igap_records_no()`
+- `.test_correlate_skips_if_dispatch_too_old()`
+- `.test_correlate_skips_if_no_recent_dispatch()`
+- `.test_default_workspace_returns_string()`
+- `.test_disable_enable()`
+- `.test_disabled_by_default_skips()`
+- `.test_dispatch_confidence_above_threshold()`
+- `.test_dispatch_probe_ok()`
+- `.test_drift_diverged_halts()`
+- `.test_drift_drifting_continues_with_penalty()`
+- `.test_drift_gate_diverged_matches_cli()`
+- `.test_drift_gate_no_trace()`
+- `.test_emit_returns_id()`
+- `.test_emit_with_payload()`
+- `.test_emit_writes_json()`
+- `.test_enabled_runs_all_actions()`
+- `.test_env_override_ignored_if_path_missing()`
+- `.test_env_override_takes_precedence()`
+- `.test_env_override_without_sentinel_rejected()`
+- `.test_estimate_text()`
+- `.test_events_emit_in_process()`
+- `.test_events_probe_ok()`
+- `.test_excerpts_truncated_to_120_chars()`
+- `.test_fail_basic()`
+- `.test_fail_with_extras()`
+- `.test_feedback_recorded()`
+- `.test_first_boot_seeds_defaults()`
+- `.test_force_overrides_master_gate()`
+- `.test_gate_diverged_when_full_mismatch()`
+- `.test_gate_drifting_when_partial_match()`
+- `.test_gate_no_trace_returns_unknown()`
+- `.test_gate_stable_when_score_low()`
+- `.test_generate_classifies_area()`
+- `.test_generate_creates_registry()`
+- `.test_generate_detects_stub()`
+- `.test_generate_skips_files_without_program_header()`
+- `.test_hook_add_returns_id()`
+- `.test_hook_disable_enable()`
+- `.test_hook_fire_log_action_succeeds()`
+- `.test_hook_list_filter_by_event()`
+- `.test_hook_list_finds_added()`
+- `.test_hook_remove()`
+- `.test_hooks_shim_translates_legacy()`
+- `.test_hooks_shim_unknown_action_errors()`
+- `.test_igap_probe_ok()`
+- `.test_index_add_and_remove()`
+- `.test_index_list_empty()`
+- `.test_invocation_cwd_does_not_matter()`
+- `.test_kv_get_set_roundtrip()`
+- `.test_list_filters_by_actor()`
+- `.test_list_returns_added_job()`
+- `.test_list_returns_newest_first()`
+- `.test_listen_filters_by_event()`
+- `.test_listen_returns_events()`
+- `.test_macos_home_caught()`
+- `.test_match_finds_program()`
+- `.test_match_with_empty_index()`
+- `.test_match_writes_last_dispatch()`
+- `.test_monthly_schedule()`
+- `.test_my_axon_is_excluded()`
+- `.test_myaxon_env_override()`
+- `.test_new_untracked_file_scanned_but_gitignored_skipped()`
+- `.test_no_failed_tools()`
+- `.test_ok_empty()`
+- `.test_ok_with_data()`
+- `.test_output_no_symbolic()`
+- `.test_output_symbolic_blocked()`
+- `.test_placeholder_passes()`
+- `.test_pressure_critical()`
+- `.test_pressure_low()`
+- `.test_purge_days_keeps_recent()`
+- `.test_purge_force_wipes_all()`
+- `.test_purge_without_args_refuses()`
+- `.test_query_filter_by_area()`
+- `.test_record()`
+- `.test_record_and_reset()`
+- `.test_record_appends_multiple_rows()`
+- `.test_record_creates_dated_file()`
+- `.test_record_isolated_from_real_my_axon()`
+- `.test_record_unknown_actor_fails()`
+- `.test_record_with_prompt_label()`
+- `.test_remove_job()`
+- `.test_resolves_from_file_when_no_env()`
+- `.test_restore_idempotent()`
+- `.test_restore_no_snapshots_fails()`
+- `.test_restore_replaces_target_with_latest()`
+- `.test_restore_self_snapshots_for_reversibility()`
+- `.test_restore_w_key_shorthand()`
+- `.test_restore_when_no_snapshot()`
+- `.test_restore_writes_keys_back()`
+- `.test_retrieve_missing_returns_null()`
+- `.test_returns_score()`
+- `.test_rollback_longterm()`
+- `.test_rules_list()`
+- `.test_run_increments_run_count()`
+- `.test_run_returns_trace()`
+- `.test_save_captures_w_keys()`
+- `.test_save_skips_excluded_prefixes()`
+- `.test_save_skips_oversized_value()`
+- `.test_score_is_100()`
+- `.test_second_boot_does_not_reseed()`
+- `.test_seed_defaults_creates_all()`
+- `.test_seed_defaults_idempotent()`
+- `.test_seed_defaults_includes_deprecation_cron()`
+- `.test_seed_defaults_preserves_user_entries()`
+- `.test_shipping_tree_is_clean()`
+- `.test_snapshot_caps_at_three()`
+- `.test_snapshot_creates_dated_file()`
+- `.test_snapshot_creates_rollback_dir()`
+- `.test_snapshot_nonexistent_target_fails()`
+- `.test_stats()`
+- `.test_status()`
+- `.test_store_and_retrieve_working()`
+- `.test_store_longterm()`
+- `.test_suggest()`
+- `.test_summary_empty_window()`
+- `.test_summary_groups_by_actor_and_action()`
+- `.test_tick_auto_flag_runs_one()`
+- `.test_tick_auto_off_lists_pending()`
+- `.test_tick_with_no_overdue_returns_empty()`
+- `.test_tilde_home_is_allowed()`
+- `.test_tokenize_returns_int()`
+- `.test_top()`
+- `.test_usage_probe_ok()`
+- `.test_usage_record_appends_jsonl()`
+- `.test_user_deleted_default_stays_deleted()`
+- `.test_validate_clean_registry()`
+- `.test_validate_detects_filesystem_drift()`
+- `.test_verify_blocks_on_diverged()`
+- `.test_verify_demotes_to_warn_under_dev_mode()`
+- `.test_verify_passes_when_drift_stable()`
+- `.test_violation_is_caught()`
+- `.test_weekly_short_day_name()`
+- `.test_windows_home_caught()`
+- `.test_wsl_host_caught()`
+- `Canonical JSON response envelope helpers.`
+- `Default cap is 3; older snapshots evicted FIFO.`
+- `Fresh workspace: not enabled, not asked, should prompt.`
+- `Helper: add a job with next_run set to the past so is_overdue() returns True.`
+- `L:dispatch-auto-tune defaults false → threshold doesn't change         even when`
+- `L:dispatch-auto-tune ≡ true → threshold adjusts after enough negatives.`
+- `Legacy `hooks add` → `events hook-add`. Shim warns to stderr but works.`
+- `Minimal dispatch index + prefer-compiled so matches actually fire.`
+- `PR-003 — six new functional probes for orchestrator-critical tools.`
+- `PR-006 — hooks subsystem merged into events tool.`
+- `PR-009 — session-save / boot snapshot roundtrip.      Save W: keys → clear worki`
+- `PR-010 — cron daemon activation: tick + seed-defaults + run_count.`
+- `PR-011 — boot.py seeds default cron entries once on first boot only.`
+- `PR-012 — drift gate decision + verify integration.`
+- `PR-013 — prompt-log opt-in flow: consent + purge + state report.`
+- `PR-014 — dispatch implicit feedback + auto-tune toggle.`
+- `PR-015 — auto-edit audit ledger: record / list / summary + isolation.`
+- `PR-016 — generalized 3-version snapshot helper + undo CLI.`
+- `PR-017 — auto-improve orchestrator: gates + 3 actions + audit + rollback.`
+- `PR-019 — in-process functions in tools/_axon_lib.py.      Each function asserts`
+- `PR-020 — programs registry: generate / query / validate.`
+- `PR-3.2: the deprecation-log cron entry must be seeded so a         fresh workspa`
+- `Test workspace must NOT pollute the real MYAXON_ROOT/log/auto-edits/.`
+- `TestAtomicIO`
+- `TestAutoAudit`
+- `TestAutoImprove`
+- `TestAxonLib`
+- `TestAxonPaths`
+- `TestAxonResponse`
+- `TestContext`
+- `TestCron`
+- `TestCronFirstBootAutowire`
+- `TestCronTick`
+- `TestDispatch`
+- `TestDispatchAutoTune`
+- `TestDriftGate`
+- `TestEvents`
+- `TestEventsHook`
+- `TestHealth`
+- `TestLintPaths`
+- `TestMemory`
+- `TestNewFunctionalProbes`
+- `TestProgramsRegistry`
+- `TestPromptLogConsent`
+- `TestRollback`
+- `TestSessionHandoff`
+- `TestSimulate`
+- `TestUsage`
+- `TestVerify`
+- `Unit tests for AXON kernel Python tools:   memory · events · cron · context · us`
+- `Write a drift-trace.json with the given expected/actual sequences.`
+- `Write each key to <ws>/memory/working/<k>.md.`
+- `test_tools_kernel.py`
+- `tools/_axon_paths.py must resolve AXON_ROOT correctly under all entry conditions`
+- `tools/lint_paths.py must keep the shipping tree free of /home/<user>/ and /Users`
+
+## Depends on
+- [[conftest.py]]
+- [[tools·usage.py]]

@@ -6,7 +6,7 @@
       "name": "Study",
       "order": 1,
       "deps": [],
-      "status": "pending"
+      "status": "done"
     },
     {
       "id": "plan",
@@ -15,7 +15,7 @@
       "deps": [
         "study"
       ],
-      "status": "pending"
+      "status": "done"
     },
     {
       "id": "pr",
@@ -24,7 +24,7 @@
       "deps": [
         "plan"
       ],
-      "status": "pending"
+      "status": "done"
     },
     {
       "id": "log",
@@ -33,7 +33,7 @@
       "deps": [
         "pr"
       ],
-      "status": "pending"
+      "status": "done"
     },
     {
       "id": "audit",
@@ -42,8 +42,8 @@
       "deps": [
         "log"
       ],
-      "status": "pending"
+      "status": "done"
     }
   ],
-  "updated": "2026-06-17T14:49:04.237174+00:00"
+  "updated": "2026-07-09T11:04:01.718418+00:00"
 }

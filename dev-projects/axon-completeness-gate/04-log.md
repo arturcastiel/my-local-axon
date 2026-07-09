@@ -173,3 +173,5 @@ FINAL COHERENT STATE (all green):
 OPEN PRs: none (all 19 landed). Cross-workspace: no other project has open [TODO] PR tags; git has
   no open feature branch (122 branches are all backup/* snapshots). Project pipeline is empty.
 REMAINING (non-PR, from audit): green-bar test run (human-gated) + dirty working-tree triage.
+- 2026-07-09: pointer-repair (axon-stale-pointers): _meta.phase advanced to 'audit' (was behind a done phase)
+- 2026-07-09: pointer-repair (axon-stale-pointers): status active->complete — MANIFEST-BACKED closeout (every phase done); the project was finished but never closed out (the inverse of the unbacked-claim class).

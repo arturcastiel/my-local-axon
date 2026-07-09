@@ -1,0 +1,123 @@
+---
+tags: [code, file]
+path: tests/test_hr_team_contract.py
+---
+
+# tests/test_hr_team_contract.py
+
+> 110 symbol(s) · 1 outbound file dependency(ies)
+
+## Symbols
+- `--emit-seam-shape WITHOUT the env still refuses (two independent locks).`
+- `A fabricated/unsealed dict literal (no 'kind') cannot be surfaced — this is the`
+- `ADR-001: there is NO python api/mcp run_seats backend (would resurrect the dual`
+- `ALLOW_STUB env alone is NOT a backdoor — without --emit-seam-shape the CLI refus`
+- `Adding _backend injection must NOT weaken the fail-closed default (no _backend,`
+- `Build the (unsealed) aggregation the way the helper does, with stub responses.`
+- `Contract test for tools/hr_team.py.  ADR-001 / PR-004: the .md neurons are the a`
+- `Council slate 2026-06-22: the receipt is reframed as a RUN-INTEGRITY LOG (not a`
+- `Default CLI invocation surfaces NO verdict: exit 2, empty stdout, typed stderr e`
+- `False-green guard (eval seat): the neuron DERIVE(run_seats) return schema must m`
+- `GAP-001: the deliberator no longer hand-writes the seal — it emits the unsealed`
+- `GAP-001: the router routes the live path through the AUTHORIZED Python enforceme`
+- `GAP-002: the deliberator's core aggregation comes from the tested helper, not a`
+- `Once the for-use checkout is synced, its tools/hr_team.py MUST be byte-identical`
+- `Only the authorized deliberator-neuron path may seal — a bare import cannot.`
+- `PR-005: the program router is the single invocation entry and marshals every doc`
+- `PR-006: the deliberator retry re-invokes the ONE run_seats cognition seam (same`
+- `PR-007: the router loads context via the helper (convener is TOOL-free), the con`
+- `Regression guard: main()'s default path must never print a §4.3 verdict to stdou`
+- `The fake receives the per-seat variant/effort — proving schema v2 is threaded th`
+- `The fanout backend has no real cognition wired — run_seats must REFUSE rather th`
+- `The helper produces an aggregation, NEVER a sealed verdict (import seam gated).`
+- `The whole point of PR-008: resolved fragment paths are REACHABLE (were dead befo`
+- `With both locks, the CLI emits a clearly-marked NON-verdict — never a §4.3 verdi`
+- `With require_receipt (PR-011/012 posture), even a sealed verdict needs a valid`
+- `_agg()`
+- `_aggregate()`
+- `_args()`
+- `_cli()`
+- `_is_verdict_shaped()`
+- `_seam_messages()`
+- `_v2_msgs()`
+- `_verdict_with_receipt()`
+- `advisory_only:true is structurally unbreakable — no assignment of False in sourc`
+- `test_aggregate_confidence_golden()`
+- `test_aggregation_is_not_a_verdict()`
+- `test_build_verdict_real_dissent_and_status()`
+- `test_build_verdict_uses_tested_math()`
+- `test_call_id_format()`
+- `test_catalog_parses_all_rows()`
+- `test_classify_dissent()`
+- `test_cli_allow_stub_alone_still_refuses()`
+- `test_cli_default_refuses()`
+- `test_cli_emit_seam_shape_is_not_a_verdict()`
+- `test_cli_emit_seam_shape_requires_allow_stub()`
+- `test_cli_has_no_unconditional_verdict_print()`
+- `test_context_wired_router_loads_convener_includes()`
+- `test_council_slate_runlog_reframe()`
+- `test_deliberation_metrics_golden()`
+- `test_deliberation_metrics_subcommand()`
+- `test_deliberator_emits_unsealed_aggregation()`
+- `test_deliberator_has_substantive_reround()`
+- `test_deliberator_retry_uses_sole_seam()`
+- `test_deliberator_uses_metrics_helper_not_inline_math()`
+- `test_fanout_receipt_absent_from_ledger_fails()`
+- `test_fanout_receipt_nonce_and_stale()`
+- `test_fanout_receipt_per_seat_completeness()`
+- `test_fanout_receipt_test_only_rejected()`
+- `test_fanout_receipt_valid()`
+- `test_hr_team_contract.py`
+- `test_hr_team_foruse_parity()`
+- `test_invocation_mode_derivation()`
+- `test_load_context_empty_and_nonfile_path()`
+- `test_load_context_file()`
+- `test_load_context_literal()`
+- `test_load_context_subcommand()`
+- `test_load_context_truncates_and_sanitizes()`
+- `test_make_fake_backend_content_keyed_and_bad_json()`
+- `test_manifest_schema()`
+- `test_match_roster_empty_task_is_weak()`
+- `test_match_roster_keyword_hits()`
+- `test_match_roster_subcommand()`
+- `test_match_roster_top_n_truncation()`
+- `test_match_roster_unknown_domain_fail_closed()`
+- `test_match_roster_valid_domain_scopes()`
+- `test_mint_call_id_subcommand()`
+- `test_mode_wired_router_resolves_convener_reads()`
+- `test_no_advisory_override()`
+- `test_no_python_api_mcp_backend()`
+- `test_order_sensitivity_tie_vs_clear()`
+- `test_persistence_modes()`
+- `test_provenance_audit_separates_provable()`
+- `test_provenance_audit_subcommand()`
+- `test_registry_entry_real_schema()`
+- `test_reround_decision()`
+- `test_resolve_mode_default_and_unknown()`
+- `test_resolve_mode_fragments_exist_on_disk()`
+- `test_resolve_mode_preset()`
+- `test_resolve_mode_subcommand()`
+- `test_resolve_mode_tuple_any_order_with_defaults()`
+- `test_roster_wired_router_matches_selector_gates()`
+- `test_router_marshals_single_invocation_contract()`
+- `test_router_wires_live_gates()`
+- `test_run_seats_fails_loud_without_optin()`
+- `test_run_seats_injected_fake_order_and_contract()`
+- `test_run_seats_production_default_still_fail_closed()`
+- `test_run_seats_schema_conformance_md_vs_python()`
+- `test_run_seats_seam_shape()`
+- `test_run_seats_threads_schema_v2()`
+- `test_seal_requires_authorization()`
+- `test_seal_subcommand_authorized_path()`
+- `test_sealed_verdict_schema()`
+- `test_verdict_distribution_present_and_per_seat()`
+- `test_verify_fanout_receipt_fail_closed()`
+- `test_verify_surfaceable_accepts_sealed()`
+- `test_verify_surfaceable_rejects_unsealed()`
+- `test_verify_surfaceable_require_receipt_end_to_end()`
+- `test_verify_surfaceable_requires_receipt_when_enabled()`
+- `test_verify_surfaceable_subcommand()`
+- `test_wsv_golden()`
+
+## Depends on
+- [[tools·hr_team.py]]

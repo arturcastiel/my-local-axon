@@ -44,3 +44,5 @@ is a human-validated next-release cycle, as F30 designed.
 **0 ALIAS programs remain.** F30 is fully closed (not just the harness). The held risk was the
 LLM-interpreted harness with no exec test — mitigated by letting the gate's validators (dag-consistency
 + program EXEC resolution) define the required sweep, and a code-dev smoke. main 31994cd.
+- 2026-07-09: pointer-repair (axon-stale-pointers): _meta.phase advanced to 'audit' (was behind a done phase)
+- 2026-07-09: pointer-repair (axon-stale-pointers): status active->complete — MANIFEST-BACKED closeout (every phase done); the project was finished but never closed out (the inverse of the unbacked-claim class).

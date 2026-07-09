@@ -1,7 +1,7 @@
 # Project: AXON Bug-Free Hardening (completeness gate + arch audit)
 slug:            axon-completeness-gate
 schema-version:  v4
-status:          active
+status:          complete
 legacy:          false
 phase:           audit
 workflow-step:   build

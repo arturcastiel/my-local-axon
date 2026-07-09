@@ -245,3 +245,4 @@ defects, carry). DESCOPE-to-very-low: A2 (drift diagnostic, 0 saving) · A3 (~0.
 OWNER 2026-06-16: "A7 fix only, shelve rest." SHIPPED A7 lossless constraints-scope fix
 (rows_for_scope project-aware superset + --project + tests; dormant gap, preventive, back-compat).
 A-wave shelved; D2/Goal-G-run remain owner/infra-gated. −20.3% bookend stands.
+- 2026-07-09: pointer-repair (axon-stale-pointers): pending phases retro-stamped done --force — RATIONALE: this log records delivery/completion; the manifest was never advanced at the time (the silent-pending class). Force is recorded here per repair rules.

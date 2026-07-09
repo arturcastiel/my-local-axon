@@ -1,0 +1,101 @@
+---
+tags: [code, file]
+path: workspace/programs/code-dev-plan.md
+---
+
+# workspace/programs/code-dev-plan.md
+
+> 88 symbol(s) · 0 outbound file dependency(ies)
+
+## Symbols
+- `- --budget N caps PR count; overflow → 02-prs.deferred.md`
+- `- --mode=decision is repeatable; each call appends one ADR`
+- `- --mode=operational keeps the plan flat (no tier-3 children)`
+- `- --mode=strategic writes the tier-1 roadmap once; re-run to refine`
+- `- --rule "<text>" injects ad-hoc governance rule (PR-11)`
+- `- Default mode is tactical: per-wave PR breakdown with phase files`
+- `- PRs ordered by dependency (no PR depends on a later one)`
+- `- Re-run any mode to refine its artifact (idempotent where applicable)`
+- `ARGS (PR-16)`
+- `Architecture Overview`
+- `Ask for architecture clarification if codebase is large`
+- `Best-effort — phase_model.done() enforces deps + output-completeness; not-yet-advanceable just logs.`
+- `Best-effort: failure surfaces as WARN; plan finalisation still succeeds.`
+- `Budget enforcement (PR-16)`
+- `CODEBASE ANALYSIS (large codebase key step)`
+- `Context (from Phase 1)`
+- `Contextual tool surfacing (graphify-obsidian pr-6): subsystem clusters inform PR`
+- `DAG AUTO-EMIT (PR-113) — bootstrap plan DAG with each PR + depends-on edges`
+- `GUARD`
+- `Governance trace (PR-4 + PR-11)`
+- `HELP`
+- `IDENTITY LOCK`
+- `LOAD CONTEXT`
+- `Load previous plan if exists`
+- `MODE DISPATCH (PR-16)`
+- `Mass-rejection guard (>80% filtered → user rule likely malformed)`
+- `OUTPUT → PYTHON_FAST · doc`
+- `PLAN LOOP — iterate until both satisfied`
+- `PR candidate filter — each candidate is checked against rules' applies-to=plan`
+- `PR-005 (axon-code-dev-improve · R3): phase-entry guidance — goal + how-to (flag-gated, warn-first).`
+- `PR-008 (axon-hr-ui): advance the phase manifest so the node-order gate guards REAL state.`
+- `PR-11 — echo ad-hoc rules + filter candidates against them`
+- `PROGRAM: code-dev-plan`
+- `Phase checklist (pr-13): scoped constraints rendered at entry — a ~10-line explicit`
+- `Search codebase for each key concept from study`
+- `Semantic search — ground plan in actual code`
+- `TACTICAL: per-phase files (v4.2 planning hierarchy)`
+- `WRITE OUTPUT`
+- `When tactical (the default), derive phase set from pr-list and emit`
+- `belong to each phase. Strategic / operational / decision modes skip`
+- `budget:`
+- `cache-prefix: 2048`
+- `checklist beats inferred prose, especially for weaker models (Goal G).`
+- `code-dev-plan.md`
+- `contract-version: neuron-contract v1.1`
+- `decision    → 02-plan.md + 03-decisions/adr-NNN-<slug>.md  (one ADR per call)`
+- `decision:    {input-cap: 4000, output-cap: 4000}`
+- `deprecated (axon-cleanup PR-142): TOOL?(semantic-search) → IF ✓ →`
+- `desc:    Phase 2 — codebase-grounded high-level plan + numbered PR list`
+- `desc:    Produce a high-level plan grounded in the actual codebase, then a PR list`
+- `dispatch-phrases: plan the next pull request · draft a plan · make a planning section · break work into PRs · roadmap the project`
+- `domain: code-dev`
+- `emits:   02-plan.md, 02-prs.md, 03-prs/DAG.json`
+- `example: code-dev plan`
+- `example: code-dev plan --mode=decision`
+- `example: code-dev plan --mode=strategic`
+- `example: code-dev plan --mode=tactical --budget 12`
+- `family: [code-dev]`
+- `glossary: AXON-GLOSSARY v2`
+- `grouping — suggest the graph query at plan entry.`
+- `inferred-by: synapse-infer (PR-108 bulk migration)`
+- `input-cap:    8000`
+- `inputs-count: 11`
+- `inputs:  W:code-dev-project — active project (set by code-dev load)`
+- `invocation_source: [program]`
+- `next-suggests: [code-dev-pr-create]`
+- `next:    code-dev pr — write PR-by-PR specifications`
+- `one 02-phases/phase-N-<slug>.md per phase. The slim 02-plan.md remains`
+- `operational → 02-plan.md  (run-book form: ordered steps + time/token est.)`
+- `operational: {input-cap: 4000, output-cap: 3000}`
+- `output-cap:   2000`
+- `outputs-count: 17`
+- `outputs: 02-prs.deferred.md (if --budget cuts off PRs; tactical only)`
+- `outputs: per mode (v4.2 planning hierarchy):`
+- `phase:   plan`
+- `plan-modes: (overrides blanket # budget: caps above when --mode is set)`
+- `precondition: "L:cognition-frame ≡ \"AXON-OS\" AND plan-mode IN {\"tactical\", \"strategic\", \"operational\", \"decision\"} AND RETRIEVE(W:code-dev-project) ≠ ∅ AND FILE-EXISTS(\"{project-dir}/01-study.md\") AND L:cognition-frame ≡ \"AXON-OS\""`
+- `role: mutator`
+- `status: ACTIVE`
+- `strategic   → 02-plan.md + 02-roadmap.md  (tier-1 vision + plan index)`
+- `strategic:   {input-cap: 4000, output-cap: 1500}`
+- `synapse:`
+- `tactical    → 02-plan.md + 02-prs.md + 02-phases/phase-N-<slug>.md  (default)`
+- `tactical:    {input-cap: 4000, output-cap: 6000}`
+- `the parent index; per-phase files are views grouping the PRs that`
+- `this step.`
+- `tips:`
+- `usage:   code-dev plan [--mode=tactical|strategic|operational|decision] [--budget N] [--rule "<text>"]`
+
+## Depends on
+- (none)
