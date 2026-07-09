@@ -128,3 +128,4 @@
 
 ## 2026-06-01 — preflight verdict saved → preflight-verdict.md
 - GO from code+stats: n=12 conclusive iff AXON edge ≥0.85 (n_min 11); best-case n=4; ~$10/API or ~$0 subscription. Live run owner-gated (backend + pilot + prereg). See preflight-verdict.md.
+- 2026-07-09: pointer-repair (axon-stale-pointers): custom phase '1-theory' registered in _phases.json (was split-brain: meta named a phase the manifest never knew)

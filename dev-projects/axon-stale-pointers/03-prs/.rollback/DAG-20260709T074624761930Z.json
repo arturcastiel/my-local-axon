@@ -1,0 +1,12 @@
+{
+  "schema": "axon-dag",
+  "schema-version": "v1",
+  "level": "plan",
+  "owner": "project:axon-stale-pointers",
+  "generated": "2026-07-09T07:46:24Z",
+  "generator": "tools/dag.py",
+  "validated": true,
+  "critical-path": [],
+  "nodes": [],
+  "edges": []
+}

@@ -1,0 +1,66 @@
+{
+  "schema": "v1",
+  "phases": [
+    {
+      "id": "study",
+      "name": "Study",
+      "order": 1,
+      "deps": [],
+      "status": "done",
+      "outputs": [
+        "01-study.md"
+      ]
+    },
+    {
+      "id": "plan",
+      "name": "Plan",
+      "order": 2,
+      "deps": [
+        "study"
+      ],
+      "status": "done",
+      "outputs": [
+        "02-plan.md",
+        "02-prs.md",
+        "03-prs/DAG.json"
+      ]
+    },
+    {
+      "id": "pr",
+      "name": "PR-specs",
+      "order": 3,
+      "deps": [
+        "plan"
+      ],
+      "status": "done",
+      "outputs": [
+        "03-prs/PR-*.md"
+      ]
+    },
+    {
+      "id": "log",
+      "name": "Log",
+      "order": 4,
+      "deps": [
+        "pr"
+      ],
+      "status": "done",
+      "outputs": [
+        "04-log.md"
+      ]
+    },
+    {
+      "id": "audit",
+      "name": "Audit",
+      "order": 5,
+      "deps": [
+        "log"
+      ],
+      "status": "done",
+      "outputs": [
+        "05-audit.md"
+      ]
+    }
+  ],
+  "updated": "2026-07-09T11:07:10.035405+00:00"
+}

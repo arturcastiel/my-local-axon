@@ -31,3 +31,5 @@ unjustified: the corpus already compresses.
   short programs where header overhead dominates. Forcing better compression is speculative repair with
   little gain — left as optional future tuning, now ratchet-protected from regressing.
 - **Consolidate the 5 compile tools:** they work; consolidation is churn/risk for marginal benefit.
+- 2026-07-09: pointer-repair (axon-stale-pointers): _meta.phase advanced to 'audit' (was behind a done phase)
+- 2026-07-09: pointer-repair (axon-stale-pointers): status active->complete — MANIFEST-BACKED closeout (every phase done); the project was finished but never closed out (the inverse of the unbacked-claim class).

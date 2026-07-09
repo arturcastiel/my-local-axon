@@ -1,8 +1,8 @@
 # Project: axon-registry-accessor
 slug:            axon-registry-accessor
 schema-version:  v4
-status:          active
-phase:           1-study
+status:          complete
+phase:           audit
 workflow-step:   study
 branch:          main
 codebase:        /home/arturcastiel/projects/new-axon/axon

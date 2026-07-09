@@ -1,0 +1,109 @@
+---
+tags: [code, file]
+path: workspace/programs/code-dev-study.md
+---
+
+# workspace/programs/code-dev-study.md
+
+> 96 symbol(s) · 0 outbound file dependency(ies)
+
+## Symbols
+- `(no schema/reconciler/kernel edit); lives in the phase-ladder adapter. Project-scoped read is`
+- `- --input loads JSON/text exposed as INPUT.* during composition (e.g. coverage.json, gh pr view)`
+- `- --mode=overview (default) refactors today's behavior; subsystem/deep → code-dev-study-area`
+- `- --output controls shape: engineering (full), executive (≤2k tok), machine (YAML front-matter)`
+- `- --target accepts a path or glob (≤200 files; --force to override)`
+- `- AXON rates its own understanding 0–10 every round`
+- `- Add multiple sources: URLs, PDFs, paste text, or codebase file paths`
+- `- Phase ends when both user and AXON rate satisfaction ≥ 7`
+- `- Shadow hit (hash match) = zero re-read tokens; stale/absent = read + auto-write shadow`
+- `- Type 'file' to study a source file from the codebase — shadow is checked first`
+- `ARGS (PR-8)`
+- `Architecture Snapshot`
+- `Back-compat: when no flags supplied, mode=overview and the legacy 01-study.md path remains.`
+- `Best-effort — phase_model.done() enforces deps + output-completeness; not-yet-advanceable just logs.`
+- `Constraints`
+- `DISPATCH (PR-8 area modes + PR-I intent modes)`
+- `ECL {fmt-name} Format — Accumulated Knowledge`
+- `Fail-degrade and advisory: graphify absent or build degraded → one info line, study`
+- `Findings Log`
+- `Findings Log addition — {ts.iso} ({project})`
+- `Format knowledge check — always do this before allowing source-type query`
+- `GOAL + how-to FIRST, so the user is told WHAT to do and HOW (not just given material to dump).`
+- `GOAL DEFINITION — iterated until both satisfied`
+- `GUARD`
+- `Goal`
+- `HELP`
+- `IDENTITY LOCK`
+- `INGEST MATERIAL`
+- `Key Concepts`
+- `LOAD CONTEXT`
+- `Load previous study state if exists`
+- `Narrow/paired modes route to the area studier with their lens/ref.`
+- `OUTPUT → PYTHON_FAST · doc`
+- `Open Questions`
+- `PR-008 (axon-hr-ui): advance the phase manifest so the node-order gate guards REAL state.`
+- `PR-S0 (axon-code-dev-improve · felt-value slice): phase-entry guidance — render THIS phase's`
+- `PROGRAM: code-dev-study`
+- `Phase checklist (pr-13): scoped constraints rendered at entry — a ~10-line explicit`
+- `Priorities`
+- `Reads the kernel goal record (goal.py) best-effort + warn-first; flag-gated; foundation-independent`
+- `Resolve the study profile via the tool (overview/subsystem/deep budget tiers +`
+- `S0 — GRAPHIFY-MAP (P-CD spine: build the target-repo graph ONCE, reuse every phase)`
+- `SEED INGEST (multiple-code-dev feedback channel · H2)`
+- `Shadow index check (when codebase is set)`
+- `Show shadow index status when a codebase is attached`
+- `Sources`
+- `Tech Stack`
+- `Update meta phase`
+- `WRITE OUTPUT`
+- `When the multiple-code-dev workflow's audit-to-study step has staged a seed, surface it as priming`
+- `Wide modes (overview default, audit, onboard) fall through to the overview body,`
+- `best-effort — if the goal engine cannot resolve a per-project phase goal, the warn path still helps.`
+- `budget:`
+- `cache-prefix: 4096`
+- `checklist beats inferred prose, especially for weaker models (Goal G).`
+- `code-dev-study.md`
+- `context BEFORE the human ingest loop starts, then clear it so it doesn't leak into the next manual`
+- `contract-version: neuron-contract v1.1`
+- `deep:        {input-cap: 32000, output-cap: 12000}`
+- `desc:    Phase 1 — ingest study material, establish goal, priorities, and confidence`
+- `desc:    Study loop — ingest URLs, PDFs, text, or codebase files; extract goal, priorities, and confidence score`
+- `dispatch-phrases: study the codebase · deep dive the project · ingest study material · understand this repo · learn the subsystem`
+- `domain: code-dev`
+- `emits:   01-study.md`
+- `example: code-dev study  (then choose material type when prompted)`
+- `example: code-dev study --mode=deep --target='tools/*.py' --output=executive --input=my-axon/log/usage/<date>.jsonl`
+- `example: code-dev study --mode=subsystem --target=tools/shadow.py --output=machine`
+- `family: [code-dev]`
+- `glossary: AXON-GLOSSARY v2`
+- `goals mode (axon-plus pr-12): goal-define interrogation inside the project context.`
+- `inferred-by: synapse-infer (PR-108 bulk migration)`
+- `input-cap:    16000`
+- `inputs-count: 10`
+- `inputs:  W:code-dev-project — active project slug (set by code-dev load)`
+- `invocation_source: [program]`
+- `layer (PR-H) surfaces mode-cfg.questions as structured prompts.`
+- `modes: (overrides blanket # budget: caps above when --mode is set)`
+- `next-suggests: [menu]`
+- `next:    code-dev study (add more material) · code-dev plan (move to Phase 2)`
+- `option (targeted→lens, compare→ref) fails loudly here.`
+- `output-cap:   6000`
+- `outputs-count: 15`
+- `outputs: {W:myaxon-dev-projects}/{slug}/study/<mode>.md  (legacy fallback: 01-study.md when no flags)`
+- `overview:    {input-cap:  8000, output-cap:  4000}`
+- `phase:   study`
+- `precondition: "L:cognition-frame ≡ \"AXON-OS\" AND RETRIEVE(W:code-dev-project) ≠ ∅ AND codebase ≠ ∅ AND L:cognition-frame ≡ \"AXON-OS\""`
+- `proceeds exactly as before. graphify update is incremental — re-runs on resume are cheap.`
+- `role: mutator`
+- `status: ACTIVE`
+- `study. Field names are the FLAT schema audit-to-study writes (seed.iter / seed.verdict / seed.* ).`
+- `subsystem:   {input-cap: 16000, output-cap:  6000}`
+- `synapse:`
+- `targeted/audit/compare/onboard intent modes). Unknown mode or a missing required`
+- `tips:`
+- `usage:   code-dev study [--mode=overview|subsystem|deep|targeted|audit|compare|onboard] [--target=<path|glob>] [--lens="topic"] [--ref=<path>] [--output=engineering|executive|machine] [--input=<path>]`
+- `using mode-cfg.questions to drive what this study asks. The adaptive-workflow`
+
+## Depends on
+- (none)

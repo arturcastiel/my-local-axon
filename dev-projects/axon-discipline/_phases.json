@@ -1,0 +1,56 @@
+{
+  "schema": "v1",
+  "phases": [
+    {
+      "id": "study",
+      "name": "Study",
+      "order": 1,
+      "deps": [],
+      "status": "pending"
+    },
+    {
+      "id": "plan",
+      "name": "Plan",
+      "order": 2,
+      "deps": [
+        "study"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "pr",
+      "name": "PR-specs",
+      "order": 3,
+      "deps": [
+        "plan"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "log",
+      "name": "Log",
+      "order": 4,
+      "deps": [
+        "pr"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "audit",
+      "name": "Audit",
+      "order": 5,
+      "deps": [
+        "log"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "1-foundations",
+      "name": "1-foundations",
+      "order": 6,
+      "deps": [],
+      "status": "active"
+    }
+  ],
+  "updated": "2026-07-09T11:04:01.709523+00:00"
+}

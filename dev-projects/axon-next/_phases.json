@@ -32,7 +32,7 @@
       "deps": [
         "plan"
       ],
-      "status": "pending",
+      "status": "done",
       "outputs": [
         "03-prs/PR-*.md"
       ]
@@ -44,7 +44,7 @@
       "deps": [
         "pr"
       ],
-      "status": "pending",
+      "status": "done",
       "outputs": [
         "04-log.md"
       ]
@@ -56,11 +56,11 @@
       "deps": [
         "log"
       ],
-      "status": "pending",
+      "status": "done",
       "outputs": [
         "05-audit.md"
       ]
     }
   ],
-  "updated": "2026-07-08T12:03:28.311881+00:00"
+  "updated": "2026-07-09T11:04:01.714302+00:00"
 }

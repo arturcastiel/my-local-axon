@@ -45,3 +45,5 @@ Avoided the high-blast-radius dispatcher rewrite entirely. main 9c7029b.
 *different* checkout, so `from tools.rules ...` in crucible/dont_do_lint silently resolved there once
 their repo-root insert was gone — caught by ruff's syntax check + the changeset-rules control + the
 parity net (after hardening). Verify-don't-trust, again.
+- 2026-07-09: pointer-repair (axon-stale-pointers): _meta.phase advanced to 'audit' (was behind a done phase)
+- 2026-07-09: pointer-repair (axon-stale-pointers): status active->complete — MANIFEST-BACKED closeout (every phase done); the project was finished but never closed out (the inverse of the unbacked-claim class).

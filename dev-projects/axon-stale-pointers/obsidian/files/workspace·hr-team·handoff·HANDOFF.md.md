@@ -1,0 +1,107 @@
+---
+tags: [code, file]
+path: workspace/hr-team/handoff/HANDOFF.md
+---
+
+# workspace/hr-team/handoff/HANDOFF.md
+
+> 94 symbol(s) · 0 outbound file dependency(ies)
+
+## Symbols
+- `0 · Reader gate`
+- `1 · What hr-team is — one-screen explainer`
+- `10 · Persistence & audit`
+- `10.1 Per-call file layout`
+- `10.2 Manifest schema`
+- `10.3 Typed event stream schema`
+- `11 · Constraints · refusals · non-goals`
+- `11.1 Convener refusal scripts`
+- `11.2 Cost matrix from H §14.2`
+- `11.3 Monthly estimate table from H §14.5`
+- `11.4 Non-goals reinforced`
+- `12 · Worked examples`
+- `13 · Integration recipes (H1-H4 · AXON-native)`
+- `14 · Research grounding`
+- `14.1 Failure-mode mitigations matrix (A §R5)`
+- `14.2 Framework comparison matrix (B §R7)`
+- `14.3 R14.2 cost matrix embedded`
+- `14.4 Scratchpad source map`
+- `15 · Org-design interface`
+- `15.1 RAPID mapping`
+- `15.2 Schein consulting model fit`
+- `15.3 VYJ 7-question decision tree`
+- `15.4 Mintzberg classification`
+- `15.5 Decision-rights table`
+- `16 · Tier system & continuous decision support  (v1.1.0)`
+- `16.1 The six tiers`
+- `16.2 Convener tier-selection heuristic`
+- `16.3 Mandatory rules preserved across ALL tiers`
+- `16.4 Auto-escalation on substantive dissent`
+- `16.5 Cost arithmetic for the "every-decision-part" pattern`
+- `16.6 When to override the Convener's pick`
+- `16.7 When NOT to use micro/low tiers`
+- `16.8 V-checklist additions (G13 tier discipline)`
+- `2 · Your first turn — exactly what to do`
+- `3 · Callable surface — M1 / M2 / M3 invocation modes`
+- `4 · 3-layer architecture`
+- `4.1 SELECTOR contract`
+- `4.2 CONVENER mechanics`
+- `4.3 DELIBERATOR aggregation logic`
+- `5 · CONVENER persona`
+- `5.1 Convener default prompt — copy-paste text`
+- `5.2 Persona-swap how-to`
+- `6 · Profession catalog`
+- `6.1 Domain summary`
+- `6.2 Canonical row schema`
+- `6.3 Cross-link constellations`
+- `7 · Mode catalog`
+- `7.1 Family-vs-preset composition`
+- `8 · Protocol catalog`
+- `8.1 Prompt template skeletons`
+- `9 · Prompt pack`
+- `9.1 YAML front-matter spec`
+- `9.2 Fragment-concat algorithm`
+- `9.3 File layout`
+- `H1 · AXON program form`
+- `H2 · AXON tool form`
+- `H3 · AXON workflow step`
+- `H4 · AXON sub-EXEC`
+- `HANDOFF — axon-hr-team v1`
+- `HANDOFF.md`
+- `M1 · FULL`
+- `M2 · FILTERED`
+- `M3 · EXPLICIT`
+- `R1 · Multi-agent council literature`
+- `R10 · Information aggregation`
+- `R11 · Organisational design`
+- `R12 · Domain precedents`
+- `R13 · Production failures`
+- `R14 · Cost, scaling, and quality`
+- `R2-deep · Occupational ontology integration`
+- `R3 · AXON inventory / internal grounding`
+- `R4 · Prompt-template patterns`
+- `R5 · Failure modes`
+- `R6 · Adversarial / red-team`
+- `R7 · Framework comparison`
+- `R8 · Practical team science`
+- `R9 · Decision theory and forecasting`
+- `VYJ-7 pre-invocation checklist`
+- `adversarial`
+- `budget-violation`
+- `catalog-incomplete`
+- `circular-call`
+- `clarify-if-vague`
+- `consensus`
+- `context-overflow`
+- `debate`
+- `delphi`
+- `no-profession-matches`
+- `prediction-market (optional 7th protocol)`
+- `round-robin`
+- `safety/scope-violation`
+- `weighted-vote`
+- `§V · Verification checklist`
+- `§Z · Bibliography`
+
+## Depends on
+- (none)

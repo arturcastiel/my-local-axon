@@ -1,7 +1,7 @@
 # Project: super-polish
 slug:            super-polish
 schema-version:  v4
-status:          complete
+status:          active
 phase:           3-resweep-fixes
 workflow-step:   done
 branch:          main

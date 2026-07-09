@@ -26,3 +26,5 @@ semantic slip in a rarely-tested path can pass the gate. The **boundary lock** i
 low-risk piece: it stops the #1 way the drift returns (a new tool hand-rolling the path). The existing
 20 are stable; the ALLOWLIST is the honest, ratcheting backlog. This is the same pattern as
 liveness-allow.txt.
+- 2026-07-09: pointer-repair (axon-stale-pointers): _meta.phase advanced to 'audit' (was behind a done phase)
+- 2026-07-09: pointer-repair (axon-stale-pointers): status active->complete — MANIFEST-BACKED closeout (every phase done); the project was finished but never closed out (the inverse of the unbacked-claim class).

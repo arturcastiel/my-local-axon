@@ -9,3 +9,4 @@
   proven claims. The code-graph exporter + real-path tests caught several of my own bugs
   mid-fix. Honest residual: LLM program pinned structurally not executed; live unattended
   mission not yet run.
+- 2026-07-09: pointer-repair (axon-stale-pointers): pending phases retro-stamped done --force — RATIONALE: this log records delivery/completion; the manifest was never advanced at the time (the silent-pending class). Force is recorded here per repair rules.
