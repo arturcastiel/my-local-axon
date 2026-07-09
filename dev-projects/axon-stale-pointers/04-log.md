@@ -59,3 +59,8 @@ branch:         main
 - 2026-07-09: COMPLETE (manifest-backed — all phases done; stamped via code-dev complete,
   the route this very project shipped in PR-003. First manifest-backed completion in the
   workspace.)
+- 2026-07-09: POST-SHIP AUDIT PASS (owner asked "did you audit it?") — acceptance
+  criteria re-verified against the shipped tree at ff4a93a; 05-audit.md verdict
+  finalized (was written pre-green with a pending caveat — the gap is itself a
+  lesson in claim-vs-record ordering). Residual advisory test-record-stale after
+  any post-gate commit documented as by-design.
