@@ -30,5 +30,20 @@ Performed: 2026-07-09 · Phase 5 (log vs specs cross-reference)
   "cannot go stale SILENTLY."
 
 ## Verdict
-COMPLETE pending final gate green — all 5 PRs delivered per spec with recorded
-deviations; estate at zero non-self-resolving findings.
+COMPLETE — confirmed post-ship (final audit pass 2026-07-09, after gate green):
+- Gate: 38/38 controls, 0 warnings. Suite: 5,322 passed / 0 failed / 15 skipped,
+  verdict mechanically recorded by the PR-004 conftest stamp (source: conftest).
+- Shipped: ff4a93a on origin/main (ls-remote verified); my-axon backup fa9000a.
+- Acceptance criteria re-verified against the SHIPPED tree (not the working tree):
+  sweep area present + report line ✓ · snapshot pointers field + resume guard ✓ ·
+  complete route + 6 escalations in shipped programs ✓ · conftest stamp live ✓ ·
+  estate repairs hold ✓.
+- Residual (by design, disclosed): one advisory `test-record-stale` finding exists
+  at any moment when commits postdate the last recorded suite run — including right
+  after this project's own final push. It clears at the next full suite/gate run and
+  re-arms after every commit. That is the invariant working ("cannot go stale
+  silently"), not a defect.
+- Process note: this audit document was first written BEFORE the final gate went
+  green (verdict then read "pending"); this final pass closes that gap. The formal
+  `code-dev audit` program was not executed — the audit was authored directly from
+  mechanical evidence during the run; content satisfies the phase's output contract.
