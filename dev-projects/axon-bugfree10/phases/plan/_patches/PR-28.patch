@@ -1,0 +1,63 @@
+diff --git a/tests/test_config_program.py b/tests/test_config_program.py
+index 581fa7b..975b908 100644
+--- a/tests/test_config_program.py
++++ b/tests/test_config_program.py
+@@ -50,6 +50,41 @@ def test_writes_prefs_keys():
+         assert key in t
+ 
+ 
++def test_attended_autonomy_branch_uses_substring_match_not_fail_open():
++    """B047 (PR-28): W:_decision holds the FULL option string
++    ("attended (you do every step)"), so an exact `≡ "attended"` test is
++    never true and develop/test-execution capabilities are granted fail-open
++    even when the user chose fully-manual attended mode. The attended guard
++    must use substring `contains "attended"` matching (like the build/suggest
++    guards on the same page) so the manual choice actually withholds grants.
++    """
++    t = _text()
++    # the fail-open exact-match forms must be gone
++    assert 'develop  ← IF autonomy ≡ "attended"' not in t
++    assert 'testx    ← IF autonomy ≡ "attended"' not in t
++    # both capability guards must key off a substring match of the full label
++    assert 'autonomy contains "attended" → "human" | "grant"' in t
++    assert 'autonomy contains "attended" → "human" | "green-only"' in t
++
++
++def test_merge_autonomy_branch_uses_substring_match():
++    """B047 (PR-28), residual instance: the merge-policy guard matched the
++    autonomy decision with exact `≡` against the SHORT labels
++    ("autonomous-gated" / "full-auto"), but W:_decision holds the FULL option
++    strings ("autonomous-gated (full loop, merge on green gate)" /
++    "full-auto (unattended on green)"). The exact match is therefore never true,
++    so a user who explicitly chose an auto-merge mode silently kept merge=human
++    (their choice ignored). The guard must use substring `contains` matching
++    like the other autonomy guards on the same page.
++    """
++    t = _text()
++    # the never-matching exact-label forms must be gone
++    assert 'autonomy ≡ "autonomous-gated"' not in t
++    assert 'autonomy ≡ "full-auto"' not in t
++    # merge guard must key off substring matches of the full labels
++    assert 'autonomy contains "autonomous-gated" OR autonomy contains "full-auto" → "auto" | "human"' in t
++
++
+ def test_has_identity_lock_and_clean_exit():
+     t = _text()
+     assert 'ASSERT(L:cognition-frame ≡ "AXON-OS")' in t
+diff --git a/workspace/programs/config.md b/workspace/programs/config.md
+index b94f33b..e6b8193 100644
+--- a/workspace/programs/config.md
++++ b/workspace/programs/config.md
+@@ -62,9 +62,9 @@ IF cmd ≡ "wizard" →
+                 "full-auto (unattended on green)",
+                 "attended (you do every step)"], recommended=0)
+   autonomy ← RETRIEVE(W:_decision)
+-  develop  ← IF autonomy ≡ "attended" → "human" | "grant"
+-  testx    ← IF autonomy ≡ "attended" → "human" | "green-only"
+-  mergep   ← IF autonomy ≡ "autonomous-gated" OR autonomy ≡ "full-auto" → "auto" | "human"
++  develop  ← IF autonomy contains "attended" → "human" | "grant"
++  testx    ← IF autonomy contains "attended" → "human" | "green-only"
++  mergep   ← IF autonomy contains "autonomous-gated" OR autonomy contains "full-auto" → "auto" | "human"
+   TOOL(decide, "Should AXON run the app/build itself?",
+        options=["no — human builds (recommended)", "on request", "autonomously under grant"], recommended=0)
+   buildp   ← IF RETRIEVE(W:_decision) contains "autonomously" → "grant" | "human"

@@ -1,0 +1,165 @@
+diff --git a/tests/test_pr18b_code_dev_guards.py b/tests/test_pr18b_code_dev_guards.py
+new file mode 100644
+index 0000000..2fc01e9
+--- /dev/null
++++ b/tests/test_pr18b_code_dev_guards.py
+@@ -0,0 +1,85 @@
++"""Structural regression locks for PR-18b — code-dev guard/seed logic.
++
++The three programs below are LLM-interpreted AXON-LANG. Their control flow lives in
++the *indentation and token structure* of the Markdown, so these bugs are asserted
++STATICALLY over the program text (same approach as test_phase_start_seed_capture.py).
++
++Bugs locked here:
++  B045  code-dev-study.md   — flag-mode DISPATCH escalation ran unconditionally
++                              (sibling of the IF, not its body) and the ELSE IF dangled.
++  B039  code-dev-phase-start.md — _dont-do seed guard used a substring test against the
++                              regex literal "^- " that never matches real bullets, so the
++                              file was re-seeded/clobbered on every phase start.
++  B040  code-dev-plan.md    — botched semantic-search deprecation left search-results /
++                              arch-findings undefined but still STORE'd and dereferenced.
++"""
++from __future__ import annotations
++
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parent.parent
++PROGRAMS = ROOT / "workspace" / "programs"
++
++STUDY = (PROGRAMS / "code-dev-study.md").read_text(encoding="utf-8")
++START = (PROGRAMS / "code-dev-phase-start.md").read_text(encoding="utf-8")
++PLAN = (PROGRAMS / "code-dev-plan.md").read_text(encoding="utf-8")
++
++
++def _indent(line: str) -> int:
++    return len(line) - len(line.lstrip(" "))
++
++
++# --- B045: flag-mode DISPATCH escalation must be the body of the outputs-missing IF ---
++
++def test_b045_flag_mode_escalation_is_body_of_outputs_missing_if():
++    lines = STUDY.splitlines()
++    # Scope to the flag-mode DISPATCH block: after the EXEC into code-dev-study-area,
++    # before the "dispatched to code-dev-study-area" DONE.
++    start = next(i for i, ln in enumerate(lines)
++                 if "EXEC(workspace/programs/code-dev-study-area.md" in ln)
++    end = next(i for i, ln in enumerate(lines)
++               if 'DONE(code-dev-study, "dispatched to code-dev-study-area' in ln)
++    block = lines[start:end]
++
++    if_idx = next(i for i, ln in enumerate(block)
++                  if "IF adv-study.ok ≠ true AND adv-study.reason_code ≡ \"outputs-missing\"" in ln)
++    if_indent = _indent(block[if_idx])
++
++    # The USER-facing escalation and the human-handoff must be indented DEEPER than the
++    # IF (i.e. its body), so they only fire on the outputs-missing path.
++    esc_idx = next(i for i, ln in enumerate(block) if "⚠ PHASE NOT ADVANCED — study" in ln)
++    handoff_idx = next(i for i, ln in enumerate(block) if "TOOL(human-handoff," in ln)
++    assert _indent(block[esc_idx]) > if_indent, "escalation line must be the IF body, not a sibling"
++    assert _indent(block[handoff_idx]) > if_indent, "human-handoff must be the IF body, not a sibling"
++
++    # The ELSE IF must exist and align with the IF (so it is not dangling / unreachable).
++    elseif_idx = next(i for i, ln in enumerate(block) if "ELSE IF adv-study.ok ≠ true" in ln)
++    assert _indent(block[elseif_idx]) == if_indent, "ELSE IF must align with its IF"
++
++
++# --- B039: seed guard must line-match real bullets, not substring-match "^- " ----------
++
++def test_b039_seed_guard_uses_line_mode_extract_not_regex_literal_substring():
++    # The broken substring test against the regex-anchored literal must be gone.
++    assert 'current-dnd CONTAINS "^- "' not in START, "buggy substring guard must be removed"
++    # It must be replaced by the established line-match idiom (EXTRACT ... mode=lines).
++    assert 'EXTRACT(current-dnd, pattern="^- ", mode=lines)' in START
++    # And the guard must be a genuine emptiness test that re-seeds only when no bullets exist.
++    assert "COUNT(EXTRACT(current-dnd, pattern=\"^- \", mode=lines)) ≡ 0" in START
++    # The already-populated ELSE branch must remain reachable.
++    assert 'seeded ← "no (already populated)"' in START
++
++
++# --- B040: semantic-search deprecation must leave no undefined references --------------
++
++def test_b040_no_dangling_semantic_search_references():
++    for tok in ("search-results", "arch-findings"):
++        assert tok not in PLAN, f"{tok} is undefined after PR-142 deprecation and must not appear"
++    # The active STOREs of the never-assigned results must be gone.
++    assert "STORE(W:code-dev-plan-search" not in PLAN
++    assert "STORE(W:code-dev-plan-arch" not in PLAN
++    # The DERIVE must no longer pass the undefined codebase key.
++    assert "codebase:    search-results" not in PLAN
++    # The dangling deprecated arg-strings must be gone.
++    assert '"--query {goal-text} --workspace workspace --limit 20"' not in PLAN
++    assert '"--query {key-concepts} --workspace workspace --limit 15"' not in PLAN
+diff --git a/workspace/programs/code-dev-phase-start.md b/workspace/programs/code-dev-phase-start.md
+index a3470e0..4833963 100644
+--- a/workspace/programs/code-dev-phase-start.md
++++ b/workspace/programs/code-dev-phase-start.md
+@@ -57,7 +57,7 @@ seed-content ← ∀ ln in seed-content (line-by-line) →
+   IF (ln MATCHES "^- (?!~~)") AND NOT (NEXT-LINE(ln) MATCHES "^\s+(match|review):") →
+     "{ln}\n  review: human"
+   ELSE → ln
+-IF NOT (current-dnd CONTAINS "^- ") →
++IF COUNT(EXTRACT(current-dnd, pattern="^- ", mode=lines)) ≡ 0 →
+   WRITE("{phase-dir}/_dont-do.md",
+     "# Phase prohibitions — {phase-name}\n\n"
+     "_(seeded {ts.iso} from _dont-do-seeds.md; un-tokenized bullets marked review: human)_\n\n{seed-content}\n")
+diff --git a/workspace/programs/code-dev-plan.md b/workspace/programs/code-dev-plan.md
+index aba2c42..4bf5e82 100644
+--- a/workspace/programs/code-dev-plan.md
++++ b/workspace/programs/code-dev-plan.md
+@@ -207,14 +207,9 @@ key-concepts ← EXTRACT(study, "Key Concepts")
+ tech-stack   ← EXTRACT(study, "Tech Stack")
+ goal-text    ← EXTRACT(study, "Goal")
+ 
+-# Semantic search — ground plan in actual code
+-# deprecated (axon-cleanup PR-142): TOOL?(semantic-search) → IF ✓ →
+-  # deprecated (axon-cleanup PR-142): search-results ← TOOL(semantic-search, search,
+-    "--query {goal-text} --workspace workspace --limit 20")
+-  # deprecated (axon-cleanup PR-142): arch-findings ← TOOL(semantic-search, search,
+-    "--query {key-concepts} --workspace workspace --limit 15")
+-  STORE(W:code-dev-plan-search, search-results)
+-  STORE(W:code-dev-plan-arch, arch-findings)
++# Semantic search removed (axon-cleanup PR-142): the plan is grounded via the study
++# doc (key-concepts / tech-stack / goal-text above) plus the architecture QUERY below.
++# No W:code-dev-plan-search / W:code-dev-plan-arch are stored anymore.
+ 
+ # Ask for architecture clarification if codebase is large
+ arch-extra ← QUERY(user): "Describe the high-level architecture of the codebase (layers, main modules, key services — brief is fine, or type 'skip' to use only indexed results):"
+@@ -230,9 +225,6 @@ LOOP(true) {
+     → ""
+     → "  CODEBASE FINDINGS"
+     → "  ─────────────────────────────────────────────"
+-    IF RETRIEVE(W:code-dev-plan-search) ≠ ∅ →
+-      ∀ r in search-results.results[0..4] →
+-        → "  [{r.file}]  {r.snippet[:80]}"
+     IF arch-extra ≠ "skip" →
+       → ""
+       → "  Architecture: {arch-extra}"
+@@ -241,7 +233,6 @@ LOOP(true) {
+   # AXON produces plan sections
+   plan-sections ← DERIVE({
+     context:     study.goal + "\n" + arch-extra,
+-    codebase:    search-results,
+     constraints: EXTRACT(study, "Constraints"),
+     tech:        tech-stack,
+   }, output="high-level plan with sections per major area of change")
+diff --git a/workspace/programs/code-dev-study.md b/workspace/programs/code-dev-study.md
+index 2238e4a..b0299d9 100644
+--- a/workspace/programs/code-dev-study.md
++++ b/workspace/programs/code-dev-study.md
+@@ -98,11 +98,11 @@ IF mode ≡ "subsystem" OR mode ≡ "deep" OR mode ≡ "targeted" OR mode ≡ "c
+   # gate is satisfied; outputs-missing now escalates LOUD (LOG(ERROR)), never silent.
+   adv-study ← TOOL(phase-model, done, "--project {W:myaxon-dev-projects}/{project} --phase study --best-effort")
+   IF adv-study.ok ≠ true AND adv-study.reason_code ≡ "outputs-missing" → LOG(ERROR, "phase-model: study not advanced — {adv-study.reason}")
+-  # Escalation (axon-stale-pointers): the refusal must reach the USER, not just the log —
+-  # the silent-pending failure class (axon-obsidian 2026-07-08) dies here.
+-  → "  ⚠ PHASE NOT ADVANCED — study: declared output missing ({adv-study.reason})"
+-  → "     produce the artifact, then: code-dev done"
+-  TOOL(human-handoff, {reason: "phase-model refused study: outputs-missing", need: "produce the declared artifact, then re-run code-dev done", options: ["produce artifact", "code-dev skip (forced, recorded)"]})
++    # Escalation (axon-stale-pointers): the refusal must reach the USER, not just the log —
++    # the silent-pending failure class (axon-obsidian 2026-07-08) dies here.
++    → "  ⚠ PHASE NOT ADVANCED — study: declared output missing ({adv-study.reason})"
++    → "     produce the artifact, then: code-dev done"
++    TOOL(human-handoff, {reason: "phase-model refused study: outputs-missing", need: "produce the declared artifact, then re-run code-dev done", options: ["produce artifact", "code-dev skip (forced, recorded)"]})
+   ELSE IF adv-study.ok ≠ true → LOG(WARN, "phase-model: study not advanced — {adv-study.reason}")
+   DONE(code-dev-study, "dispatched to code-dev-study-area ({mode})")
+ 

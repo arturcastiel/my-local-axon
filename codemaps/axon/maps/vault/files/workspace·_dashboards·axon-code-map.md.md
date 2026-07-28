@@ -1,0 +1,117 @@
+---
+tags: [code, file]
+path: workspace/_dashboards/axon-code-map.md
+---
+
+# workspace/_dashboards/axon-code-map.md
+
+> 104 symbol(s) · 0 outbound file dependency(ies)
+
+## Symbols
+- `AXON code-graph — map (tools)`
+- `C0 — 1452 node(s) · anchor `_axon_io``
+- `C1 — 87 node(s) · anchor `goal``
+- `C10 — 13 node(s) · anchor `emits``
+- `C11 — 11 node(s) · anchor `autonomy_cadence``
+- `C12 — 10 node(s) · anchor `axon_bridge``
+- `C13 — 9 node(s) · anchor `project_refresh``
+- `C14 — 9 node(s) · anchor `rules.r_new_needs_test``
+- `C15 — 9 node(s) · anchor `rules.registry``
+- `C16 — 9 node(s) · anchor `workflow_dag``
+- `C17 — 8 node(s) · anchor `doc_anchors``
+- `C18 — 8 node(s) · anchor `lint_commit_trailer``
+- `C19 — 8 node(s) · anchor `lint_summary``
+- `C2 — 85 node(s) · anchor `dual_agent_eval``
+- `C20 — 8 node(s) · anchor `registry_drift``
+- `C21 — 8 node(s) · anchor `rules.r_cognition_language``
+- `C22 — 8 node(s) · anchor `rules.r_override_attempt``
+- `C23 — 8 node(s) · anchor `token_bench``
+- `C24 — 7 node(s) · anchor `a2a``
+- `C25 — 7 node(s) · anchor `aegis_policy``
+- `C26 — 7 node(s) · anchor `audit_axon_lang``
+- `C27 — 7 node(s) · anchor `clock``
+- `C28 — 7 node(s) · anchor `metric_integrity``
+- `C29 — 7 node(s) · anchor `neuron_audit``
+- `C3 — 63 node(s) · anchor `code_graph``
+- `C30 — 7 node(s) · anchor `rules.r_no_orphan_tools``
+- `C31 — 7 node(s) · anchor `skip_guard``
+- `C32 — 7 node(s) · anchor `study_modes``
+- `C33 — 6 node(s) · anchor `axon_io_lint``
+- `C34 — 6 node(s) · anchor `code_symbols``
+- `C35 — 6 node(s) · anchor `conformance_scorecard``
+- `C36 — 6 node(s) · anchor `coverage_gate``
+- `C37 — 6 node(s) · anchor `doc_index``
+- `C38 — 6 node(s) · anchor `dont_do_lint``
+- `C39 — 6 node(s) · anchor `emit_listener_lint``
+- `C4 — 23 node(s) · anchor `graphify_bridge``
+- `C40 — 6 node(s) · anchor `lint_path_vars``
+- `C41 — 6 node(s) · anchor `pr_drift``
+- `C42 — 6 node(s) · anchor `project_graph``
+- `C43 — 6 node(s) · anchor `rules.r_fail_format``
+- `C44 — 6 node(s) · anchor `write_barrier``
+- `C45 — 5 node(s) · anchor `boot_friction``
+- `C46 — 5 node(s) · anchor `coherence_lint``
+- `C47 — 5 node(s) · anchor `doctrine_lint``
+- `C48 — 5 node(s) · anchor `rules.r_neuron_role``
+- `C49 — 5 node(s) · anchor `rules.r_workflow_node_order``
+- `C5 — 21 node(s) · anchor `crucible``
+- `C50 — 5 node(s) · anchor `synapse_scaffold``
+- `C51 — 5 node(s) · anchor `tier_detect``
+- `C52 — 5 node(s) · anchor `token_bench_compare``
+- `C53 — 5 node(s) · anchor `translate``
+- `C54 — 4 node(s) · anchor `dry_run_lint``
+- `C55 — 4 node(s) · anchor `hooks.reanchor_store``
+- `C56 — 4 node(s) · anchor `keystone``
+- `C57 — 4 node(s) · anchor `project_doc_floor``
+- `C58 — 4 node(s) · anchor `residue_lint``
+- `C59 — 4 node(s) · anchor `rules.r_identity_lock``
+- `C6 — 19 node(s) · anchor `axiom``
+- `C60 — 4 node(s) · anchor `rules.r_inference_mode_lock``
+- `C61 — 4 node(s) · anchor `rules.r_tool_call_exists``
+- `C62 — 3 node(s) · anchor `decide``
+- `C63 — 3 node(s) · anchor `exec_args_lint``
+- `C64 — 3 node(s) · anchor `harness_conformance``
+- `C65 — 3 node(s) · anchor `human_handoff``
+- `C66 — 3 node(s) · anchor `lint_code``
+- `C67 — 3 node(s) · anchor `onboarding``
+- `C68 — 3 node(s) · anchor `pr_sync``
+- `C69 — 3 node(s) · anchor `rules.manifest``
+- `C7 — 16 node(s) · anchor `shadow``
+- `C70 — 3 node(s) · anchor `rules.r_autonomy_breaker``
+- `C71 — 3 node(s) · anchor `rules.r_autonomy_cadence``
+- `C72 — 3 node(s) · anchor `rules.r_dont_do_lint``
+- `C73 — 3 node(s) · anchor `rules.r_handoff_surfaced``
+- `C74 — 3 node(s) · anchor `rules.r_memory_respected``
+- `C75 — 3 node(s) · anchor `rules.r_phase_tracked``
+- `C76 — 3 node(s) · anchor `rules.r_reasoning_trace``
+- `C77 — 3 node(s) · anchor `rules.r_token_budget``
+- `C78 — 3 node(s) · anchor `rules.r_tool_receipts``
+- `C79 — 2 node(s) · anchor `hooks``
+- `C8 — 15 node(s) · anchor `apply_host_wiring``
+- `C80 — 2 node(s) · anchor `rtk``
+- `C81 — 2 node(s) · anchor `rules.r3_arithmetic``
+- `C82 — 2 node(s) · anchor `rules.r7_no_symbolic_output``
+- `C83 — 2 node(s) · anchor `rules.r_adversary_scan``
+- `C84 — 2 node(s) · anchor `rules.r_coherence``
+- `C85 — 2 node(s) · anchor `rules.r_grounded_claims``
+- `C86 — 2 node(s) · anchor `rules.r_menu_rendered``
+- `C87 — 2 node(s) · anchor `rules.r_no_planned_tools``
+- `C88 — 2 node(s) · anchor `rules.r_project_anchor``
+- `C89 — 2 node(s) · anchor `rules.r_state_surfaced``
+- `C9 — 14 node(s) · anchor `apply_memory_slot``
+- `C90 — 2 node(s) · anchor `rules.r_tool_exists``
+- `C91 — 2 node(s) · anchor `rules.r_w_budget``
+- `C92 — 2 node(s) · anchor `tokenizer``
+- `C93 — 1 node(s) · anchor `__init__``
+- `C94 — 1 node(s) · anchor `calculator``
+- `C95 — 1 node(s) · anchor `document_parser``
+- `C96 — 1 node(s) · anchor `rules.__init__``
+- `C97 — 1 node(s) · anchor `validator``
+- `C98 — 1 node(s) · anchor `web_search``
+- `Communities (natural subsystems)`
+- `God-nodes (most-connected hubs — refactor-risk radar)`
+- `Index`
+- `axon-code-map.md`
+
+## Depends on
+- (none)

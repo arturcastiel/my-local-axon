@@ -1,0 +1,125 @@
+diff --git a/tests/test_pr18a_code_dev_dispatch.py b/tests/test_pr18a_code_dev_dispatch.py
+new file mode 100644
+index 0000000..1a61142
+--- /dev/null
++++ b/tests/test_pr18a_code_dev_dispatch.py
+@@ -0,0 +1,62 @@
++"""Regression (PR-18a): code-dev dispatch / CASE routing — audit (markdown logic).
++
++These are interpreted AXON-LANG programs (not unit-executable), so the assertions are static
++checks over the program TEXT that lock the corrected control-flow for three routing bugs:
++
++- B044 (code-dev-state.md): the `actions` subcommand is advertised in desc/usage/the FAIL list but
++  the CASE had no `actions` arm, so `code-dev state actions` fell through the `*` wildcard and
++  hard-failed. Fix: an `actions → EXEC(auto-actions.md)` branch before the wildcard.
++- B046 (code-dev.md): the `IF cmd ≡ "phase"` block read the never-written key W:code-dev-phase-cmd,
++  so `code-dev phase list` always defaulted to "new" and scaffolded a phase instead of listing.
++  Fix: dispatch off the parsed second token `sub`.
++- B042 (code-dev-safety-freeze.md): the SESSION HOOK hardcoded state=frozen (anchor=freeze)
++  regardless of mode, so `code-dev thaw` re-froze the session at entry. Fix: read mode BEFORE the
++  hook and branch the checkpoint/transition (thaw → --state active).
++"""
++from pathlib import Path
++
++PROG = Path(__file__).resolve().parent.parent / "workspace" / "programs"
++STATE = (PROG / "code-dev-state.md").read_text(encoding="utf-8")
++CODEDEV = (PROG / "code-dev.md").read_text(encoding="utf-8")
++FREEZE = (PROG / "code-dev-safety-freeze.md").read_text(encoding="utf-8")
++
++
++# ── B044: state actions has a CASE arm ──────────────────────────────────────
++def test_state_actions_has_dispatch_arm():
++    # the documented `actions` subcommand now routes, instead of hitting the `*` wildcard FAIL
++    assert "actions  → EXEC(workspace/programs/auto-actions.md)" in STATE
++    # and it precedes the wildcard so it wins
++    assert STATE.index("actions  → EXEC(workspace/programs/auto-actions.md)") < STATE.index(
++        '*        → FAIL(code-dev-state,'
++    )
++
++
++# ── B046: phase dispatch reads the parsed second token, not a dead key ───────
++def test_phase_dispatch_uses_parsed_sub_token():
++    # the never-written key is gone; dispatch is off the parsed `sub`
++    assert "RETRIEVE(W:code-dev-phase-cmd)" not in CODEDEV
++    assert "phase-sub ← sub | \"new\"" in CODEDEV
++    # the list handler is now reachable (kept intact)
++    assert 'IF phase-sub ≡ "list" →' in CODEDEV
++
++
++# ── B042: session hook is mode-aware (thaw does not re-freeze) ───────────────
++def test_freeze_session_hook_is_mode_aware():
++    hook = FREEZE.split("## SESSION HOOK", 1)[1].split("project ← RETRIEVE", 1)[0]
++    # mode is resolved BEFORE any session transition
++    assert hook.index('mode ← RETRIEVE(W:code-dev-freeze-mode)') < hook.index(
++        'TOOL(session, transition'
++    )
++    # freeze branch → frozen; thaw branch → active (not a hardcoded frozen)
++    assert 'TOOL(session, transition, "--path {session-path} --state frozen")' in hook
++    assert 'TOOL(session, transition, "--path {session-path} --state active")' in hook
++    assert 'IF mode ≡ "freeze" →' in hook
++
++
++def test_freeze_no_unconditional_frozen_transition_at_entry():
++    # the pre-fix bug was a bare, always-run transition to frozen at the very top of the hook,
++    # before mode was read. Assert the transition now lives inside the mode branch.
++    hook = FREEZE.split("## SESSION HOOK", 1)[1].split("project ← RETRIEVE", 1)[0]
++    frozen_idx = hook.index('--state frozen')
++    branch_idx = hook.index('IF mode ≡ "freeze" →')
++    assert branch_idx < frozen_idx, "frozen transition must be gated by the mode branch"
+diff --git a/workspace/programs/code-dev-safety-freeze.md b/workspace/programs/code-dev-safety-freeze.md
+index 50eb834..e790e9a 100644
+--- a/workspace/programs/code-dev-safety-freeze.md
++++ b/workspace/programs/code-dev-safety-freeze.md
+@@ -31,9 +31,16 @@ ASSERT(L:cognition-frame ≡ "AXON-OS") | HALT("Identity lost — run: boot axon
+ STORE(W:active-program, "code-dev-safety-freeze")
+ 
+ ## SESSION HOOK (PR-9)
++# The hook must respect mode (freeze|thaw) — a bare hardcode re-froze the session on `code-dev thaw`,
++# leaving session state permanently inconsistent with the thawed project. Read mode BEFORE the hook.
++mode ← RETRIEVE(W:code-dev-freeze-mode) | "freeze"   # freeze | thaw
+ session-path ← "{W:myaxon-dev-projects}/{W:code-dev-project}/_session.md"
+-TOOL(session, checkpoint, "--path {session-path} --turn {W:turn-counter} --anchor freeze --summary pre-freeze")
+-TOOL(session, transition, "--path {session-path} --state frozen")
++IF mode ≡ "freeze" →
++  TOOL(session, checkpoint, "--path {session-path} --turn {W:turn-counter} --anchor freeze --summary pre-freeze")
++  TOOL(session, transition, "--path {session-path} --state frozen")
++ELSE →
++  TOOL(session, checkpoint, "--path {session-path} --turn {W:turn-counter} --anchor thaw --summary pre-thaw")
++  TOOL(session, transition, "--path {session-path} --state active")
+ 
+ project ← RETRIEVE(W:code-dev-project)
+ ASSERT(project ≠ ∅) | FAIL(code-dev-safety-freeze, "No project loaded.")
+@@ -41,7 +48,7 @@ proj-dir ← "{W:myaxon-dev-projects}/{project}"
+ meta ← READ("{proj-dir}/_meta.md")
+ phase-dir ← "{proj-dir}/phases/{meta.phase}"
+ phase-meta ← READ("{phase-dir}/_meta.md")
+-mode ← RETRIEVE(W:code-dev-freeze-mode) | "freeze"   # freeze | thaw
++# mode already resolved at the SESSION HOOK above (freeze | thaw)
+ ts ← TOOL(clock)
+ 
+ IF mode ≡ "freeze" →
+diff --git a/workspace/programs/code-dev-state.md b/workspace/programs/code-dev-state.md
+index 0cfde5b..f51bc5b 100644
+--- a/workspace/programs/code-dev-state.md
++++ b/workspace/programs/code-dev-state.md
+@@ -46,6 +46,7 @@ CASE sub:
+   save     → EXEC(workspace/programs/code-dev-state-save.md)
+   restore  → EXEC(workspace/programs/code-dev-state-save.md)
+   undo     → EXEC(workspace/programs/code-dev-state-undo.md)
++  actions  → EXEC(workspace/programs/auto-actions.md)
+   *        → FAIL(code-dev-state, "unknown subcommand: {sub} (use: status|next|resume|handoff|metrics|save|restore|undo|actions)")
+ 
+ DONE(code-dev-state, sub)
+diff --git a/workspace/programs/code-dev.md b/workspace/programs/code-dev.md
+index 7fad784..d0f26b3 100644
+--- a/workspace/programs/code-dev.md
++++ b/workspace/programs/code-dev.md
+@@ -122,7 +122,7 @@ IF cmd ≡ "status"          → EXEC(code-dev-state-status)
+ # while the real structure checker (with --fix support) was called by nothing.
+ IF cmd ≡ "check-structure" → EXEC(code-dev-safety-audit-structure)
+ IF cmd ≡ "phase" →
+-  phase-sub ← RETRIEVE(W:code-dev-phase-cmd) | "new"
++  phase-sub ← sub | "new"
+   IF phase-sub ≡ "new"   → EXEC(code-dev-phase-new)
+   IF phase-sub ≡ "start" → EXEC(code-dev-phase-start)
+   IF phase-sub ≡ "list" →

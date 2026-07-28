@@ -1,0 +1,11 @@
+{
+  "target_repo": "/home/arturcastiel/projects/new-axon/axon",
+  "built_ts": "2026-07-13T16:58:00.242571+00:00",
+  "graphify_version": "graphify 0.8.36",
+  "signal": {
+    "kind": "git",
+    "git_commit": "293d79c6c239a63608a9fc095719b389fbd4a4b6",
+    "dirty": false,
+    "content_hash": ""
+  }
+}

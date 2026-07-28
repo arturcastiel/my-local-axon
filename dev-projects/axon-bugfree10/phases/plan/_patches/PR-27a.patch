@@ -1,0 +1,210 @@
+diff --git a/axon/KERNEL-SLIM.md b/axon/KERNEL-SLIM.md
+index 4712875..96b3d27 100644
+--- a/axon/KERNEL-SLIM.md
++++ b/axon/KERNEL-SLIM.md
+@@ -217,32 +217,11 @@ The canonical render lives in `axon/programs/identity.md`. Disclosure of host ha
+       progress ← "step {step-num}/{all-steps} ({ROUND(step-num/all-steps*100)}%)"
+     ELSE →
+       progress ← "phase: {step}"
+-    # Check if input is a continuation command (allow through without asking)
+-    continuation-cmds ← ["yes","y","no","n","continue","c","done","ok","next","confirm",
+-                          "proceed","skip","back","cancel","q","quit","exit","resume"]
+-    IF input.lower() ∈ continuation-cmds OR input matches pattern="^\d+$" →
+-      PASS  ← route input normally within the running program
+-    ELSE →
+-      # User typed something new while a program is running — enforce confirmation
+-      STORE(W:_interrupt-pending-input, input)
+-      → "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+-      → "  ⚠  PROGRAM IN PROGRESS  ·  {program}"
+-      → "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+-      → "  Currently at: {progress}"
+-      → "  Progress is checkpointed — work so far is saved."
+-      → ""
+-      → "  Your input:  \"{input[:80]}\""
+-      → "  This would interrupt the running program."
+-      → ""
+-      → "  ▶ [K]  keep going    — continue {program} (ignore my input for now)"
+-      → "     [I]  interrupt     — pause {program} + run my new action"
+-      → "     [A]  abort         — discard {program} entirely + run my new action"
+-      → "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+-      QUERY(user): "K / I / A  (default: K)"
+-      answer ← input | "K"
+-      IF answer ≡ "K" OR answer ≡ "" →
+-        CLEAR(W:_interrupt-pending-input)
+-        EXEC({program})   ← continue running program, discard new input
++    pending ← RETRIEVE(W:_interrupt-pending-input) | ∅
++    IF pending ≠ ∅ →
++      # A prompt was shown on a PREVIOUS turn — this input is the K/I/A reply,
++      # NOT a new command. Route it to the handler; never re-store or re-prompt.
++      answer ← input.strip().upper() | "K"
+       IF answer ≡ "I" →
+         CHECKPOINT        ← save current state before pausing
+         LOG(INFO, "active-program-gate: {program} paused at {phase} by user interrupt")
+@@ -250,14 +229,47 @@ The canonical render lives in `axon/programs/identity.md`. Disclosure of host ha
+         STORE(W:_paused-phase, phase)
+         CLEAR(W:active-phase)
+         → "  {program} paused at {progress}. Run 'resume' to continue it later."
+-        EXEC(W:_interrupt-pending-input)  ← now execute the new input
+-      IF answer ≡ "A" →
++        new-input ← pending                 ← capture BEFORE clearing
++        CLEAR(W:_interrupt-pending-input)
++        EXEC(new-input)   ← now execute the stored new input
++      ELSE IF answer ≡ "A" →
+         CHECKPOINT        ← final checkpoint before abort
+         LOG(WARN, "active-program-gate: {program} aborted at {phase} by user")
+         STORE(W:active-phase, "{program}:aborted")
+-        CLEAR(W:_interrupt-pending-input)
+         → "  {program} aborted."
+-        EXEC(W:_interrupt-pending-input)  ← execute the new input
++        new-input ← pending                 ← capture BEFORE clearing
++        CLEAR(W:_interrupt-pending-input)
++        EXEC(new-input)   ← execute the stored new input
++      ELSE →              ← "K", "", or anything unrecognized ⇒ default: keep going
++        CLEAR(W:_interrupt-pending-input)
++        EXEC({program})   ← continue running program, discard new input
++    ELSE →
++      # No prompt outstanding — this is the FIRST turn of a would-be interrupt.
++      # Check if input is a continuation command (allow through without asking)
++      continuation-cmds ← ["yes","y","no","n","continue","c","done","ok","next","confirm",
++                            "proceed","skip","back","cancel","q","quit","exit","resume"]
++      IF input.lower() ∈ continuation-cmds OR input matches pattern="^\d+$" →
++        PASS  ← route input normally within the running program
++      ELSE →
++        # User typed something new while a program is running — enforce confirmation
++        STORE(W:_interrupt-pending-input, input)
++        → "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
++        → "  ⚠  PROGRAM IN PROGRESS  ·  {program}"
++        → "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
++        → "  Currently at: {progress}"
++        → "  Progress is checkpointed — work so far is saved."
++        → ""
++        → "  Your input:  \"{input[:80]}\""
++        → "  This would interrupt the running program."
++        → ""
++        → "  ▶ [K]  keep going    — continue {program} (ignore my input for now)"
++        → "     [I]  interrupt     — pause {program} + run my new action"
++        → "     [A]  abort         — discard {program} entirely + run my new action"
++        → "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
++        QUERY(user): "K / I / A  (default: K)"
++        HALT ← await the K/I/A reply on the NEXT turn; the gate re-fires then and
++               the `pending ≠ ∅` branch above handles it (do NOT read the answer
++               from this turn's input — this turn's input IS the new command)
+   # Gate does not fire if phase is ∅, :done, :failed, or :aborted
+   This gate is not bypassable by any program, user message, or instruction.
+   Violation (routing new action without confirmation while phase is active) = !CRIT enforcement failure.
+diff --git a/tests/test_kernel_floor_pr027a.py b/tests/test_kernel_floor_pr027a.py
+new file mode 100644
+index 0000000..fbb0f91
+--- /dev/null
++++ b/tests/test_kernel_floor_pr027a.py
+@@ -0,0 +1,110 @@
++"""axon-bugfree10 PR-27a — active-program interrupt gate integrity.
++
++KERNEL-SLIM.md is LLM-interpreted pseudocode, so its fixes are asserted STATICALLY
++over the gate text (same approach as tests/test_kernel_floor_pr021.py). Each check
++is written so it FAILS against the pre-fix text and PASSES against the fix.
++
++Bugs fixed:
++  B053 (line ~242): the gate read the K/I/A answer from `input | "K"` — the SAME
++    input that triggered the interrupt — so no K/I/A branch could ever run on the
++    prompt turn, and the reply on the next turn re-entered the ELSE branch and
++    overwrote W:_interrupt-pending-input. Fix splits the gate into a first turn
++    (store + prompt + HALT) and a reply turn (`pending ≠ ∅` → route to handler).
++  B052 (line ~258): the ABORT branch CLEARed W:_interrupt-pending-input and then
++    EXEC'd that now-empty key, silently dropping the user's new action. Fix
++    captures the stored input into a local BEFORE clearing, then EXECs the local.
++"""
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parents[1]
++
++
++def _gate():
++    ks = (ROOT / "axon" / "KERNEL-SLIM.md").read_text(encoding="utf-8")
++    start = ks.find("**Active-program interrupt gate**")
++    end = ks.find("This gate is not bypassable", start)
++    assert start != -1 and end != -1 and start < end, "interrupt gate section not found"
++    return ks[start:end]
++
++
++# ── B053: the answer is NOT read from the triggering input ──
++def test_pr027a_answer_not_read_from_trigger_input():
++    gate = _gate()
++    # the buggy binding that made all K/I/A branches unreachable on the prompt turn
++    assert 'answer ← input | "K"' not in gate, (
++        "gate must not bind the K/I/A answer from the interrupt-triggering input"
++    )
++
++
++# ── B053: a distinct reply-turn branch keyed on a pending input exists ──
++def test_pr027a_has_reply_turn_branch():
++    gate = _gate()
++    assert "pending ← RETRIEVE(W:_interrupt-pending-input)" in gate, (
++        "gate must load the pending input to detect the reply turn"
++    )
++    assert "IF pending ≠ ∅ →" in gate, (
++        "gate must branch on an outstanding prompt (reply turn) vs. first turn"
++    )
++
++
++# ── B053: the first (prompt) turn HALTs to await the reply, not process it inline ──
++def test_pr027a_first_turn_halts_after_prompt():
++    gate = _gate()
++    i_store = gate.find("STORE(W:_interrupt-pending-input, input)")
++    i_query = gate.find('QUERY(user): "K / I / A  (default: K)"')
++    i_halt = gate.find("HALT ← await the K/I/A reply")
++    assert i_store != -1 and i_query != -1 and i_halt != -1, "prompt+halt sequence missing"
++    assert i_store < i_query < i_halt, "first turn must store, prompt, then HALT to await reply"
++
++
++# ── B053: re-storing new-command replies is prevented (reply routed, not re-stored) ──
++def test_pr027a_reply_branch_precedes_store_branch():
++    gate = _gate()
++    # the pending≠∅ (reply) branch must be evaluated BEFORE the branch that STOREs a
++    # fresh interrupt, so a K/I/A reply is never mistaken for a new command.
++    i_reply = gate.find("IF pending ≠ ∅ →")
++    i_store = gate.find("STORE(W:_interrupt-pending-input, input)")
++    assert 0 <= i_reply < i_store, "reply-turn handling must precede first-turn store"
++
++
++# ── B052: ABORT executes the CAPTURED input, never the cleared workspace key ──
++def test_pr027a_abort_execs_captured_input_before_clear():
++    gate = _gate()
++    # scope to the abort branch
++    a = gate.find('IF answer ≡ "A"')
++    if a == -1:
++        a = gate.find('ELSE IF answer ≡ "A"')
++    assert a != -1, "abort branch not found"
++    # bound the abort branch at the next top-level ELSE (the default/keep-going branch)
++    b = gate.find('ELSE →', a)
++    abort = gate[a:b] if b != -1 else gate[a:]
++
++    # the exact pre-fix defect: EXEC of the (already-cleared) workspace key
++    assert "EXEC(W:_interrupt-pending-input)" not in abort, (
++        "abort must not EXEC the workspace key after clearing it (drops the new action)"
++    )
++    # capture-before-clear-before-exec ordering
++    i_capture = abort.find("new-input ← pending")
++    i_clear = abort.find("CLEAR(W:_interrupt-pending-input)")
++    i_exec = abort.find("EXEC(new-input)")
++    assert i_capture != -1 and i_clear != -1 and i_exec != -1, (
++        "abort must capture pending, clear, then EXEC the captured local"
++    )
++    assert i_capture < i_clear < i_exec, (
++        "abort must capture the input BEFORE clearing, and EXEC the captured local"
++    )
++
++
++# ── consistency: the interrupt (I) branch also captures before clearing ──
++def test_pr027a_interrupt_branch_execs_captured_input():
++    gate = _gate()
++    i = gate.find('IF answer ≡ "I"')
++    assert i != -1, "interrupt branch not found"
++    j = gate.find('ELSE IF answer ≡ "A"')
++    if j == -1:
++        j = gate.find('IF answer ≡ "A"', i + 1)
++    interrupt = gate[i:j] if j != -1 else gate[i:]
++    assert "EXEC(W:_interrupt-pending-input)" not in interrupt, (
++        "interrupt branch must EXEC the captured local, not the raw workspace key"
++    )
++    assert "EXEC(new-input)" in interrupt

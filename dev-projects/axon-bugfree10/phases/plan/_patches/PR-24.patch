@@ -1,0 +1,117 @@
+diff --git a/tests/test_self_care.py b/tests/test_self_care.py
+index 87471c9..e9bc023 100644
+--- a/tests/test_self_care.py
++++ b/tests/test_self_care.py
+@@ -51,6 +51,44 @@ def test_persistence_na_when_no_claude_dir(tmp_path):
+     assert p["status"] == "n/a"
+ 
+ 
++def test_health_score_read_via_memory_not_kv_store(monkeypatch, tmp_path):
++    """B012: L:health-score lives in the longterm .md store (health.py --persist is its
++    single writer). kv-store REFUSES the L: namespace (C9 split-brain guard), so reading
++    it through kv-store always yields an error → score None → health falsely 'unknown'.
++    The canonical reader is `memory get --scope L`; assert self-care uses it and picks up
++    a healthy persisted score."""
++    calls = []
++
++    def fake_axon(*args, timeout=120):
++        a = [str(x) for x in args]
++        calls.append(tuple(a))
++        if a[:2] == ["kv-store", "get"]:  # real kv_store.py refuses L: and exits 2
++            return 2, json.dumps({"error": "kv-store refuses the L: namespace"})
++        if a[:2] == ["memory", "get"]:
++            return 0, json.dumps({"scope": "L", "key": "health-score",
++                                  "value": "95", "found": True})
++        if a[0] == "freshness":
++            return 0, json.dumps({"stale": []})
++        if a[0] == "cron":
++            return 0, json.dumps({"overdue_count": 0, "count": 0})
++        if a[0] == "drift":
++            return 0, json.dumps({"state": "stable"})
++        if a[0] == "igap":
++            return 0, json.dumps({"total": 0})
++        if a[0] == "lint-path-vars":
++            return 0, json.dumps({"violations": []})
++        return 0, "{}"
++
++    monkeypatch.setattr(self_care, "_axon", fake_axon)
++    rep = self_care.run_check(ws=str(tmp_path), claude_dir=_wire(tmp_path))
++
++    assert ("memory", "get", "--scope", "L", "--key", "health-score") in calls
++    assert not any(c[:2] == ("kv-store", "get") for c in calls)
++    assert rep["areas"]["health"]["score"] == "95"
++    assert rep["areas"]["health"]["ok"] is True
++    assert not any(item.startswith("health:") for item in rep["needs_attention"])
++
++
+ def test_check_returns_rolled_up_structure(tmp_path):
+     # integration: composes the real tools; the persistence area is pinned via a wired fixture.
+     rep = self_care.run_check(claude_dir=_wire(tmp_path))
+diff --git a/tests/test_self_care_pointers.py b/tests/test_self_care_pointers.py
+index 96392f4..99a0420 100644
+--- a/tests/test_self_care_pointers.py
++++ b/tests/test_self_care_pointers.py
+@@ -145,6 +145,25 @@ def test_complete_claim_backed_is_clean(ws, projects):
+     assert _findings(res, "complete-claim-unbacked") == []
+ 
+ 
++def test_incomplete_status_is_not_a_complete_claim(ws, projects):
++    """B064: 'complete' is matched as a WHOLE WORD — the substring inside 'incomplete'
++    (the exact opposite claim) must NOT trigger a complete-claim-unbacked finding even
++    though the manifest legitimately still has non-done phases."""
++    _project(projects, "still-going", "incomplete", "plan",
++             {"study": "done"})  # plan/pr/log/audit pending — consistent with 'incomplete'
++    res = self_care.pointer_check(str(ws), projects_dir=str(projects))
++    assert _findings(res, "complete-claim-unbacked") == []
++
++
++def test_completed_status_is_still_a_complete_claim(ws, projects):
++    """The whole-word fix must not under-match: 'completed' is still a completion claim,
++    so an unbacked manifest under 'completed' must still be flagged."""
++    _project(projects, "claims-done", "completed", "pr",
++             {"study": "done", "plan": "done"})  # pr/log/audit pending
++    res = self_care.pointer_check(str(ws), projects_dir=str(projects))
++    assert len(_findings(res, "complete-claim-unbacked")) == 1
++
++
+ # ── 4 · test-run freshness ─────────────────────────────────────────────────
+ 
+ def test_test_record_stale_when_commit_newer(ws, projects, tmp_path):
+diff --git a/tools/self_care.py b/tools/self_care.py
+index e0ba53b..adf8808 100644
+--- a/tools/self_care.py
++++ b/tools/self_care.py
+@@ -23,6 +23,7 @@ import argparse
+ import glob
+ import json
+ import os
++import re
+ import subprocess
+ import sys
+ from pathlib import Path
+@@ -197,7 +198,10 @@ def pointer_check(ws: str | None = None, projects_dir: str | None = None,
+                         "check": "manifest", "kind": "meta-behind", "project": slug,
+                         "detail": f"{slug}: {rep['note']}",
+                         "fix": f"advance _meta.phase in {pdir}/_meta.md"})
+-            if "complete" in (status_f + " " + phase_f) and manifest:
++            # B064: a WHOLE-WORD 'complete' claim — the negative lookbehind stops the
++            # substring inside 'incomplete' (its exact opposite) from false-firing this
++            # finding, while still catching 'complete'/'completed'/'task-complete'.
++            if re.search(r"(?<![a-z])complete", status_f + " " + phase_f) and manifest:
+                 not_done = [ph["id"] for ph in manifest.get("phases", [])
+                             if ph.get("status") != "done"]
+                 if not_done:
+@@ -252,8 +256,11 @@ def run_check(ws: str | None = None, claude_dir: str | None = None) -> dict:
+     areas: dict = {}
+     attention: list[str] = []
+ 
+-    # 1. health score (read the persisted L:health-score; --heal re-probes it)
+-    _, so = _axon("kv-store", "get", "--key", "L:health-score")
++    # 1. health score (read the persisted L:health-score; --heal re-probes it).
++    # B012: L:health-score lives in the longterm .md store (health.py --persist is its
++    # single writer). kv-store REFUSES the L: namespace (C9 split-brain guard), so the
++    # canonical reader is memory.py --scope L, not kv-store.
++    _, so = _axon("memory", "get", "--scope", "L", "--key", "health-score")
+     hs = _loads(so)
+     score = hs.get("value") if hs.get("found") else None
+     areas["health"] = {"score": score, "ok": (score is None or int(score) >= 70)}

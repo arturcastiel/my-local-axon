@@ -1,0 +1,95 @@
+diff --git a/axon/compiler/templates/chat-session.tpl.md b/axon/compiler/templates/chat-session.tpl.md
+index f7b2ec5..f1f4a26 100644
+--- a/axon/compiler/templates/chat-session.tpl.md
++++ b/axon/compiler/templates/chat-session.tpl.md
+@@ -11,7 +11,7 @@ Base:        ∅
+ | {{folder}} | str | yes | ∅ | Folder grouping for this chat |
+ | {{goal}} | str | yes | ∅ | One-sentence goal for this conversation |
+ | {{output-path}} | str | no | ∅ | Where to save the final output (workspace-relative path) |
+-| {{output-format}} | str | no | doc | Format for saved output: "doc" | "report" | "list" | "raw" |
++| {{output-format}} | str | no | doc | Format for saved output (translate formats): "doc" | "report" | "explanation" | "audit" |
+ | {{model-preference}} | str | no | ∅ | Preferred model for this chat; ∅ = inherit from session |
+ | {{max-turns}} | num | no | ∅ | Maximum conversation turns before forcing close; ∅ = unlimited |
+ | {{on-complete}} | op | no | ∅ | Op to execute after chat closes — e.g., EXEC(another-program) |
+@@ -42,7 +42,7 @@ CHECKPOINT
+ 
+ ### Save Output
+ IF {{output-path}} ≠ ∅ →
+-  EXEC(translate, {input: W:chat-output, format: "{{output-format}}"}) → W:formatted-output
++  EXEC(translate, {source: W:chat-output, format: "{{output-format}}"}) → W:formatted-output
+   WRITE({{output-path}}, W:formatted-output)
+   LOG(INFO, "Chat output saved: {{output-path}}")
+ ELSE →
+diff --git a/axon/compiler/templates/feedback-loop.tpl.md b/axon/compiler/templates/feedback-loop.tpl.md
+index 17dd4e8..b0b10cc 100644
+--- a/axon/compiler/templates/feedback-loop.tpl.md
++++ b/axon/compiler/templates/feedback-loop.tpl.md
+@@ -72,22 +72,23 @@ UNTIL(passed ≡ true OR iter ≥ max-iter) {
+     LOG(WARN, "actor {actor} failed on iteration {iter}")
+     → "  ⚠ Actor failed — retrying..."
+     eval-result ← {score: 0, passed: [], failed: ["actor-failed"]}
+-    # Skip to next iteration — condition will re-evaluate
+-
+-  ### Phase 3: Evaluate
+-  → "  Evaluating..."
+-  EVAL(W:actor-output, criteria, tolerance) → eval-result
+-  STORE(W:loop-eval-{iter}, eval-result)
+-
+-  IF eval-result.score >= tolerance →
+-    passed ← true
+-    → "  ✓ Passed ({eval-result.score * 100}%) — {COUNT(eval-result.passed)}/{COUNT(criteria)} criteria met"
++    STORE(W:loop-eval-{iter}, eval-result)
++    # Actor failed — skip evaluation this iteration; UNTIL re-checks (retry, or exit at max-iter)
+   ELSE →
+-    → "  ✗ Score: {eval-result.score * 100}% (need {tolerance * 100}%)"
+-    → "  Failed: {eval-result.failed}"
+-    IF iter < max-iter →
+-      → "  Retrying..."
+-      EMIT({goal}-loop-retry, {iteration: iter, score: eval-result.score, failed: eval-result.failed})
++    ### Phase 3: Evaluate
++    → "  Evaluating..."
++    EVAL(W:actor-output, criteria, tolerance) → eval-result
++    STORE(W:loop-eval-{iter}, eval-result)
++
++    IF eval-result.score >= tolerance →
++      passed ← true
++      → "  ✓ Passed ({eval-result.score * 100}%) — {COUNT(eval-result.passed)}/{COUNT(criteria)} criteria met"
++    ELSE →
++      → "  ✗ Score: {eval-result.score * 100}% (need {tolerance * 100}%)"
++      → "  Failed: {eval-result.failed}"
++      IF iter < max-iter →
++        → "  Retrying..."
++        EMIT({goal}-loop-retry, {iteration: iter, score: eval-result.score, failed: eval-result.failed})
+ }
+ 
+ ## RESULT ROUTING
+diff --git a/axon/compiler/templates/qc-workflow.tpl.md b/axon/compiler/templates/qc-workflow.tpl.md
+index 2334ca9..67ba103 100644
+--- a/axon/compiler/templates/qc-workflow.tpl.md
++++ b/axon/compiler/templates/qc-workflow.tpl.md
+@@ -30,8 +30,14 @@ STORE(W:fail-count, 0)
+ ### Sample Selection
+ TOOL(calculator, "min({{sample-size}}, COUNT(W:batch))")
+ STORE(W:sample-size, result)
+-STORE(W:sample, RAND(W:batch, W:sample-size))   ← random sample without replacement
+-LOG(DEBUG, "Sample selected: {W:sample-size} of {COUNT(W:batch)} items")
++STORE(W:pool, W:batch)                                  ← draw pool — working copy of the batch
++STORE(W:sample, [])
++UNTIL(COUNT(W:sample) ≥ W:sample-size OR W:pool ≡ []) {
++  pick ← RAND(W:pool)                                   ← RAND(list) → one element (EXT-002)
++  APPEND(W:sample, pick)
++  STORE(W:pool, FILTER(W:pool, value ≠ pick))           ← remove drawn item — sampling without replacement
++}
++LOG(DEBUG, "Sample selected: {COUNT(W:sample)} of {COUNT(W:batch)} items")
+ 
+ ### Inspection Loop
+ LOOP(∀ item ∈ W:sample) {
+@@ -48,7 +54,7 @@ LOOP(∀ item ∈ W:sample) {
+     LOG(WARN, "✗ {item.id} — deviation {W:deviation:.3f} exceeds {{tolerance}}")
+     IF W:fail-count ≥ {{escalate-threshold}} →
+       !CRIT ⊕ LOG(CRITICAL, "Escalation threshold reached: {W:fail-count} failures")
+-      IF {{notify-target}} ≠ ∅ → TOOL(notify, {channel: slack, to: {{notify-target}}, message: "QC ALERT: {W:fail-count} failures on {{item-name}} batch {W:batch-key}", priority: high})
++      IF {{notify-target}} ≠ ∅ → TOOL(notify, {channel: slack, to: {{notify-target}}, message: "QC ALERT: {W:fail-count} failures on {{item-name}} batch {{batch-key}}", priority: high})
+       EMIT(qc-escalated, {item: "{{item-name}}", fail-count: W:fail-count, batch: "{{batch-key}}"})
+ 
+   IF {{checkpoint-each}} ≡ true → CHECKPOINT

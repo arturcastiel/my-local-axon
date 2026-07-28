@@ -1,0 +1,180 @@
+diff --git a/tests/test_rules/test_r3_arithmetic.py b/tests/test_rules/test_r3_arithmetic.py
+index d2bf579..49b42fd 100644
+--- a/tests/test_rules/test_r3_arithmetic.py
++++ b/tests/test_rules/test_r3_arithmetic.py
+@@ -37,3 +37,16 @@ class TestR3Arithmetic:
+     def test_calculator_path_reference_alone_passes(self) -> None:
+         # Mention of tools/calculator.py without any float arith → no R3 trip.
+         assert r3_check(_ctx("invoke tools/calculator.py for the math step")) is None
++
++    # B078 — percent/currency arithmetic (the rule's core scope) must not fail open.
++    def test_percent_arithmetic_violates(self) -> None:
++        v = r3_check(_ctx("L:total = 1.5% * 2"))
++        assert v is not None and v.rule_id == "R3"
++
++    def test_percent_arithmetic_in_prose_violates(self) -> None:
++        v = r3_check(_ctx("discount 1.5% + 2"))
++        assert v is not None and v.rule_id == "R3"
++
++    def test_currency_arithmetic_violates(self) -> None:
++        v = r3_check(_ctx("price = $1.50 + $2.00"))
++        assert v is not None and v.rule_id == "R3"
+diff --git a/tests/test_rules/test_r_dont_do.py b/tests/test_rules/test_r_dont_do.py
+index 814efd1..465f021 100644
+--- a/tests/test_rules/test_r_dont_do.py
++++ b/tests/test_rules/test_r_dont_do.py
+@@ -88,6 +88,17 @@ def test_semantic_prohibition_flags_human_review():
+     assert "human review" in v.reason and "un-enforceable" not in v.reason
+ 
+ 
++def test_disabled_bullet_does_not_clobber_active_prohibition():
++    # B078/B079: a struck ~~disabled~~ bullet's indented match: must NOT overwrite the
++    # previous active prohibition's token (fail-open on the active rule).
++    text = ("- keep rule\n  match: SECRET\n"
++            "- ~~retired~~\n  match: OLDTOKEN\n")
++    pr = r.parse_dont_do(text)
++    assert len(pr) == 1
++    assert pr[0]["text"] == "keep rule"
++    assert pr[0]["match"] == "SECRET"
++
++
+ def test_semantic_does_not_token_match():
+     # a semantic prohibition never does substring matching on its prose text
+     ctx = {"changed_files": [{"path": "a.py", "status": "A"}],
+diff --git a/tests/test_rules/test_r_inference_mode_lock.py b/tests/test_rules/test_r_inference_mode_lock.py
+index 2c4f8bb..80416d1 100644
+--- a/tests/test_rules/test_r_inference_mode_lock.py
++++ b/tests/test_rules/test_r_inference_mode_lock.py
+@@ -60,6 +60,18 @@ STORE(L:inference-mode, 10)
+         assert v is not None
+         assert v.severity == "BLOCK"
+ 
++    def test_lock_control_key_not_flagged(self) -> None:
++        # B080: STORE(L:inference-mode-locked, ...) is the distinct lock-control key,
++        # NOT the protected L:inference-mode key. It must not trip the rule even when
++        # locked=true (otherwise turning the lock off is itself a BLOCK).
++        text = '''# PROGRAM: lock-toggle
++STORE(L:inference-mode-locked, false)
++'''
++        assert riml.check({
++            "program_text": text,
++            "state": {"inference_mode_locked": "true"},
++        }) is None
++
+     def test_program_name_from_ctx_when_no_header(self) -> None:
+         """Programs without an explicit '# PROGRAM:' header fall back to ctx."""
+         text = 'STORE(L:inference-mode, 7)\n'
+diff --git a/tests/test_rules/test_r_tool_receipts.py b/tests/test_rules/test_r_tool_receipts.py
+index ad6fad3..b397692 100644
+--- a/tests/test_rules/test_r_tool_receipts.py
++++ b/tests/test_rules/test_r_tool_receipts.py
+@@ -98,3 +98,21 @@ def test_spaced_tool_form_detected():
+     ctx = {"output_text": "Result via TOOL ( fabricated-spaced ) was great.",
+            "state": {"tool_receipts_required": "true"}, "root": str(ROOT)}
+     assert rr.check(ctx) is not None
++
++
++# ── B081: dispatcher non-tool subcommands + prose must not fail-closed BLOCK ─────────
++
++def test_dispatcher_help_subcommand_not_blocked(tmp_path):
++    """`python3 axon.py help` is guidance the CLI itself emits; `help` is not a tool and
++    can never be receipted, so quoting it must NOT BLOCK. Hermetic empty root."""
++    ctx = {"output_text": "For options run: python3 axon.py help",
++           "state": {"tool_receipts_required": "true"}, "root": str(tmp_path)}
++    assert rr.check(ctx) is None
++
++
++def test_lowercase_prose_tool_not_captured(tmp_path):
++    """Lowercase prose 'tool (' is not the AXON-LANG symbolic form; it must not capture
++    the following word ('like') as a claimed tool and BLOCK."""
++    ctx = {"output_text": "We used the parser tool (like the doc one) to read it.",
++           "state": {"tool_receipts_required": "true"}, "root": str(tmp_path)}
++    assert rr.check(ctx) is None
+diff --git a/tools/rules/r3_arithmetic.py b/tools/rules/r3_arithmetic.py
+index 6f98845..3d9e143 100644
+--- a/tools/rules/r3_arithmetic.py
++++ b/tools/rules/r3_arithmetic.py
+@@ -9,7 +9,7 @@ script itself (`tools/calculator.py`, `python ... calculator ...`) don't count
+ import re
+ from .registry import Violation
+ 
+-ARITH_RE     = re.compile(r'(?<!\w)\d+\.\d+\s*[+\-*/%]\s*\d')
++ARITH_RE     = re.compile(r'(?<!\w)\$?\d+\.\d+%?\s*[+\-*/%]\s*\$?\d')
+ CODE_SPAN_RE = re.compile(r'`[^`]*`')
+ CALC_TOOL_RE = re.compile(r'TOOL\(\s*calculator\b[^)]*\)')
+ CALC_PATH_RE = re.compile(r'(?:tools/)?calculator(?:\.py)?\b', re.IGNORECASE)
+diff --git a/tools/rules/r_dont_do.py b/tools/rules/r_dont_do.py
+index eee4138..1052a2f 100644
+--- a/tools/rules/r_dont_do.py
++++ b/tools/rules/r_dont_do.py
+@@ -28,6 +28,7 @@ severity = "BLOCK"
+ rule_id  = "R_DONT_DO"
+ 
+ _BULLET = re.compile(r'^- (?!~~)(.+?)\s*$')          # active prohibition bullet
++_ANY_BULLET = re.compile(r'^- ')                     # any bullet (incl. disabled ~~struck~~)
+ _MATCH  = re.compile(r'^\s+match:\s*(.+?)\s*$', re.IGNORECASE)
+ _REVIEW = re.compile(r'^\s+review:\s*(.+?)\s*$', re.IGNORECASE)
+ 
+@@ -48,6 +49,12 @@ def parse_dont_do(text: str) -> list[dict]:
+             cur = {"text": b.group(1).strip(), "match": None, "review": None}
+             prohibitions.append(cur)
+             continue
++        if _ANY_BULLET.match(line):
++            # A bullet that isn't an active prohibition (e.g. a disabled
++            # ~~struck~~ rule). End the current prohibition so this bullet's
++            # indented match:/review: lines don't leak onto the previous one.
++            cur = None
++            continue
+         if cur is None:
+             continue
+         m = _MATCH.match(line)
+diff --git a/tools/rules/r_inference_mode_lock.py b/tools/rules/r_inference_mode_lock.py
+index 1aa9100..de19121 100644
+--- a/tools/rules/r_inference_mode_lock.py
++++ b/tools/rules/r_inference_mode_lock.py
+@@ -44,7 +44,7 @@ INFERENCE_MODE_OWNERS: frozenset = frozenset({
+ })
+ 
+ _STORE_RE = re.compile(
+-    r'STORE\(\s*L:inference-mode\b[^)]*\)'
++    r'STORE\(\s*L:inference-mode(?![-\w])[^)]*\)'
+ )
+ _PROGRAM_NAME_RE = re.compile(
+     r'^#\s*PROGRAM:\s*([\w.-]+)\s*$', re.MULTILINE
+diff --git a/tools/rules/r_tool_receipts.py b/tools/rules/r_tool_receipts.py
+index bc8b43b..347e7ac 100644
+--- a/tools/rules/r_tool_receipts.py
++++ b/tools/rules/r_tool_receipts.py
+@@ -33,16 +33,23 @@ rule_id  = "R_TOOL_RECEIPTS"
+ # dispatcher CLI form `axon.py <tool>` — the exact path that WRITES receipts, and the
+ # easiest fabrication surface (paste a CLI command + fake output). The prior regex matched
+ # only literal "TOOL(" with no space, missing both (audit 2026-06-15, mass false-negative).
++# Case-SENSITIVE on purpose: AXON-LANG spells the symbolic form uppercase `TOOL(`, so
++# matching case-insensitively over-captured ordinary prose ("the parser tool (like the
++# doc one)" → claimed 'like') and fail-closed BLOCKed legitimate output (audit 2026-07).
++# `axon.py` in the dispatcher branch is a literal lowercase path, unaffected by dropping
++# IGNORECASE.
+ _CLAIM_RE = re.compile(
+-    r"\bTOOL\s*\(\s*([a-z0-9][\w-]*)"      # symbolic: TOOL( name  (now space-tolerant)
+-    r"|axon\.py\s+([a-z0-9][\w-]*)",       # dispatcher CLI: python3 axon.py <tool> = sys.argv[1]
+-    re.IGNORECASE)
+-
+-# Only the documentation placeholder is exempt. The prior set exempted real/exploitable
+-# tokens — notably `verify`, an ACTIVE tool that the dispatcher receipts on every real run,
+-# so exempting it let a fabricated 'gate GREEN' sail through (audit 2026-06-15). An honest
+-# verify run has a receipt and passes; only a fabricated claim with no receipt is blocked.
+-_EXEMPT = {"x"}
++    r"\bTOOL\s*\(\s*([a-z0-9][\w-]*)"      # symbolic: TOOL( name  (space-tolerant)
++    r"|axon\.py\s+([a-z0-9][\w-]*)")       # dispatcher CLI: python3 axon.py <tool> = sys.argv[1]
++
++# Exempt: the documentation placeholder plus dispatcher SUBCOMMANDS that are not tools and
++# therefore can never appear in the receipt ledger. `help` (python3 axon.py help / help
++# <tool>) returns from main() before _write_receipt runs, so capturing it as a claimed tool
++# fail-closed BLOCKed legitimate output that merely quoted the CLI's own guidance string.
++# The prior set exempted real/exploitable tokens — notably `verify`, an ACTIVE tool the
++# dispatcher receipts on every real run — so exempting it let a fabricated 'gate GREEN' sail
++# through (audit 2026-06-15); those stay non-exempt.
++_EXEMPT = {"x", "help"}
+ 
+ 
+ def _receipted_tools(root: str) -> set[str]:

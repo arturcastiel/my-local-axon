@@ -1,0 +1,130 @@
+diff --git a/benchmark/cold-start/cold_stranger.py b/benchmark/cold-start/cold_stranger.py
+index d197d54..7a688b8 100644
+--- a/benchmark/cold-start/cold_stranger.py
++++ b/benchmark/cold-start/cold_stranger.py
+@@ -356,7 +356,7 @@ def run_one(task: dict, model: str, rubric: dict, *, clean_checkout: Path,
+     return {
+         "task_id": task["id"], "model": model, "tier": tier,
+         "harness": "claude-code-headless", "naive": True,
+-        "repo_sha": repo_sha(clean_checkout), "wall_ms": wall_ms,
++        "repo_sha": repo_sha(ROOT), "wall_ms": wall_ms,
+         "pass": passed,
+         "failure_kind": rec_fail_kind,       # None | hook-block | auth | error | fabricated
+         "failure_marker": rec_marker,
+diff --git a/tests/test_cold_stranger.py b/tests/test_cold_stranger.py
+index 0ed4cf1..a87c8e5 100644
+--- a/tests/test_cold_stranger.py
++++ b/tests/test_cold_stranger.py
+@@ -257,6 +257,49 @@ def test_detect_fabrication_empty_oracle_is_no_judgment():
+     assert fk is None
+ 
+ 
++def test_run_one_records_repo_sha_of_real_repo(tmp_path, monkeypatch):
++    # B066: run_one must stamp repo_sha from the REAL repo (ROOT), not from the
++    # git-archive checkout — that checkout has no .git, so repo_sha(checkout) is
++    # ALWAYS 'unknown', silently destroying which-commit-was-tested provenance.
++    checkout = tmp_path / "checkout"
++    checkout.mkdir()
++    assert C.repo_sha(checkout) == "unknown"   # the .git-less archive → 'unknown' (the bug's cause)
++
++    seen = {}
++
++    def spy(root):
++        seen["root"] = Path(root)
++        return "deadbee"
++
++    monkeypatch.setattr(C, "repo_sha", spy)
++
++    # Stub the spawn + grade so no `claude` agent is launched.
++    fake_dae = type(sys)("dual_agent_eval")
++
++    class _Backend:
++        def __init__(self, model, cwd=None):
++            pass
++
++        def __call__(self, msgs):
++            return "AXON · OS STATE · MODES"
++
++    fake_dae.ClaudeCliBackend = _Backend
++    fake_cs = type(sys)("conformance_scorecard")
++    fake_cs.grade = lambda scenario, transcript, tier: {
++        "pass": True, "missing_must_mention": [], "anti_pattern_hits": []}
++    monkeypatch.setitem(sys.modules, "dual_agent_eval", fake_dae)
++    monkeypatch.setitem(sys.modules, "conformance_scorecard", fake_cs)
++    monkeypatch.setattr(C, "detect_tier", lambda m: "standard")
++
++    task = C.load_tasks()[0]
++    home = tmp_path / "home"
++    home.mkdir()
++    rec = C.run_one(task, "sonnet", C.load_rubric(), clean_checkout=checkout,
++                    isolated_home=home, transcript_dir=tmp_path / "t")
++    assert seen["root"] == C.ROOT, "repo_sha must be computed against the real repo ROOT"
++    assert rec["repo_sha"] == "deadbee"        # not 'unknown'
++
++
+ def test_ground_truth_reads_checkout(tmp_path):
+     (tmp_path / "tools").mkdir()
+     (tmp_path / "tools" / "REGISTRY.json").write_text(
+diff --git a/tests/test_stop_hook_next_turn.py b/tests/test_stop_hook_next_turn.py
+index 2321fe5..8a4f5e5 100644
+--- a/tests/test_stop_hook_next_turn.py
++++ b/tests/test_stop_hook_next_turn.py
+@@ -216,6 +216,42 @@ def test_verify_stop_no_pending_gate_on_pass(tmp_path, monkeypatch):
+ # UserPromptSubmit hook WITHOUT || true (so it can block)
+ # ---------------------------------------------------------------------------
+ 
++def test_doctrine_host_mirror_written_in_governed_path(tmp_path, monkeypatch):
++    """B022: _doctrine_host_mirror must add tools/ to sys.path before importing _axon_paths.
++
++    In the sentinel-governed (primary) path, _axon_active() returns True WITHOUT inserting
++    tools/ into sys.path, and _doctrine_host_mirror runs BEFORE _surface_open_accountability
++    (the only other function that inserts tools/). Before the fix `from _axon_paths import
++    default_workspace` raised ImportError (swallowed by the bare except), so the host-side
++    tamper-evidence mirror was never written — defeating the whole control.
++    """
++    # A governed tmp AXON root that _axon_paths resolves to via $AXON_ROOT (needs the sentinel).
++    axon_root = tmp_path
++    (axon_root / ".axon-governed").write_text("", encoding="utf-8")
++    (axon_root / "workspace").mkdir()
++    state = axon_root / "axon" / "state"
++    state.mkdir(parents=True)
++    (state / "doctrine-current-node.json").write_text(
++        json.dumps({"run_id": "R1", "node": "N1", "kind": "K1"}), encoding="utf-8")
++    monkeypatch.setenv("AXON_ROOT", str(axon_root))
++
++    mod = _load_verify_stop(SENTINEL)
++
++    # Reproduce the governed primary path: tools/ NOT on sys.path, path-resolver not cached.
++    real_tools = str(mod.TOOLS)
++    monkeypatch.setattr(sys, "path", [p for p in sys.path if p != real_tools])
++    monkeypatch.delitem(sys.modules, "_axon_paths", raising=False)
++    monkeypatch.delitem(sys.modules, "_longterm", raising=False)
++
++    mod._doctrine_host_mirror()
++
++    mirror = state / "doctrine-host-mirror.jsonl"
++    assert mirror.exists(), "host mirror must be written in the sentinel-governed path"
++    row = json.loads(mirror.read_text(encoding="utf-8").splitlines()[0])
++    assert row["actor"] == "host-stop-hook"
++    assert row["run_id"] == "R1" and row["node"] == "N1" and row["kind"] == "K1"
++
++
+ def test_settings_wires_next_turn_gate():
+     """next_turn_gate.py must be in UserPromptSubmit hooks WITHOUT '|| true'."""
+     settings = json.loads((ROOT / ".claude" / "settings.json").read_text(encoding="utf-8"))
+diff --git a/tools/hooks/verify_stop.py b/tools/hooks/verify_stop.py
+index 647b687..53af0a8 100644
+--- a/tools/hooks/verify_stop.py
++++ b/tools/hooks/verify_stop.py
+@@ -103,6 +103,11 @@ def _doctrine_host_mirror() -> None:
+     try:
+         import json as _json
+         import os
++        # The sentinel-governed path returns from _axon_active() without touching sys.path,
++        # so tools/ may not be importable yet — ensure it before importing _axon_paths, or this
++        # host-side tamper-evidence mirror silently no-ops in the primary (governed) path.
++        if str(TOOLS) not in sys.path:
++            sys.path.insert(0, str(TOOLS))
+         from _axon_paths import default_workspace
+         ws = default_workspace()
+         # doctrine-fix PR-05: the record now lives under axon/state (whitelisted-actor write).

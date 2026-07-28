@@ -1,0 +1,386 @@
+diff --git a/tests/test_shell_r9_bypass_pr01.py b/tests/test_shell_r9_bypass_pr01.py
+new file mode 100644
+index 0000000..55aea1d
+--- /dev/null
++++ b/tests/test_shell_r9_bypass_pr01.py
+@@ -0,0 +1,123 @@
++"""axon-bugfree10 PR-01 — regression tests for three R9 write-gate bypasses in tools/shell.py.
++
++These reproduce the exact failure_scenarios in a PRODUCTION-SHAPED topology, where the kernel
++`axon/` dir is a SIBLING of `workspace/` (i.e. `<repo>/axon` + `<repo>/workspace`), which is how
++`_default_workspace()` resolves in the real OS. The pre-fix code anchored the R9 classifier to the
++workspace itself, so it looked for `<repo>/workspace/axon` (non-existent) and missed real writes.
++
++  B001 — absolute (and cd-relative) kernel writes were classified as non-axon → ALLOWED.
++  B031 — a redirect with no space before `>` (`word>file`) was never extracted → ALLOWED.
++  B032 — `cd <dir>` was stripped but never re-based subsequent path resolution → ALLOWED.
++
++Each test asserts the op is now BLOCKED with dev-mode OFF. All three FAILED before this PR.
++"""
++from __future__ import annotations
++
++import importlib.util
++import sys
++from pathlib import Path
++
++import pytest
++
++ROOT = Path(__file__).resolve().parent.parent
++TOOL = ROOT / "tools" / "shell.py"
++
++
++def _load():
++    spec = importlib.util.spec_from_file_location("axon_shell_pr01", str(TOOL))
++    mod = importlib.util.module_from_spec(spec)
++    sys.path.insert(0, str(ROOT / "tools"))
++    spec.loader.exec_module(mod)
++    return mod
++
++
++SHELL = _load()
++
++
++def _repo_ws(tmp_path: Path, dev_mode: bool = False) -> Path:
++    """Production-shaped repo: axon/ is a SIBLING of workspace/. Returns the workspace path."""
++    repo = tmp_path / "repo"
++    (repo / "axon" / "core").mkdir(parents=True)
++    (repo / "axon" / "KERNEL-SLIM.md").write_text("kernel\n", encoding="utf-8")
++    ws = repo / "workspace"
++    (ws / "memory" / "longterm").mkdir(parents=True)
++    (ws / "memory" / "episodic").mkdir(parents=True)
++    if dev_mode:
++        (ws / "memory" / "longterm" / "dev-mode.md").write_text(
++            "value: true\n", encoding="utf-8")
++    return ws
++
++
++# ── B001 — absolute / sibling-anchor kernel write ────────────────────────────
++def test_b001_absolute_kernel_write_blocked(tmp_path: Path) -> None:
++    ws = _repo_ws(tmp_path)
++    abs_kernel = str(tmp_path / "repo" / "axon" / "KERNEL-SLIM.md")
++    with pytest.raises(SHELL.GateBlock) as exc:
++        SHELL.gate_check(f"cp /tmp/evil {abs_kernel}", str(ws))
++    assert exc.value.code == "r9-axon-write"
++
++
++def test_b001_relative_kernel_write_still_blocked(tmp_path: Path) -> None:
++    """The relative form must stay blocked (no regression from the anchor change)."""
++    ws = _repo_ws(tmp_path)
++    with pytest.raises(SHELL.GateBlock):
++        SHELL.gate_check("cp /tmp/evil axon/KERNEL-SLIM.md", str(ws))
++
++
++def test_b001_anchor_is_repo_root(tmp_path: Path) -> None:
++    ws = _repo_ws(tmp_path)
++    assert SHELL._axon_anchor(str(ws)) == str(tmp_path / "repo")
++    abs_kernel = str(tmp_path / "repo" / "axon" / "KERNEL-SLIM.md")
++    assert SHELL._is_axon_path(abs_kernel, str(ws)) is True
++
++
++# ── B031 — redirect with no space before the operator ────────────────────────
++def test_b031_no_space_redirect_blocked(tmp_path: Path) -> None:
++    ws = _repo_ws(tmp_path)
++    with pytest.raises(SHELL.GateBlock) as exc:
++        SHELL.gate_check("echo pwned>axon/KERNEL-SLIM.md", str(ws))
++    assert exc.value.code == "r9-axon-write"
++
++
++def test_b031_extract_no_space_target() -> None:
++    assert SHELL._extract_redirect_targets("echo pwned>axon/KERNEL-SLIM.md") == [
++        "axon/KERNEL-SLIM.md"]
++    # spaced + fd-prefixed forms still work
++    assert SHELL._extract_redirect_targets("echo x > a") == ["a"]
++    assert SHELL._extract_redirect_targets("echo x 1>> b") == ["b"]
++
++
++# ── B032 — cd relocates cwd; later write/delete must re-base ─────────────────
++def test_b032_cd_then_delete_kernel_blocked(tmp_path: Path) -> None:
++    ws = _repo_ws(tmp_path)
++    with pytest.raises(SHELL.GateBlock) as exc:
++        SHELL.gate_check("cd axon && rm -rf core", str(ws))
++    assert exc.value.code == "protected-delete"
++
++
++def test_b032_cd_then_redirect_kernel_blocked(tmp_path: Path) -> None:
++    ws = _repo_ws(tmp_path)
++    with pytest.raises(SHELL.GateBlock) as exc:
++        SHELL.gate_check("cd axon && echo x > KERNEL-SLIM.md", str(ws))
++    assert exc.value.code == "r9-axon-write"
++
++
++def test_b032_cd_semicolon_write_blocked(tmp_path: Path) -> None:
++    ws = _repo_ws(tmp_path)
++    with pytest.raises(SHELL.GateBlock):
++        SHELL.gate_check("cd axon ; cp /tmp/x KERNEL-SLIM.md", str(ws))
++
++
++def test_b032_no_cd_no_false_block(tmp_path: Path) -> None:
++    """Without a cd, a workspace-local delete/write is still allowed (no over-blocking)."""
++    ws = _repo_ws(tmp_path)
++    result = SHELL.gate_check("rm scratch.txt", str(ws))
++    assert result["verdict"] == "allow"
++    result = SHELL.gate_check("echo hi > note.txt", str(ws))
++    assert result["verdict"] == "allow"
++
++
++def test_b032_segment_cwd_folding() -> None:
++    assert SHELL._segment_cwds(SHELL._split_commands("cd axon && rm core")) == ["", "axon"]
++    assert SHELL._segment_cwds(
++        SHELL._split_commands("cd a && cd b && rm x")) == ["", "a", "a/b"]
+diff --git a/tools/shell.py b/tools/shell.py
+index f06ed60..387aaf9 100644
+--- a/tools/shell.py
++++ b/tools/shell.py
+@@ -159,13 +159,18 @@ def _unwrap_wrapper(tokens: list[str]) -> list[str]:
+     return list(tokens)
+ 
+ 
+-def _classify_deletions(commands: list[list[str]], argv: str) -> list[dict]:
++def _classify_deletions(commands: list[list[str]], argv: str,
++                        cwds: list[str] | None = None) -> list[dict]:
+     """Every deletion the command performs → [{verb, targets, recursive}]. Covers direct
+     verbs (rm/shred/unlink/rmdir), wrapper-hidden verbs, find -delete / -exec rm,
+     rsync --delete, tar --remove-files, git clean -fdx. Interpreter deletes ride the
+-    existing _INTERP_WRITE_CALL vector (widened above)."""
++    existing _INTERP_WRITE_CALL vector (widened above).
++
++    B032: when `cwds` (per-segment cwd prefixes) is supplied, each segment's relative delete
++    targets are rebased onto its cwd so `cd axon && rm -rf core` is inspected as `axon/core`."""
+     hits: list[dict] = []
+-    for raw in commands:
++    for seg_i, raw in enumerate(commands):
++        pfx = cwds[seg_i] if cwds and seg_i < len(cwds) else ""
+         tokens = _unwrap_wrapper(raw)
+         if not tokens:
+             continue
+@@ -173,9 +178,10 @@ def _classify_deletions(commands: list[list[str]], argv: str) -> list[dict]:
+         flags = [t for t in tokens[1:] if t.startswith("-")]
+         args = [t for t in tokens[1:] if not t.startswith("-")]
+         recursive = any(f in _RECURSIVE_FLAGS for f in flags)
++        rebase = lambda ts: [_join_cwd(pfx, t) for t in ts]   # B032: apply this segment's cwd
+ 
+         if head in _DELETE_VERB_HEADS:
+-            hits.append({"verb": head, "targets": args, "recursive": recursive})
++            hits.append({"verb": head, "targets": rebase(args), "recursive": recursive})
+         elif head == "find":
+             # `find <paths> ... -delete`  or  `... -exec rm ...`
+             if "-delete" in tokens or ("-exec" in tokens and any(
+@@ -185,18 +191,18 @@ def _classify_deletions(commands: list[list[str]], argv: str) -> list[dict]:
+                     if t.startswith("-"):
+                         break          # first predicate ends the path list
+                     paths.append(t)
+-                hits.append({"verb": "find-delete", "targets": paths or ["."],
++                hits.append({"verb": "find-delete", "targets": rebase(paths or ["."]),
+                              "recursive": True})
+         elif head == "rsync" and any(f.startswith("--delete") for f in flags):
+             # rsync --delete purges dest extras → the DEST (last positional) is at risk
+-            hits.append({"verb": "rsync-delete", "targets": args[-1:] if args else [],
++            hits.append({"verb": "rsync-delete", "targets": rebase(args[-1:] if args else []),
+                          "recursive": True})
+         elif head == "tar" and "--remove-files" in tokens:
+-            hits.append({"verb": "tar-remove", "targets": args, "recursive": True})
++            hits.append({"verb": "tar-remove", "targets": rebase(args), "recursive": True})
+         elif head == "git" and len(tokens) > 1 and os.path.basename(tokens[1]) == "clean":
+             # git clean -fdx deletes untracked (+ ignored w/ -x) files under the tree
+             if any("f" in f.lstrip("-") for f in flags):
+-                hits.append({"verb": "git-clean", "targets": args or ["."],
++                hits.append({"verb": "git-clean", "targets": rebase(args or ["."]),
+                              "recursive": True})
+     return hits
+ 
+@@ -483,11 +489,72 @@ def _enforce_doctrine_node(has_write: bool, has_delete: bool, workspace: str) ->
+ 
+ 
+ # ─── R9 path-check — delegates to the canonical classifier (arch-audit #11 consolidation) ──
++def _axon_anchor(workspace_root: str) -> str:
++    """Repo root that actually holds the kernel `axon/` dir, relative to `workspace_root`.
++
++    B001 FIX: callers pass the tool's `workspace` (in production `<repo>/workspace`), but the
++    kernel dir is its SIBLING `<repo>/axon` — NOT `<repo>/workspace/axon`. Anchoring the R9
++    classifier to `workspace_root` therefore checked a non-existent dir, so ABSOLUTE (and
++    `../axon/…`) writes to the real kernel were classified as non-axon and slipped the gate.
++    Probe the parent first (production, axon/ is a sibling of workspace/); fall back to
++    `workspace_root` itself for self-contained topologies (tests/federation) where axon/ lives
++    INSIDE the workspace. Mirrors the `_resolve_repo_anchor` / `_doctrine_current_node` convention."""
++    parent = os.path.dirname(os.path.abspath(workspace_root))
++    if os.path.isdir(os.path.join(parent, "axon")):
++        return parent
++    return workspace_root
++
++
+ def _is_axon_path(p: str, workspace_root: str) -> bool:
+-    """True iff `p` resolves inside `workspace_root`/axon. Delegates to the single
++    """True iff `p` resolves inside the kernel `axon/` dir. Delegates to the single
+     `_axon_paths.is_axon_path` so this gate, the R9 rule, and the in-process io-gate cannot drift."""
+     from _axon_paths import is_axon_path
+-    return is_axon_path(p, anchor=workspace_root)
++    return is_axon_path(p, anchor=_axon_anchor(workspace_root))
++
++
++# ─── cwd (`cd`) modeling — B032 ──────────────────────────────────────────────
++def _leading_cd_dir(tokens: list[str]) -> str | None:
++    """If a segment's leading command (after env-assignments) is `cd <dir>`, return <dir>, else None."""
++    i = 0
++    while i < len(tokens):
++        t = tokens[i]
++        if "=" in t and re.match(r'^[A-Z_][A-Z0-9_]*=', t):
++            i += 1
++            continue
++        break
++    if i < len(tokens) and tokens[i] == "cd" and i + 1 < len(tokens) \
++            and not tokens[i + 1].startswith("-"):
++        return tokens[i + 1]
++    return None
++
++
++def _apply_cd(cur: str, d: str) -> str:
++    """Fold a `cd <d>` into the running relative-cwd prefix `cur` (relative to the repo root)."""
++    if os.path.isabs(d):
++        return os.path.normpath(d)
++    return os.path.normpath(os.path.join(cur or ".", d))
++
++
++def _join_cwd(prefix: str, target: str) -> str:
++    """Rebase a segment-local relative `target` onto the segment's cwd `prefix`."""
++    if not prefix or not target or os.path.isabs(target):
++        return target
++    return os.path.normpath(os.path.join(prefix, target))
++
++
++def _segment_cwds(commands: list[list[str]]) -> list[str]:
++    """The relative-cwd prefix in effect when each ordered segment runs. A leading `cd <dir>` in an
++    earlier `&&`/`;`/`|`-segment relocates the shell's cwd (subprocess runs the whole line under
++    shell=True), so a later `rm core` / `> KERNEL-SLIM.md` must be resolved against that dir — not
++    the workspace root. Without this, `cd axon && rm -rf core` was inspected as `core` (miss)."""
++    cwds: list[str] = []
++    cur = ""
++    for tokens in commands:
++        cwds.append(cur)
++        d = _leading_cd_dir(tokens)
++        if d is not None:
++            cur = _apply_cd(cur, d)
++    return cwds
+ 
+ 
+ def _read_longterm(workspace: str, key: str) -> str | None:
+@@ -511,14 +578,10 @@ def _dev_mode_active(workspace: str) -> bool:
+ 
+ 
+ # ─── Argv tokenization + path extraction ────────────────────────────────────
+-def _split_commands(argv: str) -> list[list[str]]:
+-    """Split a shell line on `&&`, `;`, `|` and return per-command token lists.
+-
+-    We intentionally do NOT execute the split commands one-by-one — we keep
+-    the original string for subprocess. The split is only for inspection
+-    (so we apply hard-forbidden + write-shape checks to each segment).
+-    """
+-    # Split on top-level &&, ;, ||, | (not inside quotes).
++def _raw_segments(argv: str) -> list[str]:
++    """Split a shell line on top-level `&&`, `||`, `;`, `|` (not inside quotes) and return the
++    RAW (untokenized) per-command strings, empties dropped. `_split_commands` tokenizes these;
++    the raw form is kept so redirect extraction + cwd (`cd`) modeling can key on each segment."""
+     parts: list[str] = []
+     cur: list[str] = []
+     i = 0
+@@ -545,11 +608,18 @@ def _split_commands(argv: str) -> list[list[str]]:
+     tail = "".join(cur).strip()
+     if tail:
+         parts.append(tail)
++    return [p for p in parts if p]
++
++
++def _split_commands(argv: str) -> list[list[str]]:
++    """Split a shell line on `&&`, `;`, `|` and return per-command token lists.
+ 
++    We intentionally do NOT execute the split commands one-by-one — we keep
++    the original string for subprocess. The split is only for inspection
++    (so we apply hard-forbidden + write-shape checks to each segment).
++    """
+     tokenized: list[list[str]] = []
+-    for p in parts:
+-        if not p:
+-            continue
++    for p in _raw_segments(argv):
+         try:
+             tokenized.append(shlex.split(p, posix=True))
+         except ValueError:
+@@ -563,10 +633,14 @@ def _extract_redirect_targets(argv: str) -> list[str]:
+     arch-audit #1 (G1a) FIX: the operator alternation previously was `>>?|2>|&>`, which missed
+     fd-prefixed redirects `1>`, `1>>`, `3>`–`9>`, the append-amp `&>>`, and the clobber `>|` — so
+     `echo x 1> axon/KERNEL-SLIM.md` slipped past the gate. `\\d*>>?` now covers any fd number.
++
++    B031 FIX: the leading `(?:^|\\s)` REQUIRED whitespace/start immediately before the operator, so
++    a redirect with no space (`echo pwned>axon/KERNEL-SLIM.md` — valid shell) was never extracted
++    and its target never R9-inspected. The operator now matches regardless of the preceding char.
+     """
+     targets: list[str] = []
+-    # Redirects: [n]> [n]>> &> &>> >|  (fd-number-prefixed forms included)
+-    for m in re.finditer(r'(?:^|\s)(?:\d*>>?|&>>?|>\|)\s*([^\s|;&]+)', argv):
++    # Redirects: [n]> [n]>> &> &>> >|  (fd-number-prefixed forms included; space before `>` optional)
++    for m in re.finditer(r'(?:\d*>>?|&>>?|>\|)\s*([^\s|;&]+)', argv):
+         t = m.group(1).strip("\"'")
+         if t:
+             targets.append(t)
+@@ -620,14 +694,23 @@ def gate_check(argv: str, workspace: str) -> dict:
+             raise GateBlock(reason, code="hard-forbidden")
+ 
+     commands  = _split_commands(argv)
+-    redirects = _extract_redirect_targets(argv)
++    raw_segs  = _raw_segments(argv)                # B032: per-segment raw strings (index-aligned)
++    seg_cwd   = _segment_cwds(commands)            # B032: cwd prefix in effect per segment (`cd` folded)
++
++    # 3(pre). Redirect targets — extracted PER SEGMENT so a `cd <dir>` earlier on the line rebases
++    #         the target (`cd axon && echo x > KERNEL-SLIM.md` → target `axon/KERNEL-SLIM.md`).
++    redirects: list[str] = []
++    for seg_i, raw in enumerate(raw_segs):
++        for t in _extract_redirect_targets(raw):
++            redirects.append(_join_cwd(seg_cwd[seg_i], t))
+ 
+     inspected_paths: list[str] = []
+     write_segments: list[dict] = []
+     destructive_hits: list[tuple[str, str | None]] = []
+-    deletion_hits = _classify_deletions(commands, argv)   # axon-next PR-001
++    deletion_hits = _classify_deletions(commands, argv, seg_cwd)   # axon-next PR-001 (+B032 cwd)
+ 
+-    for tokens in commands:
++    for seg_i, tokens in enumerate(commands):
++        pfx = seg_cwd[seg_i]                       # B032: this segment's cwd prefix
+         head, sub = _command_head(tokens)
+         if not head:
+             continue
+@@ -650,7 +733,7 @@ def gate_check(argv: str, workspace: str) -> dict:
+                 # `git -C <dir>` form: the actual subcommand is later
+                 if t == "-C":
+                     continue
+-                inspected_paths.append(t)
++                inspected_paths.append(_join_cwd(pfx, t))
+             write_segments.append({"kind": "git-write", "head": "git",
+                                     "subcommand": sub, "tokens": tokens})
+             continue
+@@ -660,7 +743,7 @@ def gate_check(argv: str, workspace: str) -> dict:
+             for t in tokens[1:]:
+                 if t.startswith("-"):
+                     continue
+-                inspected_paths.append(t)
++                inspected_paths.append(_join_cwd(pfx, t))
+             write_segments.append({"kind": "write-cmd", "head": head, "tokens": tokens})
+             continue
+ 
+@@ -673,7 +756,7 @@ def gate_check(argv: str, workspace: str) -> dict:
+                 for t in tokens[1:]:
+                     if t.startswith("-"):
+                         continue
+-                    inspected_paths.append(t)
++                    inspected_paths.append(_join_cwd(pfx, t))
+                 write_segments.append({"kind": "inplace-edit", "head": head, "tokens": tokens})
+             continue
+ 
+@@ -681,7 +764,7 @@ def gate_check(argv: str, workspace: str) -> dict:
+         if head == "dd":
+             for t in tokens[1:]:
+                 if t.startswith("of="):
+-                    inspected_paths.append(t[len("of="):])
++                    inspected_paths.append(_join_cwd(pfx, t[len("of="):]))
+             write_segments.append({"kind": "dd-write", "head": head, "tokens": tokens})
+             continue
+ 

@@ -1,0 +1,192 @@
+{
+  "schema": "axon-dag",
+  "schema-version": "v1",
+  "level": "plan",
+  "owner": "project:axonbugfree3",
+  "generated": "2026-07-13T11:33:32Z",
+  "generator": "tools/dag.py",
+  "validated": true,
+  "critical-path": [],
+  "nodes": [
+    {
+      "id": "PR-001",
+      "kind": "pr",
+      "name": "Resolve workflow names across both roots",
+      "label": "Resolve workflow names across both roots",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-002",
+      "kind": "pr",
+      "name": "Workflow caller contracts",
+      "label": "Workflow caller contracts",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-003",
+      "kind": "pr",
+      "name": "Codemap arg contract + shadow dispatch",
+      "label": "Codemap arg contract + shadow dispatch",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-004",
+      "kind": "pr",
+      "name": "Envelope binds",
+      "label": "Envelope binds",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-005",
+      "kind": "pr",
+      "name": "graphify-bridge impact",
+      "label": "graphify-bridge impact",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-006",
+      "kind": "pr",
+      "name": "pattern.py pref parse",
+      "label": "pattern.py pref parse",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-007",
+      "kind": "pr",
+      "name": "phase-model reason oracle",
+      "label": "phase-model reason oracle",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-008",
+      "kind": "pr",
+      "name": "doctrine preflight fail-closed",
+      "label": "doctrine preflight fail-closed",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-009",
+      "kind": "pr",
+      "name": "hr-team refusal pipeline",
+      "label": "hr-team refusal pipeline",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-010",
+      "kind": "pr",
+      "name": "doctrine-node recovery",
+      "label": "doctrine-node recovery",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-011",
+      "kind": "pr",
+      "name": "drift alignment + deadlock breaker",
+      "label": "drift alignment + deadlock breaker",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-012",
+      "kind": "pr",
+      "name": "suggestion calibration",
+      "label": "suggestion calibration",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-013",
+      "kind": "pr",
+      "name": "tick shape + situate bridge",
+      "label": "tick shape + situate bridge",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-014",
+      "kind": "pr",
+      "name": "reporting batch",
+      "label": "reporting batch",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-015",
+      "kind": "pr",
+      "name": "chat index reader==writer",
+      "label": "chat index reader==writer",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-016",
+      "kind": "pr",
+      "name": "episodic store",
+      "label": "episodic store",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-017",
+      "kind": "pr",
+      "name": "agent-memory tiers",
+      "label": "agent-memory tiers",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-018",
+      "kind": "pr",
+      "name": "routing/guards batch",
+      "label": "routing/guards batch",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-019",
+      "kind": "pr",
+      "name": "contract lints ratchet",
+      "label": "contract lints ratchet",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-020",
+      "kind": "pr",
+      "name": "integrity cleanup",
+      "label": "integrity cleanup",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-021",
+      "kind": "pr",
+      "name": "kernel spec (human-only)",
+      "label": "kernel spec (human-only)",
+      "status": "pending",
+      "child-dag": null
+    }
+  ],
+  "edges": [
+    {
+      "from": "PR-006",
+      "to": "PR-012",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-011",
+      "to": "PR-021",
+      "kind": "depends"
+    }
+  ]
+}

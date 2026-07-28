@@ -1,0 +1,275 @@
+diff --git a/tests/test_quality_loop.py b/tests/test_quality_loop.py
+index 5f36589..ac560a0 100644
+--- a/tests/test_quality_loop.py
++++ b/tests/test_quality_loop.py
+@@ -168,3 +168,61 @@ def test_unsigned_legacy_state_is_fail_closed(tmp_path):
+                             "locked": False, "lock_reason": None}, indent=2), encoding="utf-8")
+     st = _ramp(tmp_path, "ramp-status")
+     assert st["integrity_ok"] is False and st["s_fix_authorized"] is False
++
++
++# ── B025: writers must NOT re-sign a present-but-unverified state ─────────────────
++def _write_unsigned_three_clean(tmp_path):
++    import json as _j
++    sp = tmp_path / "loops" / "quality.ramp.json"
++    sp.parent.mkdir(parents=True, exist_ok=True)
++    sp.write_text(_j.dumps({"cycles": [{"n": i + 1, "clean": True} for i in range(3)],
++                            "locked": False, "lock_reason": None}, indent=2), encoding="utf-8")
++    return sp
++
++
++def test_ramp_record_refuses_to_launder_unsigned_state(tmp_path):
++    """B025: ramp-record on a hand-written 3-clean state must refuse — not append a 4th
++    cycle and re-sign the whole array (which would forge autonomy)."""
++    _write_unsigned_three_clean(tmp_path)
++    assert _ramp(tmp_path, "ramp-status")["s_fix_authorized"] is False  # denied pre-record
++    rec = _ramp(tmp_path, "ramp-record", "--clean", "true", "--note", "x")
++    assert rec["ok"] is False                       # refused, not recorded
++    st = _ramp(tmp_path, "ramp-status")
++    assert st["integrity_ok"] is False              # still unsigned — not laundered clean
++    assert st["s_fix_authorized"] is False          # autonomy NOT granted
++    assert st["cycles_complete"] == 3               # no 4th cycle was appended
++
++
++def test_ramp_lock_resets_tampered_streak(tmp_path):
++    """B025: locking a tampered state must not re-sign its fraudulent clean streak
++    (which would survive a later human unlock). The streak is wiped."""
++    _write_unsigned_three_clean(tmp_path)
++    _ramp(tmp_path, "ramp-lock", "--reason", "S-fix broke a test")
++    st = _ramp(tmp_path, "ramp-status")
++    assert st["locked"] is True
++    assert st["cycles_complete"] == 0               # fraudulent streak wiped, not blessed
++    assert st["s_fix_authorized"] is False
++    # human unlock must not resurrect the wiped streak
++    _ramp(tmp_path, "ramp-unlock", "--human-confirm", "yes")
++    st2 = _ramp(tmp_path, "ramp-status")
++    assert st2["cycles_complete"] == 0 and st2["s_fix_authorized"] is False
++
++
++def test_ramp_unlock_does_not_bless_tampered_streak(tmp_path):
++    """B025: a human unlock of a tampered state must not re-sign its fraudulent streak."""
++    sp = _write_unsigned_three_clean(tmp_path)
++    import json as _j
++    state = _j.loads(sp.read_text()); state["locked"] = True
++    sp.write_text(_j.dumps(state, indent=2), encoding="utf-8")   # tampered + locked
++    _ramp(tmp_path, "ramp-unlock", "--human-confirm", "yes")
++    st = _ramp(tmp_path, "ramp-status")
++    assert st["cycles_complete"] == 0 and st["s_fix_authorized"] is False
++
++
++def test_ramp_record_still_earns_autonomy_legitimately(tmp_path):
++    """Guard the non-buggy path: signed records from a clean start still earn autonomy."""
++    for _ in range(3):
++        assert _ramp(tmp_path, "ramp-record", "--clean", "true")["ok"] is True
++    st = _ramp(tmp_path, "ramp-status")
++    assert st["integrity_ok"] is True and st["clean_streak"] == 3
++    assert st["s_fix_authorized"] is True
+diff --git a/tests/test_test_runner_policy.py b/tests/test_test_runner_policy.py
+index 731c03d..834e2bb 100644
+--- a/tests/test_test_runner_policy.py
++++ b/tests/test_test_runner_policy.py
+@@ -149,3 +149,57 @@ def test_agent_allowed_runs(monkeypatch, capsys):
+     TR.cmd_run(_run_args())
+     out = json.loads(capsys.readouterr().out)
+     assert "refused" not in out and "verdict" in out
++
++
++# ── B033: verdict is fail-closed on collection/import errors + non-zero exit ──────
++def _run_with_report(monkeypatch, tmp_path, capsys, *, report, rc, stdout=""):
++    """Drive cmd_run (human actor) against a controlled pytest json-report + returncode."""
++    rp = Path("/tmp/axon-pytest-report.json")
++    rp.write_text(json.dumps(report))
++    monkeypatch.setattr(TR, "_actor", lambda a: "human")
++    monkeypatch.setattr(TR, "run_pytest",
++                        lambda *a, **k: SimpleNamespace(returncode=rc, stdout=stdout, stderr=""))
++    monkeypatch.setattr(TR, "LAST_RESULT_PATH", tmp_path / "last.json")
++    monkeypatch.setattr(TR.subprocess, "run",
++                        lambda *a, **k: SimpleNamespace(returncode=0, stdout="", stderr=""))
++    TR.cmd_run(_run_args())
++    return json.loads(capsys.readouterr().out)
++
++
++def test_verdict_fails_on_collection_error(monkeypatch, tmp_path, capsys):
++    """A suite whose module has an import/collection error: pytest exits non-zero and the
++    json summary carries {passed:N, failed:0, error:1}. The old `failed==0 -> PASS` rule
++    reported green (B033); the verdict must now be FAIL."""
++    report = {
++        "summary": {"passed": 2, "failed": 0, "error": 1, "total": 3},
++        "tests": [
++            {"outcome": "passed", "nodeid": "t::a"},
++            {"outcome": "passed", "nodeid": "t::b"},
++            {"outcome": "error", "nodeid": "t::c", "call": {"longrepr": "ImportError: boom"}},
++        ],
++        "duration": 0.1,
++    }
++    out = _run_with_report(monkeypatch, tmp_path, capsys, report=report, rc=2)
++    assert out["verdict"].startswith("FAIL")
++    assert out["errors"] == 1
++    assert out["returncode"] == 2
++    assert any("c" in f["test"] for f in out["failures"])
++
++
++def test_verdict_fails_on_nonzero_exit_with_no_reported_failures(monkeypatch, tmp_path, capsys):
++    """Missing json-report plugin / no tests collected: failed==0, error==0, but pytest
++    exits non-zero. Consulting only `failed` fails open; the returncode must veto PASS."""
++    report = {"summary": {"passed": 0, "failed": 0, "total": 0}, "tests": [], "duration": 0.0}
++    out = _run_with_report(monkeypatch, tmp_path, capsys, report=report, rc=4)
++    assert out["verdict"].startswith("FAIL")
++    assert out["returncode"] == 4
++
++
++def test_verdict_passes_on_genuinely_green_run(monkeypatch, tmp_path, capsys):
++    """Guard the non-buggy path: exit 0, no failures, no errors -> PASS."""
++    report = {"summary": {"passed": 3, "failed": 0, "error": 0, "total": 3},
++              "tests": [{"outcome": "passed", "nodeid": f"t::{i}"} for i in range(3)],
++              "duration": 0.2}
++    out = _run_with_report(monkeypatch, tmp_path, capsys, report=report, rc=0)
++    assert out["verdict"] == "PASS"
++    assert out["errors"] == 0 and out["returncode"] == 0
+diff --git a/tools/quality_loop.py b/tools/quality_loop.py
+index 61c34a0..d650415 100644
+--- a/tools/quality_loop.py
++++ b/tools/quality_loop.py
+@@ -207,7 +207,13 @@ def ramp_status(ws: str) -> dict:
+ 
+ def ramp_record(ws: str, clean: bool, note: str) -> dict:
+     state_p = Path(ws) / "loops" / "quality.ramp.json"
+-    state, _ = _ramp_load(ws)
++    state, integrity_ok = _ramp_load(ws)
++    # B025: a present-but-tampered/unsigned state must NOT be appended-to and re-signed —
++    # that would launder hand-asserted clean cycles into a validly-signed state (fail-open).
++    # Refuse; the state must be reset by a human before autonomy can resume being earned.
++    if not integrity_ok:
++        return {"ok": False, "error": "ramp state failed integrity verification "
++                "(tampered/unsigned) — refusing to record; run ramp-verify"}
+     state["cycles"].append({"n": len(state["cycles"]) + 1, "clean": clean,
+                             "note": note[:160],
+                             "ts": datetime.now(timezone.utc).isoformat()})
+@@ -218,7 +224,12 @@ def ramp_record(ws: str, clean: bool, note: str) -> dict:
+ def ramp_lock(ws: str, reason: str) -> dict:
+     """A failed S-fix re-locks the ramp instantly (human review required to unlock)."""
+     state_p = Path(ws) / "loops" / "quality.ramp.json"
+-    state, _ = _ramp_load(ws)
++    state, integrity_ok = _ramp_load(ws)
++    # B025: locking is the fail-closed direction, but re-signing a tampered state would
++    # launder its fraudulent clean streak (surviving a later human unlock). Reset the
++    # cycles so lock cannot re-bless hand-asserted autonomy.
++    if not integrity_ok:
++        state = {"cycles": [], "locked": True, "lock_reason": None}
+     state["locked"] = True
+     state["lock_reason"] = reason[:200]
+     _ramp_save(state_p, state, ws)
+@@ -232,7 +243,11 @@ def ramp_unlock(ws: str, human_confirm: str) -> dict:
+     state_p = Path(ws) / "loops" / "quality.ramp.json"
+     if not state_p.exists():
+         return {"ok": False, "error": "no ramp state"}
+-    state, _ = _ramp_load(ws)
++    state, integrity_ok = _ramp_load(ws)
++    # B025: unlocking a tampered state must not re-sign (and thereby bless) its fraudulent
++    # clean streak. The human unlocks a clean slate; autonomy must be re-earned.
++    if not integrity_ok:
++        state = {"cycles": [], "locked": False, "lock_reason": None}
+     state["locked"] = False
+     state["lock_reason"] = None
+     _ramp_save(state_p, state, ws)
+diff --git a/tools/test_runner.py b/tools/test_runner.py
+index c0778af..5190dcc 100644
+--- a/tools/test_runner.py
++++ b/tools/test_runner.py
+@@ -63,10 +63,14 @@ def parse_report(rc, stdout, stderr):
+             failed  = [t for t in tests if t.get("outcome") == "failed"]
+             passed  = [t for t in tests if t.get("outcome") == "passed"]
+             skipped = [t for t in tests if t.get("outcome") == "skipped"]
++            # collection/setup failures surface as outcome=='error' (never 'failed'),
++            # so counting only 'failed' would let a broken suite report green (B033).
++            errored = [t for t in tests if t.get("outcome") == "error"]
+             return {
+                 "passed":  summary.get("passed", len(passed)),
+                 "failed":  summary.get("failed", len(failed)),
+                 "skipped": summary.get("skipped", len(skipped)),
++                "errors":  summary.get("error", len(errored)),
+                 "total":   summary.get("total", len(tests)),
+                 "duration": raw.get("duration", 0),
+                 "failures": [
+@@ -74,7 +78,7 @@ def parse_report(rc, stdout, stderr):
+                         "test":    t.get("nodeid",""),
+                         "message": _extract_message(t),
+                     }
+-                    for t in failed
++                    for t in (failed + errored)
+                 ],
+                 "returncode": rc,
+             }
+@@ -82,22 +86,26 @@ def parse_report(rc, stdout, stderr):
+             pass
+ 
+     # Fallback: parse pytest terminal output
+-    passed = skipped = failed = total = 0
++    passed = skipped = failed = errors = total = 0
+     m = re.search(r'(\d+) passed', stdout)
+     if m: passed = int(m.group(1))
+     m = re.search(r'(\d+) failed', stdout)
+     if m: failed = int(m.group(1))
+     m = re.search(r'(\d+) skipped', stdout)
+     if m: skipped = int(m.group(1))
++    m = re.search(r'(\d+) error', stdout)
++    if m: errors = int(m.group(1))
+     total = passed + failed + skipped
+ 
+     failures = []
+     for block in re.findall(r'FAILED (.+?) -', stdout):
+         failures.append({"test": block.strip(), "message": ""})
++    for block in re.findall(r'ERROR (.+?) -', stdout):
++        failures.append({"test": block.strip(), "message": ""})
+ 
+     return {
+         "passed": passed, "failed": failed, "skipped": skipped,
+-        "total": total, "duration": 0,
++        "errors": errors, "total": total, "duration": 0,
+         "failures": failures, "returncode": rc,
+     }
+ 
+@@ -187,7 +195,22 @@ def cmd_run(args):
+     result = run_pytest(paths, fail_fast=ff)
+     summary = parse_report(result.returncode, result.stdout, result.stderr)
+ 
+-    verdict = "PASS" if summary["failed"] == 0 else f"FAIL ({summary['failed']} tests)"
++    # Green ONLY when pytest itself exited 0 AND no failed/errored outcomes. A broken
++    # suite (import/collection error, missing json-report plugin, no tests collected)
++    # exits non-zero with failed==0 — consulting only `failed` fails the gate open (B033).
++    errors = summary.get("errors", 0)
++    rc = summary.get("returncode", result.returncode)
++    if summary["failed"] == 0 and errors == 0 and rc == 0:
++        verdict = "PASS"
++    else:
++        reasons = []
++        if summary["failed"]:
++            reasons.append(f"{summary['failed']} failed")
++        if errors:
++            reasons.append(f"{errors} error(s)")
++        if rc != 0 and not summary["failed"] and not errors:
++            reasons.append(f"pytest exit {rc}")
++        verdict = "FAIL (" + ", ".join(reasons) + ")"
+ 
+     output = {
+         "suite":    suite,
+@@ -195,8 +218,10 @@ def cmd_run(args):
+         "verdict":  verdict,
+         "passed":   summary["passed"],
+         "failed":   summary["failed"],
++        "errors":   errors,
+         "skipped":  summary["skipped"],
+         "total":    summary["total"],
++        "returncode": rc,
+         "duration": round(summary.get("duration", 0), 2),
+         "failures": summary["failures"],
+     }
+@@ -239,6 +264,8 @@ def _print_text(out):
+     print(f"  Verdict:  {out['verdict']}")
+     print(f"  Passed:   {out['passed']}")
+     print(f"  Failed:   {out['failed']}")
++    if out.get("errors"):
++        print(f"  Errors:   {out['errors']}")
+     print(f"  Skipped:  {out['skipped']}")
+     print(f"  Total:    {out['total']}")
+     if out.get("duration"):

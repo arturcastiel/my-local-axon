@@ -1,0 +1,146 @@
+diff --git a/tests/test_loop_receipt_integrity.py b/tests/test_loop_receipt_integrity.py
+new file mode 100644
+index 0000000..9aff0c4
+--- /dev/null
++++ b/tests/test_loop_receipt_integrity.py
+@@ -0,0 +1,82 @@
++"""PR-08 — receipt & ledger integrity: canonical checksum + GC re-chain.
++
++B023: _canonical_checksum must hash str content directly (no JSON re-quoting)
++      so a file/jsonl-append receipt's stored post checksum matches the bytes
++      read back from disk at verify time.
++B075: cmd_gc must re-chain surviving rows' prev-sha after dropping old rows,
++      so verify_chain does not report a false tamper break on an untampered
++      ledger that was merely garbage-collected.
++"""
++import hashlib
++import json
++import subprocess
++import sys
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parent.parent
++TOOLS = ROOT / "tools"
++sys.path.insert(0, str(TOOLS))
++import loop_receipt as lr  # noqa: E402
++
++
++def _run(ws, *args):
++    return subprocess.run(
++        [sys.executable, str(TOOLS / "loop_receipt.py"), "--workspace", str(ws), *args],
++        capture_output=True, text=True)
++
++
++# ── B023 ────────────────────────────────────────────────────────────────────
++
++def test_canonical_checksum_str_matches_disk_bytes():
++    """A str content and the identical bytes on disk must hash the same."""
++    content = "new\n"
++    assert lr._canonical_checksum(content) == lr._canonical_checksum(content.encode("utf-8"))
++    assert lr._canonical_checksum(content) == hashlib.sha256(b"new\n").hexdigest()
++
++
++def test_verify_file_target_no_false_drift(tmp_path):
++    """begin --target-kind file with str post content, commit, then verify against
++    the byte-identical file must report drift=false (was true before B023 fix)."""
++    target = tmp_path / "foo.txt"
++    target.write_text("new\n")
++    r = _run(tmp_path, "begin", "--actor", "t", "--intent", "compile-pattern",
++             "--target-kind", "file", "--trigger-source", "manual-user",
++             "--path", str(target), "--post-json", json.dumps("new\n"))
++    rid = json.loads(r.stdout)["id"]
++    _run(tmp_path, "commit", "--id", rid)
++    v = json.loads(_run(tmp_path, "verify", "--id", rid).stdout)
++    assert v["ok"] is True and v["drift"] is False, v
++
++
++# ── B075 ────────────────────────────────────────────────────────────────────
++
++def _begin_commit(ws, intent, trig, begin_ts):
++    r = _run(ws, "begin", "--actor", "t", "--intent", intent,
++             "--target-kind", "tree", "--trigger-source", trig, "--key", "n")
++    rid = json.loads(r.stdout)["id"]
++    _run(ws, "commit", "--id", rid)
++    # backdate the begin-ts of this receipt's rows so gc can drop them
++    ledger = ws / "state" / "loop-receipt.ledger.jsonl"
++    lines = ledger.read_text().splitlines()
++    out = []
++    for ln in lines:
++        row = json.loads(ln)
++        if row.get("id") == rid:
++            row["begin-ts"] = begin_ts
++        out.append(json.dumps(row, sort_keys=True, ensure_ascii=False))
++    ledger.write_text("\n".join(out) + "\n")
++    return rid
++
++
++def test_gc_rechains_and_chain_stays_valid(tmp_path):
++    # An old terminal receipt (to be GC'd) followed by a recent one (to survive).
++    _begin_commit(tmp_path, "doctrine-node", "doctrine-run", "2020-01-01T00:00:00Z")
++    _begin_commit(tmp_path, "delegated-destructive", "unattended-run", lr._now_iso())
++
++    res = json.loads(_run(tmp_path, "gc", "--keep-days", "90").stdout)
++    assert res["removed"] >= 1, res
++
++    v = lr.verify_chain(tmp_path)
++    assert v["ok"] is True, v
++    # surviving rows must all be genuinely chained now
++    assert v["chained"] == v["rows"] and v["rows"] >= 1, v
+diff --git a/tools/loop_receipt.py b/tools/loop_receipt.py
+index 8e24808..ca66b04 100644
+--- a/tools/loop_receipt.py
++++ b/tools/loop_receipt.py
+@@ -96,6 +96,11 @@ def _canonical_checksum(value: Any) -> str:
+     hashed directly without re-serialization."""
+     if isinstance(value, (bytes, bytearray)):
+         return hashlib.sha256(bytes(value)).hexdigest()
++    if isinstance(value, str):
++        # file/jsonl-append targets pass raw text content: hash the bytes
++        # directly (no JSON re-quoting) so it matches Path.read_bytes() at
++        # verify time. sha256(s.encode()) == sha256(same-bytes-on-disk).
++        return hashlib.sha256(value.encode("utf-8")).hexdigest()
+     payload = json.dumps(value, sort_keys=True, ensure_ascii=False)
+     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+ 
+@@ -143,6 +148,30 @@ def _append(record: dict, workspace: Optional[Path] = None) -> None:
+     )
+ 
+ 
++def _rechain(rows: list[dict]) -> list[dict]:
++    """Recompute prev-sha for a rewritten row sequence (e.g. post-GC).
++
++    A GC that drops rows leaves each survivor's prev-sha pointing at a now-deleted
++    predecessor, which verify_chain would flag as a false tamper break. Walking the
++    surviving rows in order and re-linking each chained row to the hash of its new
++    predecessor restores an intact, verifiable chain rooted at 'genesis'. Legacy rows
++    (no prev-sha) stay legacy but still advance the running hash."""
++    def _row_hash(r):
++        return hashlib.sha256(
++            json.dumps({k: v for k, v in r.items() if k != "row-sha"},
++                       sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest()
++
++    out: list[dict] = []
++    prev = "genesis"
++    for row in rows:
++        new_row = dict(row)
++        if "prev-sha" in new_row:
++            new_row["prev-sha"] = prev
++        prev = _row_hash(new_row)
++        out.append(new_row)
++    return out
++
++
+ def verify_chain(workspace: Optional[Path] = None) -> dict:
+     """Walk the ledger, recomputing each chained row's expected prev-sha from its
+     predecessor. A break = a silent insertion/edit/deletion. MIGRATION-TOLERANT: rows
+@@ -403,6 +432,10 @@ def cmd_gc(args: argparse.Namespace) -> int:
+     # Rewrite ledger atomically via atomic_write (full replace, not append).
+     if removed > 0:
+         from _axon_io import atomic_write
++        # Re-chain the survivors: dropping rows orphans each successor's prev-sha,
++        # which verify_chain would misread as tampering. Re-linking restores an
++        # intact chain over the kept rows (PR-004 tamper-evidence preserved).
++        kept = _rechain(kept)
+         payload = "".join(json.dumps(r, sort_keys=True, ensure_ascii=False) + "\n" for r in kept)
+         atomic_write(path, payload, _actor=ACTOR_NAME)
+     print(json.dumps({"removed": removed, "kept": len(kept)}))

@@ -1,0 +1,288 @@
+diff --git a/tests/test_health_probe_smoke.py b/tests/test_health_probe_smoke.py
+new file mode 100644
+index 0000000..17272fd
+--- /dev/null
++++ b/tests/test_health_probe_smoke.py
+@@ -0,0 +1,52 @@
++"""B021 — probe_smoke must FAIL (not fail-open ACTIVE) when a tool's `--help`
++exits non-zero or times out. Previously both the non-zero branch and the
++TimeoutExpired branch returned {"status": "ACTIVE"}, so a broken ACTIVE tool
++without a specific probe was reported healthy, keeping counts['FAILED']==0 and
++L:health-score==100 — masking the failure from the kernel gates and menu."""
++import sys
++import textwrap
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parent.parent
++TOOLS = ROOT / "tools"
++sys.path.insert(0, str(TOOLS))
++
++import health  # noqa: E402
++
++
++def _write(tmp_path, body: str) -> str:
++    p = tmp_path / "broken_tool.py"
++    p.write_text(textwrap.dedent(body))
++    return str(p)
++
++
++def test_probe_smoke_fails_on_nonzero_help(tmp_path):
++    # A tool with an import/syntax error: `python tool.py --help` returns rc=1.
++    script = _write(tmp_path, """
++        import definitely_not_a_real_module  # ImportError before argparse
++        print("never reached")
++    """)
++    result = health.probe_smoke(script)
++    assert result["status"] == "FAILED", result
++
++
++def test_probe_smoke_fails_on_timeout(tmp_path, monkeypatch):
++    # Force the probe subprocess to time out; the TimeoutExpired branch must FAIL.
++    script = _write(tmp_path, """
++        import time
++        time.sleep(30)
++    """)
++    # Shrink the timeout budget so the test is fast.
++    monkeypatch.setenv("AXON_HEALTH_TIMEOUT_SCALE", "0.01")
++    result = health.probe_smoke(script)
++    assert result["status"] == "FAILED", result
++
++
++def test_probe_smoke_active_on_clean_help(tmp_path):
++    # The non-buggy path is preserved: a well-formed --help (rc=0) stays ACTIVE.
++    script = _write(tmp_path, """
++        import argparse
++        argparse.ArgumentParser().parse_args()
++    """)
++    result = health.probe_smoke(script)
++    assert result["status"] == "ACTIVE", result
+diff --git a/tests/test_program_tool_conformance.py b/tests/test_program_tool_conformance.py
+index 7c4c31b..82b71d4 100644
+--- a/tests/test_program_tool_conformance.py
++++ b/tests/test_program_tool_conformance.py
+@@ -155,6 +155,44 @@ def test_declared_subs_reads_last_brace_group():
+     assert ptc.declared_subs(usage) == {"evaluate", "chunk", "rerank", "verdict"}
+ 
+ 
++def test_declared_subs_ignores_option_choices_when_no_subparsers():
++    """B089: a subparser-LESS tool whose only {...} group is an option's choices
++    (`--format {json,text}`) must return None — those choices are NOT subcommands.
++    The last-brace heuristic mistook them for a subcommand set, so a valid scoped
++    call-site TOOL(foo, "somearg") was flagged unknown-subcommand and BLOCKED."""
++    usage = "usage: foo [-h] [--format {json,text}] path\n"
++    assert ptc.declared_subs(usage) is None
++
++
++def test_declared_subs_skips_option_choices_but_keeps_real_subcommands():
++    """When BOTH an option-choices group and a positional subcommand group exist,
++    only the positional group is the action set."""
++    usage = "usage: tool [-h] [--format {json,text}] {add,list} ...\n"
++    assert ptc.declared_subs(usage) == {"add", "list"}
++
++
++def test_run_check_does_not_flag_choices_only_tool(monkeypatch):
++    """End-to-end B089: a call-site to a subparser-less, choices-only tool with a
++    positional first arg must NOT produce an unknown-subcommand violation."""
++    usage = "usage: foo [-h] [--format {json,text}] path\n\noptions:\n  -h\n"
++
++    class _FakeProber:
++        def top(self, tool):
++            return 0, usage
++
++        def sub(self, tool, sub):
++            return 0, usage
++
++    monkeypatch.setattr(ptc, "_Prober", lambda: _FakeProber())
++    monkeypatch.setattr(ptc, "extract_call_sites",
++                        lambda text, rel: [{"tool": "foo", "sub": "somearg",
++                                            "flags": [], "file": rel, "line": 1}])
++    monkeypatch.setattr(ptc, "extract_accessor_reads", lambda text, rel: [])
++    monkeypatch.setattr(ptc, "_scoped_files", lambda scope="all": [ROOT / "README.md"])
++    res = ptc.run_check("all")
++    assert not any(v["kind"] == "unknown-subcommand" for v in res["violations"]), res
++
++
+ def test_all_scopes_clean_block_invariant():
+     """The all-scope BLOCK promotion's invariant — 0 violations repo-wide. A failure
+     means a program drifted from its tool's argparse: fix the program or the tool."""
+diff --git a/tests/test_rules/test_r_tool_call_exists.py b/tests/test_rules/test_r_tool_call_exists.py
+index b7c3ecd..5fafabe 100644
+--- a/tests/test_rules/test_r_tool_call_exists.py
++++ b/tests/test_rules/test_r_tool_call_exists.py
+@@ -32,8 +32,11 @@ def fake_tools(tmp_path, monkeypatch):
+     return _write
+ 
+ 
+-def _ctx(program_text: str, program_path: str = "test.md") -> dict:
+-    return {"program_text": program_text, "program_path": program_path}
++def _ctx(program_text: str, program_path: str = "test.md", registry: dict | None = None) -> dict:
++    ctx = {"program_text": program_text, "program_path": program_path}
++    if registry is not None:
++        ctx["registry"] = registry
++    return ctx
+ 
+ 
+ # ---------- 1. valid subcommand ----------
+@@ -177,3 +180,49 @@ def test_ast_cache_isolation(fake_tools, tmp_path):
+     r_tool_call_exists.clear_cache()
+     assert "brand-new" in r_tool_call_exists._subcommands_of("usage")
+     assert "top" not in r_tool_call_exists._subcommands_of("usage")
++
++
++# ---------- 11. B029: registry script field resolves name != filename ----------
++
++def test_registry_script_field_resolves_subcommands(fake_tools):
++    """A tool whose registry name differs from its script filename
++    (todo -> agent_todo.py) must still get its subcommands checked via the
++    REGISTRY 'script' field. Previously _subcommands_of('todo') opened the
++    nonexistent tools/todo.py, returned empty, and the rule skipped validation —
++    so a typo like TOOL(todo, lst) sailed through the BLOCK gate."""
++    fake_tools("agent_todo", """
++        import argparse
++        p = argparse.ArgumentParser()
++        sub = p.add_subparsers()
++        sub.add_parser("add")
++        sub.add_parser("list")
++        sub.add_parser("done")
++        sub.add_parser("due")
++    """)
++    registry = {"tools": {"todo": {"script": "tools/agent_todo.py", "status": "ACTIVE"}}}
++
++    # Valid subcommand passes.
++    assert r_tool_call_exists.check(_ctx("x ← TOOL(todo, list)", registry=registry)) is None
++
++    # Typo is now BLOCKED (was silently skipped before the fix).
++    r_tool_call_exists.clear_cache()
++    v = r_tool_call_exists.check(_ctx("x ← TOOL(todo, lst)", registry=registry))
++    assert v is not None
++    assert v.rule_id == "R_TOOL_CALL_EXISTS"
++    assert v.severity == "BLOCK"
++    # Hint should point at the real subcommand.
++    assert "list" in v.reason
++
++
++def test_no_registry_falls_back_to_name_based_path(fake_tools):
++    """Absent a registry entry, resolution falls back to tools/<name>.py so
++    tools whose name==filename keep working (backward-compatible)."""
++    fake_tools("dispatch_stats", """
++        import argparse
++        p = argparse.ArgumentParser()
++        sub = p.add_subparsers()
++        sub.add_parser("precision")
++    """)
++    assert r_tool_call_exists.check(_ctx("x ← TOOL(dispatch-stats, precision)")) is None
++    v = r_tool_call_exists.check(_ctx("x ← TOOL(dispatch-stats, bogus)"))
++    assert v is not None and v.rule_id == "R_TOOL_CALL_EXISTS"
+diff --git a/tools/health.py b/tools/health.py
+index ff20198..94855d4 100644
+--- a/tools/health.py
++++ b/tools/health.py
+@@ -176,9 +176,9 @@ def probe_smoke(script):
+         p = run([sys.executable, script, "--help"], timeout=_t(5))
+         if p.returncode == 0:
+             return {"status": "ACTIVE", "note": "smoke (--help)"}
+-        return {"status": "ACTIVE", "note": "smoke (script exists)"}
++        return {"status": "FAILED", "note": p.stderr[:200] or f"--help exited {p.returncode}"}
+     except subprocess.TimeoutExpired:
+-        return {"status": "ACTIVE", "note": "smoke (--help timed out — script runnable)"}
++        return {"status": "FAILED", "note": "--help timed out"}
+ 
+ 
+ # ----- Functional probes for orchestrator-critical tools (PR-003) ----------
+diff --git a/tools/program_tool_conformance.py b/tools/program_tool_conformance.py
+index 1759651..8be65cc 100644
+--- a/tools/program_tool_conformance.py
++++ b/tools/program_tool_conformance.py
+@@ -285,9 +285,26 @@ def declared_subs(help_text: str) -> set[str] | None:
+     """Subcommand/positional-action set from an argparse usage line; None when absent.
+     argparse renders option CHOICES before positionals (e.g. `--format {json,text}`
+     precedes `[{evaluate,chunk,...}]`), so the LAST {a,b,c} group is the action set —
+-    the first-match form false-flagged retrieval-eval's real `chunk` action."""
+-    matches = _USAGE_SUBS.findall(help_text.split("\n\n")[0])
+-    return set(matches[-1].split(",")) if matches else None
++    the first-match form false-flagged retrieval-eval's real `chunk` action.
++
++    But a {a,b,c} group is *only* a subcommand set when it is a positional; an
++    option's choices metavar (`--format {json,text}`) is NOT. argparse renders the
++    latter immediately after the option string (`--format`/`[--format`), whereas a
++    positional group follows a *closed* token (`[-h]`) or the usage prefix. A
++    subparser-less tool whose sole {...} group is an option's choices must return
++    None (no subparsers) — otherwise those choices were mistaken for subcommands and
++    a valid positional call-site was flagged unknown-subcommand."""
++    usage = help_text.split("\n\n")[0]
++    positional_groups: list[str] = []
++    for m in _USAGE_SUBS.finditer(usage):
++        prev = usage[:m.start()].rstrip()
++        prev_token = prev.rsplit(None, 1)[-1] if prev else ""
++        # option-choices lead: `--opt` / `[--opt` / `-o` / `[-o`, but NOT a closed
++        # bracket token like `[-h]` (whose `]` ends the group before this one).
++        if re.match(r"\[?-{1,2}[A-Za-z]", prev_token) and not prev_token.endswith("]"):
++            continue
++        positional_groups.append(m.group(1))
++    return set(positional_groups[-1].split(",")) if positional_groups else None
+ 
+ 
+ def declared_flags(help_text: str) -> set[str]:
+diff --git a/tools/rules/r_tool_call_exists.py b/tools/rules/r_tool_call_exists.py
+index 3fd0ed8..21db8f6 100644
+--- a/tools/rules/r_tool_call_exists.py
++++ b/tools/rules/r_tool_call_exists.py
+@@ -41,18 +41,32 @@ def clear_cache() -> None:
+     _SUBCOMMAND_CACHE.clear()
+ 
+ 
+-def _subcommands_of(tool_name: str) -> frozenset:
+-    if tool_name in _SUBCOMMAND_CACHE:
+-        return _SUBCOMMAND_CACHE[tool_name]
+-    path = _AXON_ROOT / "tools" / f"{tool_name.replace('-', '_')}.py"
++def _subcommands_of(tool_name: str, registry: Optional[dict] = None) -> frozenset:
++    # Resolve the script via the REGISTRY 'script' field — a tool's registry
++    # name is not always its script filename (todo -> agent_todo.py,
++    # queue -> queue_tool.py, workflow-runner -> workflow_run.py,
++    # rules -> rules_loader.py). Falling back to tools/<name>.py silently
++    # skipped subcommand validation for every such tool. Fall back to the
++    # name-based path only when the registry has no script for this tool.
++    script_rel = None
++    if registry:
++        entry = (registry.get("tools") or {}).get(tool_name) or {}
++        script_rel = entry.get("script")
++    if script_rel:
++        path = _AXON_ROOT / script_rel
++    else:
++        path = _AXON_ROOT / "tools" / f"{tool_name.replace('-', '_')}.py"
++    key = str(path)
++    if key in _SUBCOMMAND_CACHE:
++        return _SUBCOMMAND_CACHE[key]
+     if not path.exists():
+-        _SUBCOMMAND_CACHE[tool_name] = frozenset()
+-        return _SUBCOMMAND_CACHE[tool_name]
++        _SUBCOMMAND_CACHE[key] = frozenset()
++        return _SUBCOMMAND_CACHE[key]
+     try:
+         tree = ast.parse(path.read_text("utf-8"))
+     except (OSError, SyntaxError):
+-        _SUBCOMMAND_CACHE[tool_name] = frozenset()
+-        return _SUBCOMMAND_CACHE[tool_name]
++        _SUBCOMMAND_CACHE[key] = frozenset()
++        return _SUBCOMMAND_CACHE[key]
+     names = set()
+     for node in ast.walk(tree):
+         if (isinstance(node, ast.Call)
+@@ -63,7 +77,7 @@ def _subcommands_of(tool_name: str) -> frozenset:
+             and isinstance(node.args[0].value, str)):
+             names.add(node.args[0].value)
+     out = frozenset(names)
+-    _SUBCOMMAND_CACHE[tool_name] = out
++    _SUBCOMMAND_CACHE[key] = out
+     return out
+ 
+ 
+@@ -84,7 +98,7 @@ def check(ctx) -> Optional[Violation]:
+                 continue
+             if name in PASSTHROUGH_TOOLS:
+                 continue
+-            subs = _subcommands_of(name)
++            subs = _subcommands_of(name, ctx.get("registry"))
+             if not subs:
+                 continue
+             if sub in subs:

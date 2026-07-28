@@ -1,0 +1,583 @@
+{
+ "project": "axon-bugfree10",
+ "generated": "2026-07-27",
+ "sequence": [
+  "PR-01",
+  "PR-06",
+  "PR-04",
+  "PR-28",
+  "PR-02",
+  "PR-05",
+  "PR-03",
+  "PR-07",
+  "PR-17",
+  "PR-22",
+  "PR-08",
+  "PR-29",
+  "PR-09",
+  "PR-10",
+  "PR-11",
+  "PR-13",
+  "PR-14a",
+  "PR-14b",
+  "PR-15",
+  "PR-16",
+  "PR-18a",
+  "PR-18b",
+  "PR-19",
+  "PR-20",
+  "PR-21",
+  "PR-27a",
+  "PR-23",
+  "PR-24",
+  "PR-25",
+  "PR-26",
+  "PR-27b"
+ ],
+ "nodes": [
+  "PR-01",
+  "PR-06",
+  "PR-04",
+  "PR-28",
+  "PR-02",
+  "PR-05",
+  "PR-03",
+  "PR-07",
+  "PR-17",
+  "PR-22",
+  "PR-08",
+  "PR-29",
+  "PR-09",
+  "PR-10",
+  "PR-11",
+  "PR-13",
+  "PR-14a",
+  "PR-14b",
+  "PR-15",
+  "PR-16",
+  "PR-18a",
+  "PR-18b",
+  "PR-19",
+  "PR-20",
+  "PR-21",
+  "PR-27a",
+  "PR-23",
+  "PR-24",
+  "PR-25",
+  "PR-26",
+  "PR-27b"
+ ],
+ "edges": [
+  {
+   "from": "PR-05",
+   "to": "PR-02",
+   "reason": "PR-05/B072 consumes the comment/quote-stripping helper introduced in PR-02; land the helper first to avoid a divergent second implementation (single source of truth for the strip predicate)."
+  },
+  {
+   "from": "PR-29",
+   "to": "PR-03",
+   "reason": "R_TOOL_RECEIPTS canonical-name boundary: B051 (record the canonical name) must be consistent with the tightened _CLAIM_RE claim-capture from B081 (PR-03); reviewed and landed as a matching set."
+  },
+  {
+   "from": "PR-10",
+   "to": "PR-03",
+   "reason": "Same canonical-name boundary: B029 (resolve script by registry 'script' field) co-governs how a tool claim is identified with B081/B051; keep the three consistent."
+  },
+  {
+   "from": "PR-17",
+   "to": "PR-01",
+   "reason": "Program-layer autofixes mutate workspace/programs; the R9 kernel-write gate (B001) must be sound first \u2014 while advisory B009/B010/B013 stay open, PR-01 is the only automated kernel-write guardrail."
+  },
+  {
+   "from": "PR-17",
+   "to": "PR-06",
+   "reason": "Program control-flow evidence relies on a returncode-aware verdict; PR-06/B033 certifies the pass/fail oracle before program traces are trusted."
+  },
+  {
+   "from": "PR-18a",
+   "to": "PR-01",
+   "reason": "code-dev dispatch autofixes mutate program files; kernel-write gate must be sound first."
+  },
+  {
+   "from": "PR-18a",
+   "to": "PR-06",
+   "reason": "Trace evidence trustworthy only after the returncode-aware verdict lands."
+  },
+  {
+   "from": "PR-18b",
+   "to": "PR-01",
+   "reason": "code-dev guard/seed autofixes mutate program files; kernel-write gate must be sound first."
+  },
+  {
+   "from": "PR-18b",
+   "to": "PR-06",
+   "reason": "Trace evidence trustworthy only after the returncode-aware verdict lands."
+  },
+  {
+   "from": "PR-19",
+   "to": "PR-01",
+   "reason": "code-dev marshaling autofixes mutate program files; kernel-write gate must be sound first."
+  },
+  {
+   "from": "PR-19",
+   "to": "PR-06",
+   "reason": "Five-program trace evidence trustworthy only after the returncode-aware verdict lands."
+  },
+  {
+   "from": "PR-20",
+   "to": "PR-06",
+   "reason": "Program interpolation trace evidence relies on the returncode-aware verdict."
+  },
+  {
+   "from": "PR-21",
+   "to": "PR-01",
+   "reason": "Program state/persistence autofixes mutate program files; kernel-write gate must be sound first."
+  },
+  {
+   "from": "PR-08",
+   "to": "PR-06",
+   "reason": "Receipt/ledger tool tests are verified through the runner; returncode-aware verdict must land first for a trustworthy green."
+  },
+  {
+   "from": "PR-13",
+   "to": "PR-06",
+   "reason": "Data-integrity fixture tests verified through the runner; depends on the returncode-aware verdict."
+  },
+  {
+   "from": "PR-15",
+   "to": "PR-06",
+   "reason": "Dispatch-contract change verified via the program-trace corpus through the runner; depends on the returncode-aware verdict."
+  }
+ ],
+ "prs": [
+  {
+   "pr_id": "PR-01",
+   "title": "shell.py R9 write-gate: fix kernel anchor, redirect regex, and cd-cwd rebasing",
+   "bug_ids": [
+    "B001",
+    "B031",
+    "B032"
+   ],
+   "risk": "high",
+   "effort": "M",
+   "depends_on": [],
+   "kernel_floor": false
+  },
+  {
+   "pr_id": "PR-06",
+   "title": "Green-gate integrity: test_runner returncode-aware verdict + quality_loop HMAC ramp",
+   "bug_ids": [
+    "B033",
+    "B025"
+   ],
+   "risk": "medium",
+   "effort": "M",
+   "depends_on": [],
+   "kernel_floor": false
+  },
+  {
+   "pr_id": "PR-04",
+   "title": "Doctrine gates: fail-closed integrity, delimited receipt match, relative-path crash",
+   "bug_ids": [
+    "B017",
+    "B018",
+    "B019"
+   ],
+   "risk": "medium",
+   "effort": "M",
+   "depends_on": [],
+   "kernel_floor": false
+  },
+  {
+   "pr_id": "PR-28",
+   "title": "config.md autonomy fail-open: attended capability-grant branch never fires",
+   "bug_ids": [
+    "B047"
+   ],
+   "risk": "medium",
+   "effort": "S",
+   "depends_on": [],
+   "kernel_floor": false
+  },
+  {
+   "pr_id": "PR-02",
+   "title": "Rule linters: strip comments/quotes before EXEC/STORE/phase-ledger scans (shared helper)",
+   "bug_ids": [
+    "B026",
+    "B027",
+    "B028"
+   ],
+   "risk": "medium",
+   "effort": "M",
+   "depends_on": [],
+   "kernel_floor": false
+  },
+  {
+   "pr_id": "PR-05",
+   "title": "Lint/dep/conformance gates: close substring & regex fail-opens (reuse strip helper)",
+   "bug_ids": [
+    "B067",
+    "B068",
+    "B070",
+    "B072"
+   ],
+   "risk": "medium",
+   "effort": "M",
+   "depends_on": [
+    "PR-02"
+   ],
+   "kernel_floor": false
+  },
+  {
+   "pr_id": "PR-03",
+   "title": "Rule linters: regex/parse correctness (arithmetic, dont-do, mode-lock, receipts)",
+   "bug_ids": [
+    "B078",
+    "B079",
+    "B080",
+    "B081"
+   ],
+   "risk": "medium",
+   "effort": "M",
+   "depends_on": [],
+   "kernel_floor": false
+  },
+  {
+   "pr_id": "PR-07",
+   "title": "Trace gates: dag conditional edges, drift TTL stability, pr_drift anchor casing",
+   "bug_ids": [
+    "B016",
+    "B020",
+    "B024"
+   ],
+   "risk": "medium",
+   "effort": "M",
+   "depends_on": [],
+   "kernel_floor": false
+  },
+  {
+   "pr_id": "PR-17",
+   "title": "Program dry-run & control-flow safety: combine/merge/workflow-run",
+   "bug_ids": [
+    "B002",
+    "B003",
+    "B004",
+    "B036"
+   ],
+   "risk": "medium",
+   "effort": "M",
+   "depends_on": [
+    "PR-01",
+    "PR-06"
+   ],
+   "kernel_floor": false
+  },
+  {
+   "pr_id": "PR-22",
+   "title": "ADVISORY (kernel floor): gate fail-opens in dry_run_lint & write_barrier \u2014 OWNER ESCALATION",
+   "bug_ids": [
+    "B009",
+    "B010",
+    "B013"
+   ],
+   "risk": "low",
+   "effort": "S",
+   "depends_on": [],
+   "kernel_floor": true
+  },
+  {
+   "pr_id": "PR-08",
+   "title": "Receipt & ledger integrity: canonical checksum + GC re-chain",
+   "bug_ids": [
+    "B023",
+    "B075"
+   ],
+   "risk": "medium",
+   "effort": "M",
+   "depends_on": [
+    "PR-06"
+   ],
+   "kernel_floor": false
+  },
+  {
+   "pr_id": "PR-29",
+   "title": "axon.py: record canonical registry tool name in receipts",
+   "bug_ids": [
+    "B051"
+   ],
+   "risk": "low",
+   "effort": "S",
+   "depends_on": [
+    "PR-03"
+   ],
+   "kernel_floor": false
+  },
+  {
+   "pr_id": "PR-09",
+   "title": "workflow_run.py: exclude draft workflows, honor boolean-true if:",
+   "bug_ids": [
+    "B082",
+    "B083"
+   ],
+   "risk": "low",
+   "effort": "S",
+   "depends_on": [],
+   "kernel_floor": false
+  },
+  {
+   "pr_id": "PR-10",
+   "title": "Tool health/conformance/registry resolution fixes",
+   "bug_ids": [
+    "B021",
+    "B029",
+    "B089"
+   ],
+   "risk": "low",
+   "effort": "S",
+   "depends_on": [
+    "PR-03"
+   ],
+   "kernel_floor": false
+  },
+  {
+   "pr_id": "PR-11",
+   "title": "State stores: kv_store null value + memory L: rollback history",
+   "bug_ids": [
+    "B074",
+    "B076"
+   ],
+   "risk": "low",
+   "effort": "S",
+   "depends_on": [],
+   "kernel_floor": false
+  },
+  {
+   "pr_id": "PR-13",
+   "title": "Data-integrity: table-row corruption, rollback eviction ordering, obsidian counts",
+   "bug_ids": [
+    "B073",
+    "B015",
+    "B077"
+   ],
+   "risk": "medium",
+   "effort": "M",
+   "depends_on": [
+    "PR-06"
+   ],
+   "kernel_floor": false
+  },
+  {
+   "pr_id": "PR-14a",
+   "title": "CLI arg/boundary hardening: benchmark, tokenizer, context",
+   "bug_ids": [
+    "B086",
+    "B087",
+    "B091",
+    "B069"
+   ],
+   "risk": "low",
+   "effort": "S",
+   "depends_on": [],
+   "kernel_floor": false
+  },
+  {
+   "pr_id": "PR-14b",
+   "title": "Hook/refresh boundary: reanchor_store prompt token + project_refresh reconcile report",
+   "bug_ids": [
+    "B088",
+    "B090"
+   ],
+   "risk": "low",
+   "effort": "S",
+   "depends_on": [],
+   "kernel_floor": false
+  },
+  {
+   "pr_id": "PR-15",
+   "title": "Invocation fidelity: run.py subcommand/args + dispatch threshold persistence",
+   "bug_ids": [
+    "B030",
+    "B071"
+   ],
+   "risk": "medium",
+   "effort": "S",
+   "depends_on": [
+    "PR-06"
+   ],
+   "kernel_floor": false
+  },
+  {
+   "pr_id": "PR-16",
+   "title": "Harness plumbing: verify_stop import path + cold_stranger repo_sha",
+   "bug_ids": [
+    "B022",
+    "B066"
+   ],
+   "risk": "low",
+   "effort": "S",
+   "depends_on": [],
+   "kernel_floor": false
+  },
+  {
+   "pr_id": "PR-18a",
+   "title": "code-dev dispatch/CASE routing: state actions branch, phase token, safety-freeze state",
+   "bug_ids": [
+    "B044",
+    "B046",
+    "B042"
+   ],
+   "risk": "medium",
+   "effort": "M",
+   "depends_on": [
+    "PR-01",
+    "PR-06"
+   ],
+   "kernel_floor": false
+  },
+  {
+   "pr_id": "PR-18b",
+   "title": "code-dev guard/seed logic: study escalation, phase-start CONTAINS anchor, plan undefined-var",
+   "bug_ids": [
+    "B045",
+    "B039",
+    "B040"
+   ],
+   "risk": "medium",
+   "effort": "M",
+   "depends_on": [
+    "PR-01",
+    "PR-06"
+   ],
+   "kernel_floor": false
+  },
+  {
+   "pr_id": "PR-19",
+   "title": "code-dev arg/tool/result marshaling fixes",
+   "bug_ids": [
+    "B035",
+    "B037",
+    "B038",
+    "B041",
+    "B043"
+   ],
+   "risk": "medium",
+   "effort": "L",
+   "depends_on": [
+    "PR-01",
+    "PR-06"
+   ],
+   "kernel_floor": false
+  },
+  {
+   "pr_id": "PR-20",
+   "title": "Program logic & interpolation: discover/quality-loop/versions/audit/compare",
+   "bug_ids": [
+    "B048",
+    "B049",
+    "B050",
+    "B084",
+    "B085"
+   ],
+   "risk": "medium",
+   "effort": "M",
+   "depends_on": [
+    "PR-06"
+   ],
+   "kernel_floor": false
+  },
+  {
+   "pr_id": "PR-21",
+   "title": "Program state/persistence: plan-done stale pointers + chat-input persist",
+   "bug_ids": [
+    "B014",
+    "B034"
+   ],
+   "risk": "low",
+   "effort": "S",
+   "depends_on": [
+    "PR-01"
+   ],
+   "kernel_floor": false
+  },
+  {
+   "pr_id": "PR-27a",
+   "title": "ADVISORY (kernel floor): KERNEL-SLIM active-program interrupt gate integrity",
+   "bug_ids": [
+    "B052",
+    "B053"
+   ],
+   "risk": "low",
+   "effort": "S",
+   "depends_on": [],
+   "kernel_floor": true
+  },
+  {
+   "pr_id": "PR-23",
+   "title": "ADVISORY (kernel floor): predicate/validator/registry error handling",
+   "bug_ids": [
+    "B011",
+    "B060",
+    "B065",
+    "B061"
+   ],
+   "risk": "low",
+   "effort": "S",
+   "depends_on": [],
+   "kernel_floor": true
+  },
+  {
+   "pr_id": "PR-24",
+   "title": "ADVISORY (kernel floor): self_care substring false-positives",
+   "bug_ids": [
+    "B012",
+    "B064"
+   ],
+   "risk": "low",
+   "effort": "S",
+   "depends_on": [],
+   "kernel_floor": true
+  },
+  {
+   "pr_id": "PR-25",
+   "title": "ADVISORY (kernel floor): kernel tool logic/format (lib ts, clock, liveness, redact, rules_loader)",
+   "bug_ids": [
+    "B057",
+    "B058",
+    "B059",
+    "B062",
+    "B063"
+   ],
+   "risk": "low",
+   "effort": "M",
+   "depends_on": [],
+   "kernel_floor": true
+  },
+  {
+   "pr_id": "PR-26",
+   "title": "ADVISORY (kernel floor): compiler template defects (chat-session, feedback-loop, qc-workflow)",
+   "bug_ids": [
+    "B005",
+    "B006",
+    "B054",
+    "B055"
+   ],
+   "risk": "low",
+   "effort": "S",
+   "depends_on": [],
+   "kernel_floor": true
+  },
+  {
+   "pr_id": "PR-27b",
+   "title": "ADVISORY (kernel floor): kernel program specs (dev-new, plan-list, register-preference)",
+   "bug_ids": [
+    "B007",
+    "B008",
+    "B056"
+   ],
+   "risk": "low",
+   "effort": "S",
+   "depends_on": [],
+   "kernel_floor": true
+  }
+ ]
+}

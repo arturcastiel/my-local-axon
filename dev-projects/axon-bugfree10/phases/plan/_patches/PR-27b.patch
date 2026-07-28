@@ -1,0 +1,149 @@
+diff --git a/axon/programs/dev-new.md b/axon/programs/dev-new.md
+index 54fb7a7..4b13062 100644
+--- a/axon/programs/dev-new.md
++++ b/axon/programs/dev-new.md
+@@ -45,7 +45,7 @@ WRITE(dest,
+ → \"─────────────────────────────────────────────────\"
+ # → \"...\"
+ 
+-DONE(dev-new)
++DONE({W:dev-new-name})
+ ")
+ 
+ APPEND(E:session-log, {event:"program-scaffolded", name:W:dev-new-name, path:dest, time:ts.iso})
+diff --git a/axon/programs/plan-list.md b/axon/programs/plan-list.md
+index 0ed8704..ce558d2 100644
+--- a/axon/programs/plan-list.md
++++ b/axon/programs/plan-list.md
+@@ -19,8 +19,8 @@ plans ← []
+     updated: p.Updated
+   })
+ 
+-active   ← FIND(plans, status="active")
+-complete ← FIND(plans, status="completed")
++active   ← plans WHERE status="active"
++complete ← plans WHERE status="completed"
+ 
+ ## OUTPUT → PYTHON_FAST · list
+ → "▶ plan-list"
+diff --git a/axon/programs/register-preference.md b/axon/programs/register-preference.md
+index 9048ebb..4b4c9a8 100644
+--- a/axon/programs/register-preference.md
++++ b/axon/programs/register-preference.md
+@@ -39,10 +39,6 @@ APPEND(E:session-log, {
+   time:  TOOL(clock).iso
+ })
+ 
+-CLEAR(W:pref-topic)
+-CLEAR(W:pref-key)
+-CLEAR(W:pref-value)
+-
+ ## OUTPUT → PYTHON_FAST · prose
+ → "▶ register-preference  ·  {W:pref-topic}"
+ → "─────────────────────────────────────────────────"
+@@ -52,4 +48,8 @@ CLEAR(W:pref-value)
+ → ""
+ → "Next: show-preferences — review all saved preferences · menu — back to all commands"
+ 
++CLEAR(W:pref-topic)
++CLEAR(W:pref-key)
++CLEAR(W:pref-value)
++
+ DONE(register-preference)
+diff --git a/tests/test_pr27b_program_specs.py b/tests/test_pr27b_program_specs.py
+new file mode 100644
+index 0000000..6ff71c9
+--- /dev/null
++++ b/tests/test_pr27b_program_specs.py
+@@ -0,0 +1,91 @@
++"""Regression tests for PR-27b kernel program-spec bugs.
++
++These three programs are AXON pseudocode/spec (.md). The tests parse the
++program source and encode each bug's concrete failure_scenario as a
++structural/behavioral assertion that FAILS on the pre-fix source and PASSES
++after the minimal fix.
++
++Bugs covered:
++  B007 dev-new.md            — scaffold hardcoded DONE(dev-new) => generated
++                               programs terminate with the wrong name.
++  B008 plan-list.md          — FIND (first-match) used where a list filter
++                               (WHERE) is required => list under-reports.
++  B056 register-preference.md — W:pref-* CLEARed before the OUTPUT section
++                               => confirmation renders with blank fields.
++"""
++import re
++from pathlib import Path
++
++import pytest
++from conftest import AXON
++
++PROGRAMS = AXON / "programs"
++
++
++def _read(name):
++    return (PROGRAMS / name).read_text(encoding="utf-8")
++
++
++# ── B007 ────────────────────────────────────────────────────────────────────
++def _extract_write_scaffold(src):
++    """Return the string literal WRITE(dest, "....") scaffolds into a new file."""
++    i = src.index("WRITE(dest,")
++    # first double-quote that opens the scaffold literal
++    start = src.index('"', i) + 1
++    # scaffold closes on a line that is exactly `")`
++    end = src.index('\n")', start)
++    return src[start:end]
++
++
++def test_dev_new_scaffold_terminates_with_generated_name():
++    """A program scaffolded by dev-new must end with DONE(<its own name>),
++    not DONE(dev-new). Simulate interpolation of {W:dev-new-name}."""
++    scaffold = _extract_write_scaffold(_read("dev-new.md"))
++    done = re.search(r"\bDONE\(([^)\n]*)\)", scaffold)
++    assert done, "scaffold must contain a DONE(...) terminator"
++    arg = done.group(1)
++
++    sample = "my-tool"
++    rendered = arg.replace("{W:dev-new-name}", sample)
++    assert rendered == sample, (
++        f"scaffold DONE arg renders to {rendered!r}, expected {sample!r} "
++        f"(source arg was {arg!r}) — generated program would terminate with "
++        f"the wrong program name"
++    )
++    assert arg != "dev-new", (
++        "scaffold hardcodes DONE(dev-new); generated programs would close the "
++        "wrong process (B007)"
++    )
++
++
++# ── B008 ────────────────────────────────────────────────────────────────────
++def test_plan_list_filters_all_matching_plans():
++    """active/complete must be a filter over ALL matching plans, not FIND
++    (which returns only the first match). Downstream COUNT/∀ require a list."""
++    src = _read("plan-list.md")
++    assert "FIND(plans" not in src, (
++        "plan-list uses FIND(plans, ...) which yields only the first matching "
++        "plan; COUNT()/∀ then under-report the menu (B008)"
++    )
++    for status in ("active", "completed"):
++        assert re.search(rf'plans\s+WHERE\s+status\s*=\s*"{status}"', src), (
++            f"expected a WHERE filter selecting all plans with "
++            f'status="{status}"'
++        )
++
++
++# ── B056 ────────────────────────────────────────────────────────────────────
++def test_register_preference_clears_after_output():
++    """The OUTPUT section interpolates W:pref-topic/key/value, so the CLEAR()
++    of those keys must come AFTER OUTPUT (else the confirmation is blank)."""
++    src = _read("register-preference.md")
++    out_idx = src.index("## OUTPUT")
++    for key in ("W:pref-topic", "W:pref-key", "W:pref-value"):
++        clr_idx = src.index(f"CLEAR({key})")
++        assert clr_idx > out_idx, (
++            f"CLEAR({key}) occurs before the OUTPUT section; the confirmation "
++            f"would render with a blank {key} (B056)"
++        )
++    # OUTPUT still references the keys it prints
++    for token in ("{W:pref-topic}", "{W:pref-key}", "{W:pref-value}"):
++        assert token in src[out_idx:], f"OUTPUT must still interpolate {token}"

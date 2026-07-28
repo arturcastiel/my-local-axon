@@ -1,0 +1,210 @@
+diff --git a/tests/test_doctrine_bugfree10_pr04.py b/tests/test_doctrine_bugfree10_pr04.py
+new file mode 100644
+index 0000000..6b19a74
+--- /dev/null
++++ b/tests/test_doctrine_bugfree10_pr04.py
+@@ -0,0 +1,134 @@
++"""axonbugfree10 PR-04 — doctrine gate hardening.
++
++B017: _run_has_receipts must match the run-scoped rationale EXACTLY (a forged run '1'
++      must not borrow prefix-sibling run '10's committed receipts).
++B018: preflight must not crash (ValueError) on a RELATIVE routine path run from ROOT.
++B019: the integrity gate fails CLOSED — an in-tree routine that is not POSITIVELY blessed
++      (outside the covered globs, or a report that produced no JSON) must NOT validate.
++"""
++import json
++import sys
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parent.parent
++TOOLS = ROOT / "tools"
++sys.path.insert(0, str(TOOLS))
++import doctrine_arming as da  # noqa: E402
++import doctrine_run as dr  # noqa: E402
++import doctrine_preflight as dpf  # noqa: E402
++import program_integrity as pi  # noqa: E402
++
++_CONVERGING = """name: c
++version: 1
++domain: code-dev
++execution-mode: fixed
++default-goal: {statement: s, acceptance-criterion: a, rejection-criterion: r}
++synapses:
++  - {id: study, name: code-dev-study, kind: action, on-complete: [{next: done}]}
++  - {id: done, name: code-dev-journal-log, kind: action, on-complete: []}
++start: study
++"""
++
++
++def _converged_run(tmp_path, run_id):
++    (tmp_path / "axon" / "state").mkdir(parents=True)
++    ws = tmp_path / "workspace"; (ws / "memory" / "longterm").mkdir(parents=True)
++    (ws / "state").mkdir()
++    proj = tmp_path / "proj"; proj.mkdir()
++    routine = tmp_path / "c.routine.yml"; routine.write_text(_CONVERGING, encoding="utf-8")
++    assert dr.start(str(ws), str(routine), run_id, str(proj))["started"]
++    dr.step(str(ws), run_id)
++    assert dr.step(str(ws), run_id)["status"] == "converged"
++    return str(proj), str(ws)
++
++
++# ---- B017: prefix-sibling receipt forgery ---------------------------------------------
++def test_prefix_sibling_receipts_are_not_borrowed(tmp_path):
++    """Run '10' has real committed receipts (rationale 'run 10'). A forged run '1' with a
++    hand-written converged state but NO receipts of its own must be rejected — its receipt
++    check must not pass on the substring 'run 1' inside 'run 10'."""
++    proj, ws = _converged_run(tmp_path, run_id="10")
++    # forge a converged state for run '1' in the SAME workspace — no 'run 1' receipts exist
++    dr._save_state(ws, "1", {"run_id": "1", "status": "converged", "completed": 1})
++    # the direct receipt probe: only 'run 10' is committed, so run '1' has no receipts
++    assert da._run_has_receipts(ws, "10") is True
++    assert da._run_has_receipts(ws, "1") is False
++    # end-to-end: the forged run '1' is refused for lack of run-scoped receipts
++    r = da.record_clean_run(proj, "1", ws)
++    assert r["recorded"] is False
++    assert "receipt" in r["reason"].lower()
++
++
++# ---- B018: relative routine path from ROOT --------------------------------------------
++def test_relative_routine_path_does_not_crash(tmp_path, monkeypatch):
++    """preflight() given a RELATIVE path while cwd == ROOT used to hit
++    Path.relative_to(ROOT) on the still-relative path → ValueError, no JSON produced."""
++    r = tmp_path / "rel.routine.yml"
++    r.write_text("name: t\nversion: 1\nexecution-mode: fixed\nstart: s1\n"
++                 "synapses:\n  - {id: s1, name: menu, kind: terminal}\n", encoding="utf-8")
++    monkeypatch.setattr(dpf, "ROOT", tmp_path)
++    monkeypatch.chdir(tmp_path)
++    rep = dpf.preflight("rel.routine.yml", None)  # relative path, cwd == ROOT
++    assert isinstance(rep, dict) and "validated" in rep  # no traceback, JSON report exists
++
++
++# ---- B019: integrity fails CLOSED -----------------------------------------------------
++def _mk_routine(tmp_path, name="r.yml"):
++    r = tmp_path / name
++    r.write_text("name: t\nversion: 1\nexecution-mode: fixed\nstart: s1\n"
++                 "synapses:\n  - {id: s1, name: menu, kind: terminal}\n", encoding="utf-8")
++    return r
++
++
++def _clean_report(monkeypatch):
++    real = dpf._run_json
++
++    def fake(cmd):
++        if "program_integrity.py" in str(cmd):
++            return {"ok": True, "tampered": [], "missing": [], "unblessed": []}
++        return real(cmd)
++    monkeypatch.setattr(dpf, "_run_json", fake)
++
++
++def test_in_tree_unlisted_routine_fails_closed(tmp_path, monkeypatch):
++    """An in-tree routine that program_integrity does not track (outside its globs) is
++    flagged by nothing — the report is clean — yet it was NEVER blessed, so integrity
++    must NOT read as ok/blessed (B019 scenario a)."""
++    r = _mk_routine(tmp_path)
++    monkeypatch.setattr(dpf, "ROOT", tmp_path)  # in-tree, but no manifest here
++    _clean_report(monkeypatch)
++    pf = dpf.preflight(str(r), None)
++    assert pf["checks"]["integrity"]["ok"] is False
++    assert pf["checks"]["integrity"]["note"] != "blessed"
++    assert pf["validated"] is False
++
++
++def test_integrity_report_error_does_not_fail_open(tmp_path, monkeypatch):
++    """If the program_integrity subprocess produces no JSON, _run_json returns {'ok': False}
++    with no tampered/unblessed keys. That absence must not be read as blessed (B019 b)."""
++    r = _mk_routine(tmp_path)
++    monkeypatch.setattr(dpf, "ROOT", tmp_path)
++    real = dpf._run_json
++
++    def fake(cmd):
++        if "program_integrity.py" in str(cmd):
++            return {"ok": False}  # subprocess errored / timed out — no lists
++        return real(cmd)
++    monkeypatch.setattr(dpf, "_run_json", fake)
++    pf = dpf.preflight(str(r), None)
++    assert pf["checks"]["integrity"]["ok"] is False
++    assert pf["validated"] is False
++
++
++def test_positively_blessed_routine_passes_integrity(tmp_path, monkeypatch):
++    """The non-buggy path: a routine whose live hash matches the reviewed manifest is
++    positively blessed → integrity ok True, note 'blessed'."""
++    r = _mk_routine(tmp_path)
++    manifest = tmp_path / "manifest.json"
++    manifest.write_text(json.dumps({"hashes": {"r.yml": pi._sha(r)}}), encoding="utf-8")
++    monkeypatch.setattr(dpf, "ROOT", tmp_path)
++    monkeypatch.setattr(pi, "MANIFEST_PATH", manifest)
++    _clean_report(monkeypatch)
++    pf = dpf.preflight(str(r), None)
++    assert pf["checks"]["integrity"]["ok"] is True
++    assert pf["checks"]["integrity"]["note"] == "blessed"
+diff --git a/tools/doctrine_arming.py b/tools/doctrine_arming.py
+index d03d212..c22a95f 100644
+--- a/tools/doctrine_arming.py
++++ b/tools/doctrine_arming.py
+@@ -56,8 +56,12 @@ def _run_has_receipts(workspace: str, run_id: str) -> bool:
+         ws = Path(workspace) if workspace else None
+         seen = False
+         for row in loop_receipt._iter_ledger(ws):
++            # doctrine-fix H2 (axonbugfree10 B017): match the run-scoped rationale EXACTLY,
++            # not as a substring. `run {run_id}` is the WHOLE rationale doctrine_run emits,
++            # so an undelimited `in` let a forged run '1' borrow prefix-sibling run '10's
++            # committed receipt ('run 10' contains 'run 1') and pass the receipt gate.
+             if (row.get("intent") == "doctrine-node"
+-                    and f"run {run_id}" in str(row.get("rationale", ""))
++                    and str(row.get("rationale", "")).strip() == f"run {run_id}"
+                     and row.get("phase") == "committed"):
+                 seen = True
+         return seen
+diff --git a/tools/doctrine_preflight.py b/tools/doctrine_preflight.py
+index c867938..9dbfb75 100644
+--- a/tools/doctrine_preflight.py
++++ b/tools/doctrine_preflight.py
+@@ -132,20 +132,35 @@ def preflight(routine_path: str, project_dir: str | None = None) -> dict:
+ 
+     # 6. integrity: the routine file must be blessed (a poisoned routine can't validate)
+     intg = _run_json([str(TOOLS / "program_integrity.py"), "report"])
+-    routine_rel = str(p.relative_to(ROOT)) if str(ROOT) in str(p.resolve()) else routine_path
+-    # Fail CLOSED (program_integrity M6): an UNBLESSED routine is an unreviewed
+-    # instruction that could run — attackers ADD a poisoned routine, they don't edit a
+-    # blessed one. The old check passed anything not in `tampered`, so an injected
+-    # never-blessed routine could reach validated:True (axonbugfree3 wave B).
++    # B018: derive the in-tree rel-path from the RESOLVED path. `p` may be relative
++    # (e.g. `programs/foo.routine.yml` run from ROOT); `p.relative_to(ROOT)` on the still
++    # -relative p raises ValueError, aborting preflight with a traceback and no JSON report.
++    _in_tree = str(ROOT) in str(p.resolve())
++    routine_rel = str(p.resolve().relative_to(ROOT)) if _in_tree else routine_path
++    # Fail CLOSED (program_integrity M6 + axonbugfree10 B019): integrity passes ONLY when
++    # the routine is POSITIVELY confirmed blessed — present in the reviewed hash manifest
++    # with a matching live hash. "Not explicitly flagged" is NOT proof of blessing: a routine
++    # OUTSIDE program_integrity's covered globs, or a report subprocess that produced no JSON,
++    # leaves `tampered`/`unblessed` empty and the old check read that as blessed:True —
++    # exactly the injection class this gate claims to close. Out-of-tree fixtures stay
++    # runnable with an honest note (outside integrity scope).
+     _tampered = routine_rel in intg.get("tampered", [])
+     _unblessed = routine_rel in intg.get("unblessed", [])
+-    _covered = not _tampered and not _unblessed and routine_rel not in intg.get("missing", [])
+-    _in_tree = str(ROOT) in str(p.resolve())
+-    checks["integrity"] = {"ok": (not _tampered) and (not _unblessed),
+-                           "note": ("tampered — re-review + bless" if _tampered
+-                                    else "unblessed (bless before binding)" if _unblessed
+-                                    else "blessed" if _in_tree
+-                                    else "out-of-tree (outside integrity scope)")}
++    _blessed = False
++    if _in_tree:
++        try:
++            import program_integrity
++            _manifest = program_integrity._load_manifest()
++            _blessed = (routine_rel in _manifest
++                        and not _tampered
++                        and _manifest[routine_rel] == program_integrity._sha(p.resolve()))
++        except Exception:
++            _blessed = False
++    checks["integrity"] = {"ok": _blessed if _in_tree else True,
++                           "note": ("out-of-tree (outside integrity scope)" if not _in_tree
++                                    else "tampered — re-review + bless" if _tampered
++                                    else "blessed" if _blessed
++                                    else "unblessed (bless before binding)")}
+ 
+     validated = all(c.get("ok", False) for c in checks.values())
+     return {"validated": validated, "routine": routine_path, "checks": checks,

@@ -1,0 +1,178 @@
+diff --git a/tests/test_pr07_trace_gates.py b/tests/test_pr07_trace_gates.py
+new file mode 100644
+index 0000000..f079877
+--- /dev/null
++++ b/tests/test_pr07_trace_gates.py
+@@ -0,0 +1,97 @@
++"""PR-07 regression locks — trace gates.
++
++B016 (dag_consistency): next-conditional edges must be validated like
++      next-suggests; a dangling conditional edge is a fail-closed error.
++B020 (drift): a no-program trace (expected=[]) must stay stable after a
++      recorded tool — not flip to diverged/halt (init --no-program contract).
++B024 (pr_drift): a CamelCase-only acceptance item must be classified as
++      anchored and verified against the diff, not silently passed as weak.
++"""
++from __future__ import annotations
++
++import json
++import sys
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parent.parent
++sys.path.insert(0, str(ROOT / "tools"))
++
++import dag_consistency as dc  # noqa: E402
++import drift  # noqa: E402
++import pr_drift  # noqa: E402
++
++
++# ── B016: next-conditional dangling edges are errors ────────────────────────
++def _prog_cond(d, name, next_conditional):
++    (d / f"{name}.md").write_text(
++        f"# PROGRAM: {name}\n#   next-conditional: [{next_conditional}]\n")
++
++
++def test_dangling_next_conditional_edge_is_error(tmp_path):
++    pd = tmp_path / "programs"; pd.mkdir()
++    _prog_cond(pd, "alpha", "does-not-exist")
++    res = dc.check(str(tmp_path), programs_dir=str(pd),
++                   registry_path=str(tmp_path / "none.json"))
++    codes = [e["code"] for e in res["errors"]]
++    assert "DANGLING_SYNAPSE_EDGE" in codes
++    assert res["ok"] is False
++    assert any("does-not-exist" in e["detail"] for e in res["errors"])
++
++
++def test_valid_next_conditional_edge_passes(tmp_path):
++    pd = tmp_path / "programs"; pd.mkdir()
++    _prog_cond(pd, "alpha", "beta")
++    (pd / "beta.md").write_text("# PROGRAM: beta\n")
++    res = dc.check(str(tmp_path), programs_dir=str(pd),
++                   registry_path=str(tmp_path / "none.json"))
++    assert not any(e["code"] == "DANGLING_SYNAPSE_EDGE" for e in res["errors"])
++
++
++# ── B020: no-program trace stays stable after a recorded tool ───────────────
++def test_no_program_trace_stays_stable_after_record():
++    # expected empty (no-program), actual has one entry -> must be stable (0.0),
++    # not full divergence (1.0).
++    assert drift.compute_score([], ["clock"]) == 0.0
++    assert drift.classify(drift.compute_score([], ["clock"])) == "stable"
++
++
++def test_no_program_gate_stable_after_record(tmp_path):
++    ws = tmp_path / "ws"
++    (ws / "working").mkdir(parents=True)
++
++    class A:
++        workspace = str(ws)
++    # init --no-program
++    a = A(); a.no_program = True; a.program = None
++    drift.cmd_init(a)
++    # record a tool
++    r = A(); r.tool = "clock"; r.type = None; r.detail = None
++    drift.cmd_record(r)
++    gate = drift._evaluate_gate(str(ws))
++    assert gate["state"] == "stable"
++    assert gate["decision"] == "quiet"
++    assert gate["modifier"] == 0
++
++
++# ── B024: CamelCase-only acceptance item is anchored + verified ─────────────
++def test_camelcase_token_is_anchored():
++    # Regression: previously _is_anchored(t.lower()) defeated CamelCase detection.
++    assert pr_drift._is_anchored("AgentCard") is True
++
++
++def test_camelcase_only_item_is_verified_not_silently_passed(tmp_path, monkeypatch):
++    spec = tmp_path / "PR-01.md"
++    spec.write_text("## Acceptance\n- [ ] Emit a valid AgentCard envelope\n")
++    # Diff that does NOT add AgentCard -> the item must be reported unmet.
++    monkeypatch.setattr(pr_drift, "_diff_text",
++                        lambda repo: "+++ b/foo.py\n+def helper():\n+    return 1\n")
++    res = pr_drift.drift(spec, tmp_path)
++    assert res["ok"] is False
++    assert any("AgentCard" in u for u in res["unmet"])
++
++    # And when the diff DOES add AgentCard, the item is satisfied.
++    monkeypatch.setattr(pr_drift, "_diff_text",
++                        lambda repo: "+++ b/card.py\n+class AgentCard:\n+    pass\n")
++    res2 = pr_drift.drift(spec, tmp_path)
++    assert res2["ok"] is True
++    assert res2["unmet"] == []
+diff --git a/tools/dag_consistency.py b/tools/dag_consistency.py
+index 63a3a3d..a6af761 100644
+--- a/tools/dag_consistency.py
++++ b/tools/dag_consistency.py
+@@ -30,7 +30,7 @@ import dag as dagtool  # tools/dag.py — verify(), detect_cycle()
+ from _axon_registry import load_registry
+ 
+ _NEXT = re.compile(r'^#?\s*next-suggests:\s*\[([^\]]*)\]', re.MULTILINE)
+-_NEXT_COND = re.compile(r'next-conditional:|synapses:')
++_NEXT_COND = re.compile(r'^#?\s*next-conditional:\s*\[([^\]]*)\]', re.MULTILINE)
+ 
+ # Valid non-program-file edge targets: the kernel mode shortcuts (COMMAND PARSING)
+ # are legitimate next-suggests targets, not dangling edges.
+@@ -120,7 +120,9 @@ def valid_neurons(programs_dir: str, registry_path: str | None) -> set:
+ 
+ 
+ def synapse_edges(programs_dir: str) -> list[tuple]:
+-    """(source, target) edges from every program's next-suggests list."""
++    """(source, target) edges from every program's next-suggests AND
++    next-conditional lists. Both edge types are part of the fail-closed
++    contract (see module docstring); dangling targets of either are errors."""
+     edges = []
+     if not os.path.isdir(programs_dir):
+         return edges
+@@ -133,11 +135,12 @@ def synapse_edges(programs_dir: str) -> list[tuple]:
+                 continue
+             src = fn[:-3]
+             text = open(os.path.join(base, fn), encoding="utf-8", errors="ignore").read()
+-            for m in _NEXT.finditer(text):
+-                for t in m.group(1).split(","):
+-                    t = t.strip()
+-                    if t:
+-                        edges.append((src, t))
++            for rx in (_NEXT, _NEXT_COND):
++                for m in rx.finditer(text):
++                    for t in m.group(1).split(","):
++                        t = t.strip()
++                        if t:
++                            edges.append((src, t))
+     return edges
+ 
+ 
+diff --git a/tools/drift.py b/tools/drift.py
+index 58a2ce6..2d94bb0 100644
+--- a/tools/drift.py
++++ b/tools/drift.py
+@@ -117,8 +117,13 @@ def compute_score(expected: list, actual: list) -> float:
+         return 0.0
+     n = min(len(actual), len(expected))
+     if n == 0:
+-        # actual has calls but expected has none — full divergence
+-        return 1.0
++        # No expected sequence to compare against (e.g. a no-program trace, where
++        # expected is intentionally empty). There is no basis for divergence, so
++        # the trace stays stable — honouring the `init --no-program` contract that
++        # the gate returns stable until the TTL expires. Returning 1.0 here would
++        # flip a no-program trace to diverged/halt on the first recorded tool,
++        # re-introducing the auto-improve deadlock this trace was meant to break.
++        return 0.0
+     expected_prefix = expected[:n]
+     actual_prefix = actual[:n]
+     dist = edit_distance(expected_prefix, actual_prefix)
+diff --git a/tools/pr_drift.py b/tools/pr_drift.py
+index 4710b1a..29823b2 100644
+--- a/tools/pr_drift.py
++++ b/tools/pr_drift.py
+@@ -70,7 +70,7 @@ def drift(pr_spec: Path, repo: Path) -> dict:
+     for it in items:
+         # Anchored tokens (identifier-like, len>=5) carry the real signal.
+         anchors = [t for t in _ANCHOR_RE.findall(it)
+-                   if len(t) >= 5 and _is_anchored(t.lower())]
++                   if len(t) >= 5 and _is_anchored(t)]
+         if not anchors:
+             # No identifier to look for — can't be verified against a diff;
+             # surface it as a weak match rather than silently passing it.

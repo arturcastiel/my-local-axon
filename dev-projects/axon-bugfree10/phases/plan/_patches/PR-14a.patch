@@ -1,0 +1,172 @@
+diff --git a/tests/test_benchmark.py b/tests/test_benchmark.py
+index b6433ec..0ea2cfa 100644
+--- a/tests/test_benchmark.py
++++ b/tests/test_benchmark.py
+@@ -55,3 +55,31 @@ def test_main_record_missing_args(tmp_path):
+ def test_main_stats_no_data(tmp_path):
+     out, _ = run(["tools/benchmark.py", "stats", "--workspace", str(tmp_path)])
+     assert "error" in out
++
++
++# ── B086: a legitimately-supplied 0 must NOT be treated as "missing" ──────────
++
++def test_main_record_accepts_zero_cmp_tokens(tmp_path):
++    """--cmp-tokens 0 (a compilation that emitted zero tokens) is a valid value;
++    the required-args guard must not reject it as missing (regression: B086)."""
++    ws = str(tmp_path)
++    out, rc = run(["tools/benchmark.py", "record", "--workflow", "wf",
++                   "--src-tokens", "100", "--cmp-tokens", "0", "--workspace", ws])
++    assert rc == 0 and out.get("recorded") is True and out["ratio"] == 100.0
++    out, _ = run(["tools/benchmark.py", "list", "--workspace", ws])
++    assert out["count"] == 1
++
++
++# ── B087: rows whose columns contain 'Date' or '---' must not be dropped ──────
++
++def test_load_log_keeps_workflow_named_like_header(tmp_path):
++    """A data row whose workflow contains the substrings 'Date' or '---' must
++    still be parsed — header/separator detection is structural, not substring
++    scanning of the whole line (regression: B087)."""
++    log = tmp_path / "b.md"
++    log.write_text("# BENCHMARK LOG\n\n" + bm.HEADER +
++                   "| 2026-01-01 | Date-parser | 1000 | 400 | 60.0% | 0 | m | $0.001 |\n"
++                   "| 2026-01-02 | a---b | 2000 | 500 | 75.0% | 0 | m | $0.001 |\n")
++    rows = bm.load_log(str(log))
++    workflows = [r[1] for r in rows]
++    assert workflows == ["Date-parser", "a---b"]
+diff --git a/tests/test_context_host_model.py b/tests/test_context_host_model.py
+index 789cf2f..cd1648d 100644
+--- a/tests/test_context_host_model.py
++++ b/tests/test_context_host_model.py
+@@ -131,6 +131,17 @@ class TestResolveLimit:
+         limit, _ = self.ctx.resolve_limit(str(ws))
+         assert limit == 200000
+ 
++    def test_cli_limit_equal_to_default_still_wins(self, tmp_path: Path) -> None:
++        """B069: an explicit --limit that happens to equal DEFAULT_LIMIT must
++        still win over the host-model lookup. Pre-fix, resolve_limit gated on
++        `cli_limit != DEFAULT_LIMIT`, so --limit 128000 was discarded and the
++        host-model window (200k) was used instead."""
++        ws = _ws(tmp_path)
++        _set_host_model(ws, "claude-4.5")  # would resolve to 200k via lookup
++        limit, src = self.ctx.resolve_limit(str(ws), cli_limit=128000)
++        assert limit == 128000
++        assert src == "cli"
++
+ 
+ # ─── CLI integration: limit_source surfaces in every JSON envelope ──────────
+ 
+@@ -173,6 +184,17 @@ class TestCLIIntegration:
+         assert out["limit"] == 64000
+         assert out["limit_source"] == "cli"
+ 
++    def test_explicit_limit_equal_to_default_is_honored(self, tmp_path: Path) -> None:
++        """B069: `pressure --tokens 120000 --limit 128000` on a 200k host-model
++        must use 128000 (→ 93.75% → critical), not silently upgrade to the
++        host-model window (→ 60% → high)."""
++        ws = _ws(tmp_path)
++        _set_host_model(ws, "claude-4.5")  # would be 200k via lookup
++        out = _run(["pressure", "--tokens", "120000", "--limit", "128000"], ws)
++        assert out["limit"] == 128000
++        assert out["limit_source"] == "cli"
++        assert out["pressure"] == "critical"
++
+     def test_reset_records_limit_source(self, tmp_path: Path) -> None:
+         """reset action surfaces limit_source so callers can verify which path resolved."""
+         ws = _ws(tmp_path)
+diff --git a/tests/test_tokenizer.py b/tests/test_tokenizer.py
+new file mode 100644
+index 0000000..3bddb7e
+--- /dev/null
++++ b/tests/test_tokenizer.py
+@@ -0,0 +1,23 @@
++"""Tests for tools/tokenizer.py — exact token counting for text/files."""
++from conftest import run  # noqa: E402
++
++
++def test_text_counts_tokens():
++    out, rc = run(["tools/tokenizer.py", "--text", "hello world"])
++    assert rc == 0
++    assert out["source"] == "inline"
++    assert out["tokens"] >= 1
++
++
++# ── B091: empty --text must be counted, not fall through to the file branch ──
++
++def test_empty_text_returns_zero_tokens():
++    """`--text ""` satisfies the mutually-exclusive group, so args.files is None.
++    A falsy-check (`if args.text:`) would fall into the file branch and crash on
++    `for path in args.files` with TypeError. Empty text must yield 0 tokens
++    (regression: B091)."""
++    out, rc = run(["tools/tokenizer.py", "--text", ""])
++    assert rc == 0, f"empty --text should not crash; got rc={rc}, out={out!r}"
++    assert out["source"] == "inline"
++    assert out["tokens"] == 0
++    assert out["chars"] == 0
+diff --git a/tools/benchmark.py b/tools/benchmark.py
+index 9a7c23f..7c8545b 100644
+--- a/tools/benchmark.py
++++ b/tools/benchmark.py
+@@ -22,10 +22,23 @@ def load_log(path):
+     rows = []
+     with open(path) as f:
+         for line in f:
+-            if line.startswith("|") and "---" not in line and "Date" not in line:
+-                cols = [c.strip() for c in line.split("|")[1:-1]]
+-                if cols and cols[0] not in ("—", ""):
+-                    rows.append(cols)
++            if not line.startswith("|"):
++                continue
++            cols = [c.strip() for c in line.split("|")[1:-1]]
++            if not cols:
++                continue
++            first = cols[0]
++            # Identify header/separator rows structurally by their FIRST cell,
++            # not by substring-scanning the whole line — otherwise a data row
++            # whose workflow (or other column) contains "Date" or "---" would
++            # be silently dropped.
++            if first == "Date":                       # header row
++                continue
++            if first and set(first) <= {"-"}:         # separator row (all dashes)
++                continue
++            if first in ("—", ""):                    # empty/placeholder row
++                continue
++            rows.append(cols)
+     return rows
+ 
+ def format_cost(tokens, model):
+@@ -48,7 +61,7 @@ def main():
+     os.makedirs(os.path.dirname(log_path), exist_ok=True)
+ 
+     if args.action == "record":
+-        if not all([args.workflow, args.src_tokens, args.cmp_tokens]):
++        if args.workflow is None or args.src_tokens is None or args.cmp_tokens is None:
+             print(json.dumps({"error": "--workflow --src-tokens --cmp-tokens required"}))
+             return
+         ratio    = round((args.src_tokens - args.cmp_tokens) / args.src_tokens * 100, 1)
+diff --git a/tools/context.py b/tools/context.py
+index 08eca63..81e1181 100644
+--- a/tools/context.py
++++ b/tools/context.py
+@@ -100,7 +100,7 @@ def resolve_limit(workspace, cli_limit=None):
+     Returns (limit, source) so callers can surface which mechanism resolved
+     the value (useful for diagnostics + boot output).
+     """
+-    if cli_limit is not None and cli_limit != DEFAULT_LIMIT:
++    if cli_limit is not None:
+         return cli_limit, "cli"
+ 
+     model = (_read_longterm(workspace, "host-model") or "").strip().lower()
+diff --git a/tools/tokenizer.py b/tools/tokenizer.py
+index fd51d5f..a115550 100644
+--- a/tools/tokenizer.py
++++ b/tools/tokenizer.py
+@@ -40,7 +40,7 @@ parser.add_argument("--encoding", default="cl100k_base",
+ args = parser.parse_args()
+ 
+ try:
+-    if args.text:
++    if args.text is not None:
+         result = count(args.text, args.encoding)
+         result["source"] = "inline"
+         print(json.dumps(result))

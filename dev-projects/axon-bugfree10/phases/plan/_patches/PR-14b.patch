@@ -1,0 +1,224 @@
+diff --git a/tests/test_project_refresh_fix_report.py b/tests/test_project_refresh_fix_report.py
+new file mode 100644
+index 0000000..00341a9
+--- /dev/null
++++ b/tests/test_project_refresh_fix_report.py
+@@ -0,0 +1,61 @@
++"""PR-14b / B090: cmd_reconcile must not discard the fix report on --fix.
++
++Failure scenario: `reconcile <proj> --fix` set res['fix_applied'] = apply_fix(...),
++then immediately rebound res to a fresh reconcile() dict (no 'fix_applied' key), so the
++printed JSON/text never told the caller whether/what was repointed even though the file
++was in fact mutated.
++"""
++from __future__ import annotations
++
++import io
++import json
++import os
++import sys
++from contextlib import redirect_stdout
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parent.parent
++sys.path.insert(0, str(ROOT / "tools"))
++
++import project_refresh as pr  # noqa: E402
++
++
++def _canon(tmp_path):
++    c = tmp_path / "canon"
++    (c / "tools" / "rules").mkdir(parents=True, exist_ok=True)
++    return c
++
++
++def _proj(tmp_path, meta_lines, name="proj"):
++    d = tmp_path / name
++    d.mkdir(exist_ok=True)
++    (d / "_meta.md").write_text("\n".join(meta_lines) + "\n", encoding="utf-8")
++    return str(d)
++
++
++def test_fix_applied_present_in_json_output(tmp_path):
++    c = _canon(tmp_path)
++    d = _proj(tmp_path, ["slug: x", "codebase:   /mnt/c/projects/axon"])
++
++    buf = io.StringIO()
++    with redirect_stdout(buf):
++        rc = pr.main(["reconcile", d, "--canonical", str(c), "--fix", "--json"])
++
++    out = json.loads(buf.getvalue())
++    assert "fix_applied" in out, "fix report was discarded by the post-fix re-read"
++    assert out["fix_applied"]["fixed"] is True
++    assert out["fix_applied"]["to"] == os.path.abspath(str(c))
++    # post-fix re-read still reflects the now-canonical, clean state
++    assert out["clean"] is True and rc == 0
++
++
++def test_fix_applied_absent_when_no_fix_requested(tmp_path):
++    c = _canon(tmp_path)
++    d = _proj(tmp_path, ["slug: x", "codebase:   /mnt/c/projects/axon"])
++
++    buf = io.StringIO()
++    with redirect_stdout(buf):
++        pr.main(["reconcile", d, "--canonical", str(c), "--json"])
++
++    out = json.loads(buf.getvalue())
++    assert "fix_applied" not in out
+diff --git a/tests/test_reanchor_store_optlike_prompt.py b/tests/test_reanchor_store_optlike_prompt.py
+new file mode 100644
+index 0000000..408c65a
+--- /dev/null
++++ b/tests/test_reanchor_store_optlike_prompt.py
+@@ -0,0 +1,105 @@
++"""PR-14b / B088: an option-like prompt must not be dropped by the reanchor hook.
++
++Failure scenario: a prompt that strips to a bare option token (e.g. "-h", "--foo")
++was passed as `--value <prompt>` / `--prompt <prompt>` / `--input <prompt>`. argparse
++in memory.py / prompt_log.py / anticipate.py then parses the token as an option and
++errors ("expected one argument"), so — because every call is capture_output and the
++result is ignored — that turn's prompt is silently lost. Fix: pass user text via the
++`--flag=value` form so it is never re-interpreted as an option.
++"""
++from __future__ import annotations
++
++import importlib.util
++from pathlib import Path
++from types import ModuleType
++from unittest.mock import MagicMock
++
++import pytest
++
++ROOT = Path(__file__).resolve().parent.parent
++HOOKS = ROOT / "tools" / "hooks"
++
++
++def _load_reanchor() -> ModuleType:
++    spec = importlib.util.spec_from_file_location(
++        "reanchor_store_optlike", HOOKS / "reanchor_store.py")
++    mod = importlib.util.module_from_spec(spec)
++    spec.loader.exec_module(mod)
++    return mod
++
++
++def _capture_calls(monkeypatch, prompt):
++    mod = _load_reanchor()
++    calls = []
++
++    def fake_run(cmd, **kw):
++        calls.append(list(cmd))
++        m = MagicMock()
++        m.returncode = 0
++        m.stdout = '{"candidates": []}'
++        return m
++
++    monkeypatch.setattr("subprocess.run", fake_run)
++    monkeypatch.setattr(mod, "_read_stdin_json", lambda: {"prompt": prompt})
++    with pytest.raises(SystemExit) as exc:
++        mod.main()
++    assert exc.value.code == 0
++    return calls
++
++
++@pytest.mark.parametrize("prompt", ["-h", "--foo", "-v"])
++def test_option_like_prompt_not_passed_as_bare_arg(monkeypatch, prompt):
++    """The prompt must never sit as its own arg right after a value-taking flag —
++    that is exactly the form argparse rejects for an option-like token."""
++    calls = _capture_calls(monkeypatch, prompt)
++    prompt_flags = {"--value", "--prompt", "--input"}
++    for cmd in calls:
++        for i, tok in enumerate(cmd[:-1]):
++            if tok in prompt_flags:
++                assert cmd[i + 1] != prompt, (
++                    f"prompt {prompt!r} passed as bare arg after {tok} "
++                    f"(argparse will drop it): {cmd}")
++
++
++@pytest.mark.parametrize("prompt", ["-h", "--foo", "-v"])
++def test_option_like_prompt_carried_via_equals_form(monkeypatch, prompt):
++    """The prompt must be embedded via --flag=value so it survives argparse."""
++    calls = _capture_calls(monkeypatch, prompt)
++    joined = [" ".join(cmd) for cmd in calls]
++    # recent-user-input (memory), record (prompt_log), and anticipate --input
++    assert any(f"--value={prompt}" in j for j in joined), joined
++    assert any(f"--prompt={prompt}" in j for j in joined), joined
++    assert any(f"--input={prompt}" in j for j in joined), joined
++
++
++def test_option_like_prompt_round_trips_through_real_memory(monkeypatch, tmp_path):
++    """End-to-end: a '-h' prompt is actually stored (not silently lost)."""
++    import subprocess
++    import sys
++
++    mod = _load_reanchor()
++    monkeypatch.setattr(mod, "_read_stdin_json", lambda: {"prompt": "-h"})
++
++    real_run = subprocess.run
++
++    def scoped_run(cmd, **kw):
++        # Only actually execute the memory store; skip prompt_log/anticipate to keep
++        # the test hermetic and fast. Point memory at a temp workspace.
++        s = " ".join(str(x) for x in cmd)
++        if str(mod.MEMORY) in s and "recent-user-input" in s:
++            cmd = list(cmd) + ["--workspace", str(tmp_path)]
++            return real_run(cmd, **kw)
++        m = MagicMock()
++        m.returncode = 0
++        m.stdout = ""
++        return m
++
++    monkeypatch.setattr("subprocess.run", scoped_run)
++    with pytest.raises(SystemExit):
++        mod.main()
++
++    got = real_run(
++        [sys.executable, str(mod.MEMORY), "get", "--scope", "W",
++         "--key", "recent-user-input", "--workspace", str(tmp_path)],
++        capture_output=True, text=True)
++    assert '"value": "-h"' in got.stdout, got.stdout
+diff --git a/tools/hooks/reanchor_store.py b/tools/hooks/reanchor_store.py
+index 9a49bc0..342da94 100644
+--- a/tools/hooks/reanchor_store.py
++++ b/tools/hooks/reanchor_store.py
+@@ -43,21 +43,23 @@ def main() -> None:
+     prompt = extract_prompt(_read_stdin_json())
+     if prompt:
+         # 1) Store prompt for retrieval / downstream consumers.
++        # Pass user-controlled text via --flag=value so an option-like prompt
++        # (e.g. "-h", "--foo") is not parsed as an argparse option and silently dropped.
+         subprocess.run(
+             [sys.executable, str(MEMORY), "set", "--scope", "W",
+-             "--key", "recent-user-input", "--value", prompt[:4000]],
++             "--key", "recent-user-input", "--value=" + prompt[:4000]],
+             capture_output=True, text=True)
+         # 2) Prompt-log: record to episodic memory so pattern analysis has real data (finding #15).
+         try:
+             subprocess.run(
+-                [sys.executable, str(PROMPT_LOG), "record", "--prompt", prompt[:4000]],
++                [sys.executable, str(PROMPT_LOG), "record", "--prompt=" + prompt[:4000]],
+                 capture_output=True, text=True, timeout=8)
+         except Exception:
+             pass  # advisory: never block the session
+         # 3) Re-tick anticipate so the footer reflects the current input (not stale boot snapshot).
+         try:
+             r = subprocess.run(
+-                [sys.executable, str(ANTICIPATE), "--input", prompt[:4000],
++                [sys.executable, str(ANTICIPATE), "--input=" + prompt[:4000],
+                  "--footer", "--top", "3"],
+                 capture_output=True, text=True, timeout=10)
+             if r.returncode == 0 and r.stdout.strip():
+diff --git a/tools/project_refresh.py b/tools/project_refresh.py
+index 50f4a95..fadd0d7 100644
+--- a/tools/project_refresh.py
++++ b/tools/project_refresh.py
+@@ -137,8 +137,9 @@ def apply_fix(proj_dir: str, canonical: str = ROOT) -> dict:
+ def cmd_reconcile(a):
+     res = reconcile(a.project, a.canonical)
+     if a.fix and not res["codebase"]["ok"]:
+-        res["fix_applied"] = apply_fix(a.project, a.canonical)
++        fix_applied = apply_fix(a.project, a.canonical)
+         res = reconcile(a.project, a.canonical)  # re-read post-fix
++        res["fix_applied"] = fix_applied  # preserve the fix report across the re-read
+     if a.json:
+         print(json.dumps(res, indent=2))
+     else:

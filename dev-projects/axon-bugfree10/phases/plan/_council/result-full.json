@@ -1,0 +1,962 @@
+{
+  "summary": "Deep plan for 91 confirmed bugs: propose PR batches -> HR expert council -> synthesize plan + DAG",
+  "agentCount": 10,
+  "logs": [
+    "proposer: 26 candidate PRs over 91 bug-assignments",
+    "council: 8/8 seats — endorse 0, revise 8, reject 0"
+  ],
+  "result": {
+    "proposal_pr_count": 26,
+    "council_tally": {
+      "endorse": 0,
+      "revise": 8,
+      "reject": 0
+    },
+    "final": {
+      "prs": [
+        {
+          "pr_id": "PR-01",
+          "title": "shell.py R9 write-gate: fix kernel anchor, redirect regex, and cd-cwd rebasing",
+          "subsystem": "kernel-gate-runtime-security",
+          "bug_ids": [
+            "B001",
+            "B031",
+            "B032"
+          ],
+          "risk": "high",
+          "effort": "M",
+          "depends_on": [],
+          "kernel_floor": false,
+          "rationale": "The single most security-critical file, all three fail-open holes in the R9 axon-write classifier. B001: _is_axon_path passes `workspace` (=<repo>/workspace) as the anchor so is_axon_path checks the non-existent <repo>/workspace/axon, letting absolute and ../axon kernel writes go unrecognized; B031 misses `word>file` redirects with no leading space; B032 never rebases path resolution after a stripped `cd`. Same file, same gate, must co-land and land first. DESIGN CONSTRAINT: the fix must mirror _axon_io.py's AXON_DIR.parent (real kernel-root) anchoring — the one consolidated consumer that got it right — not invent a third anchor derivation, so the three _axon_paths.is_axon_path consumers (shell.py, r9_axon_write.py, _axon_io.py) do not drift.",
+          "test_strategy": "tests/tools/test_shell_gate.py — BLOCK each of: `echo x > /abs/repo/axon/KERNEL-SLIM.md` (absolute), `echo x > /abs/repo/workspace/../axon/KERNEL-SLIM.md` (traversal, named in B001 summary), a symlink-into-axon write (F-D8-001 vec 1), `echo x>axon/foo.md` (no-space redirect, B031), `cd axon && rm KERNEL-SLIM.md` (cd-rebase, B032). ALLOW: a legitimate workspace write (no over-block) AND a write correctly classified under a tmp/test/federation topology where `workspace` is deliberately a distinct root (re-anchoring must not break those). CALLER AUDIT (mandatory pre-merge, not a code change here unless a defect is found): confirm tools/hooks/enforce_pretooluse.py (which calls shell._is_axon_path(tgt, shell._default_workspace()) on the highest-traffic PreToolUse path) and tools/rules/r9_axon_write.py (anchors on ctx['workspace_root']) resolve to the SAME real kernel root after this fix; if either still supplies <repo>/workspace or cwd, it carries the identical B001 defect and must be co-changed in this PR.",
+          "dissent": "Challenger lens wanted B001 split into its own minimal-diff PR ahead of B031/B032 to isolate the crown-jewel anchor fix. Overruled: security, architecture and release-sequencing lenses all hold that three bugs in one file behind one gate must co-land for a clean revert unit and a single reviewed trust boundary."
+        },
+        {
+          "pr_id": "PR-06",
+          "title": "Green-gate integrity: test_runner returncode-aware verdict + quality_loop HMAC ramp",
+          "subsystem": "tools-quality-gates",
+          "bug_ids": [
+            "B033",
+            "B025"
+          ],
+          "risk": "medium",
+          "effort": "M",
+          "depends_on": [],
+          "kernel_floor": false,
+          "rationale": "Moved to slot 2 as the release's VERIFICATION SUBSTRATE. B033: test_runner computes PASS from failed==0 while ignoring pytest collection/import errors and returncode, so any downstream PR whose new test errors at collection reads green — every 'passes-after' claim in this release is only trustworthy once this is returncode-aware. B025: ramp_record discards the integrity_ok flag then re-signs, laundering tampered clean-cycle state past the HMAC ramp gate. Both let a broken/forged state read green and gate autonomy.",
+          "test_strategy": "B033: invoke test_runner directly against a fixture suite that ERRORS on collection (not merely fails) and assert on the returned dict that verdict != PASS — assert on the tool's output object, NOT through the green-gate it is fixing (avoid the self-referential runner). B025: hand-edit a ramp state file, call ramp_record, assert it is REJECTED rather than re-signed clean. Both fail pre-fix.",
+          "dissent": "Original proposal sequenced this 8th (grouped as a mid-plan quality gate). All four sequencing/test lenses (test-strategy, release-sequencing, dependency-dag, challenger) converged that it must be second, immediately after PR-01, because it certifies the pass/fail oracle for the whole release."
+        },
+        {
+          "pr_id": "PR-04",
+          "title": "Doctrine gates: fail-closed integrity, delimited receipt match, relative-path crash",
+          "subsystem": "doctrine",
+          "bug_ids": [
+            "B017",
+            "B018",
+            "B019"
+          ],
+          "risk": "medium",
+          "effort": "M",
+          "depends_on": [],
+          "kernel_floor": false,
+          "rationale": "doctrine_arming + doctrine_preflight trust boundary. B019 is a fail-OPEN integrity gate (reports 'blessed' for untracked routines) — must be fail-closed; B017 matches receipts by undelimited `run {id}` substring so a prefix-sibling (r1 vs r10) borrows receipts; B018 crashes (uncaught ValueError) on a relative routine path under ROOT.",
+          "test_strategy": "tests/tools/test_doctrine.py: B019 assert preflight on an untracked routine returns ok:false (not 'blessed'); B017 assert run `r1` cannot satisfy receipts committed by `r10`; B018 run preflight with a relative path from inside ROOT and assert a clean error envelope instead of a traceback. Each fails pre-fix.",
+          "dissent": ""
+        },
+        {
+          "pr_id": "PR-28",
+          "title": "config.md autonomy fail-open: attended capability-grant branch never fires",
+          "subsystem": "programs-security-gate",
+          "bug_ids": [
+            "B047"
+          ],
+          "risk": "medium",
+          "effort": "S",
+          "depends_on": [],
+          "kernel_floor": false,
+          "rationale": "EXTRACTED from PR-20 and promoted to Wave 1. B047 is a capability-grant fail-open: the config wizard matches the autonomy selection with ≡ against short labels while W:_decision holds the full string, so the attended branch never fires and capabilities are granted unattended. The original proposal's own rationale flagged it 'leads as a gate-bypass' yet buried it 20th among cosmetic interpolation bugs — a contradiction four lenses (security, architecture, effort, challenger) called out. A capability fail-open belongs with the other gate fixes.",
+          "test_strategy": "Select the attended autonomy option and assert capabilities are NOT auto-granted (the attended branch fires and prompts). Add a control where the unattended option IS selected and grant proceeds. Fails pre-fix.",
+          "dissent": ""
+        },
+        {
+          "pr_id": "PR-02",
+          "title": "Rule linters: strip comments/quotes before EXEC/STORE/phase-ledger scans (shared helper)",
+          "subsystem": "rules-linters",
+          "bug_ids": [
+            "B026",
+            "B027",
+            "B028"
+          ],
+          "risk": "medium",
+          "effort": "M",
+          "depends_on": [],
+          "kernel_floor": false,
+          "rationale": "Shared root cause across r_identity_lock and r_phase_tracked: regexes run against raw program text with no comment/doc-section/quote stripping. B026 false-positives on an EXEC in a comment; B027 fail-opens when the only active-program STORE is inside a comment/example; B028 fail-opens when the only phase-ledger call is a comment mention. This PR introduces ONE reusable comment/quote-stripping helper in the tools layer that PR-05 (B072) also consumes, so the codebase converges on a single source of truth for that predicate rather than several divergent strip implementations.",
+          "test_strategy": "tests/rules/test_comment_stripping.py: feed a program with EXEC/STORE(W:active-program)/phase-ledger tokens present ONLY in `#` comments or ## HELP examples — assert no violation for the false-positive case (B026) and a violation IS raised for the fail-open cases (B027/B028). Add a real-token control that must still flag correctly. Assert the helper is importable/shared (contract test) so PR-05 can reuse it.",
+          "dissent": ""
+        },
+        {
+          "pr_id": "PR-05",
+          "title": "Lint/dep/conformance gates: close substring & regex fail-opens (reuse strip helper)",
+          "subsystem": "tools-lint-gates",
+          "bug_ids": [
+            "B067",
+            "B068",
+            "B070",
+            "B072"
+          ],
+          "risk": "medium",
+          "effort": "M",
+          "depends_on": [
+            "PR-02"
+          ],
+          "kernel_floor": false,
+          "rationale": "Four fail-open (or dead) static gates sharing the 'naive matching lets bad input through' pattern: B067 axon_io_lint _OPEN_RE only captures the first quoted string so raw writes with a literal path evade R9 (defense-in-depth sibling of PR-01/PR-22); B070 deps.py skips markdown table rows dropping real EXEC deps; B072 harness_conformance uses substring match so a capability key in a comment satisfies it — this fix CONSUMES PR-02's comment/quote-stripping helper rather than re-implementing it; B068 coherence_lint C3 branch is dead (never-falsy return).",
+          "test_strategy": "B067 assert open('/path','w') detected; B070 assert a table-routed EXEC dep is reported missing when its target is absent; B072 assert a commented-only STORE(L:cap) does NOT satisfy the gate (via the shared helper); B068 — DROP the 'or removed' disjunction: craft an input that reaches the unclassified C3 return and assert it is emitted (a real pre-fix red), then fix the never-falsy return. Each fails pre-fix.",
+          "dissent": "Test-strategy lens objected to B068's original 'assert reachable OR removed with rationale' escape-hatch oracle (a dead-code bug ships with no failing test). Resolved by mandating a falsifiable reachability assertion. Architecture/dependency lenses' soft edge PR-05→PR-02 is now encoded as a hard depends_on so the shared helper lands first."
+        },
+        {
+          "pr_id": "PR-03",
+          "title": "Rule linters: regex/parse correctness (arithmetic, dont-do, mode-lock, receipts)",
+          "subsystem": "rules-linters",
+          "bug_ids": [
+            "B078",
+            "B079",
+            "B080",
+            "B081"
+          ],
+          "risk": "medium",
+          "effort": "M",
+          "depends_on": [],
+          "kernel_floor": false,
+          "rationale": "Four independent regex/parser defects in tools/rules/*, same fix pattern (tighten the matcher): B078 ARITH_RE fails open on %/currency; B079 parse_dont_do doesn't reset `cur` on a struck bullet so it clobbers the prior prohibition; B080 _STORE_RE \\b over-matches L:inference-mode-locked; B081 _CLAIM_RE captures non-tool subcommands like `help` causing a false BLOCK. B081 co-governs the R_TOOL_RECEIPTS canonical-name boundary with B051 (PR-29) and B029 (PR-10) — reviewed as a consistency set.",
+          "test_strategy": "B078 assert BLOCK on `12% of 3.4` and `$5 + $6`; B079 assert a ~~struck~~ bullet does not overwrite the preceding active token; B080 assert STORE(L:inference-mode-locked,...) does NOT satisfy the inference-mode declaration; B081 assert `axon.py help` is not treated as a receiptable tool claim AND that a canonical-name claim recorded by B051's fix IS still captured by the tightened _CLAIM_RE. Each fails pre-fix.",
+          "dissent": ""
+        },
+        {
+          "pr_id": "PR-07",
+          "title": "Trace gates: dag conditional edges, drift TTL stability, pr_drift anchor casing",
+          "subsystem": "tools-trace-gates",
+          "bug_ids": [
+            "B016",
+            "B020",
+            "B024"
+          ],
+          "risk": "medium",
+          "effort": "M",
+          "depends_on": [],
+          "kernel_floor": false,
+          "rationale": "Three trace/consistency gate logic bugs: B016 dag_consistency never validates next-conditional edges so dangling conditionals pass the fail-closed gate; B020 drift flips a no-program trace from stable to diverged after one tool, re-introducing the auto-improve halt (historically fragile — prior 'drift deadlock'); B024 pr_drift lowercases the token before the CamelCase anchor regex, permanently defeating that branch.",
+          "test_strategy": "B016 add a dangling next-conditional edge, assert the gate now BLOCKS; B020 record one tool on a no-program trace and assert status stays stable until TTL; B024 assert a CamelCase-only acceptance token classifies as anchored. Each fails pre-fix. MERGE GATE (regression lens): B020 alters drift.py's classify contract consumed by the fail-closed r_drift_gate + auto_improve halt; run the FULL existing drift corpus (test_drift_fail_closed, test_drift_falsification, test_programs_drift, test_drift_kernel_interface) as a merge gate, not just the one new assertion.",
+          "dissent": "Regression-blast-radius lens wanted B020 split into its own drift.py PR because it ripples into an autonomy gate. Kept bundled (same trace-gate surface, disjoint files) but its higher blast radius is mitigated by mandating the full drift corpus as a merge gate rather than the single new assertion."
+        },
+        {
+          "pr_id": "PR-17",
+          "title": "Program dry-run & control-flow safety: combine/merge/workflow-run",
+          "subsystem": "programs-control-flow",
+          "bug_ids": [
+            "B002",
+            "B003",
+            "B004",
+            "B036"
+          ],
+          "risk": "medium",
+          "effort": "M",
+          "depends_on": [
+            "PR-01",
+            "PR-06"
+          ],
+          "kernel_floor": false,
+          "rationale": "Highest-priority program-layer bugs: dry-run guards and terminators that mis-scope side effects. B002 undo-completion code is stranded after a DONE inside the dry-run guard (dead) and falls through into full combine; B036 (same file, code-dev-combine.md — co-lands with B002) places the C8 dry-run guard AFTER the mutating RESTORE-DIR so --undo overwrites phases/ even when armed; B003 merge nests all real side effects inside the dry-run branch and mis-binds the ELSE; B004 workflow-run's PROMOTE DONE is dedented to column 0 (unconditional).",
+          "test_strategy": "HONEST SCOPE (test-strategy lens): tools/simulate.py does NOT model IF/ELSE/DONE/guard nesting, so these are verified as STATIC structural/indentation assertions over the .md (the established test_workflow_termination / test_kernel_floor_pr021 pattern) — they prove the text shape changed, not runtime branch behavior. B002 assert the undo-completion block sits before DONE and is reachable; B036 assert the C8 guard textually precedes RESTORE-DIR; B003 assert side-effect ops are outside the dry-run branch; B004 assert DONE(workflow-run) is indented under the promote-run guard. Each fails pre-fix.",
+          "dissent": "Test-strategy lens flagged that the original 'compile+trace / axon dry-run harness' oracle does not exist (simulate.py has no branch-scope evaluation). Reframed to static-structural assertions with the weakness acknowledged, rather than blocking the wave on a mythical harness. Depends_on PR-01 (kernel-write gate sound before program mutations) and PR-06 (returncode-aware verdict) encode the two release-gating prerequisites."
+        },
+        {
+          "pr_id": "PR-22",
+          "title": "ADVISORY (kernel floor): gate fail-opens in dry_run_lint & write_barrier — OWNER ESCALATION",
+          "subsystem": "kernel-advisory-gates",
+          "bug_ids": [
+            "B009",
+            "B010",
+            "B013"
+          ],
+          "risk": "low",
+          "effort": "S",
+          "depends_on": [],
+          "kernel_floor": true,
+          "rationale": "Findings-only advisory — axon/* is a HUMAN-ONLY kernel floor, no autofix. Surfaced in Wave 1 because these are LIVE gate holes that ship UNFIXED this release: B009 dry_run_lint _MUTATING_OP is line-start-anchored so an inline `→ WRITE(...)` mutator evades the merge gate; B010 _GUARD.search matches the dry-run token inside a `#` comment so a removed real guard still passes; B013 write_barrier lets os.open() writes/truncations through on the UNATTENDED autonomous path because the 'open' audit event carries mode=None and _hook treats it as a read. Per the owner-gates-kernel-edits memory these must be ESCALATED to the owner for a same-cycle manual patch (dev-mode + full-test), not merely surfaced — while they remain open, PR-01/B001 is the only automated kernel-write guardrail during Waves 2-3.",
+          "test_strategy": "Advisory — LANDED failing-before tests in tests/ (exercising a kernel tool from outside axon/* is NOT a floor edit; precedent: test_kernel_floor_pr021): a program with an inline `→ WRITE` mutator and a comment-only guard must be BLOCKED by dry_run_lint; an os.open(path,O_WRONLY|O_TRUNC) into a protected subtree must be BLOCKED by write_barrier. Tests flip green when the human applies the fix. No axon/* source edit lands here.",
+          "dissent": "Original proposal specified 'no code change, proposed human-run test.' Test-strategy lens (and precedent) established that regression tests live in tests/ outside the floor, so these advisory bugs should carry LANDED failing-before tests rather than un-landed proposals. Adopted."
+        },
+        {
+          "pr_id": "PR-08",
+          "title": "Receipt & ledger integrity: canonical checksum + GC re-chain",
+          "subsystem": "tools-receipts",
+          "bug_ids": [
+            "B023",
+            "B075"
+          ],
+          "risk": "medium",
+          "effort": "M",
+          "depends_on": [
+            "PR-06"
+          ],
+          "kernel_floor": false,
+          "rationale": "Both in tools/loop_receipt.py — a single cohesive surface (B051/axon.py extracted to PR-29 per architecture lens). B023 _canonical_checksum re-serializes str values so verify never matches file/jsonl targets; B075 cmd_gc rewrites the ledger without re-chaining prev-sha so verify_chain reports a false tamper break.",
+          "test_strategy": "B023 write then verify a file-target receipt (fixture: a jsonl+file-target receipt pair), assert it matches; B075 gc a middle entry of a multi-entry chained ledger then verify_chain, assert no false tamper. Each fails pre-fix.",
+          "dissent": ""
+        },
+        {
+          "pr_id": "PR-29",
+          "title": "axon.py: record canonical registry tool name in receipts",
+          "subsystem": "tools-receipts",
+          "bug_ids": [
+            "B051"
+          ],
+          "risk": "low",
+          "effort": "S",
+          "depends_on": [
+            "PR-03"
+          ],
+          "kernel_floor": false,
+          "rationale": "EXTRACTED from PR-08 per architecture lens: axon.py is the top-level dispatcher (high blast radius), a distinct surface from tools/loop_receipt.py, and should not share a revert unit with a leaf receipts tool. B051 records the typed alias instead of the canonical registry name so R_TOOL_RECEIPTS mismatches canonical-name claims. Depends on PR-03 (B081) so the record side (canonical name) and the tightened _CLAIM_RE claim-capture side are made consistent together.",
+          "test_strategy": "Invoke a tool via an alias and assert the receipt records its canonical registry name, and that a claim referencing the canonical name matches under the PR-03 _CLAIM_RE. Fails pre-fix.",
+          "dissent": ""
+        },
+        {
+          "pr_id": "PR-09",
+          "title": "workflow_run.py: exclude draft workflows, honor boolean-true if:",
+          "subsystem": "tools-workflow",
+          "bug_ids": [
+            "B082",
+            "B083"
+          ],
+          "risk": "low",
+          "effort": "S",
+          "depends_on": [],
+          "kernel_floor": false,
+          "rationale": "Two resolve/loading bugs in one file: B082 enumerates promoted .draft.yml files (documented never-auto-activated) so a draft shadows the active workflow of the same name; B083 resolve_next silently drops a rule whose if: is unquoted YAML boolean true, inverting its semantics.",
+          "test_strategy": "B082 install an active workflow and a same-name .draft.yml, assert resolution picks the active one; B083 author a rule with `if: true` and assert the rule fires. Both fail pre-fix.",
+          "dissent": ""
+        },
+        {
+          "pr_id": "PR-10",
+          "title": "Tool health/conformance/registry resolution fixes",
+          "subsystem": "tools-health-conformance",
+          "bug_ids": [
+            "B021",
+            "B029",
+            "B089"
+          ],
+          "risk": "low",
+          "effort": "S",
+          "depends_on": [
+            "PR-03"
+          ],
+          "kernel_floor": false,
+          "rationale": "Registry/subcommand resolution and health probing: B021 probe_smoke returns ACTIVE even when --help exits non-zero/times out; B029 r_tool_call_exists resolves the script by name not the REGISTRY 'script' field so aliased tools skip subcommand checks; B089 program_tool_conformance mistakes an option's {json,text} choices for the subcommand set, false-blocking subparser-less tools. B029 co-governs the R_TOOL_RECEIPTS canonical-name boundary with B081 (PR-03) and B051 (PR-29); depends_on PR-03 to keep that boundary consistent.",
+          "test_strategy": "B021 point probe_smoke at a tool whose --help exits 1, assert status != ACTIVE; B029 give a tool whose registry name != script filename and assert its subcommands are checked; B089 lint a subparser-less tool with only `--format {json,text}` and assert no unknown-subcommand violation. Each fails pre-fix.",
+          "dissent": ""
+        },
+        {
+          "pr_id": "PR-11",
+          "title": "State stores: kv_store null value + memory L: rollback history",
+          "subsystem": "tools-state-store",
+          "bug_ids": [
+            "B074",
+            "B076"
+          ],
+          "risk": "low",
+          "effort": "S",
+          "depends_on": [],
+          "kernel_floor": false,
+          "rationale": "Two state-store correctness bugs: B074 kv_store get reports a legitimately-stored JSON null as not-found (contradicts exists); B076 memory L: rollback can only ever reach the single most-recent prior value, so repeated rollback oscillates instead of walking history. NOTE (challenger coupling): the advisory B012 (PR-24, self_care health score via a kv L: key kv_store refuses) assumes kv_store key-acceptance semantics; B074's fix and B012's finding must agree on how L: keys/null are handled.",
+          "test_strategy": "B074 store null, assert get returns it as present (matching exists=true); B076 store three successive values then rollback twice and assert it walks back two steps rather than oscillating. Both fail pre-fix.",
+          "dissent": ""
+        },
+        {
+          "pr_id": "PR-13",
+          "title": "Data-integrity: table-row corruption, rollback eviction ordering, obsidian counts",
+          "subsystem": "tools-data-integrity",
+          "bug_ids": [
+            "B073",
+            "B015",
+            "B077"
+          ],
+          "risk": "medium",
+          "effort": "M",
+          "depends_on": [
+            "PR-06"
+          ],
+          "kernel_floor": false,
+          "rationale": "Three ordering/output bugs that corrupt or misreport persisted data (independent files; reviewed per-hunk): B073 index.append_table_row concatenates the new row onto the following ## SECTION line and injects a blank line; B015 restore() takes the FIFO-capped self-snapshot (evicting the oldest) BEFORE reading the chosen snapshot bytes, deleting `chosen` then crashing; B077 obsidian export_fresh's unchanged fast-path reports raw-graph counts instead of the file-note/cross-file-edge counts build_vault produces.",
+          "test_strategy": "B073 append a row to a table immediately followed by a header, assert the header survives and the table is well-formed; B015 (fixture: a .rollback dir pre-filled to the FIFO cap with oldest==chosen) restore the oldest snapshot at cap, assert it succeeds with no self-eviction of `chosen`; B077 (fixture: an obsidian vault exported twice) run export_fresh twice and assert identical counts on the unchanged path. Each fails pre-fix.",
+          "dissent": ""
+        },
+        {
+          "pr_id": "PR-14a",
+          "title": "CLI arg/boundary hardening: benchmark, tokenizer, context",
+          "subsystem": "tools-cli-args",
+          "bug_ids": [
+            "B086",
+            "B087",
+            "B091",
+            "B069"
+          ],
+          "risk": "low",
+          "effort": "S",
+          "depends_on": [],
+          "kernel_floor": false,
+          "rationale": "Pure-CLI half of the original PR-14 (hook + project_refresh split to PR-14b per architecture lens for revert independence). Shared falsy/None/parse pattern: B086 benchmark required-args guard treats a legit 0 as missing; B087 benchmark load_log drops data rows containing 'Date'/'---' substrings; B091 tokenizer treats empty --text as absent and crashes on files=None; B069 context resolve_limit discards an explicit --limit equal to DEFAULT (medium — the one non-cosmetic bug here).",
+          "test_strategy": "B086 pass src_tokens=0 and assert accepted; B087 log a row whose workflow contains 'Date', assert it survives list/stats; B091 --text '' assert clean empty result (no files crash); B069 --limit 128000 assert it wins over host window. Each fails pre-fix.",
+          "dissent": "Challenger lens argued the low-severity CLI bugs (B086/B087/B091) should be deferred out of a gate-fix release entirely. Overruled: the plan must place all 91 confirmed bugs; they are sunk to Wave 2 with near-trivial isolated tests so they never gate the security wave."
+        },
+        {
+          "pr_id": "PR-14b",
+          "title": "Hook/refresh boundary: reanchor_store prompt token + project_refresh reconcile report",
+          "subsystem": "tools-cli-args",
+          "bug_ids": [
+            "B088",
+            "B090"
+          ],
+          "risk": "low",
+          "effort": "S",
+          "depends_on": [],
+          "kernel_floor": false,
+          "rationale": "Split from PR-14 so the reanchor_store HOOK (runtime-active) and project_refresh do not share a revert unit with the pure-CLI trio: B088 reanchor_store no-ops when the prompt is an option-like token; B090 project_refresh cmd_reconcile rebinds res and discards the fix report.",
+          "test_strategy": "B088 prompt '-h' assert the three actions run; B090 assert fix_applied appears in reconcile output. Each fails pre-fix.",
+          "dissent": ""
+        },
+        {
+          "pr_id": "PR-15",
+          "title": "Invocation fidelity: run.py subcommand/args + dispatch threshold persistence",
+          "subsystem": "tools-dispatch",
+          "bug_ids": [
+            "B030",
+            "B071"
+          ],
+          "risk": "medium",
+          "effort": "S",
+          "depends_on": [
+            "PR-06"
+          ],
+          "kernel_floor": false,
+          "rationale": "Two invocation/side-effect bugs: B030 run.py's TOOL branch calls run_script(script) with NO arguments, dropping the captured subcommand/flags and the STORE(...result) target; B071 dispatch auto-tune reports threshold_adjusted even when the re.sub no-ops or the pref file is missing, so the change is never persisted. B030 changes the core AXON-LANG TOOL-line dispatch contract — wide blast radius.",
+          "test_strategy": "B030 issue a TOOL line with a subcommand+flag and a `→ STORE(...)` target, assert the subcommand runs and the result is stored; B071 run auto-tune when the dispatch-confidence line is absent and assert it PERSISTS a new line (single falsifiable post-condition, not the original 'persists OR reports not-adjusted' ambiguous oracle). MERGE GATE (regression lens): run the full program-trace corpus for programs that emit TOOL lines, since B030 alters run_script for every TOOL line, not just the crafted one.",
+          "dissent": "Test-strategy lens flagged B071's original 'persists a new line OR reports not-adjusted' as a non-deterministic oracle; pinned to the persist post-condition. Regression lens required the broad program-trace corpus as a merge gate for B030's dispatch-contract change."
+        },
+        {
+          "pr_id": "PR-16",
+          "title": "Harness plumbing: verify_stop import path + cold_stranger repo_sha",
+          "subsystem": "harness-benchmark",
+          "bug_ids": [
+            "B022",
+            "B066"
+          ],
+          "risk": "low",
+          "effort": "S",
+          "depends_on": [],
+          "kernel_floor": false,
+          "rationale": "Two harness/provenance plumbing bugs: B022 verify_stop._doctrine_host_mirror imports _axon_paths without adding tools/ to sys.path, so it silently no-ops on the sentinel-governed path and never writes the tamper-evidence mirror; B066 cold_stranger computes repo_sha against a git-archive checkout with no .git so provenance is always 'unknown'.",
+          "test_strategy": "B022 (fixture: a sentinel-governed path with tools/ import context) exercise the sentinel path and assert the host-side mirror file is written; B066 (fixture: a .git-less git-archive checkout) assert repo_sha resolves to a real sha OR a SINGLE documented explicit fallback value (pick one falsifiable post-condition, not an open disjunction). Both fail pre-fix.",
+          "dissent": "Test-strategy lens flagged B066's 'real sha OR documented fallback' as an ambiguous oracle; the fix must commit to one expected post-condition."
+        },
+        {
+          "pr_id": "PR-18a",
+          "title": "code-dev dispatch/CASE routing: state actions branch, phase token, safety-freeze state",
+          "subsystem": "programs-code-dev",
+          "bug_ids": [
+            "B044",
+            "B046",
+            "B042"
+          ],
+          "risk": "medium",
+          "effort": "M",
+          "depends_on": [
+            "PR-01",
+            "PR-06"
+          ],
+          "kernel_floor": false,
+          "rationale": "Dispatch/state half of the split PR-18 (effort/release/challenger lenses converged that 6 medium-risk program traces in one PR is an L, too big for one sitting). B044 missing `actions` CASE branch falls to wildcard-fail; B046 phase dispatch reads unwritten W:code-dev-phase-cmd instead of the parsed token so `phase list` runs phase-new; B042 safety-freeze hardcodes state=frozen so `thaw` re-freezes.",
+          "test_strategy": "STATIC-STRUCTURAL (no branch-scope evaluator in simulate.py): B044 assert an `actions` CASE branch exists in the dispatch; B046 assert the phase dispatch reads the parsed token not W:code-dev-phase-cmd; B042 assert `thaw` sets state to unfrozen (not the hardcoded 'frozen'). Each fails pre-fix. MERGE GATE: for B044/B046 (dispatch routing every code-dev subcommand traverses) assert untouched subcommands still route correctly (structural completeness of the CASE table).",
+          "dissent": ""
+        },
+        {
+          "pr_id": "PR-18b",
+          "title": "code-dev guard/seed logic: study escalation, phase-start CONTAINS anchor, plan undefined-var",
+          "subsystem": "programs-code-dev",
+          "bug_ids": [
+            "B045",
+            "B039",
+            "B040"
+          ],
+          "risk": "medium",
+          "effort": "M",
+          "depends_on": [
+            "PR-01",
+            "PR-06"
+          ],
+          "kernel_floor": false,
+          "rationale": "Guard/seed half of the split PR-18. B045 study's escalation/handoff run unconditionally with a dangling ELSE IF; B039 phase-start CONTAINS uses a regex-anchored '^- ' literal that never matches, re-seeding _dont-do.md; B040 plan STOREs/derefs undefined search-results/arch-findings.",
+          "test_strategy": "STATIC-STRUCTURAL: B045 assert escalation/handoff sits under the outputs-missing guard (no dangling ELSE IF); B039 assert the CONTAINS predicate matches an existing '- ' bullet so an existing _dont-do.md is NOT re-seeded; B040 assert no undefined-var deref (search-results/arch-findings are STOREd before use). Each fails pre-fix.",
+          "dissent": ""
+        },
+        {
+          "pr_id": "PR-19",
+          "title": "code-dev arg/tool/result marshaling fixes",
+          "subsystem": "programs-code-dev",
+          "bug_ids": [
+            "B035",
+            "B037",
+            "B038",
+            "B041",
+            "B043"
+          ],
+          "risk": "medium",
+          "effort": "L",
+          "depends_on": [
+            "PR-01",
+            "PR-06"
+          ],
+          "kernel_floor": false,
+          "rationale": "Marshaling errors that silently drop data or crash in code-dev programs (re-labeled L — five distinct program files each needing its own trace, per effort lens): B038 passes '7d' to igap's integer --days (crash); B041 shadow append with unsupported --date flag crashes and loses findings; B043 binds the whole shell envelope without unwrapping .stdout so branch-drift always false-positives; B037 builds the append shadow-path from the relative path while init used the absolute convention, so appends no-op; B035 reads 02-prs.md as a table filtering col5=merged though it is a bullet list.",
+          "test_strategy": "STATIC-STRUCTURAL per program: B038 assert default igap passes an int days value; B041 assert the per-edit shadow append omits the unsupported --date flag; B043 assert {git-branch} dereferences .stdout of the envelope; B037 assert the four appends target the absolute shadow-path init created; B035 assert changelog counts merged PRs from the bullet '- **Status:**' form. Each fails/mis-behaves pre-fix.",
+          "dissent": "Effort lens re-labeled M→L (five separate program traces). Kept as one PR (cohesive code-dev marshaling surface, disjoint files) but budgeted as a heavy L review; noted as a review-adjacency cluster with PR-18a/b and PR-20."
+        },
+        {
+          "pr_id": "PR-20",
+          "title": "Program logic & interpolation: discover/quality-loop/versions/audit/compare",
+          "subsystem": "programs-misc",
+          "bug_ids": [
+            "B048",
+            "B049",
+            "B050",
+            "B084",
+            "B085"
+          ],
+          "risk": "medium",
+          "effort": "M",
+          "depends_on": [
+            "PR-06"
+          ],
+          "kernel_floor": false,
+          "rationale": "B047 (autonomy fail-open) EXTRACTED to PR-28 and promoted to Wave 1, so this PR no longer mixes a trust-boundary fix with cosmetics. Remaining: B048 discover re-inits `issues` discarding the appended dependency issue and references it before init; B049 quality-loop passes undefined findings-json to report; B050 versions reads unwritten W:_versions-target with no W:_arg1 fallback; B084 audit-to-study uses {project.path} on a slug string; B085 axon-compare interpolates never-assigned {coverage-pct}.",
+          "test_strategy": "STATIC-STRUCTURAL: B048 assert a surfaced dependency issue reaches output (issues not re-init'd); B049 assert the cycle report references a defined findings-json; B050 assert a CLI target arg is honored via a W:_arg1 fallback; B084 assert notes-dir resolves from the slug (no {project.path} on a slug); B085 assert coverage-pct is assigned before interpolation (or the GAP block corrected). Each fails pre-fix.",
+          "dissent": "Challenger lens wanted the cosmetic interpolation bugs B084/B085 deferred out of this release. Overruled (all 91 must be placed) but they are demoted to Wave 3 and no longer share a PR with the extracted security fix B047."
+        },
+        {
+          "pr_id": "PR-21",
+          "title": "Program state/persistence: plan-done stale pointers + chat-input persist",
+          "subsystem": "programs-state",
+          "bug_ids": [
+            "B014",
+            "B034"
+          ],
+          "risk": "low",
+          "effort": "S",
+          "depends_on": [
+            "PR-01"
+          ],
+          "kernel_floor": false,
+          "rationale": "Two persistence/state-lifecycle bugs: B014 plan-done task=='all' clears W:active-plan but leaves stale W:plan-done-name/-task that shadow the active-plan fallback next invocation; B034 chat-input's PERSIST append omits the `text` field so the assistant reply is never written to the chat file.",
+          "test_strategy": "STATIC-STRUCTURAL: B014 assert plan-done all CLEARs the stale plan-done-name/-task pointers (no shadowing of active-plan on the next invocation); B034 assert the PERSIST append includes the `text` field. Both fail pre-fix.",
+          "dissent": ""
+        },
+        {
+          "pr_id": "PR-27a",
+          "title": "ADVISORY (kernel floor): KERNEL-SLIM active-program interrupt gate integrity",
+          "subsystem": "kernel-advisory-programs",
+          "bug_ids": [
+            "B052",
+            "B053"
+          ],
+          "risk": "low",
+          "effort": "S",
+          "depends_on": [],
+          "kernel_floor": true,
+          "rationale": "SPLIT from PR-27 and moved to the FRONT of the advisory wave (security lens): B052/B053 are a PRE-EXECUTION security control in KERNEL-SLIM.md that fires on EVERY user input before command parsing. B052 interrupt ABORT clears W:_interrupt-pending-input then EXECs that now-empty key (drops the user action); B053 binds `answer` from the triggering input not the K/I/A reply and re-fires on every input, so no K/I/A branch executes and the reply overwrites pending-input. A broken pre-parse gate must outrank tool-logic/format advisories.",
+          "test_strategy": "Advisory — LANDED static-assertion tests over KERNEL-SLIM.md (kernel .md; tests in tests/ do not edit the floor): assert the ABORT branch preserves and runs the new action; assert `answer` binds from the K/I/A reply and each K/I/A branch routes to its handler; assert the gate does not re-fire on every input. Flip green when the human applies the fix. No axon/* source edit lands here.",
+          "dissent": ""
+        },
+        {
+          "pr_id": "PR-23",
+          "title": "ADVISORY (kernel floor): predicate/validator/registry error handling",
+          "subsystem": "kernel-advisory-tools",
+          "bug_ids": [
+            "B011",
+            "B060",
+            "B065",
+            "B061"
+          ],
+          "risk": "low",
+          "effort": "S",
+          "depends_on": [],
+          "kernel_floor": true,
+          "rationale": "Findings-only advisory (kernel floor). Uncaught-exception / error-propagation defects in kernel .py tools: B011 predicate `matches` with an invalid regex raises re.error and crashes the CLI/gate caller; B060 predicate `in` with a non-string LHS raises uncaught TypeError; B065 validator selects the data source by truthiness so `--data ''` falls through to open(None); B061 programs_registry main() never propagates args.func's return so `return 1` error paths exit 0.",
+          "test_strategy": "Advisory — LANDED behavioral failing-before tests in tests/ (kernel .py tools are testable from outside the floor): invalid regex RHS returns the error envelope not a traceback; non-string `in` returns an error envelope; validator with --data '' errors cleanly; programs_registry error path exits non-zero. Flip green on human fix. No floor edit.",
+          "dissent": "Test-strategy lens: original 'proposed human-run test / no code lands' under-covers 14 behaviorally-testable kernel .py bugs. Adopted LANDED failing-before tests in tests/ (not a floor edit) so these AI-verified bugs carry durable regression checks."
+        },
+        {
+          "pr_id": "PR-24",
+          "title": "ADVISORY (kernel floor): self_care substring false-positives",
+          "subsystem": "kernel-advisory-tools",
+          "bug_ids": [
+            "B012",
+            "B064"
+          ],
+          "risk": "low",
+          "effort": "S",
+          "depends_on": [],
+          "kernel_floor": true,
+          "rationale": "Findings-only advisory (kernel floor). B012 reads the health score via kv-store with an L: key that kv_store refuses and no longer holds the value, so score is always None (health perpetually unknown) — coupled to PR-11/B074 kv_store key-acceptance semantics, which must agree; B064 complete-claim check uses `\"complete\" in (status+' '+phase)` matching inside 'incomplete', a false complete-claim-unbacked finding.",
+          "test_strategy": "Advisory — LANDED behavioral tests in tests/: self_care reports a real numeric health score when one exists; a status of 'incomplete' does NOT trigger a complete-claim-unbacked finding. Flip green on human fix. No floor edit.",
+          "dissent": ""
+        },
+        {
+          "pr_id": "PR-25",
+          "title": "ADVISORY (kernel floor): kernel tool logic/format (lib ts, clock, liveness, redact, rules_loader)",
+          "subsystem": "kernel-advisory-tools",
+          "bug_ids": [
+            "B057",
+            "B058",
+            "B059",
+            "B062",
+            "B063"
+          ],
+          "risk": "low",
+          "effort": "M",
+          "depends_on": [],
+          "kernel_floor": true,
+          "rationale": "Findings-only advisory (kernel floor). Five logic/format defects in kernel .py tools: B057 _axon_lib usage_record writes ts as isoformat()+'Z' ('...+00:00Z') which usage.py cannot fromisoformat-parse, silently dropping entries; B058 clock's `unix` uses naive-UTC .timestamp() (off by the host UTC offset); B059 liveness_lint's caller regex \\bauthorized\\s*\\( matches English prose so a dead governance seam reads as wired; B062 redact reports hit offsets against the progressively-redacted string not the original; B063 rules_loader dead-rule detection uses substring containment so R-1 is masked by R-10.",
+          "test_strategy": "Advisory — LANDED behavioral tests in tests/: usage_record entries are readable by usage.py windowed queries; clock.unix equals the true epoch on a non-UTC TZ; liveness_lint does not report a dead seam wired from prose; redact offsets index the original text; rules_loader flags R-1 dead even when R-10 is referenced. Flip green on human fix. No floor edit.",
+          "dissent": ""
+        },
+        {
+          "pr_id": "PR-26",
+          "title": "ADVISORY (kernel floor): compiler template defects (chat-session, feedback-loop, qc-workflow)",
+          "subsystem": "kernel-advisory-compiler",
+          "bug_ids": [
+            "B005",
+            "B006",
+            "B054",
+            "B055"
+          ],
+          "risk": "low",
+          "effort": "S",
+          "depends_on": [],
+          "kernel_floor": true,
+          "rationale": "Findings-only advisory (kernel floor). Compiler .tpl.md template bugs: B005 chat-session Save Output invokes translate with key `input:` instead of required `source:` so translate hard-fails; B006 feedback-loop actor-failure branch falls through to EVAL (dead eval-result write, EVAL runs on empty/FAIL); B054 qc-workflow Slack alert interpolates never-stored {W:batch-key}; B055 qc-workflow RAND(W:batch, W:sample-size) misuses RAND (no sample-N-without-replacement form).",
+          "test_strategy": "Advisory — LANDED static-assertion tests over the .tpl.md templates: chat-session Save Output passes source:; feedback-loop actor failure SKIPS the iteration (no fallthrough to EVAL); qc-workflow interpolates a stored batch key and uses a valid sampling op. Flip green on human fix. No floor edit.",
+          "dissent": ""
+        },
+        {
+          "pr_id": "PR-27b",
+          "title": "ADVISORY (kernel floor): kernel program specs (dev-new, plan-list, register-preference)",
+          "subsystem": "kernel-advisory-programs",
+          "bug_ids": [
+            "B007",
+            "B008",
+            "B056"
+          ],
+          "risk": "low",
+          "effort": "S",
+          "depends_on": [],
+          "kernel_floor": true,
+          "rationale": "Findings-only advisory (kernel floor) — remainder of PR-27 after the security-critical interrupt gate (B052/B053) split to PR-27a. B007 dev-new scaffold hardcodes DONE(dev-new) instead of DONE({W:dev-new-name}); B008 plan-list uses FIND where a filter is needed so it captures only the first plan (under-reports); B056 register-preference OUTPUT interpolates pref-topic/key/value after they were CLEARed (blank confirmation).",
+          "test_strategy": "Advisory — LANDED static-assertion tests over the kernel .md programs: dev-new output program terminates with its own name; plan-list lists ALL active/completed plans; register-preference confirmation shows populated fields. Flip green on human fix. No floor edit.",
+          "dissent": ""
+        }
+      ],
+      "sequence": [
+        "PR-01",
+        "PR-06",
+        "PR-04",
+        "PR-28",
+        "PR-02",
+        "PR-05",
+        "PR-03",
+        "PR-07",
+        "PR-17",
+        "PR-22",
+        "PR-08",
+        "PR-29",
+        "PR-09",
+        "PR-10",
+        "PR-11",
+        "PR-13",
+        "PR-14a",
+        "PR-14b",
+        "PR-15",
+        "PR-16",
+        "PR-18a",
+        "PR-18b",
+        "PR-19",
+        "PR-20",
+        "PR-21",
+        "PR-27a",
+        "PR-23",
+        "PR-24",
+        "PR-25",
+        "PR-26",
+        "PR-27b"
+      ],
+      "dag": {
+        "nodes": [
+          "PR-01",
+          "PR-06",
+          "PR-04",
+          "PR-28",
+          "PR-02",
+          "PR-05",
+          "PR-03",
+          "PR-07",
+          "PR-17",
+          "PR-22",
+          "PR-08",
+          "PR-29",
+          "PR-09",
+          "PR-10",
+          "PR-11",
+          "PR-13",
+          "PR-14a",
+          "PR-14b",
+          "PR-15",
+          "PR-16",
+          "PR-18a",
+          "PR-18b",
+          "PR-19",
+          "PR-20",
+          "PR-21",
+          "PR-27a",
+          "PR-23",
+          "PR-24",
+          "PR-25",
+          "PR-26",
+          "PR-27b"
+        ],
+        "edges": [
+          {
+            "from": "PR-05",
+            "to": "PR-02",
+            "reason": "PR-05/B072 consumes the comment/quote-stripping helper introduced in PR-02; land the helper first to avoid a divergent second implementation (single source of truth for the strip predicate)."
+          },
+          {
+            "from": "PR-29",
+            "to": "PR-03",
+            "reason": "R_TOOL_RECEIPTS canonical-name boundary: B051 (record the canonical name) must be consistent with the tightened _CLAIM_RE claim-capture from B081 (PR-03); reviewed and landed as a matching set."
+          },
+          {
+            "from": "PR-10",
+            "to": "PR-03",
+            "reason": "Same canonical-name boundary: B029 (resolve script by registry 'script' field) co-governs how a tool claim is identified with B081/B051; keep the three consistent."
+          },
+          {
+            "from": "PR-17",
+            "to": "PR-01",
+            "reason": "Program-layer autofixes mutate workspace/programs; the R9 kernel-write gate (B001) must be sound first — while advisory B009/B010/B013 stay open, PR-01 is the only automated kernel-write guardrail."
+          },
+          {
+            "from": "PR-17",
+            "to": "PR-06",
+            "reason": "Program control-flow evidence relies on a returncode-aware verdict; PR-06/B033 certifies the pass/fail oracle before program traces are trusted."
+          },
+          {
+            "from": "PR-18a",
+            "to": "PR-01",
+            "reason": "code-dev dispatch autofixes mutate program files; kernel-write gate must be sound first."
+          },
+          {
+            "from": "PR-18a",
+            "to": "PR-06",
+            "reason": "Trace evidence trustworthy only after the returncode-aware verdict lands."
+          },
+          {
+            "from": "PR-18b",
+            "to": "PR-01",
+            "reason": "code-dev guard/seed autofixes mutate program files; kernel-write gate must be sound first."
+          },
+          {
+            "from": "PR-18b",
+            "to": "PR-06",
+            "reason": "Trace evidence trustworthy only after the returncode-aware verdict lands."
+          },
+          {
+            "from": "PR-19",
+            "to": "PR-01",
+            "reason": "code-dev marshaling autofixes mutate program files; kernel-write gate must be sound first."
+          },
+          {
+            "from": "PR-19",
+            "to": "PR-06",
+            "reason": "Five-program trace evidence trustworthy only after the returncode-aware verdict lands."
+          },
+          {
+            "from": "PR-20",
+            "to": "PR-06",
+            "reason": "Program interpolation trace evidence relies on the returncode-aware verdict."
+          },
+          {
+            "from": "PR-21",
+            "to": "PR-01",
+            "reason": "Program state/persistence autofixes mutate program files; kernel-write gate must be sound first."
+          },
+          {
+            "from": "PR-08",
+            "to": "PR-06",
+            "reason": "Receipt/ledger tool tests are verified through the runner; returncode-aware verdict must land first for a trustworthy green."
+          },
+          {
+            "from": "PR-13",
+            "to": "PR-06",
+            "reason": "Data-integrity fixture tests verified through the runner; depends on the returncode-aware verdict."
+          },
+          {
+            "from": "PR-15",
+            "to": "PR-06",
+            "reason": "Dispatch-contract change verified via the program-trace corpus through the runner; depends on the returncode-aware verdict."
+          }
+        ]
+      },
+      "plan_narrative": "Strategy: land the trust boundary before anything that could exploit or mask a hole. Wave 1 fixes the security/gate fail-opens and stands up the verification substrate. PR-01 (shell.py R9 write-gate) is first and load-bearing — until the kernel-write anchor is correct, no downstream autofix can be trusted not to scribble the floor; it is expanded with traversal, symlink, and tmp-topology tests plus a mandatory caller-audit of enforce_pretooluse.py and r9_axon_write.py (both pass the same suspect anchor, though neither is a ledgered bug). PR-06 moves to second because test_runner's returncode-blind verdict is the release's pass/fail oracle: every 'passes-after' claim is only trustworthy once it is returncode-aware. The remaining Wave 1 PRs close the doctrine, lint, trace, and program-dry-run gates, extract the config autonomy fail-open (B047) from the old grab-bag into its own promoted PR-28, and surface the live kernel gate holes (PR-22, owner-escalation). PR-02 lands the shared comment-strip helper before PR-05 reuses it.\n\nPhasing rationale: Wave 2 is tool correctness (receipts, workflow, health, state stores, data-integrity, CLI, dispatch, harness) — split where the council converged (B051/axon.py out of the loop_receipt PR into PR-29; PR-14 split so the runtime hook and project_refresh do not share a revert unit with the pure-CLI trio). Wave 3 is program correctness, with the oversized PR-18 split into dispatch (18a) and guard/seed (18b) halves and PR-19 re-labeled L to reflect five separate program traces; program-layer PRs depend on PR-01 (write gate) and PR-06 (verdict). Because tools/simulate.py has no IF/ELSE/DONE branch-scope evaluator, all program-layer oracles are honestly reframed as static-structural assertions rather than a mythical runtime trace harness. Wave 4 is the human-only kernel-floor advisory track: no axon/* source is edited, but every advisory bug now carries a LANDED failing-before test in tests/ (outside the floor, per the test_kernel_floor_pr021 precedent) so these AI-verified bugs become durable checks; the KERNEL-SLIM pre-parse interrupt gate (B052/B053) is split out as PR-27a and placed first in the advisory wave because a broken pre-execution control outranks tool-logic advisories. The R_TOOL_RECEIPTS canonical-name trio (B081/B051/B029) is sequenced so PR-03 lands first and PR-29/PR-10 depend on it, keeping the claim/record boundary consistent.",
+      "dissent": [
+        "PR-01 grouping: challenger wanted B001 split into its own minimal-diff PR ahead of B031/B032; security/architecture/release lenses (majority) kept the three shell.py bugs together as one gate/one revert unit. Recorded on PR-01.",
+        "R9 caller coverage gap: security and regression lenses identified a probable sibling B001-class fail-open in tools/rules/r9_axon_write.py and in tools/hooks/enforce_pretooluse.py, neither of which is a ledgered bug. It cannot be assigned a bug_id, so it is captured as a mandatory pre-merge caller-audit inside PR-01 rather than a separate PR — the one place the disjoint-file coverage guarantee is genuinely incomplete.",
+        "PR-07/B020 (drift): regression lens wanted it split into its own drift.py PR given its ripple into the fail-closed drift gate and autonomy halt; kept bundled but mitigated by mandating the full drift test corpus as a merge gate.",
+        "Program-layer verification: test-strategy lens holds that static-structural assertions are strictly weaker than the runtime-trace evidence the original plan implied; accepted as the honest ceiling unless the team first builds branch-scope evaluation into simulate.py (not scheduled this release).",
+        "Low-severity CLI bugs (B086/B087/B091 etc.): challenger wanted them deferred out of the release entirely; overruled because the plan must place all 91 confirmed bugs, but they are sunk to Wave 2 and never gate the security wave.",
+        "Advisory kernel gate holes B009/B010/B013 ship UNFIXED (human-only floor). Security and release lenses stress these must be escalated to the owner for a same-cycle manual patch (dev-mode + full-test), because while open, PR-01/B001 is the only automated kernel-write guardrail during Waves 2-3."
+      ],
+      "council_summary": "[\"security-kernel-integrity (revise): PR-01 must prove EVERY named R9 vector (absolute, ../axon traversal, symlink) is closed and co-audit the enforce_pretooluse.py / r9_axon_write.py callers that share the same wrong anchor.\",\"architecture-coupling (revise): file-cohesion discipline is excellent, but extract the security fixes (B047, B051/axon.py) out of thematic grab-bags and converge the tools-side scanners on one comment-strip helper.\",\"test-strategy (revise): test_runner's returncode-blind verdict (B033) is the release oracle and must land second; the program-layer 'trace harness' does not exist, so reframe those oracles as static-structural; advisory bugs should carry LANDED failing-before tests, not un-landed proposals.\",\"release-sequencing-risk (revise): no hard merge conflicts (disjoint files) but move PR-06 to slot 2 as verification infrastructure and split the medium-risk 6-bug PR-18 to halve its blast radius.\",\"effort-estimation (revise): PR-18 is really an L (six program traces) and PR-20 mixes a security fail-open with cosmetics — split both; budget PR-01 as a heavy high-risk M.\",\"regression-blast-radius (revise): 'disjoint files => no dependencies' is false for shared classifier contracts — PR-01 shares _is_axon_path with the PreToolUse hook and the r9 rule; broad-regression gates are needed for B020/B030/B044/B046.\",\"dependency-dag (revise): empty depends_on is largely defensible (no shared files, no cycles), but encode the soft edges — PR-05→PR-02 (strip helper), the B081/B051/B029 receipts trio, and PR-06 as the verification substrate.\",\"challenger (revise): worst offense is burying the B047 autonomy fail-open at position 20 among cosmetic bugs — promote it to Wave 1; split the crown-jewel B001 and the over-batched program PRs; coverage checks out 91/91 but the notes miscount the PRs.\"]"
+    }
+  },
+  "workflowProgress": [
+    {
+      "type": "workflow_phase",
+      "index": 1,
+      "title": "Propose"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 2,
+      "title": "Council"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 3,
+      "title": "Synthesize"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 1,
+      "label": "propose:batching",
+      "phaseIndex": 1,
+      "phaseTitle": "Propose",
+      "agentId": "aaaf4df650fb9c327",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1785175636420,
+      "queuedAt": 1785175636370,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "27 PRs cover all 91 confirmed bugs, each bug in exactly one…",
+      "promptPreview": "You are the lead planner for a bug-fix release on AXON (an OS-for-AI-agents: Python tools + Markdown \"programs\").\n\nSTEP 1 — read the full confirmed-bug ledger:\n  cat /home/arturcastiel/projects/axon-sections/my-axon/dev-projects/axon-bugfree10/phases/plan/_plan-input.json\n(It is JSON: {total_confirmed, first_cut_subsystems, bugs:[{id,file,line,severity,category,part,summary,kernel_floor}]}. You ma…",
+      "lastProgressAt": 1785175918759,
+      "tokens": 46000,
+      "toolCalls": 4,
+      "durationMs": 282337,
+      "resultPreview": "{\"prs\":[{\"pr_id\":\"PR-01\",\"title\":\"shell.py R9 write-gate: fix kernel anchor, redirect regex, and cd-cwd rebasing\",\"subsystem\":\"kernel-gate-runtime-security\",\"bug_ids\":[\"B001\",\"B031\",\"B032\"],\"risk\":\"high\",\"effort\":\"M\",\"depends_on\":[],\"kernel_floor\":false,\"rationale\":\"All three are fail-open holes in the single most security-critical file: B001 points the R9 axon-write classifier at the non-existent…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 2,
+      "label": "council:security-kernel-integrity",
+      "phaseIndex": 2,
+      "phaseTitle": "Council",
+      "agentId": "a8344a6ba0b9e9fa5",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1785175918825,
+      "queuedAt": 1785175918784,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "security-kernel-integrity",
+      "promptPreview": "You are a seat on an AXON advisory HR council reviewing a bug-fix release plan. YOUR LENS: security-kernel-integrity.\nKernel/gate integrity & security. The R9 write-gate and fail-open gates are the crown jewels — these fixes must land first and cannot themselves introduce a bypass. Flag any PR that touches a gate without a regression test that proves the hole is closed.\n\nThe confirmed-bug ledger i…",
+      "lastProgressAt": 1785176056716,
+      "tokens": 39930,
+      "toolCalls": 10,
+      "durationMs": 137890,
+      "resultPreview": "{\"lens\":\"security-kernel-integrity\",\"overall\":\"revise\",\"issues\":[\"PR-01 crown-jewel test gap: B001's own summary names two evasion vectors — absolute writes AND `../axon/...` traversal — and the shared classifier _axon_paths.is_axon_path documents symlink-into-axon (F-D8-001 vec 1) as in-scope. The test_strategy only asserts BLOCK on an absolute path, a no-space redirect, and a `cd axon` case. It …"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 3,
+      "label": "council:architecture-coupling",
+      "phaseIndex": 2,
+      "phaseTitle": "Council",
+      "agentId": "ac2ad8ae2a6a2cb43",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1785175918826,
+      "queuedAt": 1785175918785,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "architecture-coupling (module coupling & cohesion; one cohe…",
+      "promptPreview": "You are a seat on an AXON advisory HR council reviewing a bug-fix release plan. YOUR LENS: architecture-coupling.\nModule coupling & cohesion. Are bugs batched so each PR touches one coherent surface? Flag PRs that span unrelated modules (hard to review/revert) or that split one root-cause across PRs.\n\nThe confirmed-bug ledger is at /home/arturcastiel/projects/axon-sections/my-axon/dev-projects/axo…",
+      "lastProgressAt": 1785176036006,
+      "tokens": 35088,
+      "toolCalls": 4,
+      "durationMs": 117180,
+      "resultPreview": "{\"lens\":\"architecture-coupling (module coupling & cohesion; one coherent surface per PR; no root-cause split across PRs)\",\"overall\":\"revise\",\"issues\":[\"STRENGTH (keep): The plan is disciplined on the worst anti-pattern in my lens. Every file that has multiple bugs keeps them in ONE PR (shell.py all in PR-01; loop_receipt.py B023+B075 in PR-08; doctrine_preflight.py B018+B019 in PR-04; r_identity_l…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 4,
+      "label": "council:test-strategy",
+      "phaseIndex": 2,
+      "phaseTitle": "Council",
+      "agentId": "a503aa8a735253b8d",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1785175918827,
+      "queuedAt": 1785175918785,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "test-strategy",
+      "promptPreview": "You are a seat on an AXON advisory HR council reviewing a bug-fix release plan. YOUR LENS: test-strategy.\nTest coverage & verifiability. Every bug is AI-verified, NOT human-confirmed. Each PR MUST carry a test that fails before / passes after. Flag PRs with vague or missing test strategy; call out bugs that need a fixture.\n\nThe confirmed-bug ledger is at /home/arturcastiel/projects/axon-sections/m…",
+      "lastProgressAt": 1785176062706,
+      "tokens": 39171,
+      "toolCalls": 7,
+      "durationMs": 143879,
+      "resultPreview": "{\"lens\":\"test-strategy\",\"overall\":\"revise\",\"issues\":[\"VERDICT-ORACLE COMPROMISED (blocking): PR-06/B033 fixes tools/test_runner.py, whose verdict is computed at line 190 as `PASS if failed==0` while ignoring returncode. Confirmed by inspection. Until this lands, ANY PR whose 'passes after' evidence is produced via test_runner can read green while pytest actually errored on collection/import. Every…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 5,
+      "label": "council:release-sequencing-risk",
+      "phaseIndex": 2,
+      "phaseTitle": "Council",
+      "agentId": "a9b62ce29078101c0",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1785175918827,
+      "queuedAt": 1785175918785,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "release-sequencing-risk",
+      "promptPreview": "You are a seat on an AXON advisory HR council reviewing a bug-fix release plan. YOUR LENS: release-sequencing-risk.\nOrder & blast radius. Sequence so foundational/low-risk-high-value fixes land first and risky ones are isolated. Flag orderings that put a risky refactor before the gate fixes, or that batch too much into one PR.\n\nThe confirmed-bug ledger is at /home/arturcastiel/projects/axon-sectio…",
+      "lastProgressAt": 1785176048175,
+      "tokens": 33376,
+      "toolCalls": 4,
+      "durationMs": 129347,
+      "resultPreview": "{\"lens\":\"release-sequencing-risk\",\"overall\":\"revise\",\"issues\":[\"VERIFIED GOOD: no file is edited by two PRs (checked all 91 bug->file mappings). The disjoint-file-set claim and empty depends_on are sound at the file-edit level, so there are no hard merge-conflict blockers. My critique is about ORDER and BLAST RADIUS, not conflicts.\",\"PR-01 first is CORRECT and load-bearing, not a violation of 'iso…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 6,
+      "label": "council:effort-estimation",
+      "phaseIndex": 2,
+      "phaseTitle": "Council",
+      "agentId": "ab359892a72068ff6",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1785175918828,
+      "queuedAt": 1785175918785,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "effort-estimation",
+      "promptPreview": "You are a seat on an AXON advisory HR council reviewing a bug-fix release plan. YOUR LENS: effort-estimation.\nEffort realism. Challenge S/M/L sizing; a PR bundling 10 bugs across 8 files is not \"M\". Recommend splits where a batch is too big to review in one sitting.\n\nThe confirmed-bug ledger is at /home/arturcastiel/projects/axon-sections/my-axon/dev-projects/axon-bugfree10/phases/plan/_plan-input…",
+      "lastProgressAt": 1785176012889,
+      "tokens": 33372,
+      "toolCalls": 4,
+      "durationMs": 94061,
+      "resultPreview": "{\"lens\":\"effort-estimation\",\"overall\":\"revise\",\"issues\":[\"PR-18 is mis-sized: labeled M but it is 6 bugs across 6 DISTINCT program files (code-dev-safety-freeze/state/study/code-dev/phase-start/plan), all medium-risk control-flow/dispatch logic. Each program must be individually compile+traced to verify the guard/dispatch fix and check for regressions across its branches. Six independent program t…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 7,
+      "label": "council:regression-blast-radius",
+      "phaseIndex": 2,
+      "phaseTitle": "Council",
+      "agentId": "a261823b58e083841",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1785175918829,
+      "queuedAt": 1785175918786,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "regression-blast-radius",
+      "promptPreview": "You are a seat on an AXON advisory HR council reviewing a bug-fix release plan. YOUR LENS: regression-blast-radius.\nRegression risk. Which fixes could break callers? shell.py, run.py, drift.py, phase-model are high-traffic. Flag fixes that change a widely-used contract and demand caller-audit + broad test.\n\nThe confirmed-bug ledger is at /home/arturcastiel/projects/axon-sections/my-axon/dev-projec…",
+      "lastProgressAt": 1785176086438,
+      "tokens": 40393,
+      "toolCalls": 8,
+      "durationMs": 167609,
+      "resultPreview": "{\"lens\":\"regression-blast-radius\",\"overall\":\"revise\",\"issues\":[\"PR-01 / B001 — the plan's blanket claim (in `notes`) that 'depends_on is empty across the board because every PR touches a disjoint file set' is FALSE for shared-classifier contracts. `shell._is_axon_path` is not private to shell.py: tools/hooks/enforce_pretooluse.py:243 calls `shell._is_axon_path(tgt, ws)` where `ws = shell._default_…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 8,
+      "label": "council:dependency-dag",
+      "phaseIndex": 2,
+      "phaseTitle": "Council",
+      "agentId": "a973264f9384bc5bd",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1785175918830,
+      "queuedAt": 1785175918786,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "dependency-dag",
+      "promptPreview": "You are a seat on an AXON advisory HR council reviewing a bug-fix release plan. YOUR LENS: dependency-dag.\nDependency correctness. Build the true fix-order DAG: which PRs must precede others (shared file, shared helper, gate-before-consumer). Flag missing or wrong depends_on edges and any cycle.\n\nThe confirmed-bug ledger is at /home/arturcastiel/projects/axon-sections/my-axon/dev-projects/axon-bug…",
+      "lastProgressAt": 1785176080921,
+      "tokens": 43587,
+      "toolCalls": 6,
+      "durationMs": 162091,
+      "resultPreview": "{\"lens\":\"dependency-dag\",\"overall\":\"revise\",\"issues\":[\"VERIFIED: the plan's core justification for empty depends_on holds at the hard level. I mapped all 91 bugs to files and confirmed no source file appears in two PRs (e.g. loop_receipt.py B023+B075 both in PR-08; shell.py B001/B031/B032 all in PR-01; dry_run_lint.py B009/B010 both in PR-22). So there are NO merge-conflict / shared-file build edg…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 9,
+      "label": "council:challenger",
+      "phaseIndex": 2,
+      "phaseTitle": "Council",
+      "agentId": "a3dc45a38556a05ce",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1785175918831,
+      "queuedAt": 1785175918786,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "challenger",
+      "promptPreview": "You are a seat on an AXON advisory HR council reviewing a bug-fix release plan. YOUR LENS: challenger.\nMANDATORY adversary. Argue the plan is WRONG: over-batched, mis-prioritized, scope-creeping, or violating the axon/ human-only floor by proposing autofix PRs for kernel files. Push for fewer/smaller PRs and for demoting low-severity noise. Default to \"revise\" unless the plan is genuinely tight.\n\n…",
+      "lastProgressAt": 1785176062605,
+      "tokens": 34708,
+      "toolCalls": 5,
+      "durationMs": 143774,
+      "resultPreview": "{\"lens\":\"challenger\",\"overall\":\"revise\",\"issues\":[\"MIS-PRIORITIZATION (worst offense): PR-20 buries B047 -- a config-wizard AUTONOMY FAIL-OPEN that grants capabilities because the attended branch never fires -- inside a 6-bug 'programs-misc' PR sequenced at position 20 in Wave 3, alongside cosmetic interpolation bugs B084 ({project.path} on a slug) and B085 ({coverage-pct} never assigned). The pla…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 10,
+      "label": "synthesize:final-plan",
+      "phaseIndex": 3,
+      "phaseTitle": "Synthesize",
+      "agentId": "ac6d1cd0ef6919915",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1785176086466,
+      "queuedAt": 1785176086441,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Strategy: land the trust boundary before anything that coul…",
+      "promptPreview": "You are the council deliberator. Synthesize ONE final bug-fix release plan for AXON from the proposal + 8 expert critiques. This is a DEEP plan — it must be defensible and dependency-correct.\n\nLEDGER: /home/arturcastiel/projects/axon-sections/my-axon/dev-projects/axon-bugfree10/phases/plan/_plan-input.json (read with `cat /home/arturcastiel/projects/axon-sections/my-axon/dev-projects/axon-bugfree1…",
+      "lastProgressAt": 1785176444011,
+      "tokens": 57372,
+      "toolCalls": 5,
+      "durationMs": 357545,
+      "resultPreview": "{\"prs\":[{\"pr_id\":\"PR-01\",\"title\":\"shell.py R9 write-gate: fix kernel anchor, redirect regex, and cd-cwd rebasing\",\"subsystem\":\"kernel-gate-runtime-security\",\"bug_ids\":[\"B001\",\"B031\",\"B032\"],\"risk\":\"high\",\"effort\":\"M\",\"depends_on\":[],\"kernel_floor\":false,\"rationale\":\"The single most security-critical file, all three fail-open holes in the R9 axon-write classifier. B001: _is_axon_path passes `worksp…"
+    }
+  ],
+  "totalTokens": 402997,
+  "totalToolCalls": 57
+}

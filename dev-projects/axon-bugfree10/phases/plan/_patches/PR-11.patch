@@ -1,0 +1,128 @@
+diff --git a/tests/test_kv_store.py b/tests/test_kv_store.py
+index ea21bf1..3611ed4 100644
+--- a/tests/test_kv_store.py
++++ b/tests/test_kv_store.py
+@@ -73,3 +73,15 @@ def test_malformed_json_object_rejected_not_coerced(tmp_path):
+ 
+ def test_get_missing_key(tmp_path):
+     assert _get(tmp_path, "nope")["found"] is False
++
++
++def test_stored_json_null_reports_found(tmp_path):
++    # B074: a legitimately-stored JSON null must not be reported as absent. `get` must
++    # agree with `exists` — pre-fix, get(default=None) treated the stored None as missing.
++    r = _run("set", "--key", "foo", "--value", "null", store=tmp_path)
++    assert r.returncode == 0 and json.loads(r.stdout)["stored"] is True
++    ex = _run("exists", "--key", "foo", store=tmp_path)
++    assert json.loads(ex.stdout)["exists"] is True
++    g = _get(tmp_path, "foo")
++    assert g["found"] is True, "stored JSON null reported as not-found (contradicts exists)"
++    assert g["value"] is None
+diff --git a/tests/test_memory_rollback_multistep.py b/tests/test_memory_rollback_multistep.py
+new file mode 100644
+index 0000000..6d5f897
+--- /dev/null
++++ b/tests/test_memory_rollback_multistep.py
+@@ -0,0 +1,61 @@
++"""B076: L: rollback must be a genuine multi-step undo, not a two-value oscillation.
++
++Pre-fix, rollback popped the most-recent prior value but then re-inserted the *current*
++value at the front of the history sidecar. That made history[1:] permanently unreachable
++and turned repeated rollback into a v(n-1)<->v(n) toggle — defeating the ROLLBACK_MAX=3
++multi-step-undo contract that `history`/`remaining_history` advertises.
++"""
++import json
++import subprocess
++import sys
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parent.parent
++MEM = ROOT / "tools" / "memory.py"
++
++
++def _run(*argv, ws):
++    return subprocess.run([sys.executable, str(MEM), *argv, "--workspace", str(ws)],
++                          capture_output=True, text=True, timeout=30)
++
++
++def _set(ws, key, value):
++    r = _run("set", "--scope", "L", "--key", key, "--value", value, ws=ws)
++    assert r.returncode == 0, r.stdout + r.stderr
++
++
++def _get(ws, key):
++    return json.loads(_run("get", "--scope", "L", "--key", key, ws=ws).stdout)["value"]
++
++
++def _rollback(ws, key):
++    return json.loads(_run("rollback", "--scope", "L", "--key", key, ws=ws).stdout)
++
++
++def test_rollback_walks_back_through_full_history(tmp_path):
++    for v in ("v1", "v2", "v3", "v4"):
++        _set(tmp_path, "foo", v)
++    # Sidecar is [v3, v2, v1]; file is v4. A correct multi-step undo walks v4->v3->v2->v1.
++    assert _get(tmp_path, "foo") == "v4"
++
++    d = _rollback(tmp_path, "foo")
++    assert d["restored_value"] == "v3" and _get(tmp_path, "foo") == "v3"
++
++    d = _rollback(tmp_path, "foo")
++    # Pre-fix this returned v4 (oscillation) and v2/v1 were unreachable forever.
++    assert d["restored_value"] == "v2", "rollback oscillated instead of walking history back"
++    assert _get(tmp_path, "foo") == "v2"
++
++    d = _rollback(tmp_path, "foo")
++    assert d["restored_value"] == "v1" and _get(tmp_path, "foo") == "v1"
++    assert d["remaining_history"] == 0
++
++
++def test_rollback_two_value_case_still_restores_prior(tmp_path):
++    # Guard the manifested contract: single prior value still restores correctly.
++    _set(tmp_path, "k1", "first")
++    _set(tmp_path, "k1", "second")
++    d = _rollback(tmp_path, "k1")
++    assert d["rolled_back"] is True
++    assert d["restored_value"] == "first"
++    assert _get(tmp_path, "k1") == "first"
+diff --git a/tools/kv_store.py b/tools/kv_store.py
+index 5265c2a..c8fffe2 100644
+--- a/tools/kv_store.py
++++ b/tools/kv_store.py
+@@ -79,8 +79,12 @@ try:
+         if not args.key:
+             print(json.dumps({"error": "--key is required for get"}))
+             sys.exit(1)
+-        value = cache.get(args.key, default=None)
+-        if value is None:
++        # A stored JSON null is a legitimate value (None), indistinguishable from a
++        # missing key if we default to None. Use a private sentinel so `found` tracks
++        # actual presence (matching `exists`), not "value happens to be None".
++        _MISSING = object()
++        value = cache.get(args.key, default=_MISSING)
++        if value is _MISSING:
+             print(json.dumps({"found": False, "key": args.key, "value": None}))
+         else:
+             print(json.dumps({"found": True, "key": args.key, "value": value}))
+diff --git a/tools/memory.py b/tools/memory.py
+index e9d1050..c7a7405 100644
+--- a/tools/memory.py
++++ b/tools/memory.py
+@@ -88,12 +88,12 @@ def main():
+             history = json.load(f)
+         if not history:
+             print(json.dumps({"error": "Rollback history is empty"})); sys.exit(1)
++        # Multi-step undo: consume the next-older value (index 0 is most-recent prior)
++        # and shrink history. Re-inserting the current value at the front (the old bug)
++        # made history[1:] permanently unreachable and turned repeated rollback into a
++        # two-value oscillation, defeating the ROLLBACK_MAX multi-step-undo contract.
+         prev = history.pop(0)
+-        # Save current as rollback before restoring
+-        if os.path.exists(path):
+-            with open(path) as f:
+-                history.insert(0, f.read().strip())
+-            history = history[:ROLLBACK_MAX]
++        history = history[:ROLLBACK_MAX]
+         atomic_write_json(rb_path, history)
+         atomic_write(path, prev + "\n")
+         print(json.dumps({"rolled_back": True, "scope": "L", "key": args.key,

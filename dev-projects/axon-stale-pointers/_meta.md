@@ -9,7 +9,7 @@ branch:          main
 codebase:        /home/arturcastiel/projects/new-axon/axon
 workflow:        _workflow.yml
 parent:          (none)
-sub-projects:    []
+sub-projects:    [axon-state-surface]
 created:         2026-07-09
 updated:         2026-07-09
 

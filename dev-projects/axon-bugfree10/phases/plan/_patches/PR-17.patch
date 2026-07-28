@@ -1,0 +1,201 @@
+diff --git a/tests/test_program_dryrun_control_flow_pr17.py b/tests/test_program_dryrun_control_flow_pr17.py
+new file mode 100644
+index 0000000..b49b655
+--- /dev/null
++++ b/tests/test_program_dryrun_control_flow_pr17.py
+@@ -0,0 +1,113 @@
++"""PR-17 regression locks — dry-run & control-flow in three AXON programs.
++
++These are LLM-interpreted AXON-LANG programs, so their control flow is asserted
++STATICALLY over the program text (indentation-scoped branches, statement order).
++
++Bugs locked:
++  B002 (code-dev-combine.md) — undo-completion (log append, "✓ Restored", CLEAR+
++       DONE) was misplaced inside the dry-run guard AFTER a DONE, so unreachable,
++       and the undo path fell through into a full combine. Fix: completion runs
++       after RESTORE-DIR, inside the undo block, reachable.
++  B036 (code-dev-combine.md) — the C8 dry-run guard sat AFTER the mutating
++       RESTORE-DIR it protects, so an armed `whatif undo` still overwrote phases/.
++       Fix: guard renders + DONEs BEFORE RESTORE-DIR.
++  B003 (code-dev-merge.md) — dry-run guard was not nested under the target-phase
++       IF; the phase-merge side effects sat inside the dry-run branch AFTER a DONE
++       (unreachable), and the ELSE bound to the dry-run IF (wrong single-PR path).
++       Also the _meta.md mutations ran before the dry-run check. Fix: guard nested
++       under target-phase IF, BEFORE any mutation; side effects in the true branch.
++  B004 (workflow-run.md) — the promote-block DONE was dedented to column 0, making
++       it unconditional so a normal run terminated before executing any workflow.
++       Fix: DONE indented under `IF promote-run ≠ ∅`.
++"""
++from __future__ import annotations
++
++from pathlib import Path
++
++PROGRAMS = Path(__file__).resolve().parents[1] / "workspace" / "programs"
++COMBINE = (PROGRAMS / "code-dev-combine.md").read_text(encoding="utf-8")
++MERGE = (PROGRAMS / "code-dev-merge.md").read_text(encoding="utf-8")
++WFRUN = (PROGRAMS / "workflow-run.md").read_text(encoding="utf-8")
++
++
++# ── B036: combine --undo dry-run guard precedes the mutating RESTORE-DIR ────────
++
++def test_combine_undo_dryrun_guard_precedes_restore():
++    undo = COMBINE.index('IF mode ≡ "undo" →')
++    guard = COMBINE.index("IF RETRIEVE(W:code-dev-dry-run) ≡ true →", undo)
++    restore = COMBINE.index("RESTORE-DIR(", undo)
++    # the guard must be evaluated BEFORE the mutating restore (dry-run never mutates)
++    assert guard < restore, "dry-run guard must precede RESTORE-DIR in the undo block"
++    # and the guard terminates (DONE) so an armed dry-run never reaches the restore
++    guard_body = COMBINE[guard:restore]
++    assert "DONE(code-dev-combine)" in guard_body
++
++
++# ── B002: undo-completion is reachable (after restore, not after a DONE) ─────────
++
++def test_combine_undo_completion_reachable_after_restore():
++    restore = COMBINE.index("RESTORE-DIR(")
++    restored_msg = COMBINE.index("✓ Restored phases/", restore)
++    # the restore executes, THEN logs + prints + clears — the completion is reached
++    assert restore < restored_msg
++    between = COMBINE[restore:restored_msg]
++    # no DONE fires between the restore and its completion (the old dead-code bug)
++    assert "DONE(code-dev-combine)" not in between
++    # the undo log append is part of the reachable completion, after the restore
++    assert COMBINE.index("combine undo", restore) < restored_msg
++    # and the undo path clears the active program + DONEs (never falls through to combine)
++    tail = COMBINE[restored_msg:COMBINE.index("a ← RETRIEVE(W:code-dev-combine-a)")]
++    assert "CLEAR(W:active-program)" in tail and "DONE(code-dev-combine)" in tail
++
++
++# ── B003: merge --phase dry-run guard nested + before mutation; ELSE bound right ─
++
++def _merge_lines():
++    lines = MERGE.splitlines()
++    start = next(i for i, l in enumerate(lines) if l.startswith('IF target-phase ≡ "true"'))
++    els = next(i for i, l in enumerate(lines) if i > start and l.startswith("ELSE →"))
++    return lines, start, els
++
++
++def test_merge_phase_dryrun_guard_nested_and_before_mutation():
++    lines, start, els = _merge_lines()
++    guard = next(i for i in range(start, els) if lines[i].strip().startswith("IF RETRIEVE(W:code-dev-dry-run)"))
++    meta = next(i for i in range(start, els) if "--field status --value merged" in lines[i])
++    # the guard is nested INSIDE the target-phase branch (indented), not at column 0
++    assert lines[guard].startswith("  "), "dry-run guard must be nested under the target-phase IF"
++    # and it runs BEFORE the _meta.md mutation (never touch disk on dry-run)
++    assert guard < meta, "dry-run guard must precede the meta status mutation"
++    # the meta mutation is a phase-branch statement (2-space indent), not inside the guard body (4-space)
++    assert lines[meta].startswith("  TOOL(meta"), "meta mutation must live in the phase branch, not the guard body"
++
++
++def test_merge_phase_side_effects_reachable_not_after_a_done():
++    lines, start, els = _merge_lines()
++    meta = next(i for i in range(start, els) if "--field status --value merged" in lines[i])
++    logged = next(i for i in range(meta, els) if "phase merged" in lines[i])
++    # the phase-merged log append happens after the meta mutation, inside the branch
++    assert meta < logged < els
++    # no branch-level DONE fires between them (the old unreachable-after-DONE bug);
++    # the only DONE in the phase branch is the guard's own (4-space indent) early exit
++    body = lines[meta:logged]
++    assert not any(l.strip() == "DONE(code-dev-merge)" for l in body)
++
++
++def test_merge_else_binds_to_target_phase_not_dryrun():
++    lines, start, els = _merge_lines()
++    # ELSE sits at column 0, the same scope as `IF target-phase` — its single-PR branch
++    assert lines[els] == "ELSE →"
++    # and the single-PR path (the ELSE body) prompts for a PR — proving it is the phase fallback
++    else_body = "\n".join(lines[els:])
++    assert 'QUERY(user): "Which PR?"' in else_body
++
++
++# ── B004: workflow-run promote-block DONE is scoped to the promote IF ────────────
++
++def test_workflow_run_promote_done_is_indented_under_its_if():
++    promote = WFRUN.index("IF promote-run ≠ ∅ →")
++    resolve = WFRUN.index("## RESOLVE PATH", promote)
++    segment = WFRUN[promote:resolve]
++    # the DONE must be indented (scoped to the IF), not an unconditional column-0 statement
++    assert "\n  DONE(workflow-run)" in segment, "promote-block DONE must be indented under its IF"
++    assert "\nDONE(workflow-run)" not in segment, "a column-0 DONE would terminate every normal run"
+diff --git a/workspace/programs/code-dev-combine.md b/workspace/programs/code-dev-combine.md
+index 2164ed6..b8886b2 100644
+--- a/workspace/programs/code-dev-combine.md
++++ b/workspace/programs/code-dev-combine.md
+@@ -43,20 +43,26 @@ IF mode ≡ "undo" →
+   latest ← LAST(SORT(snaps))
+   confirm ← QUERY(user): "Restore from {latest}? This overwrites current phases/ tree. [yes / no]"
+   IF confirm ≢ "yes" → HALT("undo aborted")
++  # C8 dry-run guard — `code-dev whatif` arms W:code-dev-dry-run (+ the substrate
++  # flag for tool-mediated writes). Honor it BEFORE any mutating op: render the
++  # plan, never touch disk. Enforced by tools/dry_run_lint.py (crucible BLOCK).
++  IF RETRIEVE(W:code-dev-dry-run) ≡ true →
++    → "  (dry-run) PLAN — would restore phases/ from {latest} (snapshot restore, no changes made)."
++    → "  Targets resolved above are rendered, not written. (dry-run ended — state unchanged)"
++    CLEAR(W:active-program) ; DONE(code-dev-combine)
+   RESTORE-DIR("{proj-dir}/archive/combine-snapshots/{latest}/phases", "{proj-dir}/phases")
+-# C8 dry-run guard — `code-dev whatif` arms W:code-dev-dry-run (+ the substrate
+-# flag for tool-mediated writes). Honor it BEFORE any mutating op: render the
+-# plan, never touch disk. Enforced by tools/dry_run_lint.py (crucible BLOCK).
+-IF RETRIEVE(W:code-dev-dry-run) ≡ true →
+-  → "  (dry-run) PLAN — would combine the listed projects into one (snapshot + merged scaffold + meta rewrites)."
+-  → "  Targets resolved above are rendered, not written. (dry-run ended — state unchanged)"
+-  DONE(code-dev-combine)
+-
+   APPEND("{proj-dir}/04-log.md",
+     "\n## {ts.iso} · combine undo\nrestored from {latest}\n")
+   → "  ✓ Restored phases/ from {latest}"
+   CLEAR(W:active-program) ; DONE(code-dev-combine)
+ 
++# C8 dry-run guard (main combine flow) — `code-dev whatif` arms W:code-dev-dry-run.
++# Honor it BEFORE any mutating op: render the plan, never touch disk.
++IF RETRIEVE(W:code-dev-dry-run) ≡ true →
++  → "  (dry-run) PLAN — would combine the listed projects into one (snapshot + merged scaffold + meta rewrites)."
++  → "  Targets resolved above are rendered, not written. (dry-run ended — state unchanged)"
++  CLEAR(W:active-program) ; DONE(code-dev-combine)
++
+ a ← RETRIEVE(W:code-dev-combine-a) | QUERY(user): "First phase?"
+ b ← RETRIEVE(W:code-dev-combine-b) | QUERY(user): "Second phase?"
+ new-name ← RETRIEVE(W:code-dev-combine-new) | QUERY(user): "New combined phase name?"
+diff --git a/workspace/programs/code-dev-merge.md b/workspace/programs/code-dev-merge.md
+index bc114f4..9441de5 100644
+--- a/workspace/programs/code-dev-merge.md
++++ b/workspace/programs/code-dev-merge.md
+@@ -41,17 +41,18 @@ target-phase ← RETRIEVE(W:code-dev-merge-phase) | "false"
+ ts ← TOOL(clock)
+ 
+ IF target-phase ≡ "true" →
++  # C8 dry-run guard — `code-dev whatif` arms W:code-dev-dry-run (+ the substrate
++  # flag for tool-mediated writes). Honor it BEFORE any mutating op: render the
++  # plan, never touch disk. Enforced by tools/dry_run_lint.py (crucible BLOCK).
++  IF RETRIEVE(W:code-dev-dry-run) ≡ true →
++    → "  (dry-run) PLAN — would mark phase {phase} merged, archive snapshots + update logs/registries."
++    → "  Targets resolved above are rendered, not written. (dry-run ended — state unchanged)"
++    CLEAR(W:active-program) ; DONE(code-dev-merge)
++
+   # mark phase merged
+   # Field-addressed: one set per field replaces the per-prior-value REPLACE variants
+   TOOL(meta, set, "--project {phase-dir} --field status --value merged")
+   TOOL(meta, set, "--project {phase-dir} --field workflow-step --value merged")
+-# C8 dry-run guard — `code-dev whatif` arms W:code-dev-dry-run (+ the substrate
+-# flag for tool-mediated writes). Honor it BEFORE any mutating op: render the
+-# plan, never touch disk. Enforced by tools/dry_run_lint.py (crucible BLOCK).
+-IF RETRIEVE(W:code-dev-dry-run) ≡ true →
+-  → "  (dry-run) PLAN — would merge the PR branch artifacts + update logs/registries."
+-  → "  Targets resolved above are rendered, not written. (dry-run ended — state unchanged)"
+-  DONE(code-dev-merge)
+ 
+   APPEND("{proj-dir}/04-log.md",
+     "\n## {ts.iso} · phase merged\nphase {phase} marked merged.\n")
+diff --git a/workspace/programs/workflow-run.md b/workspace/programs/workflow-run.md
+index 3ca3af0..2a7c983 100644
+--- a/workspace/programs/workflow-run.md
++++ b/workspace/programs/workflow-run.md
+@@ -71,7 +71,7 @@ IF promote-run ≠ ∅ →
+   → "    Review it, then rename .draft.yml → .yml to adopt. Drafts are NEVER auto-activated."
+   CLEAR(W:_workflow-run-promote)
+   CLEAR(W:_wf-step-n)
+-DONE(workflow-run)
++  DONE(workflow-run)
+ 
+ ## RESOLVE PATH
+ path ← RETRIEVE(W:_workflow-run-path) | ∅

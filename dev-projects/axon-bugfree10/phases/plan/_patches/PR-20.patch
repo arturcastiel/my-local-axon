@@ -1,0 +1,164 @@
+diff --git a/tests/test_pr20_program_fixes.py b/tests/test_pr20_program_fixes.py
+new file mode 100644
+index 0000000..ff816eb
+--- /dev/null
++++ b/tests/test_pr20_program_fixes.py
+@@ -0,0 +1,67 @@
++"""
++Structural regression tests for PR-20 program-logic fixes (axon-bugfree10).
++
++Each program is pseudocode (AXON-LANG), so verification is structural: assert the
++corrected token/branch is present and the buggy token is gone. Tied 1:1 to the
++failure_scenario of each bug.
++"""
++from pathlib import Path
++
++from conftest import ROOT
++
++PROGRAMS = ROOT / "workspace" / "programs"
++
++
++def _text(name: str) -> str:
++    return (PROGRAMS / name).read_text(encoding="utf-8")
++
++
++def test_b048_discover_issues_initialized_before_dep_scan():
++    """`issues ← []` must precede the dependency-scan append, and the append must
++    emit issue objects (not plain strings) so STEP-4 impact filters keep them."""
++    t = _text("discover.md")
++    init_pos = t.index("issues ← []")
++    dep_pos = t.index("MAP(W:_deps-result.issues")
++    assert init_pos < dep_pos, "issues must be initialized before the dependency append"
++    # No second reset after the dependency block that would wipe the entries.
++    assert t.count("issues ← []") == 1, "the redundant reset that discarded dep issues is gone"
++    # Dependency entries carry the object shape the render loops require.
++    assert 'type: "dependency"' in t
++    assert 'impact: (i.impact | "medium"' in t
++    # The old plain-string append is gone.
++    assert '"dependency: {i}"' not in t
++
++
++def test_b049_quality_loop_findings_json_defined():
++    """`findings-json` must be assigned (as a file path), the findings serialized to it,
++    and only then interpolated into the report call. The report tool reads --findings as
++    a path (json.loads(Path(...).read_text())), so raw JSON content would not work."""
++    t = _text("quality-loop.md")
++    assign_pos = t.index("findings-json ←")
++    write_pos = t.index("WRITE(findings-json, TO-JSON(findings))")
++    use_pos = t.index("--findings {findings-json}")
++    assert assign_pos < write_pos < use_pos, (
++        "findings-json must be assigned a path, written to, then used")
++    # It must be a path (interpolated string), not the raw JSON blob passed as a filename.
++    assert "findings-json ← TO-JSON(findings)" not in t
++
++
++def test_b050_versions_arg1_fallback():
++    """versions must fall back to the generic W:_arg1 tokenizer bridge key."""
++    t = _text("versions.md")
++    assert "RETRIEVE(W:_versions-target) | RETRIEVE(W:_arg1) → target" in t
++
++
++def test_b084_audit_to_study_notes_dir_uses_slug_path():
++    """project is a slug string; notes-dir must build the path from it, not `.path`."""
++    t = _text("audit-to-study.md")
++    assert "{W:myaxon-dev-projects}/{project}/shadow/audit-feedback/" in t
++    assert "{project.path}/shadow/audit-feedback/" not in t
++
++
++def test_b085_axon_compare_no_undefined_coverage_pct():
++    """`coverage-pct` was never assigned; the gap-area line must use the retained
++    dim-compilation score instead."""
++    t = _text("axon-compare.md")
++    assert "{coverage-pct}" not in t
++    assert "{dim-compilation}/9" in t
+diff --git a/workspace/programs/audit-to-study.md b/workspace/programs/audit-to-study.md
+index 7d5b399..d43e62c 100644
+--- a/workspace/programs/audit-to-study.md
++++ b/workspace/programs/audit-to-study.md
+@@ -50,7 +50,7 @@ STORE(W:code-dev-study-seed, seed)
+ 
+ # Persist a human-readable note too, under the project's shadow folder,
+ # so the next code-dev-study has a file artifact it can cite.
+-notes-dir  ← "{project.path}/shadow/audit-feedback/"
++notes-dir  ← "{W:myaxon-dev-projects}/{project}/shadow/audit-feedback/"
+ MKDIR(notes-dir)
+ note-path  ← "{notes-dir}iter-{iter}-{ts.date}.md"
+ WRITE(note-path,
+diff --git a/workspace/programs/axon-compare.md b/workspace/programs/axon-compare.md
+index e0af64a..3293973 100644
+--- a/workspace/programs/axon-compare.md
++++ b/workspace/programs/axon-compare.md
+@@ -216,7 +216,7 @@ total-haystack  ← SUM(W:_cmp-scores-haystack)
+ → "  AXON GAP AREAS:"
+ → "    → Online community presence is limited (early-stage project)"
+ → "    → Ecosystem / plugin library smaller than LangGraph/AutoGen"
+-→ "    → Compilation coverage at {coverage-pct}% — grow to ≥50% for full benefit"
++→ "    → Compilation/opt score {dim-compilation}/9 — expand compiled mirrors for wider benefit"
+ → ""
+ → "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+ 
+diff --git a/workspace/programs/discover.md b/workspace/programs/discover.md
+index d135682..27e00dd 100644
+--- a/workspace/programs/discover.md
++++ b/workspace/programs/discover.md
+@@ -27,15 +27,26 @@ TOOL(context, status) → W:_ctx-report
+ 
+ ## STEP 2 — Scan programs for context hygiene issues
+ TOOL(deps, check) → W:_deps-result
+-# LOW fix (axon-bugfix01): this scan was computed and then never read — surface it.
+-IF W:_deps-result ≠ ∅ AND W:_deps-result.issues | [] IS NOT EMPTY →
+-  issues ← issues + MAP(W:_deps-result.issues, i → "dependency: {i}")
+ 
+ programs-path ← RETRIEVE(W:ws-programs)
+ programs      ← SCAN(programs-path, "*.md", exclude="compiled/,INDEX.md")
+ 
+ issues ← []
+ 
++# LOW fix (axon-bugfix01): this scan was computed and then never read — surface it.
++# Emit each dependency issue as a proper issue object (program/type/impact/fix) so it
++# is counted, sorted by impact (STEP 4), and rendered by the loops below. The list is
++# initialized ABOVE this block so these entries are not referenced-before-init and
++# are not wiped by a later reset. Plain strings would be dropped by the impact FIND
++# filters and crash the render loops, so each entry carries the object shape.
++IF W:_deps-result ≠ ∅ AND (W:_deps-result.issues | []) IS NOT EMPTY →
++  issues ← issues + MAP(W:_deps-result.issues, i → {
++    program: (i.program | "workspace"),
++    type: "dependency",
++    impact: (i.impact | "medium"),
++    fix: "Dependency issue: {i.message | i}"
++  })
++
+ LOOP(∀ p ∈ programs) {
+   PROGRESS(i, programs.count, p.name)
+   READ(p.path) → W:_prog-text
+diff --git a/workspace/programs/quality-loop.md b/workspace/programs/quality-loop.md
+index 3a83ce2..a12e64d 100644
+--- a/workspace/programs/quality-loop.md
++++ b/workspace/programs/quality-loop.md
+@@ -58,6 +58,13 @@ mode ← IF ramp.s_fix_authorized ≡ true → "s-fix" ELSE → "report-only"
+ ∀ f in FILTER(verified, shared_surface ≡ true AND severity ≡ "fix") →
+   DERIVE(prepared-diff, f)   # written into the cycle report, never applied
+ report-path ← "{W:myaxon-dev-projects}/{W:code-dev-project | 'axon-plus'}/quality/cycle-{cycle}.md"
++# The report tool reads --findings as a PATH to a scan-output JSON file
++# (json.loads(Path(--findings).read_text())), so persist the post-verification findings
++# object to disk and pass that path — not the raw JSON, and not the previously-undefined
++# {findings-json}. The verify loop above stamped f.verified on findings.findings, so the
++# serialized file carries the verified column the report renders.
++findings-json ← "{W:myaxon-dev-projects}/{W:code-dev-project | 'axon-plus'}/quality/_scan-{cycle}.json"
++WRITE(findings-json, TO-JSON(findings))
+ TOOL(quality-loop, report, "--findings {findings-json} --cycle {cycle} --mode report-only --out {report-path}")
+ 
+ STORE(W:active-phase, "quality-loop:converge")
+diff --git a/workspace/programs/versions.md b/workspace/programs/versions.md
+index 46dd2e4..1f4f950 100644
+--- a/workspace/programs/versions.md
++++ b/workspace/programs/versions.md
+@@ -33,7 +33,7 @@ is current. Useful for auditing what changed between runs.
+ ## INSTRUCTIONS
+ 
+ ### Step 1 — Find program
+-RETRIEVE(W:_versions-target) → target
++RETRIEVE(W:_versions-target) | RETRIEVE(W:_arg1) → target
+ IF target ≡ ∅ → QUERY(user, "Which program?") → target
+ target ← target.replace(".md", "")
+ 

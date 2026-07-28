@@ -1,0 +1,74 @@
+diff --git a/tests/test_chat_input_persist.py b/tests/test_chat_input_persist.py
+new file mode 100644
+index 0000000..213062e
+--- /dev/null
++++ b/tests/test_chat_input_persist.py
+@@ -0,0 +1,49 @@
++"""
++Regression test for B034 (PR-21):
++The chat-input program must persist the assistant's reply text to the chat file.
++
++Before the fix, the `## PERSIST RESPONSE` APPEND wrote only {role:"assistant",
++time:...} with no `text` field, so assistant turns were silently dropped and the
++conversation history was lost on reopening the chat.
++
++This is a structural test over the AXON-LANG program: it asserts the assistant
++persist block carries a `text:` field bound to the generated reply.
++"""
++import re
++from pathlib import Path
++
++from conftest import ROOT
++
++CHAT_INPUT = ROOT / "workspace" / "programs" / "chat-input.md"
++
++
++def _persist_block(text: str) -> str:
++    """Return the body of the `## PERSIST RESPONSE` section."""
++    lines = text.splitlines()
++    start = next(i for i, l in enumerate(lines) if l.strip().startswith("## PERSIST RESPONSE"))
++    body = []
++    for l in lines[start + 1:]:
++        if l.startswith("## ") or l.strip().startswith("DONE("):
++            break
++        body.append(l)
++    return "\n".join(body)
++
++
++def test_chat_input_persists_assistant_text():
++    src = CHAT_INPUT.read_text()
++    block = _persist_block(src)
++    # The assistant APPEND must include a text field (the persisted reply).
++    assert re.search(r'\brole\s*:\s*"assistant"', block), \
++        "expected an assistant APPEND in PERSIST RESPONSE"
++    assert re.search(r'\btext\s*:', block), \
++        "assistant APPEND must persist a `text` field (B034); found none:\n" + block
++
++
++def test_chat_input_binds_reply_before_persisting():
++    """The reply produced by RESPOND must be captured so it can be persisted."""
++    src = CHAT_INPUT.read_text()
++    # A variable is bound from RESPOND(...) and reused in the persist text field.
++    assert re.search(r'reply\s*(←|<-|=)\s*RESPOND\(', src), \
++        "expected the RESPOND result to be bound to a `reply` variable"
++    block = _persist_block(src)
++    assert "reply" in block, "persist block must reference the captured reply"
+diff --git a/workspace/programs/chat-input.md b/workspace/programs/chat-input.md
+index ca573fe..65b6a12 100644
+--- a/workspace/programs/chat-input.md
++++ b/workspace/programs/chat-input.md
+@@ -44,11 +44,13 @@ LOG(INFO, "chat-input: appended message to {W:active-chat}")
+ → "▶ {W:active-chat}  ·  {goal}"
+ → "─────────────────────────────────────────────────"
+ # Agent response follows — reasoned against chat goal + message content
+-→ RESPOND(msg, context=goal)
++reply ← RESPOND(msg, context=goal)
++→ reply
+ 
+ ## PERSIST RESPONSE
+ APPEND(E:{chat-file}, {
+   role:  "assistant",
++  text:  reply,
+   time:  TOOL(clock).iso,
+ })
+ 

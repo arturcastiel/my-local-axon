@@ -1,0 +1,183 @@
+diff --git a/tests/test_dry_run.py b/tests/test_dry_run.py
+index 717271f..90d191f 100644
+--- a/tests/test_dry_run.py
++++ b/tests/test_dry_run.py
+@@ -62,3 +62,40 @@ def test_guard_must_precede_first_mutation(tmp_path):
+     bad.write_text("MKDIR(x)\nIF RETRIEVE(W:code-dev-dry-run) ≡ true →\n", encoding="utf-8")
+     v = dry_run_lint.check_program(bad)
+     assert v and "AFTER" in v["hint"]
++
++
++def test_inline_arrow_mutator_is_caught(tmp_path):
++    """B009: a mutator whose only writes are inline after a conditional arrow
++    (`IF … → WRITE(…)`, `ELSE → MKDIR(…)`) has NO line-start op, so the old
++    `.match` anchored to `^\\s*` reported the program clean. With no dry-run guard
++    present it must now be flagged as unguarded."""
++    bad = tmp_path / "code-dev-inline.md"
++    bad.write_text('IF ready ≡ true → WRITE("out.txt", body)\n'
++                   'ELSE → MKDIR("out-dir")\n', encoding="utf-8")
++    v = dry_run_lint.check_program(bad)
++    assert v is not None, "inline-arrow mutator slipped the gate"
++    assert v["first_mutating_op"] == 1
++    assert "no W:code-dev-dry-run guard" in v["hint"]
++
++
++def test_guard_in_comment_does_not_satisfy_gate(tmp_path):
++    """B010: the only occurrence of the guard token is a descriptive comment; the real
++    `RETRIEVE(W:code-dev-dry-run)` runtime guard was deleted. The gate must NOT treat the
++    comment as a guard and must report the unguarded mutations."""
++    bad = tmp_path / "code-dev-commented.md"
++    bad.write_text("# C8 dry-run guard — code-dev whatif arms W:code-dev-dry-run\n"
++                   'MKDIR("dir")\n'
++                   'WRITE("f", "x")\n', encoding="utf-8")
++    v = dry_run_lint.check_program(bad)
++    assert v is not None, "comment-only guard token satisfied the gate"
++    assert "no W:code-dev-dry-run guard" in v["hint"]
++    assert v["first_mutating_op"] == 2
++
++
++def test_op_name_inside_string_is_not_a_mutation(tmp_path):
++    """A program that only mentions a mutating verb inside a string/comment (no real call)
++    must not be misread as an unguarded mutator (guards the .search widening)."""
++    ok = tmp_path / "code-dev-prose.md"
++    ok.write_text('LOG("this would WRITE(x) if armed")\n'
++                  '# note: MKDIR(dir) is deferred\n', encoding="utf-8")
++    assert dry_run_lint.check_program(ok) is None
+diff --git a/tests/test_write_barrier.py b/tests/test_write_barrier.py
+index a696f99..bd57f44 100644
+--- a/tests/test_write_barrier.py
++++ b/tests/test_write_barrier.py
+@@ -36,6 +36,29 @@ def test_barrier_refuses_computed_path_rmtree(tmp_path):
+     assert rc != 0 and "write-barrier" in err
+ 
+ 
++def test_barrier_refuses_os_open_write_of_kernel(tmp_path):
++    """B013: os.open() raises the `open` audit event with mode=None and the write intent
++    in the integer flags. The old mode-only check let `os.open(kernel, O_WRONLY|O_TRUNC)`
++    truncate the kernel floor. It must now be refused."""
++    (tmp_path / "axon").mkdir()
++    (tmp_path / "axon" / "KERNEL-SLIM.md").write_text("floor", encoding="utf-8")
++    rc, err = _run("import os; fd=os.open('axon/KERNEL-SLIM.md', os.O_WRONLY|os.O_TRUNC); "
++                   "os.write(fd, b'')", tmp_path)
++    assert rc != 0 and "write-barrier" in err
++    # and the kernel content survived (the truncate never landed)
++    assert (tmp_path / "axon" / "KERNEL-SLIM.md").read_text() == "floor"
++
++
++def test_barrier_allows_os_open_readonly_of_kernel(tmp_path):
++    """The flags path must still let a read-only os.open (flags == O_RDONLY, no write bit)
++    through — the agent reads protected files constantly."""
++    (tmp_path / "axon").mkdir()
++    (tmp_path / "axon" / "KERNEL-SLIM.md").write_text("floor", encoding="utf-8")
++    rc, err = _run("import os; fd=os.open('axon/KERNEL-SLIM.md', os.O_RDONLY); os.close(fd)",
++                   tmp_path)
++    assert rc == 0, err
++
++
+ def test_barrier_allows_unprotected_write(tmp_path):
+     (tmp_path / "scratch").mkdir()
+     rc, err = _run("open('scratch/ok.txt','w').write('fine')", tmp_path)
+diff --git a/tools/dry_run_lint.py b/tools/dry_run_lint.py
+index b8f71d6..946accb 100644
+--- a/tools/dry_run_lint.py
++++ b/tools/dry_run_lint.py
+@@ -31,19 +31,54 @@ MUTATORS = (
+     "code-dev-partition.md",
+ )
+ 
++# A mutating library op is an executable call — it counts whether it opens the line
++# (after indent) OR is chained inline after a conditional arrow (`IF … → WRITE(…)`,
++# `ELSE → MKDIR(…)`). Anchoring to line-start only (the old `^\s*` + .match) let inline
++# mutators slip the gate entirely (B009). Matched with .search against a comment- and
++# string-stripped view (see _code_only) so op names living in prose/strings don't count.
+ _MUTATING_OP = re.compile(
+-    r"^\s*(?:WRITE|APPEND|MKDIR|COPY-FILE|COPY-RECURSIVE|COPY-DIR-CONTENTS|"
++    r"(?:^\s*|→\s*)(?:WRITE|APPEND|MKDIR|COPY-FILE|COPY-RECURSIVE|COPY-DIR-CONTENTS|"
+     r"DELETE-DIR|REPLACE-LINE|REPLACE-SECTION|REPLACE-PATH|TRUNCATE|CONCAT-FILES)\(")
+ _GUARD = re.compile(r"W:code-dev-dry-run")
+ 
+ 
++def _code_only(ln: str) -> str:
++    """Executable view of a line: drop the `#` comment tail and blank string interiors.
++    The dry-run guard token lives in a descriptive `# … W:code-dev-dry-run` comment on
++    every real mutator; matching the guard against the raw line let that comment satisfy
++    the gate even when the runtime `RETRIEVE(W:code-dev-dry-run)` guard was deleted (B010).
++    Blanking string bodies also stops an op name inside a literal from being read as a call."""
++    out = []
++    in_str = False
++    esc = False
++    for ch in ln:
++        if in_str:
++            if esc:
++                esc = False
++            elif ch == "\\":
++                esc = True
++            elif ch == '"':
++                in_str = False
++                out.append(ch)
++            continue                         # drop string-interior chars
++        if ch == '"':
++            in_str = True
++            out.append(ch)
++        elif ch == "#":
++            break                            # comment tail — not executable
++        else:
++            out.append(ch)
++    return "".join(out)
++
++
+ def check_program(path: Path) -> dict | None:
+     try:
+-        lines = path.read_text(encoding="utf-8").splitlines()
++        raw = path.read_text(encoding="utf-8").splitlines()
+     except OSError:
+         return {"file": path.name, "error": "unreadable"}
++    lines = [_code_only(ln) for ln in raw]
+     guard_at = next((i for i, ln in enumerate(lines, 1) if _GUARD.search(ln)), None)
+-    first_mut = next((i for i, ln in enumerate(lines, 1) if _MUTATING_OP.match(ln)), None)
++    first_mut = next((i for i, ln in enumerate(lines, 1) if _MUTATING_OP.search(ln)), None)
+     if first_mut is None:
+         return None                       # no mutating ops — nothing to guard
+     if guard_at is None:
+diff --git a/tools/write_barrier.py b/tools/write_barrier.py
+index 870f6d9..468dd9c 100644
+--- a/tools/write_barrier.py
++++ b/tools/write_barrier.py
+@@ -47,6 +47,12 @@ _PROTECTED_DELETE = ("axon/", "workspace/programs", "workspace/memory",
+ _DELETE_EVENTS = frozenset({"os.remove", "os.unlink", "os.rmdir", "os.removedirs",
+                             "shutil.rmtree"})
+ 
++# os.open reports the `open` audit event with mode=None and the write intent living in
++# the integer flags (args[2]); any of these bits means the descriptor can mutate. O_RDONLY
++# is 0, so a pure read (flags == O_RDONLY) yields no bit and is let through.
++_OPEN_WRITE_FLAGS = (os.O_WRONLY | os.O_RDWR | os.O_CREAT | os.O_TRUNC | os.O_APPEND
++                     | getattr(os, "O_EXCL", 0))
++
+ # Audit events that mutate the filesystem → (event name, arg-index of the path).
+ _WRITE_EVENTS = {
+     "open": 0,             # args: (path, mode, flags) — mode checked below
+@@ -94,11 +100,21 @@ def _hook(event: str, args) -> None:
+     idx = _WRITE_EVENTS.get(event)
+     if idx is None:
+         return
+-    # `open` mutates only in write/append/create/truncate modes.
++    # `open` mutates only in write/append/create/truncate modes. builtin open() reports the
++    # string mode (args[1]); os.open() reports mode=None and encodes the intent in the
++    # integer flags (args[2]) — inspecting only the mode fail-opened every os.open write/
++    # truncate of a protected subtree (B013). Read-only opens are still let through.
+     if event == "open":
+         mode = args[1] if len(args) > 1 else "r"
+-        if mode is None or (isinstance(mode, str) and not any(c in mode for c in "wax+")):
+-            return
++        flags = args[2] if len(args) > 2 else None
++        if isinstance(mode, str):
++            if not any(c in mode for c in "wax+"):
++                return
++        elif isinstance(flags, int):
++            if not (flags & _OPEN_WRITE_FLAGS):
++                return
++        else:
++            return                          # neither a write mode nor decodable flags
+     roots = _PROTECTED_DELETE if event in _DELETE_EVENTS else _PROTECTED_WRITE
+     for i in ({idx, 1} if event in ("os.rename", "os.replace") else {idx}):
+         if i < len(args):

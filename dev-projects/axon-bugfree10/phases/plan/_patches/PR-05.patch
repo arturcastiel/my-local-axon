@@ -1,0 +1,362 @@
+diff --git a/tests/test_axon_io_lint.py b/tests/test_axon_io_lint.py
+index dd87dd9..3e88c49 100644
+--- a/tests/test_axon_io_lint.py
++++ b/tests/test_axon_io_lint.py
+@@ -118,6 +118,40 @@ def test_multiple_raw_writes_per_file(tmp_path):
+     assert "write-text" in kinds
+ 
+ 
++# ---------------------------------------------------------------------------
++# B067 — literal-path open() where the mode is the 2nd string arg.  The old
++# regex captured only the first quoted string (the path) and, finding no valid
++# mode, silently passed — a raw write that bypassed atomic_write().
++# ---------------------------------------------------------------------------
++
++def test_detects_open_literal_path_write(tmp_path):
++    p = _write_py(tmp_path, "a.py", 'with open("out.json", "w") as f:\n    f.write("x")\n')
++    findings = ail.find_raw_writes(p)
++    assert len(findings) == 1
++    assert findings[0]["kind"] == "open-write"
++
++
++def test_detects_open_literal_path_append(tmp_path):
++    p = _write_py(tmp_path, "a.py", 'open("data/results.txt", "a").write(x)\n')
++    findings = ail.find_raw_writes(p)
++    assert len(findings) == 1
++    assert findings[0]["kind"] == "open-write"
++
++
++def test_detects_open_literal_path_write_nested_in_call(tmp_path):
++    p = _write_py(tmp_path, "a.py", 'json.dump(x, open("cache.json", "w"))\n')
++    findings = ail.find_raw_writes(p)
++    assert len(findings) == 1
++    assert findings[0]["kind"] == "open-write"
++
++
++def test_ignores_open_two_literal_read(tmp_path):
++    """Literal path + explicit read mode must still not be flagged."""
++    p = _write_py(tmp_path, "a.py", 'open("cache.json", "r").read()\n')
++    findings = ail.find_raw_writes(p)
++    assert findings == []
++
++
+ # ---------------------------------------------------------------------------
+ # lint() — integration with the WHITELIST
+ # ---------------------------------------------------------------------------
+diff --git a/tests/test_coherence_lint.py b/tests/test_coherence_lint.py
+index 1c7d5ed..45be3ea 100644
+--- a/tests/test_coherence_lint.py
++++ b/tests/test_coherence_lint.py
+@@ -1,4 +1,5 @@
+ """Tests for tools/coherence_lint.py — structural-coherence lint (axon-coherence-v2)."""
++import json
+ import sys
+ from pathlib import Path
+ 
+@@ -46,6 +47,39 @@ def test_compiled_with_source_is_clean(tmp_path):
+     assert all(d["kind"] != "orphan-compiled" for d in cl.check(ws, ax)["defects"])
+ 
+ 
++def _write_registry(ws, programs: dict):
++    """Overwrite REGISTRY.json with {name: entry} programs."""
++    (ws / "programs" / "REGISTRY.json").write_text(
++        json.dumps({"programs": programs}), encoding="utf-8")
++
++
++def test_unclassified_program_flagged(tmp_path):
++    # B067/C3: a program whose name matches no _NAME_CATEGORY key AND whose area
++    # is not in _AREA_CATEGORY falls through the taxonomy (silently defaulted to
++    # 'System & Config'). It must now be flagged, not swallowed.
++    ws, ax = _mk(tmp_path)
++    _write_registry(ws, {
++        "zzz-nowhere": {"status": "ACTIVE", "area": "totally-unknown-area",
++                        "description": "real program"},
++    })
++    r = cl.check(ws, ax)
++    assert not r["ok"]
++    assert any(d["kind"] == "unclassified" and d["name"] == "zzz-nowhere"
++               for d in r["defects"])
++
++
++def test_classified_program_not_flagged(tmp_path):
++    # A program with a known area (or matching name) is genuinely classified and
++    # must NOT be reported as unclassified.
++    ws, ax = _mk(tmp_path)
++    _write_registry(ws, {
++        "some-memory-prog": {"status": "ACTIVE", "area": "memory",
++                             "description": "real program"},
++    })
++    r = cl.check(ws, ax)
++    assert all(d["kind"] != "unclassified" for d in r["defects"])
++
++
+ def test_default_paths_are_absolute_and_cwd_independent():
+     # BF-006: the gate must scan the real tree regardless of cwd. Defaults were
+     # relative literals ("workspace"/"axon"), so off repo-root the scan was empty
+diff --git a/tests/test_deps_table_routes.py b/tests/test_deps_table_routes.py
+new file mode 100644
+index 0000000..0334007
+--- /dev/null
++++ b/tests/test_deps_table_routes.py
+@@ -0,0 +1,68 @@
++"""Tests for tools/deps.py — B070: table-routed EXEC() dependencies.
++
++Router programs (e.g. interactive.md's COMMAND VOCABULARY) dispatch real EXEC()
++targets from markdown table cells. The scanner used to skip *every* table row,
++dropping those deps so `deps check` failed open on the highest-fanout routers.
++"""
++import sys
++from pathlib import Path
++
++TOOLS = Path(__file__).resolve().parent.parent / "tools"
++sys.path.insert(0, str(TOOLS))
++
++import deps  # noqa: E402
++
++
++_ROUTER = """# PROGRAM: router
++
++## INPUTS
++| Name | Type | Required |
++|------|------|----------|
++| flag | bool | no |
++
++## COMMAND VOCABULARY
++| User types | Action |
++|------------|--------|
++| `resume` | EXEC(resume) — resume a session |
++| `translate [f]` | EXEC(translate, {source: [f]}) — human-readable |
++| `add tool [n]` | EXEC(register-tool, {name: [n]}) |
++
++### Non-table dispatch
++EXEC(mode-suggest)
++"""
++
++
++def _write(tmp_path, name, text):
++    p = tmp_path / f"{name}.md"
++    p.write_text(text, encoding="utf-8")
++    return str(p)
++
++
++def test_extract_deps_captures_table_routed_execs(tmp_path):
++    fp = _write(tmp_path, "router", _ROUTER)
++    execs = deps.extract_deps(fp)["exec"]
++    # non-table dep still present
++    assert "mode-suggest" in execs
++    # table-routed deps must now be captured (previously dropped)
++    for target in ("resume", "translate", "register-tool"):
++        assert target in execs, f"{target} missing from {execs}"
++
++
++def test_extract_deps_ignores_plain_doc_table_rows(tmp_path):
++    """A table with no EXEC()/TOOL() call must not inject phantom deps."""
++    text = ("# PROGRAM: doc\n\n## INPUTS\n"
++            "| Name | Type |\n|------|------|\n| foo | bool |\n")
++    fp = _write(tmp_path, "doc", text)
++    d = deps.extract_deps(fp)
++    assert d["exec"] == [] and d["tools"] == []
++
++
++def test_check_flags_broken_table_route(tmp_path):
++    """A table-routed EXEC target that does not exist is now reported (not fail-open)."""
++    (tmp_path / "programs").mkdir()
++    (tmp_path / "programs" / "router.md").write_text(
++        "# PROGRAM: router\n\n| cmd | action |\n|-----|--------|\n"
++        "| `x` | EXEC(does-not-exist) |\n", encoding="utf-8")
++    graph = deps.build_graph(str(tmp_path), str(tmp_path / "no-axon"))
++    assert "does-not-exist" in graph["router"]["deps"]["exec"]
++    assert "does-not-exist" not in graph  # target program is genuinely missing
+diff --git a/tests/test_harness_conformance.py b/tests/test_harness_conformance.py
+index 3888b71..88694f1 100644
+--- a/tests/test_harness_conformance.py
++++ b/tests/test_harness_conformance.py
+@@ -32,3 +32,39 @@ def test_fully_declared_adapter_passes(tmp_path):
+ def test_readme_is_not_treated_as_adapter(tmp_path):
+     (tmp_path / "README.md").write_text("just docs, no caps")
+     assert hc.check(tmp_path)["ok"] is True   # README skipped, no adapters → ok
++
++
++# ---------------------------------------------------------------------------
++# B072 — substring matching fails open: a cap mentioned only in a comment (never
++# actually STORE-declared) must not satisfy the gate.
++# ---------------------------------------------------------------------------
++
++def test_comment_only_cap_is_flagged(tmp_path):
++    caps = "\n".join(f'STORE(L:host-cap-{c}, "self")'
++                     for c in hc.REQUIRED_CAPS if c != "enforce")
++    (tmp_path / "foo.md").write_text(
++        'STORE(L:host-harness, "Foo")\n'
++        '# TODO wire host-cap-enforce\n'
++        f'{caps}\n')
++    r = hc.check(tmp_path)
++    assert r["ok"] is False
++    assert any("host-cap-enforce" in issue
++               for v in r["violations"] for issue in v["issues"])
++
++
++def test_comment_only_host_harness_is_flagged(tmp_path):
++    caps = "\n".join(f'STORE(L:host-cap-{c}, "self")' for c in hc.REQUIRED_CAPS)
++    (tmp_path / "bar.md").write_text(
++        '# this adapter mentions host-harness only in a comment\n' + caps + "\n")
++    r = hc.check(tmp_path)
++    assert r["ok"] is False
++    assert any("host-harness" in issue
++               for v in r["violations"] for issue in v["issues"])
++
++
++def test_generic_fallback_without_host_harness_passes(tmp_path):
++    """generic.md deliberately leaves host-harness unset — still conformant."""
++    caps = "\n".join(f'STORE(L:host-cap-{c}, "self")' for c in hc.REQUIRED_CAPS)
++    (tmp_path / "generic.md").write_text(
++        '# Fallback — leaves L:host-harness unset by design.\n' + caps + "\n")
++    assert hc.check(tmp_path)["ok"] is True
+diff --git a/tools/axon_io_lint.py b/tools/axon_io_lint.py
+index 7e4b4e4..34a9341 100644
+--- a/tools/axon_io_lint.py
++++ b/tools/axon_io_lint.py
+@@ -35,6 +35,9 @@ WHITELIST: frozenset = frozenset({
+     "queue_tool",
+     "events",
+     "cron",
++    # __main__ self-demo intentionally attempts a raw kernel write to prove the
++    # audit-hook REFUSES it — routing it through atomic_write would defeat the demo.
++    "write_barrier",
+     # --- pending migration to atomic_write / atomic_append ---
+     "_axon_lib",
+     "anticipate",
+@@ -122,10 +125,13 @@ WHITELIST: frozenset = frozenset({
+ # Detection
+ # ---------------------------------------------------------------------------
+ 
+-# Matches any quoted string that could be a mode arg to open().
+-# We then filter by _is_write_mode to keep only 'w'/'a' modes and
+-# exclude 'r', 'rb', 'r+', etc.
+-_OPEN_RE = re.compile(r"""\bopen\s*\([^)]*?['"]([^'"]+)['"]""")
++# Match an open(...) call and capture its whole argument list up to the first
++# ')'.  We then inspect *every* quoted string inside those args and keep the call
++# only if one of them is a real write/append mode (via _is_write_mode).  Capturing
++# just the first quoted string (the old behaviour) missed raw writes where the
++# path is a literal and the mode is the 2nd string arg, e.g. open("out.json","w").
++_OPEN_CALL_RE = re.compile(r"""\bopen\s*\(([^)]*)""")
++_QUOTED_RE = re.compile(r"""['"]([^'"]+)['"]""")
+ 
+ # Path.write_text(...) / Path.write_bytes(...)
+ _WRITE_TEXT_RE = re.compile(r"""\.write_text\s*\(""")
+@@ -168,8 +174,9 @@ def find_raw_writes(path: Path) -> list[dict]:
+     for lineno, raw_line in enumerate(text.splitlines(), 1):
+         line = _strip_line_comment(raw_line)
+         matched = False
+-        for m in _OPEN_RE.finditer(line):
+-            if _is_write_mode(m.group(1)):
++        for m in _OPEN_CALL_RE.finditer(line):
++            args = m.group(1)
++            if any(_is_write_mode(q) for q in _QUOTED_RE.findall(args)):
+                 findings.append({"lineno": lineno, "kind": "open-write",
+                                   "snippet": raw_line.strip()[:80]})
+                 matched = True
+diff --git a/tools/coherence_lint.py b/tools/coherence_lint.py
+index 43058f9..a41acaa 100644
+--- a/tools/coherence_lint.py
++++ b/tools/coherence_lint.py
+@@ -22,6 +22,21 @@ def _program_names(progdir: Path) -> set:
+     return {p.stem for p in progdir.glob("*.md") if not p.name.startswith("_")}
+ 
+ 
++def _has_real_category(pr, name: str, area: str) -> bool:
++    """True if the program matches a real menu category (name pattern or known area).
++
++    `programs_registry._menu_category` never returns a falsy value — an unmatched
++    program silently gets the catch-all default ``_AREA_CATEGORY.get(area, "System &
++    Config")``. So a program that matches *neither* a `_NAME_CATEGORY` key nor a
++    known `_AREA_CATEGORY` area has genuinely fallen through the taxonomy; this
++    reproduces `_menu_category`'s own matching to tell the two cases apart.
++    """
++    for key in pr._NAME_CATEGORY:
++        if name == key or name.startswith(key):
++            return True
++    return area in pr._AREA_CATEGORY
++
++
+ def check(workspace: Path, axon: Path) -> dict:
+     defects = []
+     os_progs = _program_names(axon / "programs")
+@@ -50,10 +65,15 @@ def check(workspace: Path, axon: Path) -> dict:
+         for name, entry in data.get("programs", {}).items():
+             if not pr._is_listable(entry):
+                 continue
+-            cat = pr._menu_category(name, entry.get("area", ""))
+-            if not cat:
++            area = entry.get("area", "")
++            # _menu_category never returns a falsy value, so `not cat` is dead:
++            # a genuine fall-through is one that reaches the catch-all default
++            # instead of a real name/area match.
++            if not _has_real_category(pr, name, area):
++                cat = pr._menu_category(name, area)
+                 defects.append({"kind": "unclassified", "name": name,
+-                                "detail": "no menu category"})
++                                "detail": f"falls through menu taxonomy "
++                                          f"(silently defaulted to {cat!r})"})
+     except Exception as ex:  # a broken menu mapping is itself a coherence defect
+         defects.append({"kind": "menu-check-error", "detail": str(ex)})
+ 
+diff --git a/tools/deps.py b/tools/deps.py
+index 20f55f1..8b6612f 100644
+--- a/tools/deps.py
++++ b/tools/deps.py
+@@ -61,7 +61,11 @@ def extract_deps(filepath):
+             continue
+         if re.match(r'\s*#', l):            # comment lines
+             continue
+-        if re.match(r'\s*\|', l):           # markdown table rows
++        # Markdown table rows are usually doc/INPUTS tables, but router programs
++        # (e.g. interactive.md's COMMAND VOCABULARY) dispatch real EXEC()/TOOL()
++        # targets from table cells. Skip a table row only when it carries no such
++        # call — dropping every row hid the highest-fanout routers' deps (fail-open).
++        if re.match(r'\s*\|', l) and "EXEC(" not in l and "TOOL(" not in l:
+             continue
+         if re.match(r'\s*`', l):            # inline code lines
+             continue
+diff --git a/tools/harness_conformance.py b/tools/harness_conformance.py
+index fbe5d2e..7582a23 100644
+--- a/tools/harness_conformance.py
++++ b/tools/harness_conformance.py
+@@ -19,16 +19,36 @@ HARNESS_DIR = ROOT / "workspace" / "harness"
+ REQUIRED_CAPS = ("boot", "reanchor", "enforce", "log", "tools", "backstop")
+ 
+ 
++def _declares(text: str, key: str) -> bool:
++    """True if *text* has a real (non-comment) ``STORE(L:<key>...)`` declaration.
++
++    A bare substring match fails open: a capability named only inside a comment
++    (e.g. ``# TODO wire host-cap-enforce``) would satisfy the gate even though the
++    adapter never actually declares it. Only STORE lines that are not commented out
++    count as a real declaration.
++    """
++    needle = f"STORE(L:{key}"
++    for line in text.splitlines():
++        if line.lstrip().startswith("#"):
++            continue
++        if needle in line:
++            return True
++    return False
++
++
+ def check(harness_dir: Path) -> dict:
+     adapters = [p for p in sorted(harness_dir.glob("*.md")) if p.stem != "README"]
+     violations = []
+     for p in adapters:
+         text = p.read_text(encoding="utf-8")
+         issues = []
+-        if "host-harness" not in text:
++        # generic.md is the documented "unknown host" fallback: it deliberately
++        # leaves L:host-harness unset so the identity gate renders the bare AXON
++        # identity. Every other adapter must really declare the harness.
++        if p.stem != "generic" and not _declares(text, "host-harness"):
+             issues.append("missing L:host-harness")
+         for cap in REQUIRED_CAPS:
+-            if f"host-cap-{cap}" not in text:
++            if not _declares(text, f"host-cap-{cap}"):
+                 issues.append(f"missing host-cap-{cap}")
+         if issues:
+             violations.append({"adapter": p.stem, "issues": issues})

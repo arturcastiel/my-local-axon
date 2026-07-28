@@ -1,0 +1,200 @@
+diff --git a/tests/test_bugfix10_pr19_code_dev_marshaling.py b/tests/test_bugfix10_pr19_code_dev_marshaling.py
+new file mode 100644
+index 0000000..ce1c8e8
+--- /dev/null
++++ b/tests/test_bugfix10_pr19_code_dev_marshaling.py
+@@ -0,0 +1,70 @@
++"""Content pins for axon-bugfree10 PR-19 — code-dev arg/tool/result marshaling.
++
++These programs are LLM-interpreted, so the mechanical surface (the source text)
++is the contract. Each pin cites the bug it guards: the dead/buggy marshaling must
++stay dead, and the repaired marshaling must stay present.
++"""
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parent.parent
++PROG = ROOT / "workspace" / "programs"
++
++
++def _read(name: str) -> str:
++    """Program source with comment lines stripped — pins govern executable ops;
++    explanatory comments may name the dead patterns they replaced."""
++    lines = (PROG / name).read_text(encoding="utf-8").splitlines()
++    return "\n".join(l for l in lines if not l.lstrip().startswith("#"))
++
++
++# ── B035: changelog reads 02-prs.md as a bullet list, not a table ─────────────
++
++def test_changelog_does_not_table_extract_02prs():
++    src = _read("code-dev-changelog.md")
++    # dead: 02-prs.md is a bullet list; table-rows extraction + col5 filter always empty
++    assert "table-rows=true" not in src
++    assert 'col5="merged"' not in src
++    assert "p.col0" not in src and "p.col1" not in src
++
++
++def test_changelog_parses_status_line_for_merged():
++    src = _read("code-dev-changelog.md")
++    assert "Status:" in src               # the real status carrier in 02-prs.md
++    assert 'CONTAINS "merged"' in src     # filter on status text
++    assert "p.id" in src and "p.title" in src
++
++
++# ── B037: shadow SCAN appends to the tool-returned shadow_path ────────────────
++
++def test_shadow_scan_uses_returned_shadow_path_for_appends():
++    src = _read("code-dev-knowledge-shadow.md")
++    # dead: rel-path-based append target never exists (init used the abs-path convention)
++    assert "{shadow-dir}/{rel-path}.findings.md" not in src
++    assert "sh ← TOOL(shadow, init" in src
++    assert src.count("--shadow-path {sh.shadow_path}") == 4
++
++
++# ── B038: meta igap passes an integer to --days ───────────────────────────────
++
++def test_meta_igap_strips_day_suffix_before_days_flag():
++    src = _read("code-dev-meta-igap.md")
++    assert "--days {since}" not in src          # dead: "7d" is not an int
++    assert "--days {since-days}" in src
++    assert "since-days ←" in src
++
++
++# ── B041: shadow append has no --date flag ────────────────────────────────────
++
++def test_pr_review_shadow_append_has_no_date_flag():
++    src = _read("code-dev-pr-review.md")
++    assert "--date {ts.date}" not in src        # dead: argparse exit 2, write dropped
++
++
++# ── B043: state-resume unwraps the shell envelope .stdout ─────────────────────
++
++def test_state_resume_unwraps_git_branch_stdout():
++    src = _read("code-dev-state-resume.md")
++    # dead: binding the whole envelope to git-branch (no .stdout unwrap)
++    assert 'git-branch   ← IF codebase ≠ ∅ →' not in src
++    assert "git-branch-r ←" in src
++    assert "git-branch-r.stdout" in src
+diff --git a/workspace/programs/code-dev-changelog.md b/workspace/programs/code-dev-changelog.md
+index 124c253..b86e6bd 100644
+--- a/workspace/programs/code-dev-changelog.md
++++ b/workspace/programs/code-dev-changelog.md
+@@ -38,8 +38,20 @@ profile ← READ("{proj-dir}/_profile.md") | ∅
+ phase ← meta.phase
+ phase-dir ← "{proj-dir}/phases/{phase}"
+ 
+-prs ← EXTRACT(READ("{phase-dir}/02-prs.md"), table-rows=true, skip-header=true)
+-merged-prs ← FILTER(prs, col5="merged")
++# 02-prs.md is authored by code-dev-plan.md as a bullet list (NOT a markdown table):
++# each PR is a '## {id} — {title}' section with a '- **Status:** ...' line updated in place.
++# Table-row extraction returns nothing here, so parse the sections and keep those whose
++# Status line indicates merged.
++prs-content ← READ("{phase-dir}/02-prs.md")
++pr-blocks ← EXTRACT(prs-content, split="\n## ", mode=sections)
++merged-prs ← []
++∀ block in pr-blocks →
++  header ← FIRST-LINE(block)
++  id     ← EXTRACT(header, pattern="PR-\\d+") | ∅
++  title  ← EXTRACT(header, pattern="—\\s*(.+?)\\s*$", group=1) | id
++  status ← EXTRACT(block, pattern="- \\*\\*Status:\\*\\* (.+)", group=1) | ""
++  IF id ≠ ∅ AND status CONTAINS "merged" →
++    merged-prs ← merged-prs + [{id: id, title: title}]
+ 
+ ts ← TOOL(clock)
+ draft ← "## {phase} — {ts.date}\n\n"
+@@ -47,10 +59,10 @@ IF COUNT(merged-prs) ≡ 0 →
+   draft ← draft + "_(no merged PRs in this phase yet)_\n"
+ ELSE →
+   ∀ p in merged-prs →
+-    spec-path ← IF FILE-EXISTS("{phase-dir}/03-prs/{p.col0}.md") → "{phase-dir}/03-prs/{p.col0}.md" | "{proj-dir}/03-prs/{p.col0}.md"
++    spec-path ← IF FILE-EXISTS("{phase-dir}/03-prs/{p.id}.md") → "{phase-dir}/03-prs/{p.id}.md" | "{proj-dir}/03-prs/{p.id}.md"
+     spec ← READ(spec-path) | ""
+-    sum  ← EXTRACT(spec, section="## Summary", first-paragraph=true) | p.col1
+-    draft ← draft + "- **{p.col0}** {p.col1}\n  {sum}\n\n"
++    sum  ← EXTRACT(spec, section="## Summary", first-paragraph=true) | p.title
++    draft ← draft + "- **{p.id}** {p.title}\n  {sum}\n\n"
+ 
+ # Show draft + ask
+ → "▶ AXON / code-dev changelog  ·  [{phase}]"
+diff --git a/workspace/programs/code-dev-knowledge-shadow.md b/workspace/programs/code-dev-knowledge-shadow.md
+index 2346234..664a399 100644
+--- a/workspace/programs/code-dev-knowledge-shadow.md
++++ b/workspace/programs/code-dev-knowledge-shadow.md
+@@ -322,14 +322,18 @@ IF confirm-scan ≡ "new-only"   → process-list ← new-files
+     arch-role:    EXTRACT(content, "how this file fits in the system"),
+   }
+ 
+-  TOOL(shadow, init,
++  # shadow init derives the shadow path from the ABSOLUTE file path (_shadow_path_for strips
++  # only the leading '/'), so bind its returned shadow_path and append to THAT — appending to
++  # {shadow-dir}/{rel-path}.findings.md targets a non-existent file and silently no-ops.
++  # (REFRESH does this correctly via the tool-returned {f.shadow}.)
++  sh ← TOOL(shadow, init,
+        "--file {abs-path} --shadow-dir {shadow-dir} --hash {h.hash} --force
+         --branch {git-branch} --commit {git-commit} --commit-msg {git-msg[:80]}
+         --caller-program code-dev-knowledge-shadow --caller-project {RETRIEVE(W:code-dev-project)}")
+-  TOOL(shadow, append, "--shadow-path {shadow-dir}/{rel-path}.findings.md --section summary     --content {analysis.summary}")
+-  TOOL(shadow, append, "--shadow-path {shadow-dir}/{rel-path}.findings.md --section structures  --content {analysis.structures}")
+-  TOOL(shadow, append, "--shadow-path {shadow-dir}/{rel-path}.findings.md --section dependencies --content {analysis.dependencies}")
+-  TOOL(shadow, append, "--shadow-path {shadow-dir}/{rel-path}.findings.md --section arch-role   --content {analysis.arch-role}")
++  TOOL(shadow, append, "--shadow-path {sh.shadow_path} --section summary     --content {analysis.summary}")
++  TOOL(shadow, append, "--shadow-path {sh.shadow_path} --section structures  --content {analysis.structures}")
++  TOOL(shadow, append, "--shadow-path {sh.shadow_path} --section dependencies --content {analysis.dependencies}")
++  TOOL(shadow, append, "--shadow-path {sh.shadow_path} --section arch-role   --content {analysis.arch-role}")
+   → "  ✓ {rel-path}"
+ 
+ → ""
+diff --git a/workspace/programs/code-dev-meta-igap.md b/workspace/programs/code-dev-meta-igap.md
+index a223080..5654648 100644
+--- a/workspace/programs/code-dev-meta-igap.md
++++ b/workspace/programs/code-dev-meta-igap.md
+@@ -58,7 +58,10 @@ IF sub ≡ "record":
+   EMIT(code-dev.igap.recorded, {context: "{ctx-r}", type: "{type}"})
+   → "✓ igap recorded ({type})"
+ ELSE IF sub ≡ "list":
+-  TOOL(igap, report, "--days {since}")  → text-report
++  # --since is authored as "7d" (human form) but igap's --days is int-typed; strip the
++  # trailing 'd' so `--days 7d` → `--days 7` instead of argparse `invalid int value: '7d'`.
++  since-days ← EXTRACT(since, pattern="\\d+") | since
++  TOOL(igap, report, "--days {since-days}")  → text-report
+ 
+ ## CALLER CONVENTION
+ Any code-dev program that issues `QUERY(user)` or HALT in a confidence
+diff --git a/workspace/programs/code-dev-pr-review.md b/workspace/programs/code-dev-pr-review.md
+index a007ad4..8031a7c 100644
+--- a/workspace/programs/code-dev-pr-review.md
++++ b/workspace/programs/code-dev-pr-review.md
+@@ -351,7 +351,10 @@ steps ← EXTRACT(harm, "^[0-9]+\.", mode=lines)
+   IF edited-file ≠ ∅ →
+     → "  After edit — update shadow for {edited-file}:"
+     QUERY(user): "What changed in {edited-file}? (describe the edit for shadow findings log):"
+-    TOOL(shadow, append, "--shadow-path {shadow-dir}/{edited-file}.findings.md --section findings --content {input} --date {ts.date}")
++    # shadow append has no --date flag (only --shadow-path/--section/--content/--context);
++    # passing --date makes argparse exit 2 and drops the write. Omit it (matches the sibling
++    # append at ~line 212).
++    TOOL(shadow, append, "--shadow-path {shadow-dir}/{edited-file}.findings.md --section findings --content {input}")
+     → "  ✔ shadow updated: {edited-file}"
+   → "  Verify: run grep check for this step, confirm returns 0."
+ 
+diff --git a/workspace/programs/code-dev-state-resume.md b/workspace/programs/code-dev-state-resume.md
+index 1621fca..75558e8 100644
+--- a/workspace/programs/code-dev-state-resume.md
++++ b/workspace/programs/code-dev-state-resume.md
+@@ -131,9 +131,15 @@ shadow-stats ← TOOL(shadow, stats, "--shadow-dir {shadow-dir}") | ∅
+ 
+ ## ─── BRANCH STATE ──────────────────────────────────────────────────────
+ codebase     ← proj-meta.codebase | ∅
+-git-branch   ← IF codebase ≠ ∅ →
+-                 TOOL(shell, "git -C {codebase} branch --show-current 2>/dev/null") | "not-a-repo"
+-               | "—"
++# TOOL(shell) returns an envelope {ok,verdict,stdout,…} — bind it, then unwrap .stdout
++# (sibling codemap-new.md does the same). Binding the whole envelope would make every
++# comparison below false and interpolate the raw dict into the resume marker.
++git-branch-r ← IF codebase ≠ ∅ →
++                 TOOL(shell, "git -C {codebase} branch --show-current 2>/dev/null") | ∅
++               | ∅
++git-branch   ← IF codebase ≡ ∅ → "—"
++             | TRIM(git-branch-r.stdout) ≠ "" → TRIM(git-branch-r.stdout)
++             | "not-a-repo"
+ branch-state ← IF git-branch ≡ meta-branch → "✓"
+               | IF git-branch ≡ "not-a-repo" OR git-branch ≡ "—" → "?"
+               | "⚠ drift"

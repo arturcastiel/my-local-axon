@@ -1,0 +1,299 @@
+diff --git a/tests/test_rules/test_r_identity_lock.py b/tests/test_rules/test_r_identity_lock.py
+index aa00a2d..11f23f3 100644
+--- a/tests/test_rules/test_r_identity_lock.py
++++ b/tests/test_rules/test_r_identity_lock.py
+@@ -62,6 +62,55 @@ STORE(W:active-program, "backwards")
+ 
+     def test_required_activation_blocks(self) -> None:
+         text = '''EXEC(thing)
++'''
++        v = rid.check({
++            "program_text": text,
++            "state": {"identity_lock_required": "true"},
++        })
++        assert v is not None
++        assert v.severity == "BLOCK"
++
++    # --- B026: EXEC mentioned in a comment must not trigger a spurious
++    #     "EXEC appears BEFORE STORE" ordering violation. ---
++    def test_exec_in_comment_above_store_does_not_false_positive(self) -> None:
++        text = '''# PROGRAM: ok
++# Usage: this eventually calls EXEC(runner)
++STORE(W:active-program, "demo")
++EXEC(runner)
++'''
++        v = rid.check({
++            "program_text": text,
++            "state": {"identity_lock_required": "true"},
++        })
++        assert v is None, (
++            f"comment EXEC must not count as first EXEC; got: "
++            f"{getattr(v, 'reason', None)}"
++        )
++
++    # --- B027: a STORE(W:active-program,...) that lives only in a comment
++    #     must NOT satisfy the gate when there is no real store. ---
++    def test_store_only_in_comment_does_not_satisfy_gate(self) -> None:
++        text = '''# PROGRAM: sneaky
++# Example usage: STORE(W:active-program, "demo")
++STORE(W:goal, "x")
++EXEC(sub-program)
++'''
++        v = rid.check({
++            "program_text": text,
++            "state": {"identity_lock_required": "true"},
++        })
++        assert v is not None, "commented STORE must not satisfy identity lock"
++        assert v.severity == "BLOCK"
++        assert "does NOT" in v.reason or "not" in v.reason.lower()
++
++    # --- doc-section example must also be exempt ---
++    def test_store_in_help_section_does_not_satisfy_gate(self) -> None:
++        text = '''# PROGRAM: sneaky2
++STORE(W:goal, "x")
++EXEC(sub-program)
++
++## HELP
++STORE(W:active-program, "demo")
+ '''
+         v = rid.check({
+             "program_text": text,
+diff --git a/tests/test_rules/test_r_phase_tracked.py b/tests/test_rules/test_r_phase_tracked.py
+index afb5120..d7dff4d 100644
+--- a/tests/test_rules/test_r_phase_tracked.py
++++ b/tests/test_rules/test_r_phase_tracked.py
+@@ -68,3 +68,41 @@ DONE(pure)
+                 'TOOL(phase-ledger, "record", "--program ok --phase start")\n'
+                 'CLEAR(W:active-program)\n')
+         assert rpt.check({"program_text": text}) is None
++
++    # --- B028: a phase-ledger record call that lives only in a comment
++    #     must NOT satisfy the gate — the program never really records. ---
++    def test_phase_ledger_only_in_comment_does_not_satisfy_gate(self) -> None:
++        text = ('STORE(W:active-program, "demo")\n'
++                '# later you might: TOOL(phase-ledger, record, ...)\n'
++                'EXEC(sub)\n'
++                'CLEAR(W:active-program)\n')
++        v = rpt.check({
++            "program_text": text,
++            "state": {"phase_tracking_required": "true"},
++        })
++        assert v is not None, "commented phase-ledger call must not pass G-02"
++        assert v.severity == "BLOCK"
++
++    def test_phase_ledger_in_help_section_does_not_satisfy_gate(self) -> None:
++        text = ('STORE(W:active-program, "demo")\n'
++                'EXEC(sub)\n'
++                'CLEAR(W:active-program)\n'
++                '\n'
++                '## HELP\n'
++                'TOOL(phase-ledger, record, "--program demo --phase start")\n')
++        v = rpt.check({
++            "program_text": text,
++            "state": {"phase_tracking_required": "true"},
++        })
++        assert v is not None
++        assert v.severity == "BLOCK"
++
++    def test_store_only_in_comment_makes_rule_na(self) -> None:
++        # A commented STORE(W:active-program) must not make the program look
++        # like it takes ownership — no real store means rule is N/A (None).
++        text = ('# Example: STORE(W:active-program, "demo")\n'
++                '→ "read only"\n')
++        assert rpt.check({
++            "program_text": text,
++            "state": {"phase_tracking_required": "true"},
++        }) is None
+diff --git a/tools/rules/r_identity_lock.py b/tools/rules/r_identity_lock.py
+index a1dac78..7b93edb 100644
+--- a/tools/rules/r_identity_lock.py
++++ b/tools/rules/r_identity_lock.py
+@@ -40,6 +40,73 @@ _STORE_RE = re.compile(
+ )
+ _EXEC_RE = re.compile(r'EXEC\(')
+ 
++# Doc-only markdown sections whose bodies are human documentation, not
++# executable AXON-LANG. EXEC/STORE tokens appearing here are examples.
++_DOC_SECTIONS = {
++    "HELP", "PURPOSE", "OVERVIEW", "RATIONALE", "NOTES",
++    "EXAMPLES", "EXAMPLE", "DESCRIPTION", "WHY", "WHEN",
++    "AUTHORING-NOTES",
++}
++_SECTION_RE = re.compile(r'^##\s*([A-Z][A-Z\-/ ]*)', re.MULTILINE)
++
++
++def _doc_section_ranges(text: str) -> list:
++    """Return [start, end) ranges that belong to doc-only sections."""
++    ranges = []
++    headers = list(_SECTION_RE.finditer(text))
++    for i, m in enumerate(headers):
++        name = m.group(1).strip().rstrip(":").upper().replace(" ", "-")
++        if name not in _DOC_SECTIONS:
++            continue
++        start = m.start()
++        end = headers[i + 1].start() if i + 1 < len(headers) else len(text)
++        ranges.append((start, end))
++    return ranges
++
++
++def _in_exempt_range(pos: int, ranges: list) -> bool:
++    return any(lo <= pos < hi for lo, hi in ranges)
++
++
++def _in_quoted_string(text: str, pos: int) -> bool:
++    """True if pos is inside a single/double-quoted string on its line."""
++    line_start = text.rfind("\n", 0, pos) + 1
++    line_so_far = text[line_start:pos]
++    in_single = in_double = False
++    i = 0
++    while i < len(line_so_far):
++        c = line_so_far[i]
++        if c == "\\" and i + 1 < len(line_so_far):
++            i += 2
++            continue
++        if c == "'" and not in_double:
++            in_single = not in_single
++        elif c == '"' and not in_single:
++            in_double = not in_double
++        i += 1
++    return in_single or in_double
++
++
++def _in_comment(text: str, pos: int) -> bool:
++    line_start = text.rfind("\n", 0, pos) + 1
++    line = text[line_start:pos]
++    return line.lstrip().startswith("#")
++
++
++def _first_real_match(regex, text: str, exempt_ranges: list):
++    """First regex match whose start is not in a comment, quoted string,
++    or doc-only section — i.e. a real AXON-LANG op, not documentation."""
++    for m in regex.finditer(text):
++        pos = m.start()
++        if _in_exempt_range(pos, exempt_ranges):
++            continue
++        if _in_quoted_string(text, pos):
++            continue
++        if _in_comment(text, pos):
++            continue
++        return m
++    return None
++
+ 
+ def _is_required(state: dict) -> bool:
+     if "identity_lock_required" in state:
+@@ -69,12 +136,14 @@ def check(ctx):
+     if not text:
+         return None
+ 
+-    first_exec = _EXEC_RE.search(text)
++    exempt_ranges = _doc_section_ranges(text)
++
++    first_exec = _first_real_match(_EXEC_RE, text, exempt_ranges)
+     if first_exec is None:
+-        # Pure helper: no EXEC, nothing to enforce.
++        # Pure helper: no (real) EXEC, nothing to enforce.
+         return None
+ 
+-    store_match = _STORE_RE.search(text)
++    store_match = _first_real_match(_STORE_RE, text, exempt_ranges)
+     state = ctx.get("state") or {}
+     required = _is_required(state)
+     block_sev = "BLOCK" if required else "WARN"
+diff --git a/tools/rules/r_phase_tracked.py b/tools/rules/r_phase_tracked.py
+index 2470a67..c054107 100644
+--- a/tools/rules/r_phase_tracked.py
++++ b/tools/rules/r_phase_tracked.py
+@@ -40,6 +40,73 @@ _PHASE_LEDGER_RE = re.compile(
+     r'TOOL\(\s*phase-ledger\s*,\s*["\']?record["\']?'
+ )
+ 
++# Doc-only markdown sections whose bodies are human documentation, not
++# executable AXON-LANG. STORE / phase-ledger tokens here are examples.
++_DOC_SECTIONS = {
++    "HELP", "PURPOSE", "OVERVIEW", "RATIONALE", "NOTES",
++    "EXAMPLES", "EXAMPLE", "DESCRIPTION", "WHY", "WHEN",
++    "AUTHORING-NOTES",
++}
++_SECTION_RE = re.compile(r'^##\s*([A-Z][A-Z\-/ ]*)', re.MULTILINE)
++
++
++def _doc_section_ranges(text: str) -> list:
++    """Return [start, end) ranges that belong to doc-only sections."""
++    ranges = []
++    headers = list(_SECTION_RE.finditer(text))
++    for i, m in enumerate(headers):
++        name = m.group(1).strip().rstrip(":").upper().replace(" ", "-")
++        if name not in _DOC_SECTIONS:
++            continue
++        start = m.start()
++        end = headers[i + 1].start() if i + 1 < len(headers) else len(text)
++        ranges.append((start, end))
++    return ranges
++
++
++def _in_exempt_range(pos: int, ranges: list) -> bool:
++    return any(lo <= pos < hi for lo, hi in ranges)
++
++
++def _in_quoted_string(text: str, pos: int) -> bool:
++    """True if pos is inside a single/double-quoted string on its line."""
++    line_start = text.rfind("\n", 0, pos) + 1
++    line_so_far = text[line_start:pos]
++    in_single = in_double = False
++    i = 0
++    while i < len(line_so_far):
++        c = line_so_far[i]
++        if c == "\\" and i + 1 < len(line_so_far):
++            i += 2
++            continue
++        if c == "'" and not in_double:
++            in_single = not in_single
++        elif c == '"' and not in_single:
++            in_double = not in_double
++        i += 1
++    return in_single or in_double
++
++
++def _in_comment(text: str, pos: int) -> bool:
++    line_start = text.rfind("\n", 0, pos) + 1
++    line = text[line_start:pos]
++    return line.lstrip().startswith("#")
++
++
++def _first_real_match(regex, text: str, exempt_ranges: list):
++    """First regex match whose start is not in a comment, quoted string,
++    or doc-only section — i.e. a real AXON-LANG op, not documentation."""
++    for m in regex.finditer(text):
++        pos = m.start()
++        if _in_exempt_range(pos, exempt_ranges):
++            continue
++        if _in_quoted_string(text, pos):
++            continue
++        if _in_comment(text, pos):
++            continue
++        return m
++    return None
++
+ 
+ def _is_required(state: dict) -> bool:
+     """Read L:phase-tracking-required from state or longterm disk."""
+@@ -66,13 +133,15 @@ def check(ctx):
+     if not text:
+         return None
+ 
+-    store_match = _STORE_ACTIVE_RE.search(text)
++    exempt_ranges = _doc_section_ranges(text)
++
++    store_match = _first_real_match(_STORE_ACTIVE_RE, text, exempt_ranges)
+     if store_match is None:
+         # Program doesn't take ownership of execution — rule N/A.
+         return None
+ 
+-    if _PHASE_LEDGER_RE.search(text):
+-        # Has at least one TOOL(phase-ledger, record, ...) — compliant.
++    if _first_real_match(_PHASE_LEDGER_RE, text, exempt_ranges):
++        # Has at least one real TOOL(phase-ledger, record, ...) — compliant.
+         return None
+ 
+     state = ctx.get("state") or {}

@@ -1,0 +1,912 @@
+{
+ "project": "axon-bugfree10",
+ "note": "Remaining NON-KERNEL PRs (Stream N). Corrected paths. plan-done moved to kernel (excluded).",
+ "prs": [
+  {
+   "pr_id": "PR-01",
+   "title": "shell.py R9 write-gate: fix kernel anchor, redirect regex, and cd-cwd rebasing",
+   "depends_on": [],
+   "files": [
+    "tools/shell.py"
+   ],
+   "bugs": [
+    {
+     "id": "B001",
+     "file": "tools/shell.py",
+     "line": 490,
+     "severity": "critical",
+     "category": "gate-bypass-fail-open",
+     "summary": "R9 axon-write gate uses the wrong anchor: _is_axon_path passes `workspace` (=<repo>/workspace) to is_axon_path, so the classifier checks paths against the non-existent `<repo>/workspace/axon` instead of the real kernel dir `<repo>/axon`. Absolute (and `../axon/\u2026`) writes to the kernel are not recognized as axon writes.",
+     "failure_scenario": "With dev-mode OFF, `python3 tools/shell.py exec --argv \"cp /tmp/evil /home/arturcastiel/projects/new-axon/axon/axon/KERNEL-SLIM.md\"` is ALLOWED (axon_hits=[]) and overwrites the kernel, while the equivalent relative form `cp /tmp/evil axon/KERNEL-SLIM.md` is correctly BLOCKED (r9-axon-write). Confirmed empirically: shell._is_axon_path(abs_kernel, workspace)=False but the canonical is_axon_path(abs_kernel)=True. The unattended kernel-floor check (4b, line 742) also keys on axon_hits, so it is bypassed too. Fix: anchor to os.path.dirname(workspace) (the repo root) or use is_axon_path's default anchor."
+    },
+    {
+     "id": "B031",
+     "file": "tools/shell.py",
+     "line": 569,
+     "severity": "high",
+     "category": "regex-gap-fail-open",
+     "summary": "_extract_redirect_targets requires whitespace/start `(?:^|\\s)` immediately before the redirect operator, so a redirect with no space before `>` (`word>file`) is not extracted and its target is never R9-inspected.",
+     "failure_scenario": "With dev-mode OFF, `echo pwned>axon/KERNEL-SLIM.md` (no space before `>`) is ALLOWED and overwrites the kernel, whereas the spaced form `echo pwned > axon/KERNEL-SLIM.md` is BLOCKED (r9-axon-write). Confirmed: _extract_redirect_targets('echo pwned>axon/KERNEL-SLIM.md') returns []. `cmd>file` is valid shell, so this is a clean R9 bypass."
+    },
+    {
+     "id": "B032",
+     "file": "tools/shell.py",
+     "line": 588,
+     "severity": "high",
+     "category": "cwd-modeling-bypass",
+     "summary": "The gate recognizes and strips a leading `cd` (in _command_head) but no stage re-bases subsequent path resolution to the changed cwd. Each split segment's paths are resolved against `workspace`, so a `cd <dir> && <write/delete>` relocates the real cwd while the protected-delete and R9 checks inspect the wrong base.",
+     "failure_scenario": "With dev-mode OFF (and no unattended write-barrier), `cd axon && rm -rf core` is ALLOWED. subprocess runs with shell=True, so it cd's into the kernel dir and recursively deletes <repo>/axon/core (kernel core), yet _enforce_deletions/_is_axon_path resolve the target 'core' against workspace (workspace/core), never matching the protected `axon/` root. Confirmed empirically (ALLOWED). Equivalent for writes: `cd axon && echo x > KERNEL-SLIM.md`."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-06",
+   "title": "Green-gate integrity: test_runner returncode-aware verdict + quality_loop HMAC ramp",
+   "depends_on": [],
+   "files": [
+    "tools/quality_loop.py",
+    "tools/test_runner.py"
+   ],
+   "bugs": [
+    {
+     "id": "B033",
+     "file": "tools/test_runner.py",
+     "line": 190,
+     "severity": "high",
+     "category": "gate-bypass",
+     "summary": "The run verdict is computed only from failed==0, ignoring pytest collection/import errors and the process returncode, so a broken suite reports PASS (fail-open green gate).",
+     "failure_scenario": "Point `test-runner run --suite unit` at a suite where a test module has an import error (or the pytest-json-report plugin is missing so `--json-report-file` is rejected). pytest exits with returncode 2/4 and the json summary carries {passed:N, failed:0, error:1} (collection/error outcomes are never counted in parse_report's `failed`/`failures`, which only match outcome=='failed'). verdict = 'PASS' if summary['failed'] == 0 (line 190), returncode is captured but never consulted, so output.verdict='PASS' is printed and persisted to last-test-run.json. Downstream green-only gates (e.g. crucible/aegis) then treat a suite that never actually ran green as passing."
+    },
+    {
+     "id": "B025",
+     "file": "tools/quality_loop.py",
+     "line": 210,
+     "severity": "high",
+     "category": "gate-bypass-fail-open",
+     "summary": "ramp_record binds `state, _ = _ramp_load(ws)`, discarding the integrity_ok flag, then _ramp_save re-signs the loaded state \u2014 laundering hand-written/tampered clean cycles into a validly-signed state and bypassing the fail-closed HMAC ramp gate that gates S-fix autonomy.",
+     "failure_scenario": "An agent hand-writes loops/quality.ramp.json = {\"cycles\":[{\"n\":1,\"clean\":true},{\"n\":2,\"clean\":true},{\"n\":3,\"clean\":true}],\"locked\":false} with no/invalid 'sig'. ramp-status alone correctly denies (integrity_ok False -> s_fix_authorized False). The agent then runs `ramp-record --clean true --note x` once: _ramp_load returns the tampered 3-clean state, the discarded integrity flag is ignored, a 4th clean cycle is appended, and _ramp_save signs the whole array with the real key. Now ramp-status reports clean_streak=4, integrity_ok=True, s_fix_authorized=True \u2014 autonomy that was 'hand-asserted' (contradicting the module invariant at lines 141-143) is granted. ramp_lock/ramp_unlock re-sign loaded-but-unverified state the same way. Fix: when the state file is present but integrity_ok is False, refuse (or reset cycles) rather than re-signing."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-04",
+   "title": "Doctrine gates: fail-closed integrity, delimited receipt match, relative-path crash",
+   "depends_on": [],
+   "files": [
+    "tools/doctrine_arming.py",
+    "tools/doctrine_preflight.py"
+   ],
+   "bugs": [
+    {
+     "id": "B017",
+     "file": "tools/doctrine_arming.py",
+     "line": 60,
+     "severity": "high",
+     "category": "gate-bypass",
+     "summary": "_run_has_receipts matches receipts by undelimited substring `run {run_id}`, letting a forged run borrow a prefix-sibling run's committed receipts.",
+     "failure_scenario": "run_id is caller-supplied (doctrine_run.py --run-id, default None, used verbatim as rationale `run {run_id}`). record_clean_run for run_id='1' calls _run_has_receipts('1'), which checks `f'run 1' in rationale`. A legitimate run '10' emits a committed doctrine-node receipt with rationale 'run 10', which contains the substring 'run 1'. An attacker writes a forged doctrine-run-1.json with status='converged' (workspace/memory/working is agent-writable) but emits no receipts for run '1'. _run_converged('1') passes on the forged status, _run_has_receipts('1') falsely passes on run '10's receipt, verify_chain is intact, and with no host mirror present (_mirror_consistent returns None) the forged run is recorded as clean arming evidence \u2014 defeating the H2 guarantee that 'a fabricated run-id with no receipts is rejected' and advancing unattended arming."
+    },
+    {
+     "id": "B018",
+     "file": "tools/doctrine_preflight.py",
+     "line": 135,
+     "severity": "high",
+     "category": "unhandled-exception",
+     "summary": "preflight() crashes with an uncaught ValueError when the routine is given as a relative path and the tool is run from within the ROOT tree.",
+     "failure_scenario": "Run `python3 tools/doctrine_preflight.py programs/foo.routine.yml` from the axon/ directory (ROOT). The guard `str(ROOT) in str(p.resolve())` is True (p.resolve() prefixes cwd=ROOT), so the branch computes `p.relative_to(ROOT)` on the still-relative `p` (Path('programs/foo.routine.yml')). Path.relative_to raises ValueError ('one path is relative and the other is absolute') because it uses the unresolved `p`, not `p.resolve()`. The exception propagates out of preflight()/main() \u2014 the tool aborts with a traceback and produces no JSON result, breaking any caller that expects the {validated:...} report. Reproduced directly."
+    },
+    {
+     "id": "B019",
+     "file": "tools/doctrine_preflight.py",
+     "line": 144,
+     "severity": "high",
+     "category": "gate-bypass-fail-open",
+     "summary": "The integrity gate is fail-OPEN: it reports ok:true / note 'blessed' for any routine program_integrity.py does not track, defeating the documented fail-closed guarantee.",
+     "failure_scenario": "integrity.ok is computed as `(not _tampered) and (not _unblessed)`, i.e. 'not explicitly flagged', never 'positively confirmed blessed'. program_integrity.py `report` only lists files matching its COVERED/POWER globs (my-axon/dev-projects/*/*.routine.yml etc). (a) A poisoned in-tree routine placed OUTSIDE those globs (e.g. axon/my-axon/dev-projects/evil/graph.yml, wrong suffix, or a nested subdir) is never listed in `unblessed` or `tampered`, so _tampered=_unblessed=False, _in_tree=True -> integrity ok=True with note falsely 'blessed', and preflight returns validated:true for a never-blessed file \u2014 exactly the injection class the code claims to close. (b) If the program_integrity subprocess errors/times out (120s) and prints no JSON, `_run_json` returns {'ok': False} with no 'tampered'/'unblessed' keys, so both `intg.get(...,[])` are empty and integrity ok=True again. Both cases reproduced by simulation. The correctly-computed `_covered` variable at line 142 is discarded."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-28",
+   "title": "config.md autonomy fail-open: attended capability-grant branch never fires",
+   "depends_on": [],
+   "files": [
+    "workspace/programs/config.md"
+   ],
+   "bugs": [
+    {
+     "id": "B047",
+     "file": "workspace/programs/config.md",
+     "line": 65,
+     "severity": "high",
+     "category": "gate-bypass-fail-open",
+     "summary": "config wizard matches the autonomy decision with exact `\u2261` against short labels, but W:_decision holds the full option string, so the 'attended' branch is never taken and capabilities are granted fail-open.",
+     "failure_scenario": "User runs `config wizard` and selects \"attended (you do every step)\". Line 64 sets autonomy='attended (you do every step)'. Line 65 `autonomy \u2261 \"attended\"` is False (full string vs short label), so develop='grant'; likewise line 66 testx='green-only' and line 67 mergep never equals 'autonomous-gated'/'full-auto' so merge stays 'human'. The written _policy.md GRANTS develop, test-execution, and pr-create autonomy even though the user explicitly chose fully-manual attended mode \u2014 a fail-open capability grant. (Same file lines 70/79 correctly use `contains` for substring matching, confirming W:_decision is the full option text.)"
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-02",
+   "title": "Rule linters: strip comments/quotes before EXEC/STORE/phase-ledger scans (shared helper)",
+   "depends_on": [],
+   "files": [
+    "tools/rules/r_identity_lock.py",
+    "tools/rules/r_phase_tracked.py"
+   ],
+   "bugs": [
+    {
+     "id": "B026",
+     "file": "tools/rules/r_identity_lock.py",
+     "line": 72,
+     "severity": "high",
+     "category": "false-positive-gate",
+     "summary": "_EXEC_RE / _STORE_RE are applied to raw program text with no comment/doc-section/quote stripping, so an EXEC token mentioned in a comment or ## HELP example above the real STORE(W:active-program,...) triggers a spurious 'EXEC appears BEFORE STORE' violation.",
+     "failure_scenario": "Program has a comment line '# Usage: this eventually calls EXEC(runner)' above a real 'STORE(W:active-program, \"demo\")' followed by a real 'EXEC(runner)'. check() finds first_exec at the comment (line 2) < store_match (line 3) and returns the ordering Violation. With L:identity-lock-required=true this BLOCKs a fully compliant program at STATIC verification. Verified: il.check(...) returns 'EXEC(...) at line 2 appears BEFORE STORE... at line 3'. The sibling rule R_COGNITION_LANGUAGE deliberately strips comments/quotes/doc-sections; this rule does not."
+    },
+    {
+     "id": "B027",
+     "file": "tools/rules/r_identity_lock.py",
+     "line": 77,
+     "severity": "high",
+     "category": "gate-bypass-fail-open",
+     "summary": "_STORE_RE.search matches a STORE(W:active-program,...) that appears only inside a comment/example, so a program with a real EXEC but no real active-program store is treated as compliant.",
+     "failure_scenario": "Program: '# Example usage: STORE(W:active-program, \"demo\")' (comment) then 'STORE(W:goal,\"x\")' then real 'EXEC(sub-program)'. There is NO real active-program store, yet store_match is found (in the comment) before first_exec, so check() returns None. With L:identity-lock-required=true the Identity Lock gate (F-D8-003/004) is silently bypassed. Verified: il.check(...) returns None."
+    },
+    {
+     "id": "B028",
+     "file": "tools/rules/r_phase_tracked.py",
+     "line": 74,
+     "severity": "high",
+     "category": "gate-bypass-fail-open",
+     "summary": "_PHASE_LEDGER_RE.search matches a TOOL(phase-ledger, record, ...) mention that lives only in a comment/example, so a program that takes ownership but never actually records a phase passes the check.",
+     "failure_scenario": "Program: 'STORE(W:active-program, \"demo\")' then comment '# later you might: TOOL(phase-ledger, record, ...)' then 'EXEC(sub)'. The program never actually records a phase transition, but the regex matches the commented example, so check() returns None. With L:phase-tracking-required=true the G-02 Phase Ledger Integrity gate is bypassed. Verified: pt.check(...) returns None."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-05",
+   "title": "Lint/dep/conformance gates: close substring & regex fail-opens (reuse strip helper)",
+   "depends_on": [
+    "PR-02"
+   ],
+   "files": [
+    "tools/axon_io_lint.py",
+    "tools/coherence_lint.py",
+    "tools/deps.py",
+    "tools/harness_conformance.py"
+   ],
+   "bugs": [
+    {
+     "id": "B067",
+     "file": "tools/axon_io_lint.py",
+     "line": 128,
+     "severity": "medium",
+     "category": "gate-bypass-fail-open",
+     "summary": "_OPEN_RE only captures the first quoted string in open(), so raw writes with a literal path argument (mode is the 2nd string) are never detected, defeating the R9 immutability gate.",
+     "failure_scenario": "A new tool file tools/foo.py (NOT in WHITELIST) contains `with open(\"out.json\", \"w\") as f:`. _OPEN_RE captures group(1)='out.json'; _is_write_mode('out.json') is False (invalid mode chars); finditer finds no second `open(` on the line, so find_raw_writes() returns []. lint() reports ok=True, main() exits 0. The raw write bypassing _axon_io.atomic_write() passes the lint silently. Verified empirically that open(\"out.json\",\"w\"), open(\"data/results.txt\",\"a\"), and json.dump(x, open(\"cache.json\",\"w\")) are all MISSED while open(path_var,\"w\") is caught."
+    },
+    {
+     "id": "B068",
+     "file": "tools/coherence_lint.py",
+     "line": 54,
+     "severity": "medium",
+     "category": "dead-branch",
+     "summary": "C3 'unclassified' menu-coverage check is unreachable because programs_registry._menu_category never returns a falsy value.",
+     "failure_scenario": "check() imports programs_registry and does `cat = pr._menu_category(name, entry.get('area',''))` then `if not cat: defects.append({'kind':'unclassified',...})`. _menu_category (programs_registry.py:273) always returns a non-empty string \u2014 either a matched category or the fallback `_AREA_CATEGORY.get(area, 'System & Config')`. So `not cat` is always False and no 'unclassified' defect is ever emitted. A REGISTRY.json program that genuinely falls through the taxonomy is silently classified as 'System & Config' and passes the gate, contradicting the module docstring's claim that the lint catches 'programs that fall through the menu taxonomy (unclassified)'."
+    },
+    {
+     "id": "B070",
+     "file": "tools/deps.py",
+     "line": 64,
+     "severity": "medium",
+     "category": "gate-bypass-fail-open",
+     "summary": "Dependency scanner skips markdown table rows, so programs that dispatch via a routing table have their real EXEC() deps dropped; the dep checker then reports 'ok' even for broken/missing routes.",
+     "failure_scenario": "extract_deps('interactive.md') captures only ['mode-suggest'] and silently drops the ~15 table-routed EXEC targets (resume, translate, register-tool, ...). Verified by running deps.extract_deps. Because those routes are invisible, `deps check --program interactive` returns {\"ok\": true, \"issues\": []} even if a table-routed target program is renamed/deleted or its name is misspelled \u2014 the checker fails open on the highest-fanout router program instead of flagging the broken dependency."
+    },
+    {
+     "id": "B072",
+     "file": "tools/harness_conformance.py",
+     "line": 28,
+     "severity": "medium",
+     "category": "gate-bypass-fail-open",
+     "summary": "Conformance gate uses naive substring matching instead of checking for real STORE(L:...) declarations, so a required capability key mentioned only in a comment satisfies the gate.",
+     "failure_scenario": "workspace/harness/generic.md never declares STORE(L:host-harness, ...) (the token appears only in comment lines 4 and 8), yet `if \"host-harness\" not in text` at line 28 is False, so no violation is recorded. Running the tool returns {\"ok\": true, \"violations\": []} / exit 0. A genuinely half-specified adapter foo.md whose only reference to a cap is a comment like `# TODO wire host-cap-enforce` likewise passes conformance, defeating the tool's stated purpose of catching half-specified harnesses (same substring flaw at line 31 for host-cap-<cap>)."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-03",
+   "title": "Rule linters: regex/parse correctness (arithmetic, dont-do, mode-lock, receipts)",
+   "depends_on": [],
+   "files": [
+    "tools/rules/r3_arithmetic.py",
+    "tools/rules/r_dont_do.py",
+    "tools/rules/r_inference_mode_lock.py",
+    "tools/rules/r_tool_receipts.py"
+   ],
+   "bugs": [
+    {
+     "id": "B078",
+     "file": "tools/rules/r3_arithmetic.py",
+     "line": 12,
+     "severity": "medium",
+     "category": "gate-bypass",
+     "summary": "ARITH_RE fails open on percent and currency arithmetic \u2014 exactly the 'money/%' cases the BLOCK rule names \u2014 because '%' is in the operator class and the right operand must begin with a bare digit.",
+     "failure_scenario": "The rule docstring: 'any float/money/% arithmetic must go through the calculator tool' and it is a STATIC BLOCK gate. But ARITH_RE=(?<!\\w)\\d+\\.\\d+\\s*[+\\-*/%]\\s*\\d. For a program line doing inline percent math like `L:total = 1.5% * 2` the '%' immediately after the float 1.5 is consumed as the operator, leaving '* 2' with no digit for the required trailing \\d -> no match -> no Violation. Likewise `$1.50 + $2.00` never matches because the right operand `$2.00` starts with '$', not a digit. Empirically: '1.5 * 2' MATCHes but '1.5% * 2', 'discount 1.5% + 2', and '$1.50 + $2.00' all return no-match. So inline money/percent arithmetic (the rule's stated core scope) passes the gate uninspected."
+    },
+    {
+     "id": "B079",
+     "file": "tools/rules/r_dont_do.py",
+     "line": 54,
+     "severity": "medium",
+     "category": "parser-logic-fail-open",
+     "summary": "parse_dont_do does not reset `cur` when a disabled (~~struck~~) bullet is encountered, so the disabled bullet's indented match:/review: line clobbers the previous active prohibition's token.",
+     "failure_scenario": "_BULLET's `(?!~~)` lookahead makes a line like `- ~~retired rule~~` fail to match as a new bullet, so `cur` keeps pointing at the previous active prohibition. Its indented `match:`/`review:` line then overwrites that prohibition. Given a _dont-do.md:\n- keep rule\n  match: SECRET\n- ~~retired~~\n  match: OLDTOKEN\nparse_dont_do returns a single prohibition {text: 'keep rule', match: 'OLDTOKEN'}: the intended SECRET token is no longer enforced (fail-open on an active prohibition) and the retired OLDTOKEN is enforced under the wrong description. Disabling prohibitions via ~~ is an explicitly supported feature, so leaving the match: line under a struck bullet is a realistic edit."
+    },
+    {
+     "id": "B080",
+     "file": "tools/rules/r_inference_mode_lock.py",
+     "line": 47,
+     "severity": "medium",
+     "category": "incorrect-regex",
+     "summary": "_STORE_RE over-matches: `STORE\\(\\s*L:inference-mode\\b` also matches longer keys like L:inference-mode-locked (the lock-control key) and any L:inference-mode-<suffix>, because \\b matches at the '-' boundary and [^)]* then swallows '-locked, ...'.",
+     "failure_scenario": "A non-owner program (any program not named 'inference-mode', e.g. a settings/lock-toggle program) containing `STORE(L:inference-mode-locked, false)` is falsely flagged as violating R_INFERENCE_MODE_LOCK, with a reason claiming it 'contains STORE(L:inference-mode, ...)' even though it never touches the protected L:inference-mode key \u2014 it stores the distinct lock-control key. When state has inference_mode_locked=true, the spurious violation is emitted at severity BLOCK, so the very act of turning the lock off (STORE(L:inference-mode-locked, false)) is reported as a blocking violation. A negative lookahead / boundary excluding '-' (e.g. `L:inference-mode(?![-\\w])`) is needed to match only the exact key."
+    },
+    {
+     "id": "B081",
+     "file": "tools/rules/r_tool_receipts.py",
+     "line": 38,
+     "severity": "medium",
+     "category": "gate-false-positive",
+     "summary": "_CLAIM_RE's dispatcher-CLI branch (axon.py <token>) captures non-tool subcommands like 'help', which can never be receipted, causing a fail-closed false BLOCK when tool-receipts mode is on.",
+     "failure_scenario": "With L:tool-receipts-required=true, any verified output that contains the literal string 'python3 axon.py help' -- which axon.py itself emits as guidance (axon.py:73 and the unknown-tool error at axon.py:86) -- yields claimed={'help'}. axon.py's main() returns for the 'help' subcommand BEFORE _write_receipt runs (axon.py:79-80 vs 95-96), so 'help' is never in the receipt ledger, and _EXEMPT is only {'x'} (line 45). missing=['help'] -> R_TOOL_RECEIPTS returns BLOCK on legitimate output. The same over-capture fires for ordinary prose because \\bTOOL\\s*\\( is IGNORECASE: text like 'the parser tool (like the doc one)' captures 'like' as a claimed tool and BLOCKs."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-07",
+   "title": "Trace gates: dag conditional edges, drift TTL stability, pr_drift anchor casing",
+   "depends_on": [],
+   "files": [
+    "tools/dag_consistency.py",
+    "tools/drift.py",
+    "tools/pr_drift.py"
+   ],
+   "bugs": [
+    {
+     "id": "B016",
+     "file": "tools/dag_consistency.py",
+     "line": 122,
+     "severity": "high",
+     "category": "gate-bypass",
+     "summary": "next-conditional edges are never validated even though the tool's contract says they are, so dangling conditional edges pass the fail-closed gate.",
+     "failure_scenario": "The docstring (lines 13-16) states the checker validates that 'every program's next-suggests/next-conditional edge points to an existing neuron; dangling edges are errors'. But synapse_edges() (line 122) only runs _NEXT (next-suggests). _NEXT_COND (line 33, matching 'next-conditional:|synapses:') is compiled and never used. A program containing `next-conditional: [does-not-exist]` produces zero DANGLING_SYNAPSE_EDGE issues, so check() returns ok=true and the R_DAG_CONSISTENT gate lets a dangling conditional edge through \u2014 a fail-open hole in a tool that advertises fail-closed coverage of both edge types."
+    },
+    {
+     "id": "B020",
+     "file": "tools/drift.py",
+     "line": 121,
+     "severity": "high",
+     "category": "logic-error",
+     "summary": "A no-program drift trace flips from stable to diverged/halt after a single recorded tool, contradicting the documented 'gate returns stable until TTL' contract and re-introducing the auto-improve halt it was meant to prevent.",
+     "failure_scenario": "Run `drift init --no-program` (expected=[], actual=[]) -> gate is stable, as documented at drift.py:364-366. Then `drift record --tool clock`: cmd_record appends to actual (actual=[\"clock\"]) and calls compute_score([], [\"clock\"]). Since actual is non-empty and n=min(1,0)=0, compute_score hits the `n == 0` branch and returns 1.0, so status becomes 'diverged'. `drift gate` now returns {state:'diverged', decision:'halt', modifier:-50}. The same happens via cmd_record's auto-init path (drift.py:167-173) when boot's init never ran: the first per-turn `record --tool X` produces a diverged/halt gate. This directly violates the init --no-program contract ('Gate returns stable until 2h TTL expires') and halts auto-improve exactly like the deadlock the no-program trace was designed to break."
+    },
+    {
+     "id": "B024",
+     "file": "tools/pr_drift.py",
+     "line": 73,
+     "severity": "high",
+     "category": "logic-error-fail-open",
+     "summary": "_is_anchored(t.lower()) lowercases the token before classification, which permanently defeats the CamelCase anchor branch (regex [a-z][A-Z] can never match a lowercased string), so CamelCase-only acceptance items are misclassified as non-anchored.",
+     "failure_scenario": "A PR spec has acceptance item '- [ ] Emit a valid AgentCard envelope'. Tokens with len>=5 are 'valid' and 'AgentCard'. _is_anchored('agentcard') is False (no _ . / - and no [a-z][A-Z] after lowering) and _is_anchored('valid') is False, so anchors is empty and the item is pushed to `weak` instead of being checked against the diff. Even if the diff never adds any AgentCard code, drift() returns ok=True with unmet=[] \u2014 the unmet criterion is silently passed. An equivalent snake_case/dotted item ('emit agent_card') WOULD be verified. Fix: classify with _is_anchored(t) on the original token; keep .lower() only for the `in added` match on line 80."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-17",
+   "title": "Program dry-run & control-flow safety: combine/merge/workflow-run",
+   "depends_on": [
+    "PR-01",
+    "PR-06"
+   ],
+   "files": [
+    "workspace/programs/code-dev-combine.md",
+    "workspace/programs/code-dev-merge.md",
+    "workspace/programs/workflow-run.md"
+   ],
+   "bugs": [
+    {
+     "id": "B002",
+     "file": "workspace/programs/code-dev-combine.md",
+     "line": 53,
+     "severity": "critical",
+     "category": "control-flow / dead-code",
+     "summary": "The undo-completion code (log append, success message, CLEAR, DONE) was misplaced INSIDE the dry-run guard block AFTER a DONE, so it is unreachable, and the undo path falls straight through into the full combine flow.",
+     "failure_scenario": "User runs `code-dev combine --undo` (W:code-dev-combine-mode=\"undo\"), snapshots exist, dry-run NOT armed, user confirms 'yes'. Line 46 RESTORE-DIR restores phases/ from the latest snapshot. Then the dry-run guard at line 50 is false and its body (lines 51-58) is skipped entirely \u2014 including the intended undo log APPEND (55-56), the '\u2713 Restored' message (57), and CLEAR(W:active-program) + DONE (58), which are dead code anyway because DONE already fired at line 53. Execution therefore falls through to line 60 and runs a FULL COMBINE: it prompts 'First phase?', 'Second phase?', 'New combined phase name?', snapshots, merges, and marks phases combined \u2014 destroying the tree the undo just restored. The undo neither logs nor clears W:active-program."
+    },
+    {
+     "id": "B003",
+     "file": "workspace/programs/code-dev-merge.md",
+     "line": 51,
+     "severity": "critical",
+     "category": "logic-error",
+     "summary": "Dry-run guard is not nested under the target-phase IF; all real phase-merge side effects are nested inside the dry-run branch and placed after DONE, and the ELSE binds to the dry-run IF instead of the target-phase IF.",
+     "failure_scenario": "User runs `code-dev merge --phase` with dry-run OFF (target-phase==\"true\", W:code-dev-dry-run != true). Lines 46-47 set meta status/workflow-step=merged. Line 51's dry-run IF is false, so its body (lines 52-73: APPEND 04-log.md phase-merged entry, archive snapshots, LOG, print phase NEXT) is skipped entirely -- and those side effects are ALSO after DONE(code-dev-merge) at line 54, so they are unreachable even in dry-run. The ELSE at line 74 binds to the dry-run IF, so control falls into the single-PR branch: the program prompts 'Which PR?' and writes 02-prs.md/05-branches.md/_events.log as if a single PR merged. Result: a phase merge never logs the phase merge or archives snapshots, and instead runs the wrong (single-PR) path. Additionally, in a phase dry-run, lines 46-47 mutate _meta.md before the dry-run check, violating the 'never touch disk' dry-run contract."
+    },
+    {
+     "id": "B004",
+     "file": "workspace/programs/workflow-run.md",
+     "line": 74,
+     "severity": "critical",
+     "category": "unreachable-code",
+     "summary": "DONE(workflow-run) at the end of the PROMOTE MODE block is dedented to column 0, making it unconditional instead of scoped to the `IF promote-run \u2260 \u2205` guard.",
+     "failure_scenario": "A normal run \u2014 `axon workflow-run --name foo` or `--path wf.yml` with no --promote flag \u2014 leaves W:_workflow-run-promote \u2205, so the IF at line 66 is skipped. Execution then hits the unindented DONE(workflow-run) at line 74 and terminates the program before RESOLVE PATH / LOAD+VALIDATE / EXECUTE ever run. The two sibling early-exit blocks (DRY at line 122, ACCEPTANCE-PREFLIGHT at line 147) both indent their DONE 2 spaces INSIDE the IF (verified via cat -A); only line 74 is at column 0. As written, workflow-run never actually walks any workflow."
+    },
+    {
+     "id": "B036",
+     "file": "workspace/programs/code-dev-combine.md",
+     "line": 50,
+     "severity": "high",
+     "category": "gate-bypass / fail-open",
+     "summary": "The C8 dry-run guard is placed AFTER the mutating RESTORE-DIR it is meant to protect, so `--undo` under an armed dry-run still overwrites the phases/ tree.",
+     "failure_scenario": "User runs `code-dev whatif combine --undo` so W:code-dev-dry-run \u2261 true. mode=\"undo\" enters the block at line 40; at line 46 RESTORE-DIR('.../{latest}/phases', '{proj-dir}/phases') executes and overwrites the live phases/ tree on disk. Only AFTER that (line 50) is the dry-run flag checked. The guard's own comment (lines 47-49) says 'Honor it BEFORE any mutating op \u2026 never touch disk,' but the mutating restore runs first \u2014 a dry-run that mutates state."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-08",
+   "title": "Receipt & ledger integrity: canonical checksum + GC re-chain",
+   "depends_on": [
+    "PR-06"
+   ],
+   "files": [
+    "tools/loop_receipt.py"
+   ],
+   "bugs": [
+    {
+     "id": "B023",
+     "file": "tools/loop_receipt.py",
+     "line": 99,
+     "severity": "high",
+     "category": "logic-error",
+     "summary": "_canonical_checksum re-serializes str values via json.dumps, contradicting its documented 'hashed directly' contract, so verify never matches for file/jsonl-append targets",
+     "failure_scenario": "Run `loop-receipt begin --target-kind file --path foo.txt --post-json '\"new\\n\"' ...` then `commit`. begin stores post.checksum-sha256 = sha256(json.dumps(\"new\\n\")) = sha256('\"new\\\\n\"') (JSON-quoted). Later `loop-receipt verify --id <id>` takes the else branch at line 363 and computes actual = sha256(Path('foo.txt').read_bytes()) = sha256(b'new\\n'). Even though foo.txt is byte-identical to what was committed, expected != actual, so verify prints {\"ok\":false,\"drift\":true}. The docstring at lines 93-96 states file/jsonl-append callers pass content 'which is then hashed directly without re-serialization', but the str branch does re-serialize, permanently breaking the drift check for every file/jsonl-append receipt that relies on read_bytes."
+    },
+    {
+     "id": "B075",
+     "file": "tools/loop_receipt.py",
+     "line": 407,
+     "severity": "medium",
+     "category": "integrity-inconsistency",
+     "summary": "cmd_gc rewrites the ledger without re-chaining prev-sha, so any GC removal makes verify_chain report a false tamper break on an untampered ledger",
+     "failure_scenario": "After receipts older than keep_days accumulate, `loop-receipt gc --keep-days 90` removes >=1 old terminal (head) row and atomic_writes the surviving rows verbatim (line 406) with their original prev-sha values still pointing at now-deleted predecessors. Then `loop-receipt verify-chain` walks from the first surviving row: prev=None, chained=1, expected='genesis', claimed=hash(deleted-row) != 'genesis', tolerance (chained==1 and claimed==prev) is False since prev is None, so it returns {\"ok\":false,\"first_break\":1}. Routine GC thus destroys the very tamper-evidence PR-004 added, and cannot be distinguished from a real silent deletion."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-29",
+   "title": "axon.py: record canonical registry tool name in receipts",
+   "depends_on": [
+    "PR-03"
+   ],
+   "files": [
+    "axon.py"
+   ],
+   "bugs": [
+    {
+     "id": "B051",
+     "file": "axon.py",
+     "line": 96,
+     "severity": "medium",
+     "category": "contract-mismatch",
+     "summary": "_write_receipt records the tool name as typed (sys.argv[1], possibly an alias) without resolving it to its canonical registry name, so R_TOOL_RECEIPTS mismatches claims that reference the canonical name.",
+     "failure_scenario": "With L:tool-receipts-required=true, an agent runs `python3 axon.py search --query x` (search is an ALIAS for semantic-search, axon.py:22). _write_receipt writes {\"tool\": \"search\"} because tool=sys.argv[1] is never canonicalized. The agent's narrated output references the canonical form `TOOL(semantic-search, ...)`. R_TOOL_RECEIPTS computes claimed={'semantic-search'} but receipted={'search'}, so missing=['semantic-search'] -> false BLOCK even though the tool genuinely ran via the dispatcher."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-09",
+   "title": "workflow_run.py: exclude draft workflows, honor boolean-true if:",
+   "depends_on": [],
+   "files": [
+    "tools/workflow_run.py"
+   ],
+   "bugs": [
+    {
+     "id": "B082",
+     "file": "tools/workflow_run.py",
+     "line": 477,
+     "severity": "medium",
+     "category": "contract-violation",
+     "summary": "Promoted `.draft.yml` files (documented 'never auto-activated') are enumerated as installed workflows and shadow the active workflow of the same name in resolve/sub-workflow loading.",
+     "failure_scenario": "After `workflow-runner promote --name foo --write` creates workspace/workflows/foo.draft.yml (name: foo), list_workflows globs '*.yml' which matches '*.draft.yml'. sorted() orders 'foo.draft.yml' before 'foo.yml', so `resolve --name foo` (line 1080, next(...) over rows) returns the unreviewed draft path instead of the active foo.yml; _default_sub_loader (line 338) and workflow_names() inherit the same shadowing, so nested-workflow anti-skip enforcement can load a draft's terminals as authoritative. Verified by execution: with foo.yml (v9) and foo.draft.yml (v1) present, resolve returns foo.draft.yml v1."
+    },
+    {
+     "id": "B083",
+     "file": "tools/workflow_run.py",
+     "line": 91,
+     "severity": "medium",
+     "category": "logic-error",
+     "summary": "resolve_next silently drops a rule whose `if:` is a boolean true (unquoted YAML), the opposite of its stated semantics.",
+     "failure_scenario": "A workflow synapse has on-complete: [ {if: true, next: X}, {next: Y} ] where `if: true` is an unquoted YAML boolean (Python True). The M8 falsy special-case at line 91 catches boolean False but not True, so control reaches line 94: predicate.evaluate_expr(str(True), ctx) == evaluate_expr('True', ctx). 'True' (capital T) is not the predicate keyword `true`, so it parses as an undefined state ref -> None -> bool(None)=False. The `if: true` rule is treated as never-taken; resolve_next returns Y (or {next: None} if no fallback). The X branch the author intended to always fire is dead. Verified by execution: resolve_next returns the fallback rather than the if:true target."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-10",
+   "title": "Tool health/conformance/registry resolution fixes",
+   "depends_on": [
+    "PR-03"
+   ],
+   "files": [
+    "tools/health.py",
+    "tools/program_tool_conformance.py",
+    "tools/rules/r_tool_call_exists.py"
+   ],
+   "bugs": [
+    {
+     "id": "B021",
+     "file": "tools/health.py",
+     "line": 179,
+     "severity": "high",
+     "category": "gate-bypass-fail-open",
+     "summary": "probe_smoke (the default probe for any ACTIVE tool without a specific probe) returns status ACTIVE even when the tool's `--help` exits non-zero or times out, so genuinely broken tools are reported healthy.",
+     "failure_scenario": "A tool registered ACTIVE but not in the PROBES dict has an import/syntax error, so `python tool.py --help` returns rc=1 (or hangs). probe_smoke's second branch (line 179) and its TimeoutExpired branch (line 181) both return {\"status\": \"ACTIVE\"}. The tool is counted as ACTIVE, counts['FAILED'] stays 0, score stays 100, and persist_health writes L:health-score=100. Since that key is read by the kernel gates and menu, a broken tool is masked. This contradicts the probe's own docstring ('file exists + --help exits 0 within 5s') and the FAILED-on-nonzero pattern every other probe (e.g. probe_web_search, probe_notify) follows."
+    },
+    {
+     "id": "B029",
+     "file": "tools/rules/r_tool_call_exists.py",
+     "line": 47,
+     "severity": "high",
+     "category": "gate-bypass-fail-open",
+     "summary": "_subcommands_of resolves the tool script by name (tools/<name>.py) instead of the REGISTRY 'script' field, so tools whose registry name != script filename never get their subcommands checked.",
+     "failure_scenario": "Programs invoke tools by registry name, e.g. TOOL(todo, list, ...), TOOL(workflow-runner, advance, ...), TOOL(queue, list), TOOL(rules, audit). _subcommands_of('todo') opens tools/todo.py which does not exist (real file is tools/agent_todo.py), so path.exists() is False, it returns an empty frozenset, and check() hits `if not subs: continue`, skipping validation. A typo like TOOL(todo, lst) (real subcommand is 'list', defined via add_parser in agent_todo.py alongside add/done/due) passes the BLOCK gate unflagged. Affects at least todo->agent_todo.py, queue->queue_tool.py, workflow-runner->workflow_run.py, rules->rules_loader.py. The rule never consults the REGISTRY script field or ctx registry, defeating its purpose for these heavily-used tools."
+    },
+    {
+     "id": "B089",
+     "file": "tools/program_tool_conformance.py",
+     "line": 289,
+     "severity": "low",
+     "category": "false-positive-overblock",
+     "summary": "declared_subs() takes the LAST {a,b,c} group in the usage line as the subcommand set; for a subparser-less tool whose only {...} group is an option's choices (e.g. --format {json,text}), it returns those choices as if they were subcommands, causing a false unknown-subcommand violation.",
+     "failure_scenario": "A scoped workflow call-site `TOOL(foo, \"somearg\")` where tool foo has NO subparsers but declares a choice-valued option (usage line: `usage: foo [--format {json,text}] path`). run_check: declared_subs(top) returns {'json','text'} (non-None, verified empirically), so foo is treated as a subparser tool; extract_call_sites sets sub='somearg'; since 'somearg' not in {'json','text'} it appends kind='unknown-subcommand'. For the workflow family (gates at BLOCK) this fails run_check (ok=False, exit 1) and blocks a valid program. The last-group heuristic only distinguishes option-choices from subcommands when BOTH exist; a choices-only, subparser-less tool is mis-classified."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-11",
+   "title": "State stores: kv_store null value + memory L: rollback history",
+   "depends_on": [],
+   "files": [
+    "tools/kv_store.py",
+    "tools/memory.py"
+   ],
+   "bugs": [
+    {
+     "id": "B074",
+     "file": "tools/kv_store.py",
+     "line": 83,
+     "severity": "medium",
+     "category": "correctness",
+     "summary": "get reports a legitimately-stored JSON null value as not-found, contradicting exists",
+     "failure_scenario": "Run `kv_store.py set --key foo --value null`: json.loads('null') yields Python None and cache.set('foo', None) stores it, printing {\"stored\": true}. A subsequent `kv_store.py get --key foo` runs cache.get('foo', default=None), gets None, and prints {\"found\": false, \"value\": null} even though the key exists \u2014 while `kv_store.py exists --key foo` correctly prints {\"exists\": true}. The two commands disagree, and any consumer that keys off `found` treats a stored JSON null as absent. Verified against diskcache: set(None) then get(default=None) returns None while `in cache` is True."
+    },
+    {
+     "id": "B076",
+     "file": "tools/memory.py",
+     "line": 91,
+     "severity": "medium",
+     "category": "logic-error",
+     "summary": "L: rollback can only ever reach the single most-recent prior value; older stored history entries (up to ROLLBACK_MAX-1) are permanently unreachable, so repeated rollback oscillates instead of walking back through history.",
+     "failure_scenario": "Set L:foo four times (v1,v2,v3,v4) via `memory set --scope L`. The _longterm writer keeps the 3 prior values, so the sidecar is [\"v3\",\"v2\",\"v1\"] and the key file is v4. First `memory rollback --scope L --key foo`: prev=history.pop(0)=\"v3\", then line 94 does history.insert(0, current=\"v4\") -> sidecar becomes [\"v4\",\"v2\",\"v1\"], file=v3. Second rollback: prev=\"v4\", insert current \"v3\" -> sidecar [\"v3\",\"v2\",\"v1\"], file=v4 (identical to the start state). Rollback therefore toggles v3<->v4 forever; v2 and v1 are stored in history but can never be restored, defeating the ROLLBACK_MAX=3 multi-step-undo contract that `history`/`remaining_history` advertises."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-13",
+   "title": "Data-integrity: table-row corruption, rollback eviction ordering, obsidian counts",
+   "depends_on": [
+    "PR-06"
+   ],
+   "files": [
+    "tools/_axon_rollback.py",
+    "tools/index.py",
+    "tools/obsidian_export.py"
+   ],
+   "bugs": [
+    {
+     "id": "B073",
+     "file": "tools/index.py",
+     "line": 37,
+     "severity": "medium",
+     "category": "off-by-one-corruption",
+     "summary": "append_table_row inserts `\\n{row}` at the offset AFTER the last table row's trailing newline and appends no trailing newline of its own. When the table's last row is immediately followed by another line (e.g. a `## SECTION` header), the new row is concatenated onto that following line, destroying it; it also injects a spurious blank line splitting the table.",
+     "failure_scenario": "For an INDEX.md where the CHATS table is immediately followed (no blank separator line) by `## ARCHIVE`, `index.py append --type chat ...` produces the line `| f2 | c2 | g2 | ... | active |## ARCHIVE`, merging the new data row with the section header so `## ARCHIVE` is no longer a header (its section is lost). Confirmed empirically. Correct behavior would insert the row on its own line before the following content."
+    },
+    {
+     "id": "B015",
+     "file": "tools/_axon_rollback.py",
+     "line": 107,
+     "severity": "high",
+     "category": "ordering-hazard",
+     "summary": "restore() takes the reversibility self-snapshot (which enforces the FIFO cap and can evict the oldest snapshot) BEFORE reading the chosen snapshot's bytes, so restoring the oldest snapshot while the .rollback dir is at cap deletes `chosen` and then crashes reading it.",
+     "failure_scenario": "A target file has exactly DEFAULT_CAP (3) snapshots (steady state). Caller invokes restore(target, version=3) \u2014 reachable via the CLI `undo --target <path> --version 3` (undo.py permits version up to len(snaps)). Line 105 sets chosen = snaps[2] (the oldest). Line 107 snapshot(target) writes a new snapshot, then its cap-eviction loop (snaps[cap:]) unlinks the now-4th-oldest entry, which IS chosen. Line 108 atomic_write(target, chosen.read_text()) then raises FileNotFoundError. Net effect: the target is NOT restored, the requested snapshot is permanently deleted, and the operation errors out. Reproduced: restore(version=3) at cap -> FileNotFoundError, chosen.exists()==False. Fix: read chosen.read_text() before calling snapshot(target)."
+    },
+    {
+     "id": "B077",
+     "file": "tools/obsidian_export.py",
+     "line": 151,
+     "severity": "medium",
+     "category": "logic-error",
+     "summary": "export_fresh's 'unchanged' fast-path reports notes/edges from the raw graph (symbol-node count and total-link count) instead of the file-note count and cross-file-edge count that build_vault actually produces, so identical re-invocations return wildly different, wrong counts.",
+     "failure_scenario": "Graph has 3 source files, 30 symbol nodes, 50 links (10 cross-file). First call to export_fresh() rebuilds and returns notes=3, edges=10 (build_vault: len(by_file)=3, cross-file edge_count=10). A second identical call finds _vault_graph_hash(out)==cur and takes the unchanged branch (lines 148-154), returning notes=len(g['nodes'])=30 and edges=len(g['links'])=50. The vault on disk is unchanged (still 3 file-notes) but the returned card claims 30 notes / 50 edges \u2014 consumers (codemap-map, code-dev-obsidian) render a steady-state card that contradicts the actual vault and the initial build."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-14a",
+   "title": "CLI arg/boundary hardening: benchmark, tokenizer, context",
+   "depends_on": [],
+   "files": [
+    "tools/benchmark.py",
+    "tools/context.py",
+    "tools/tokenizer.py"
+   ],
+   "bugs": [
+    {
+     "id": "B086",
+     "file": "tools/benchmark.py",
+     "line": 51,
+     "severity": "low",
+     "category": "boundary-falsy-check",
+     "summary": "The required-args guard `if not all([args.workflow, args.src_tokens, args.cmp_tokens])` treats a legitimately-provided value of 0 as 'missing' because 0 is falsy.",
+     "failure_scenario": "Run `benchmark.py record --workflow x --src-tokens 100 --cmp-tokens 0` (a compilation that emitted zero tokens, ratio 100%). all([...]) evaluates to False on the 0, so the tool prints {\"error\": \"--workflow --src-tokens --cmp-tokens required\"} and records nothing, even though every argument was supplied."
+    },
+    {
+     "id": "B087",
+     "file": "tools/benchmark.py",
+     "line": 25,
+     "severity": "low",
+     "category": "incorrect-parsing",
+     "summary": "load_log identifies header/separator rows by substring (`'Date' not in line`, `'---' not in line`), so any recorded data row whose workflow (or other column) contains those substrings is silently dropped from `list` and `stats`.",
+     "failure_scenario": "Record a benchmark with `--workflow Date-parser` (or any name containing the capital-D substring 'Date', or containing '---'). The row is written to benchmark-log.md, but `benchmark.py list` and `benchmark.py stats` skip it at line 25 because the line contains 'Date', so the entry is invisible in reporting and excluded from avg/best/worst compression stats."
+    },
+    {
+     "id": "B091",
+     "file": "tools/tokenizer.py",
+     "line": 43,
+     "severity": "low",
+     "category": "logic-error",
+     "summary": "Empty --text input is treated as absent and falls through to the file branch, crashing on args.files=None.",
+     "failure_scenario": "Run `python tools/tokenizer.py --text \"\"` (count tokens of an empty string). The mutually-exclusive required group is satisfied by --text, so args.files is None. The guard `if args.text:` is falsy for the empty string, so control enters the else branch and executes `for path in args.files`, raising `TypeError: 'NoneType' object is not iterable` (reproduced) instead of returning {\"tokens\": 0, ...}. The check should be `if args.text is not None:`."
+    },
+    {
+     "id": "B069",
+     "file": "tools/context.py",
+     "line": 103,
+     "severity": "medium",
+     "category": "logic-error / contract-violation",
+     "summary": "resolve_limit() discards an explicit --limit that happens to equal DEFAULT_LIMIT (128000), overriding it with the host-model window and violating the documented 'explicit --limit wins' precedence.",
+     "failure_scenario": "argparse default for --limit is None (line 196), so cli_limit is not None ONLY when the user typed --limit. But line 103 gates on `cli_limit != DEFAULT_LIMIT`, so `context.py pressure --tokens 120000 --limit 128000` with L:host-model=claude-4.5 skips the 'cli' branch, reads host-model, and returns limit=200000. Result: 120000/200000 = 60% -> 'high' instead of the user-requested 120000/128000 = 93.75% -> 'critical'. The window is over-estimated (the exact direction the module docstring says is worst), causing a premature-critical MISS, and the docstring's stated 'An explicit --limit CLI arg still wins' is broken."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-14b",
+   "title": "Hook/refresh boundary: reanchor_store prompt token + project_refresh reconcile report",
+   "depends_on": [],
+   "files": [
+    "tools/hooks/reanchor_store.py",
+    "tools/project_refresh.py"
+   ],
+   "bugs": [
+    {
+     "id": "B088",
+     "file": "tools/hooks/reanchor_store.py",
+     "line": 47,
+     "severity": "low",
+     "category": "arg-marshaling",
+     "summary": "The user prompt is passed as the argparse option value '--value <prompt>'; when the stripped prompt is a single option-like token (e.g. '-h', '--foo', '-v') memory.py/prompt_log/anticipate reject it and all three actions silently no-op.",
+     "failure_scenario": "User submits a prompt that strips to a bare dash token such as '-h'. subprocess.run([...,'--value','-h']) causes memory.py argparse to error 'argument --value: expected one argument' (verified: exit shows the usage error), so W:recent-user-input is not updated; the same token also breaks prompt_log 'record --prompt -h' and anticipate '--input -h'. Because every call uses capture_output=True and ignores/\u200bswallows the result, the failure is completely silent and that turn's prompt is lost from retrieval/anticipation. Fix: pass value via '--value=' + prompt or a '--' separator."
+    },
+    {
+     "id": "B090",
+     "file": "tools/project_refresh.py",
+     "line": 141,
+     "severity": "low",
+     "category": "logic-dead-store",
+     "summary": "cmd_reconcile records the fix result into res['fix_applied'] and then immediately rebinds `res` to a fresh reconcile() dict, discarding the fix report from all output.",
+     "failure_scenario": "Run `project-refresh reconcile <proj> --fix --json` with a stale codebase pointer. Line 140 sets res['fix_applied'] = apply_fix(...), but line 141 reassigns `res = reconcile(...)` (a new dict without the 'fix_applied' key). The printed JSON/text therefore never contains 'fix_applied', so the caller cannot tell from the output whether/what was repointed even though the file was in fact mutated."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-15",
+   "title": "Invocation fidelity: run.py subcommand/args + dispatch threshold persistence",
+   "depends_on": [
+    "PR-06"
+   ],
+   "files": [
+    "tools/dispatch.py",
+    "tools/run.py"
+   ],
+   "bugs": [
+    {
+     "id": "B030",
+     "file": "tools/run.py",
+     "line": 91,
+     "severity": "high",
+     "category": "wrong-tool-invocation",
+     "summary": "handle_line's TOOL branch invokes registered tools with run_script(script) and NO arguments, silently dropping the subcommand + flags captured in RE_TOOL group(2) (and the '\u2192 STORE(...result)' target in groups 3-5).",
+     "failure_scenario": "Running `run.py workspace/programs/compiled/quality-loop.cmp.md` reaches line 63 `TOOL(quality-loop, report, \"--findings {findings-json} --cycle {cycle} --mode report-only --out {report-path}\")`. RE_TOOL matches (group1='quality-loop', group2='report, \"--findings ...\"'), but handle_line calls run_script(TOOL_SCRIPTS['quality-loop']) with no argv. quality_loop.py has a required `cmd` subparser, so it argparse-errors ('the following arguments are required: cmd'), exits 2, produces no report file. run.py records the failed call under mechanical ops and continues without failing. The intended `quality-loop report --out <cycle report>` effect never happens. The same flat matcher also has no IF/LOOP awareness, so a nested line like line 69 `TOOL(loop-contract, replan, ...)` (guarded by `IF r.advice \u2261 \"REPLAN\"`) is executed unconditionally (also argless). Any TOOL() call carrying a subcommand is mis-invoked."
+    },
+    {
+     "id": "B071",
+     "file": "tools/dispatch.py",
+     "line": 391,
+     "severity": "medium",
+     "category": "logic-error",
+     "summary": "Feedback auto-tune reports `threshold_adjusted` even when the change is never persisted, because the re.sub of `dispatch-confidence:` silently no-ops when that line is absent (and the write is skipped entirely if the pref file is missing).",
+     "failure_scenario": "With L:dispatch-auto-tune=true, legacy pref true, and a workspace whose preferences/smart-dispatch.md has no `dispatch-confidence:` line (or does not exist), after >=5 recent negatives (neg_rate>0.3) the code computes new_t=0.70 and at line 391 re.sub returns new_content == content (verified: substitution matches nothing), writes the unchanged file, then unconditionally prints {\"threshold_adjusted\": 0.70} and returns at line 406. current_threshold() still reads the default 0.65 on the next dispatch, so the reported tuning never takes effect and the tool re-reports the same bogus adjustment on every subsequent negative-heavy batch, never converging. The dispatch tests only pass because test_auto_tune_toggle_on_adjusts_threshold explicitly seeds the `dispatch-confidence: 0.65` line first."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-16",
+   "title": "Harness plumbing: verify_stop import path + cold_stranger repo_sha",
+   "depends_on": [],
+   "files": [
+    "benchmark/cold-start/cold_stranger.py",
+    "tools/hooks/verify_stop.py"
+   ],
+   "bugs": [
+    {
+     "id": "B022",
+     "file": "tools/hooks/verify_stop.py",
+     "line": 106,
+     "severity": "high",
+     "category": "ordering/import-path",
+     "summary": "_doctrine_host_mirror() imports _axon_paths without adding tools/ to sys.path, so it silently no-ops in the sentinel-governed path (the primary path), never writing the host-side tamper-evidence mirror.",
+     "failure_scenario": "Repo has the .axon-governed sentinel (present here). On Stop, verify_stop.py runs as `python3 tools/hooks/verify_stop.py` so sys.path[0]=tools/hooks. _axon_active() sees the sentinel and returns True at line 65 WITHOUT inserting tools/ into sys.path. main() then calls _doctrine_host_mirror() BEFORE _surface_open_accountability() (the only function that inserts tools/ into sys.path). At line 106 `from _axon_paths import default_workspace` raises ImportError (tools/ not on path), caught by the bare `except Exception: pass`. Result: doctrine-host-mirror.jsonl is never appended during governed unattended doctrine runs, completely defeating the agent-unreachable tamper-evidence control. It would only work in the legacy non-sentinel path where _axon_active's fallback branch happens to add tools/ to sys.path."
+    },
+    {
+     "id": "B066",
+     "file": "benchmark/cold-start/cold_stranger.py",
+     "line": 359,
+     "severity": "medium",
+     "category": "logic-error",
+     "summary": "repo_sha is computed against the git-archive checkout (which has no .git), so every record's provenance field is always \"unknown\".",
+     "failure_scenario": "run_one builds the record with repo_sha(clean_checkout). clean_checkout is produced by make_clean_checkout via `git archive HEAD | tar -x` into a tempdir, so it contains the tree but NO .git directory. repo_sha() runs `git -C <checkout> rev-parse --short HEAD`, which fails with 'not a git repository' and the except returns 'unknown'. Verified: running rev-parse in a .git-less dir returns fatal->'unknown'. Result: every JSONL run record written by a live matrix carries \"repo_sha\": \"unknown\" instead of the actual commit (e.g. b9d0f01), silently destroying the which-commit-was-tested provenance the field exists to record. It should be repo_sha(ROOT) (the real repo) or repo_sha(clean_checkout.parent) resolving upward to a real repo."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-18a",
+   "title": "code-dev dispatch/CASE routing: state actions branch, phase token, safety-freeze state",
+   "depends_on": [
+    "PR-01",
+    "PR-06"
+   ],
+   "files": [
+    "workspace/programs/code-dev-safety-freeze.md",
+    "workspace/programs/code-dev-state.md",
+    "workspace/programs/code-dev.md"
+   ],
+   "bugs": [
+    {
+     "id": "B044",
+     "file": "workspace/programs/code-dev-state.md",
+     "line": 48,
+     "severity": "high",
+     "category": "missing-dispatch",
+     "summary": "The `actions` subcommand is documented in usage, desc, and the FAIL message's own valid-list, but the CASE has no `actions` branch, so it falls through to the wildcard and fails.",
+     "failure_scenario": "User runs `code-dev state actions` (advertised at line 8 desc, line 27 usage, and line 49's own list `status|next|resume|handoff|metrics|save|restore|undo|actions`). The CASE at lines 41-48 handles status/next/resume/handoff/metrics/save/restore/undo but has no `actions` arm, so sub=\"actions\" hits `*` \u2192 FAIL(code-dev-state,\"unknown subcommand: actions\"). No code-dev-state-actions.md exists and no routing supplies it (likely intended to EXEC auto-actions.md). A documented command hard-fails."
+    },
+    {
+     "id": "B046",
+     "file": "workspace/programs/code-dev.md",
+     "line": 125,
+     "severity": "high",
+     "category": "two-token-dispatch",
+     "summary": "Phase subcommand dispatch reads unwritten key W:code-dev-phase-cmd instead of the parsed second token `sub`, so `code-dev phase list` runs code-dev-phase-new.",
+     "failure_scenario": "User runs `code-dev phase list`. cmd=\"phase\", sub=\"list\". Two-token resolution (line 90-96) looks for code-dev-phase-list.md, which does not exist (only code-dev-phase-new.md and code-dev-phase-start.md exist), so it falls through to the `IF cmd \u2261 \"phase\"` block. There, phase-sub \u2190 RETRIEVE(W:code-dev-phase-cmd) | \"new\"; grep confirms W:code-dev-phase-cmd has NO writer anywhere in the corpus, so it is always \u2205 and phase-sub defaults to \"new\" \u2192 EXEC(code-dev-phase-new), scaffolding a brand-new phase instead of listing them. The inline list handler (lines 128-135) and the unknown-subcommand FAIL (line 136) are unreachable dead code."
+    },
+    {
+     "id": "B042",
+     "file": "workspace/programs/code-dev-safety-freeze.md",
+     "line": 37,
+     "severity": "high",
+     "category": "logic-error",
+     "summary": "SESSION HOOK hardcodes state=frozen (and anchor=freeze) regardless of mode, so 'code-dev thaw' re-freezes the session at entry.",
+     "failure_scenario": "The hook at line 37 always calls TOOL(session, transition, '--path {session-path} --state frozen') and the checkpoint at line 35 hardcodes '--anchor freeze --summary pre-freeze', but mode (freeze|thaw) is not read until line 44. Invoking 'code-dev thaw' transitions session state to 'frozen' before the ELSE/thaw branch runs, leaving the session marked frozen even though the phase meta workflow-step was restored -> session state permanently inconsistent with the thawed project."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-18b",
+   "title": "code-dev guard/seed logic: study escalation, phase-start CONTAINS anchor, plan undefined-var",
+   "depends_on": [
+    "PR-01",
+    "PR-06"
+   ],
+   "files": [
+    "workspace/programs/code-dev-phase-start.md",
+    "workspace/programs/code-dev-plan.md",
+    "workspace/programs/code-dev-study.md"
+   ],
+   "bugs": [
+    {
+     "id": "B045",
+     "file": "workspace/programs/code-dev-study.md",
+     "line": 103,
+     "severity": "high",
+     "category": "control-flow",
+     "summary": "In the flag-mode DISPATCH block, the 'PHASE NOT ADVANCED' escalation and human-handoff run unconditionally instead of only on outputs-missing, and the ELSE IF is dangling.",
+     "failure_scenario": "User runs `code-dev study --mode=subsystem --target=tools/shadow.py`. Line 92 EXECs code-dev-study-area which writes the canonical 01-study.md, so phase-model.done() at line 99 returns ok=true (phase DID advance). But lines 103-105 sit at the SAME 2-space indent as the single-line IF at line 100 (contrast the corrected copy at lines 573-575, which are indented one level UNDER their IF at 570), so they are siblings of the IF, not its body. They therefore always execute: the program prints '\u26a0 PHASE NOT ADVANCED \u2014 study: declared output missing' and invokes TOOL(human-handoff,...) even on the successful path, and the `ELSE IF adv-study.ok \u2260 true` at line 106 is dangling (no directly-preceding IF) so its WARN branch is unreachable. Every subsystem/deep/targeted/compare study falsely reports non-advancement and forces a spurious human handoff."
+    },
+    {
+     "id": "B039",
+     "file": "workspace/programs/code-dev-phase-start.md",
+     "line": 60,
+     "severity": "high",
+     "category": "logic-error",
+     "summary": "Guard uses CONTAINS with a regex-anchored literal '^- ', so it never matches real bullets \u2014 _dont-do.md is always re-seeded and overwritten, clobbering existing prohibitions.",
+     "failure_scenario": "A phase is started once (seeds _dont-do.md), then a human or code-dev-dont-do adds prohibition bullets like '- no touching kernel'. On any subsequent 'code-dev phase start', current-dnd contains '- no touching kernel' but NOT the literal substring '^- ' (CONTAINS is a substring test, not regex line-match as everywhere else via EXTRACT pattern=... mode=lines). So 'NOT (current-dnd CONTAINS \"^- \")' is always true, the WRITE at line 61 re-seeds and overwrites _dont-do.md, destroying the hand-added prohibitions. The ELSE branch at lines 65-66 (seeded = 'no (already populated)') is dead/unreachable."
+    },
+    {
+     "id": "B040",
+     "file": "workspace/programs/code-dev-plan.md",
+     "line": 216,
+     "severity": "high",
+     "category": "undefined-variable",
+     "summary": "Botched semantic-search deprecation leaves search-results/arch-findings undefined but still STORE'd and dereferenced downstream.",
+     "failure_scenario": "The PR-142 deprecation commented out the guard and the two assignments (lines 211-215: 'search-results \u2190 TOOL(...)' and 'arch-findings \u2190 TOOL(...)') but left lines 213/215 as dangling arg-strings and left STORE(W:code-dev-plan-search, search-results) (216) and STORE(W:code-dev-plan-arch, arch-findings) (217) active. Running 'code-dev plan' then references the never-assigned 'search-results' at line 216, at line 234-235 ('\u2200 r in search-results.results[0..4]'), and at line 242-247 ('codebase: search-results' in DERIVE) -> undefined-variable error / garbage stored, breaking the CODEBASE FINDINGS panel and the plan derivation."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-19",
+   "title": "code-dev arg/tool/result marshaling fixes",
+   "depends_on": [
+    "PR-01",
+    "PR-06"
+   ],
+   "files": [
+    "workspace/programs/code-dev-changelog.md",
+    "workspace/programs/code-dev-knowledge-shadow.md",
+    "workspace/programs/code-dev-meta-igap.md",
+    "workspace/programs/code-dev-pr-review.md",
+    "workspace/programs/code-dev-state-resume.md"
+   ],
+   "bugs": [
+    {
+     "id": "B035",
+     "file": "workspace/programs/code-dev-changelog.md",
+     "line": 42,
+     "severity": "high",
+     "category": "schema-mismatch",
+     "summary": "Changelog reads 02-prs.md as a table and filters col5=\"merged\", but the file is authored as a bullet list whose status is stored as '- **Status:** ...' text, never a 'merged' table column.",
+     "failure_scenario": "'code-dev changelog' runs line 41 EXTRACT(READ(phase-dir/02-prs.md), table-rows=true) then line 42 FILTER(prs, col5=\"merged\"). But 02-prs.md is written by code-dev-plan.md (lines 339-352) and updated by code-dev-pr-review.md (line 490) as a bullet list ('## PR-N', '- **Status:** not-started' / '- **Status:** \u2705 ready to push'), not a markdown table. table-rows extraction returns no rows, so merged-prs is always empty and the changelog always emits '_(no merged PRs in this phase yet)_' regardless of actual merged PRs. Even code-dev-merge.md's attempt to set status via a table column (column-replace=[5,\"merged\"]) cannot land because no '| PR |' table row exists, so the status value 'merged' never appears in this file."
+    },
+    {
+     "id": "B037",
+     "file": "workspace/programs/code-dev-knowledge-shadow.md",
+     "line": 329,
+     "severity": "high",
+     "category": "wrong-path-marshaling",
+     "summary": "SCAN builds the append shadow-path from the codebase-RELATIVE path, but `shadow init` created the file under the FULL absolute path convention (`_shadow_path_for` strips only the leading '/'), so the four appends target a non-existent file and silently no-op.",
+     "failure_scenario": "Project codebase = /home/user/repo, run `code-dev shadow scan src`. For new file src/foo.cpp, abs-path=/home/user/repo/src/foo.cpp. `TOOL(shadow, init, --file {abs-path} ...)` creates the shadow at {shadow-dir}/home/user/repo/src/foo.cpp.findings.md (shadow.py `_shadow_path_for` = shadow_dir / abs_path.lstrip('/') + '.findings.md'). The subsequent appends use --shadow-path {shadow-dir}/src/foo.cpp.findings.md (rel-path only). cmd_append sees the path does not exist and returns {\"updated\": False, \"error\": \"Shadow file not found\"} for summary/structures/dependencies/arch-role. The program still prints '\u2713 {rel-path}' and 'N file(s) indexed \u2713', so the user believes indexing succeeded while every scanned shadow file is left empty of analysis (silent data loss). Note REFRESH does this correctly by using the tool-returned {f.shadow}."
+    },
+    {
+     "id": "B038",
+     "file": "workspace/programs/code-dev-meta-igap.md",
+     "line": 61,
+     "severity": "high",
+     "category": "wrong-arg-marshaling",
+     "summary": "list branch passes the string '7d' to igap's integer-typed --days flag, crashing the default `code-dev meta igap` invocation.",
+     "failure_scenario": "ARG(--since) defaults to \"7d\" (line 47). The list branch runs TOOL(igap, report, \"--days {since}\") -> `igap report --days 7d`. tools/igap.py registers `--days` with type=int (line 369), so argparse raises `invalid int value: '7d'` and the report subcommand exits non-zero. The bare `code-dev meta igap` command (and any `--since Nd`) always fails; only a plain numeric --since (e.g. `--since 7`, undocumented) would work."
+    },
+    {
+     "id": "B041",
+     "file": "workspace/programs/code-dev-pr-review.md",
+     "line": 354,
+     "severity": "high",
+     "category": "wrong-tool-invocation",
+     "summary": "shadow append is called with an unsupported --date flag, so the per-edit findings write crashes and is silently lost while the program reports success.",
+     "failure_scenario": "In the P6 respond loop, after each edited file the program runs TOOL(shadow, append, \"--shadow-path {shadow-dir}/{edited-file}.findings.md --section findings --content {input} --date {ts.date}\"). shadow.py's append subparser (build_parser, tools/shadow.py:480-485) defines only --shadow-path/--section/--content/--context, so argparse aborts with exit 2 and prints 'unrecognized arguments: --date ...'; the findings row is never written. The program then prints '  \u2714 shadow updated: {edited-file}', so the user believes the shadow was updated when it was not. Reproduced: `python3 tools/shadow.py append --shadow-path SP --section findings --content x --date 2026-07-27` -> exit 2. The sibling append at line 212 (same file, same workflow) omits --date and succeeds, confirming 354 is the defect."
+    },
+    {
+     "id": "B043",
+     "file": "workspace/programs/code-dev-state-resume.md",
+     "line": 135,
+     "severity": "high",
+     "category": "wrong-tool-result-marshaling",
+     "summary": "TOOL(shell, git branch) result is bound whole (envelope dict) without unwrapping .stdout, so branch-drift detection always false-positives and {git-branch} renders the raw envelope.",
+     "failure_scenario": "git-branch <- TOOL(shell, \"git ... branch --show-current\") stores the shell envelope {ok,verdict,stdout,...} (tools/shell.py returns this shape; sibling codemap-new.md:98-99 unwraps `.stdout`). Then branch-state compares `git-branch \u2261 meta-branch` (envelope dict vs string) \u2014 never true \u2014 and `git-branch \u2261 \"not-a-repo\"`/`\"\u2014\"` \u2014 never true \u2014 so branch-state falls through to \"\u26a0 drift\" on every resume even when the git branch matches _meta.branch. The SESSION RESUME marker (line 159) and the WHERE-YOU-ARE block (line 180) interpolate {git-branch} and print the envelope object instead of the branch name."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-20",
+   "title": "Program logic & interpolation: discover/quality-loop/versions/audit/compare",
+   "depends_on": [
+    "PR-06"
+   ],
+   "files": [
+    "workspace/programs/audit-to-study.md",
+    "workspace/programs/axon-compare.md",
+    "workspace/programs/discover.md",
+    "workspace/programs/quality-loop.md",
+    "workspace/programs/versions.md"
+   ],
+   "bugs": [
+    {
+     "id": "B048",
+     "file": "workspace/programs/discover.md",
+     "line": 37,
+     "severity": "high",
+     "category": "logic-error",
+     "summary": "The 'LOW fix' that surfaces dependency issues is dead: `issues` is referenced at line 32 before it is initialized, and line 37 (`issues \u2190 []`) unconditionally re-initializes the list, discarding whatever line 32 appended.",
+     "failure_scenario": "Run `discover` in a workspace where `TOOL(deps, check)` returns a non-empty `.issues` array. Line 31 passes, line 32 does `issues \u2190 issues + MAP(...)` (with `issues` not yet defined), then line 37 resets `issues \u2190 []`, throwing those dependency entries away. The dependency issues are never counted, never sorted into high/medium/low, and never printed \u2014 the exact behavior the LOW-fix comment (line 30) claims it repairs. Additionally the line-32 entries are plain strings lacking .impact/.type/.program, so even without the reset they would be dropped by the impact FIND filters (lines 99-101) and crash the render loops (lines 121-141)."
+    },
+    {
+     "id": "B049",
+     "file": "workspace/programs/quality-loop.md",
+     "line": 61,
+     "severity": "high",
+     "category": "undefined-interpolation",
+     "summary": "The report tool is invoked with an undefined variable `findings-json`, so the cycle report is written with no finding data.",
+     "failure_scenario": "quality-loop runs: findings are scanned into variable `findings` (line 39) and verified into `verified` (line 50). Line 61 calls TOOL(quality-loop, report, \"--findings {findings-json} ...\"), but no variable named `findings-json` is ever assigned anywhere in the program (only `findings`). The interpolation resolves to empty/undefined, so the report tool receives an empty `--findings` argument and the cycle-N.md report is generated with no findings despite real findings existing."
+    },
+    {
+     "id": "B050",
+     "file": "workspace/programs/versions.md",
+     "line": 36,
+     "severity": "high",
+     "category": "stale-state-key",
+     "summary": "`versions` reads W:_versions-target, which no code path writes, and (unlike its siblings simulate.md/library-dev.md) lacks the W:_arg1 fallback \u2014 so the CLI target argument is always ignored.",
+     "failure_scenario": "User runs `versions codemap-shadow`. The tokenizer writes the token into W:_arg1 (the generic bridge key confirmed across codemap.md, code-dev.md, simulate.md, workspace-backup.md); nothing ever writes W:_versions-target. Line 36 RETRIEVE(W:_versions-target) returns \u2205, so line 37 always fires QUERY(user,\"Which program?\"). The program can never resolve its target from the command line and always re-prompts. simulate.md line 40 fixed the identical bug with `RETRIEVE(W:_simulate-target) | RETRIEVE(W:_arg1)`; versions.md has no such fallback."
+    },
+    {
+     "id": "B084",
+     "file": "workspace/programs/audit-to-study.md",
+     "line": 53,
+     "severity": "medium",
+     "category": "wrong-state-key",
+     "summary": "notes-dir uses `{project.path}` but W:code-dev-project is a slug string, not an object with a .path field.",
+     "failure_scenario": "goal-audit stores W:code-dev-project as a slug (e.g. \"eclipse-summary\") \u2014 every canonical consumer (code-dev-journal-log:51, code-dev-study-area:58, code-dev-load:48/code-dev-new:156 which STORE the slug) treats it as a bare string interpolated into {W:myaxon-dev-projects}/{project}. Here `project \u2190 RETRIEVE(W:code-dev-project)` is that same slug string, so `{project.path}` resolves to nothing/undefined and notes-dir becomes a broken path like \"/shadow/audit-feedback/\". MKDIR + WRITE then place the audit-feedback note outside the project (or fail), so the artifact that 'code-dev-study reads on its next pass' is lost. Should be \"{W:myaxon-dev-projects}/{project}/shadow/audit-feedback/\"."
+    },
+    {
+     "id": "B085",
+     "file": "workspace/programs/axon-compare.md",
+     "line": 219,
+     "severity": "medium",
+     "category": "undefined-interpolation",
+     "summary": "`{coverage-pct}` is interpolated in the GAP AREAS output but the variable is never assigned anywhere in the program.",
+     "failure_scenario": "Any run of `axon-compare` reaches the STEP 5 output. Line 219 renders 'Compilation coverage at {coverage-pct}% \u2014 grow to \u226550% for full benefit' but no `coverage-pct \u2190 ...` assignment exists (the H22 fix removed the compilation metric and only left `dim-compilation`, not `coverage-pct`). The line either prints the literal placeholder `{coverage-pct}` or raises an undefined-variable error at output time."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-21",
+   "title": "Program state/persistence: plan-done stale pointers + chat-input persist",
+   "depends_on": [
+    "PR-01"
+   ],
+   "files": [
+    "workspace/programs/chat-input.md"
+   ],
+   "bugs": [
+    {
+     "id": "B034",
+     "file": "workspace/programs/chat-input.md",
+     "line": 50,
+     "severity": "high",
+     "category": "contract-violation",
+     "summary": "Assistant reply is never persisted to the chat file \u2014 the PERSIST append omits the `text` field",
+     "failure_scenario": "User in an active chat sends a message. Lines 32-36 append the user turn WITH `text`; line 47 RESPONDs to the screen; but the `## PERSIST RESPONSE` append at lines 50-53 writes only {role:\"assistant\", time:...} with no `text` field. The assistant's generated reply is never written to {chat-file}. On reopening the chat later, every assistant turn is empty and the conversation history is lost."
+    }
+   ]
+  }
+ ]
+}

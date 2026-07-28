@@ -1,0 +1,165 @@
+diff --git a/axon.py b/axon.py
+index d4793ef..0588957 100644
+--- a/axon.py
++++ b/axon.py
+@@ -101,18 +101,30 @@ def _write_receipt(tool, argv, rc):
+     """Execution receipt (axon-plus pr-2, Goal G anti-mimicry): one JSONL line per
+     dispatched tool run. The verifier's R_TOOL_RECEIPTS cross-checks claimed TOOL()
+     executions against this ledger — fabricated runs have no receipt. Fail-safe:
+-    a receipt problem must never break dispatch."""
++    a receipt problem must never break dispatch.
++
++    B051: a tool may be invoked under an ALIAS (e.g. `search` -> `semantic-search`),
++    but agents typically narrate the canonical registry name (`TOOL(semantic-search)`).
++    We therefore receipt BOTH the name as typed AND its canonical form, so a claim in
++    either form — the canonical TOOL() narration OR the alias CLI command `axon.py search`
++    (both recognized by R_TOOL_RECEIPTS) — finds a matching receipt and a genuinely
++    dispatched run is never false-BLOCKed. R_TOOL_RECEIPTS reads receipts as a set, so
++    the extra line is harmless; only the missing canonical name caused the false block."""
+     try:
+         import datetime, uuid
+         led_dir = os.path.join(AXON_ROOT, "workspace", "log", "receipts")
+         os.makedirs(led_dir, exist_ok=True)
+         now = datetime.datetime.now(datetime.timezone.utc)
+-        line = json.dumps({"ts": now.isoformat(), "tool": tool,
+-                           "argv": argv[:6], "rc": rc,
+-                           "nonce": uuid.uuid4().hex[:12]})
+-        with open(os.path.join(led_dir, now.strftime("%Y-%m-%d") + ".jsonl"),
+-                  "a", encoding="utf-8") as f:
+-            f.write(line + "\n")
++        # Typed name first, then canonical when the tool was an alias (de-duplicated).
++        canonical = ALIASES.get(tool, tool)
++        names = [tool] if canonical == tool else [tool, canonical]
++        path = os.path.join(led_dir, now.strftime("%Y-%m-%d") + ".jsonl")
++        with open(path, "a", encoding="utf-8") as f:
++            for name in names:
++                line = json.dumps({"ts": now.isoformat(), "tool": name,
++                                   "argv": argv[:6], "rc": rc,
++                                   "nonce": uuid.uuid4().hex[:12]})
++                f.write(line + "\n")
+     except Exception:
+         pass
+ 
+diff --git a/tests/test_dispatch_receipt_canonical.py b/tests/test_dispatch_receipt_canonical.py
+new file mode 100644
+index 0000000..6b15a16
+--- /dev/null
++++ b/tests/test_dispatch_receipt_canonical.py
+@@ -0,0 +1,117 @@
++"""PR-29 / B051 — dispatcher receipts must carry the CANONICAL registry tool name.
++
++Failure scenario (with L:tool-receipts-required=true): an agent runs
++`python3 axon.py search --query x` where `search` is an ALIAS for `semantic-search`.
++The dispatcher used to write ONLY {"tool": "search"} (the typed alias). The agent
++narrates the canonical `TOOL(semantic-search, ...)`, so R_TOOL_RECEIPTS computes
++claimed={'semantic-search'} but receipted={'search'} -> false BLOCK.
++
++Fix: the dispatcher receipts BOTH the typed alias AND its canonical name, so a claim
++in either form matches:
++  - canonical TOOL(semantic-search) narration  -> matches the canonical receipt
++  - alias CLI command `axon.py search`         -> matches the alias receipt (preserved)
++R_TOOL_RECEIPTS reads receipts as a set, so the extra line is harmless.
++
++These tests exercise the real _write_receipt (writing to a redirected AXON_ROOT) so
++they assert the actual ledger content, not just the argument passed in.
++"""
++from __future__ import annotations
++
++import importlib.util
++import json
++import os
++import sys
++import types
++from pathlib import Path
++
++import pytest
++
++ROOT = Path(__file__).resolve().parent.parent
++
++
++def _load_axon():
++    spec = importlib.util.spec_from_file_location("axon_cli_under_test", ROOT / "axon.py")
++    mod = importlib.util.module_from_spec(spec)
++    spec.loader.exec_module(mod)
++    return mod
++
++
++def _receipted_tools(axon, tmp_root):
++    """Read every receipt line the dispatcher wrote under tmp_root and return the
++    lowercased set of tool names — mirroring R_TOOL_RECEIPTS._receipted_tools."""
++    import datetime
++    led = os.path.join(tmp_root, "workspace", "log", "receipts",
++                       datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d") + ".jsonl")
++    out = set()
++    with open(led, encoding="utf-8") as f:
++        for line in f:
++            out.add(str(json.loads(line).get("tool", "")).lower())
++    return out
++
++
++def _drive_full(axon, argv, tmp_root, monkeypatch):
++    """Invoke axon.main() with argv, stubbing only the subprocess dispatch, and let the
++    REAL _write_receipt run against a redirected AXON_ROOT (tmp_root)."""
++    def fake_run(cmd, *a, **kw):
++        return types.SimpleNamespace(returncode=0)
++
++    monkeypatch.setattr(axon.subprocess, "run", fake_run)
++    monkeypatch.setattr(axon, "AXON_ROOT", str(tmp_root))
++    monkeypatch.setattr(sys, "argv", ["axon.py", *argv])
++    with pytest.raises(SystemExit) as exc:
++        axon.main()
++    assert exc.value.code == 0
++    return _receipted_tools(axon, tmp_root)
++
++
++def _pick_registered_alias(axon):
++    """Return (alias, canonical) for a currently-registered alias whose canonical
++    name differs and whose script exists."""
++    for alias, canonical in axon.ALIASES.items():
++        if alias == canonical:
++            continue  # identity shim (e.g. hooks) — nothing to canonicalize
++        if alias not in axon.TOOLS or canonical not in axon.TOOLS:
++            continue
++        if os.path.exists(axon.TOOLS[alias][0]):
++            return alias, canonical
++    return None, None
++
++
++def test_alias_receipt_includes_canonical_name(tmp_path, monkeypatch):
++    """The canonical name MUST appear in the ledger so a canonical TOOL() claim matches."""
++    axon = _load_axon()
++    alias, canonical = _pick_registered_alias(axon)
++    assert alias is not None, "no registered non-identity alias available to test"
++    receipted = _drive_full(axon, [alias, "--help"], tmp_path, monkeypatch)
++    assert canonical in receipted, (
++        f"receipt ledger {receipted} lacks the canonical name {canonical!r}; "
++        f"R_TOOL_RECEIPTS would false-BLOCK the canonical TOOL({canonical}) claim"
++    )
++
++
++def test_alias_receipt_still_includes_typed_alias(tmp_path, monkeypatch):
++    """Regression guard: the typed alias MUST also remain in the ledger so the
++    `axon.py <alias>` CLI claim form (recognized by R_TOOL_RECEIPTS) keeps matching."""
++    axon = _load_axon()
++    alias, canonical = _pick_registered_alias(axon)
++    assert alias is not None, "no registered non-identity alias available to test"
++    receipted = _drive_full(axon, [alias, "--help"], tmp_path, monkeypatch)
++    assert alias in receipted, (
++        f"receipt ledger {receipted} dropped the typed alias {alias!r}; the "
++        f"`axon.py {alias}` CLI claim form would false-BLOCK"
++    )
++
++
++def test_canonical_tool_name_writes_single_line(tmp_path, monkeypatch):
++    """A non-alias invocation records exactly its own (canonical) name — no dup line."""
++    axon = _load_axon()
++    canonical = None
++    for name, (script, _desc, status) in axon.TOOLS.items():
++        if name in axon.ALIASES:
++            continue
++        if status == "ACTIVE" and os.path.exists(script):
++            canonical = name
++            break
++    assert canonical is not None, "no active canonical tool available to test pass-through"
++    receipted = _drive_full(axon, [canonical], tmp_path, monkeypatch)
++    assert receipted == {canonical.lower()}

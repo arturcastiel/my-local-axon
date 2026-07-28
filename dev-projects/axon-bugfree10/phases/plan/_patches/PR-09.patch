@@ -1,0 +1,102 @@
+diff --git a/tests/test_workflow_run_pr09.py b/tests/test_workflow_run_pr09.py
+new file mode 100644
+index 0000000..bd69c2f
+--- /dev/null
++++ b/tests/test_workflow_run_pr09.py
+@@ -0,0 +1,67 @@
++"""axon-bugfree10 PR-09 — workflow_run.py
++
++B082: promoted `*.draft.yml` files must NOT be enumerated as installed workflows
++      (drafts are "never auto-activated" and would otherwise shadow the active .yml).
++B083: an unquoted YAML boolean `if: true` must be an always-taken rule, not dropped.
++"""
++import sys
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parents[1]
++sys.path.insert(0, str(ROOT / "tools"))
++import workflow_run as wr  # noqa: E402
++
++
++# ── B083: boolean-true if is always taken ────────────────────────────────────
++
++def _wf_bool_true():
++    return {"synapses": [
++        {"id": "s1", "on-complete": [
++            {"if": True, "next": "X"},
++            {"next": "Y"}]},
++        {"id": "X", "on-complete": []},
++        {"id": "Y", "on-complete": []}]}
++
++
++def test_boolean_true_if_is_taken():
++    # `if: true` (YAML boolean → Python True) must fire, not fall through to Y.
++    r = wr.resolve_next(_wf_bool_true(), "s1", {})
++    assert r["next"] == "X", r
++
++
++def test_boolean_false_if_still_skipped():
++    # regression guard: a real falsy predicate is still never taken.
++    wf = {"synapses": [
++        {"id": "s1", "on-complete": [
++            {"if": False, "next": "X"},
++            {"next": "Y"}]},
++        {"id": "X", "on-complete": []},
++        {"id": "Y", "on-complete": []}]}
++    assert wr.resolve_next(wf, "s1", {})["next"] == "Y"
++
++
++# ── B082: draft files are excluded from enumeration ──────────────────────────
++
++def test_draft_yml_excluded_from_list_workflows(tmp_path):
++    wsdir = tmp_path / "workspace" / "workflows"
++    wsdir.mkdir(parents=True)
++    (wsdir / "foo.yml").write_text("name: foo\nversion: 9\nsynapses: []\n", encoding="utf-8")
++    (wsdir / "foo.draft.yml").write_text("name: foo\nversion: 1\nsynapses: []\n", encoding="utf-8")
++
++    rows = wr.list_workflows(str(tmp_path / "workspace"))
++    paths = [r["path"] for r in rows]
++    assert any(p.endswith("foo.yml") and not p.endswith("foo.draft.yml") for p in paths)
++    assert not any(p.endswith(".draft.yml") for p in paths), paths
++
++
++def test_draft_does_not_shadow_active_in_names(tmp_path):
++    wsdir = tmp_path / "workspace" / "workflows"
++    wsdir.mkdir(parents=True)
++    (wsdir / "foo.yml").write_text("name: foo\nversion: 9\nsynapses: []\n", encoding="utf-8")
++    (wsdir / "foo.draft.yml").write_text("name: foo\nversion: 1\nsynapses: []\n", encoding="utf-8")
++
++    rows = wr.list_workflows(str(tmp_path / "workspace"))
++    foo_rows = [r for r in rows if r.get("name") == "foo"]
++    # exactly one 'foo' — the active one, at version 9 (the draft is gone)
++    assert len(foo_rows) == 1, foo_rows
++    assert foo_rows[0]["version"] == 9
+diff --git a/tools/workflow_run.py b/tools/workflow_run.py
+index 978c36a..d3a93ae 100644
+--- a/tools/workflow_run.py
++++ b/tools/workflow_run.py
+@@ -88,6 +88,10 @@ def resolve_next(workflow: dict, cursor_id: str, ctx: dict) -> dict:
+         if "if" not in rule:
+             return {"next": rule.get("next"), "rule_index": i, "reason": "unconditional (else)"}
+         expr = rule.get("if")
++        if expr is True:
++            # unquoted YAML boolean true → always taken (str(True)=='True' is NOT the
++            # predicate keyword `true`, so it would otherwise parse as an undefined ref)
++            return {"next": rule.get("next"), "rule_index": i, "reason": "if:true → true"}
+         if expr in (False, None, "", 0):
+             continue                       # present-but-falsy predicate → never taken
+         try:
+@@ -473,8 +477,12 @@ def list_workflows(workspace: str = "workspace") -> list:
+     import yaml as _yaml
+ 
+     rows = []
+-    # User-authored workflows
++    # User-authored workflows. Exclude promoted `*.draft.yml` files: drafts are for human
++    # review and are "never auto-activated" (see _write_draft), so they must not be
++    # enumerated as installed workflows where they would shadow the active same-name .yml.
+     for path in sorted(glob.glob(os.path.join(workspace, "workflows", "*.yml"))):
++        if path.endswith(".draft.yml"):
++            continue
+         rows.append(_describe_workflow(path, "user", _yaml))
+     # Reference workflows (one per domain)
+     for path in sorted(

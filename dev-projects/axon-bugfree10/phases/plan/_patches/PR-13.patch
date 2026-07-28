@@ -1,0 +1,199 @@
+diff --git a/tests/test_obsidian_export.py b/tests/test_obsidian_export.py
+index 6dfdb6f..ff86546 100644
+--- a/tests/test_obsidian_export.py
++++ b/tests/test_obsidian_export.py
+@@ -66,6 +66,19 @@ def test_reexport_rebuilds_when_graph_changes(tmp_path):
+     assert r["unchanged"] is False
+ 
+ 
++def test_unchanged_reexport_reports_build_vault_counts(tmp_path):
++    """B077: the 'unchanged' fast-path must report the SAME file-note / cross-file-edge
++    counts that build_vault produced — NOT the raw symbol-node / total-link counts."""
++    g = _graph(tmp_path)                    # 3 symbol nodes / 2 files, 1 cross-file link
++    r1 = oe.export_fresh(str(g), str(tmp_path / "vault"))
++    assert r1["unchanged"] is False and r1["notes"] == 2 and r1["edges"] == 1
++    r2 = oe.export_fresh(str(g), str(tmp_path / "vault"))
++    assert r2["unchanged"] is True
++    # steady-state card must match the initial build, not len(nodes)=3 / len(links)=1
++    assert r2["notes"] == r1["notes"] == 2
++    assert r2["edges"] == r1["edges"] == 1
++
++
+ def test_export_fresh_carries_a_freshness_block(tmp_path):
+     g = _graph(tmp_path)
+     r = oe.export_fresh(str(g), str(tmp_path / "vault"))
+diff --git a/tests/test_pr13_data_integrity.py b/tests/test_pr13_data_integrity.py
+new file mode 100644
+index 0000000..0c02358
+--- /dev/null
++++ b/tests/test_pr13_data_integrity.py
+@@ -0,0 +1,83 @@
++"""PR-13 data-integrity regressions:
++  B073 index.append_table_row — must not merge the new row onto the line
++        following the table (e.g. a `## SECTION` header) nor inject a blank line.
++  B015 _axon_rollback.restore — restoring the oldest snapshot while at cap must
++        not evict-then-crash on the chosen snapshot.
++"""
++import sys
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parent.parent
++sys.path.insert(0, str(ROOT / "tools"))
++
++import index                # noqa: E402
++import _axon_rollback       # noqa: E402
++
++
++# ── B073: append_table_row ────────────────────────────────────────────────────
++
++def test_append_row_before_following_section_header():
++    """A CHATS table immediately followed (no blank line) by `## ARCHIVE`."""
++    content = (
++        "## CHATS\n"
++        "| Folder | Chat | Goal | Created | Active | Status |\n"
++        "| --- | --- | --- | --- | --- | --- |\n"
++        "| f1 | c1 | g1 | 2026-01-01 | 2026-01-01 | active |\n"
++        "## ARCHIVE\n"
++        "old stuff\n"
++    )
++    row = "| f2 | c2 | g2 | 2026-01-02 | 2026-01-02 | active |"
++    out = index.append_table_row(content, "CHATS", row)
++    lines = out.split("\n")
++    # the header must survive intact on its own line
++    assert "## ARCHIVE" in lines, "section header was destroyed"
++    # the new row must be its own line, never merged with the header
++    assert row in lines
++    assert not any(l.startswith("|") and l.rstrip().endswith("## ARCHIVE") for l in lines)
++    assert "## ARCHIVE" not in row  # sanity
++    # no spurious blank line splitting the table: the new row directly follows f1
++    idx = lines.index(row)
++    assert lines[idx - 1] == "| f1 | c1 | g1 | 2026-01-01 | 2026-01-01 | active |"
++    # and it is immediately followed by the header (own line)
++    assert lines[idx + 1] == "## ARCHIVE"
++
++
++def test_append_row_table_last_in_file_no_blank_line():
++    """Regression guard for the normal case (table is the last content)."""
++    content = (
++        "## CHATS\n"
++        "| Folder | Chat | Goal | Created | Active | Status |\n"
++        "| --- | --- | --- | --- | --- | --- |\n"
++        "| f1 | c1 | g1 | 2026-01-01 | 2026-01-01 | active |\n"
++    )
++    row = "| f2 | c2 | g2 | 2026-01-02 | 2026-01-02 | active |"
++    out = index.append_table_row(content, "CHATS", row)
++    assert "\n\n" not in out, "spurious blank line injected"
++    assert out.count(row) == 1
++    lines = [l for l in out.split("\n") if l]
++    assert lines[-1] == row
++
++
++# ── B015: restore at cap must not evict-then-crash the chosen snapshot ─────────
++
++def test_restore_oldest_at_cap_does_not_evict_and_crash(tmp_path):
++    target = tmp_path / "doc.md"
++    cap = _axon_rollback.DEFAULT_CAP  # 3
++
++    # Build up exactly `cap` snapshots by editing then snapshotting.
++    contents = ["v1-oldest", "v2", "v3"]
++    for c in contents:
++        target.write_text(c)
++        _axon_rollback.snapshot(target)
++    # now write the current (un-snapshotted) contents
++    target.write_text("current")
++
++    snaps = _axon_rollback.list_snapshots(target)
++    assert len(snaps) == cap
++    oldest = snaps[-1]                       # version == cap == the oldest
++    assert oldest.read_text() == "v1-oldest"
++
++    # Restore the oldest version while at cap. Must not raise, must restore it.
++    restored = _axon_rollback.restore(target, version=cap)
++    assert restored is not None
++    assert target.read_text() == "v1-oldest", "target was not restored to the oldest snapshot"
+diff --git a/tools/_axon_rollback.py b/tools/_axon_rollback.py
+index 0fe22ed..bf63518 100644
+--- a/tools/_axon_rollback.py
++++ b/tools/_axon_rollback.py
+@@ -103,9 +103,14 @@ def restore(target: Union[str, Path], version: int = 1) -> Optional[Path]:
+     if version < 1 or version > len(snaps):
+         return None
+     chosen = snaps[version - 1]
++    # Read the chosen snapshot BEFORE self-snapshotting: snapshot() enforces the
++    # FIFO cap and, when the .rollback dir is already at cap, evicts the oldest
++    # snapshot — which may be `chosen` itself (restoring the oldest version at
++    # cap). Reading first ensures the bytes survive that eviction.
++    chosen_text = chosen.read_text()
+     # Self-snapshot the current contents so the restore is reversible
+     snapshot(target)
+-    atomic_write(target, chosen.read_text())
++    atomic_write(target, chosen_text)
+     return chosen
+ 
+ 
+diff --git a/tools/index.py b/tools/index.py
+index 457acd4..89df319 100644
+--- a/tools/index.py
++++ b/tools/index.py
+@@ -34,7 +34,10 @@ def append_table_row(content, section, row):
+             last_i = i
+     if last_i == -1:
+         return content
+-    insert_at = m.end() + sum(len(l) + 1 for l in lines[:last_i + 1])
++    # Insert at the END of the last table-row line (before its trailing newline,
++    # if any) so the new row lands on its own line and never merges onto whatever
++    # follows the table (e.g. a `## SECTION` header) nor injects a blank line.
++    insert_at = m.end() + sum(len(l) + 1 for l in lines[:last_i]) + len(lines[last_i])
+     return content[:insert_at] + f"\n{row}" + content[insert_at:]
+ 
+ def update_row_status(content, name, status, last_active):
+diff --git a/tools/obsidian_export.py b/tools/obsidian_export.py
+index 4e686b4..542a8a1 100644
+--- a/tools/obsidian_export.py
++++ b/tools/obsidian_export.py
+@@ -124,6 +124,28 @@ def _write_index(vault: Path, by_file: dict, edges_by_file: dict, project_dir: s
+     atomic_write(vault / "INDEX.md", "\n".join(lines) + "\n")
+ 
+ 
++def _vault_counts(graph: dict) -> tuple[int, int]:
++    """Compute the counts build_vault() actually produces from `graph`:
++    (file-note count, cross-file edge count) — NOT the raw symbol-node /
++    total-link counts. Kept in lock-step with build_vault's grouping logic so
++    the 'unchanged' fast-path reports the same card the initial build did."""
++    nodes = graph.get("nodes", [])
++    links = graph.get("links", graph.get("edges", []))
++    id_file: dict[str, str] = {}
++    files: set[str] = set()
++    for n in nodes:
++        sf = n.get("source_file") or "(unknown)"
++        files.add(sf)
++        id_file[str(n.get("id"))] = sf
++    edge_count = 0
++    for e in links:
++        sf = id_file.get(str(e.get("source")))
++        tf = id_file.get(str(e.get("target")))
++        if sf and tf and sf != tf:
++            edge_count += 1
++    return len(files), edge_count
++
++
+ def _vault_graph_hash(vault: str) -> str | None:
+     try:
+         return json.loads((Path(vault) / ".vault-provenance.json").read_text(
+@@ -146,10 +168,13 @@ def export_fresh(graph_path: str, out: str, project_dir: str | None = None,
+     cur = _graph_hash(g)
+     if not force and _vault_graph_hash(out) == cur:
+         # consumers (codemap-map, code-dev-obsidian) render notes/edges on THIS branch
+-        # too — compute the counts from the loaded graph so the steady-state card is real
++        # too — report the SAME file-note / cross-file-edge counts build_vault()
++        # produced (not raw symbol-node / total-link counts) so the steady-state
++        # card matches the vault on disk and the initial build.
++        notes, edges = _vault_counts(g)
+         return {"ok": True, "degraded": False, "vault": str(out), "unchanged": True,
+-                "notes": len(g.get("nodes", [])),
+-                "edges": len(g.get("links", g.get("edges", []))),
++                "notes": notes,
++                "edges": edges,
+                 "reason": "vault already reflects the current graph — no rebuild needed",
+                 "freshness": fresh}
+     res = build_vault(graph_path, out, project_dir)

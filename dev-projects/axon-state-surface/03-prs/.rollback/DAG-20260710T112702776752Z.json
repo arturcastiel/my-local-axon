@@ -1,0 +1,12 @@
+{
+  "schema": "axon-dag",
+  "schema-version": "v1",
+  "level": "pr",
+  "owner": "my-axon/dev-projects/axon-state-surface/03-prs",
+  "generated": "2026-07-10T11:27:02Z",
+  "generator": "tools/dag.py",
+  "validated": true,
+  "critical-path": [],
+  "nodes": [],
+  "edges": []
+}

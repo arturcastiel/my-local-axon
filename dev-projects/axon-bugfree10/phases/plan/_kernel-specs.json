@@ -1,0 +1,294 @@
+{
+ "project": "axon-bugfree10",
+ "note": "KERNEL floor PRs \u2014 human-only, prepared for owner gate. Each fix in axon/*; write-gate allows (dev-mode on) but NOTHING merges without owner 'gate on'.",
+ "prs": [
+  {
+   "pr_id": "PR-22",
+   "title": "ADVISORY (kernel floor): gate fail-opens in dry_run_lint & write_barrier \u2014 OWNER ESCALATION",
+   "kernel_floor": true,
+   "files": [
+    "axon/tools/dry_run_lint.py",
+    "axon/tools/write_barrier.py"
+   ],
+   "bugs": [
+    {
+     "id": "B009",
+     "file": "axon/tools/dry_run_lint.py",
+     "line": 46,
+     "severity": "high",
+     "category": "gate-bypass",
+     "summary": "The dry-run merge gate misses mutating ops written inline after an arrow because _MUTATING_OP is anchored to line-start, so an unguarded mutator that writes via `\u2192 WRITE(...)` passes.",
+     "failure_scenario": "_MUTATING_OP = re.compile(r\"^\\s*(?:WRITE|APPEND|MKDIR|...)\\(\") is applied with .match(ln), which only matches when the op is the first token on the line. AXON-LANG programs routinely write mutating ops inline after a conditional arrow (e.g. code-dev-safety-audit-structure.md lines 86-87: `IF m ENDS-WITH \"/\" \u2192 MKDIR(...)` / `ELSE \u2192 WRITE(...)`). I created a mutator code-dev-merge.md with NO dry-run guard whose only mutations are `IF ready \u2261 true \u2192 WRITE(...)` / `ELSE \u2192 MKDIR(...)`; run_check() returned ok=true, violations=[], hint 'all whatif-reachable mutators are dry-guarded' because first_mut resolved to None. A whatif dry-run of such a program would perform real destructive writes while the gate reports the promise is honored."
+    },
+    {
+     "id": "B010",
+     "file": "axon/tools/dry_run_lint.py",
+     "line": 45,
+     "severity": "high",
+     "category": "gate-bypass",
+     "summary": "_GUARD.search matches the dry-run token inside a `#` comment (no comment stripping), so a mutator whose real executable guard was removed but whose descriptive comment still mentions W:code-dev-dry-run passes the gate despite unguarded writes.",
+     "failure_scenario": "check_program computes guard_at = first line where _GUARD (r\"W:code-dev-dry-run\") matches, without excluding comment lines. All four current mutators carry a leading comment like `# C8 dry-run guard \u2014 code-dev whatif arms W:code-dev-dry-run` (e.g. code-dev-divide.md line 52). I built code-dev-divide.md whose ONLY pre-op occurrence of the token is that comment (real `IF RETRIEVE(W:code-dev-dry-run)` guard deleted) followed by unguarded MKDIR(...)/WRITE(...); run_check() returned ok=true, violations=[]. Deleting the actual runtime guard is not caught as long as the human-readable comment remains, defeating whatif's 'no writes' contract."
+    },
+    {
+     "id": "B013",
+     "file": "axon/tools/write_barrier.py",
+     "line": 100,
+     "severity": "high",
+     "category": "gate-bypass-fail-open",
+     "summary": "os.open() writes/truncations of protected subtrees bypass the write-barrier because os.open raises the 'open' audit event with mode=None, which _hook treats as a read and lets through.",
+     "failure_scenario": "In an armed unattended child, `python3 -c \"import os; fd=os.open('axon/KERNEL-SLIM.md', os.O_WRONLY|os.O_TRUNC); os.write(fd,b'')\"` truncates the kernel floor. CPython raises audit event 'open' with args ('axon/KERNEL-SLIM.md', None, flags); _hook line 99-100 sets mode=args[1]=None, then `if mode is None: return` short-circuits before any _protected_hit check, so the mutation is ALLOWED. Demonstrated live: builtin open('a') is REFUSED but os.open with O_WRONLY|O_TRUNC on the same kernel file (and on a delete-protected workspace/programs file) is ALLOWED. This is the exact computed-path residual (os.open is listed in shell.py::_INTERP_WRITE_CALL) that shell.py delegates to G1c, so the backstop fails open on its own threat model. The write intent lives in the flags (args[2]) which the hook never inspects."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-27a",
+   "title": "ADVISORY (kernel floor): KERNEL-SLIM active-program interrupt gate integrity",
+   "kernel_floor": true,
+   "files": [
+    "axon/KERNEL-SLIM.md"
+   ],
+   "bugs": [
+    {
+     "id": "B052",
+     "file": "axon/KERNEL-SLIM.md",
+     "line": 258,
+     "severity": "medium",
+     "category": "logic-error / ordering",
+     "summary": "Interrupt-gate ABORT branch clears W:_interrupt-pending-input on line 258, then tries to EXEC that same (now-empty) key on line 260, so the user's new action is silently dropped on abort.",
+     "failure_scenario": "A multi-step program is running (W:active-phase non-terminal). User types a new command 'deploy the app'; the gate stores it in W:_interrupt-pending-input (line 227) and prompts K/I/A. User chooses A (abort). Branch runs: line 257 sets active-phase to :aborted, line 258 CLEAR(W:_interrupt-pending-input) makes it \u2205, then line 260 EXEC(W:_interrupt-pending-input) executes \u2205 \u2014 a no-op. The program is aborted but 'deploy the app' is never run, contradicting the option label 'abort \u2014 discard program + run my new action'. (The I branch on line 253 does NOT clear first, so only ABORT loses the input.)"
+    },
+    {
+     "id": "B053",
+     "file": "axon/KERNEL-SLIM.md",
+     "line": 242,
+     "severity": "medium",
+     "category": "logic-error / unreachable-branch",
+     "summary": "Interrupt gate binds 'answer <- input' from the SAME input that triggered the interrupt, not from the K/I/A reply, so none of the K/I/A handler branches (lines 243/246/254) can execute on the prompt turn; and because the gate re-fires on EVERY input before parsing (line 208), the K/I/A reply on the next turn re-enters the ELSE branch and overwrites W:_interrupt-pending-input.",
+     "failure_scenario": "Program running; user types 'show weather'. Gate stores 'show weather' (line 227), renders the K/I/A prompt, then line 242 sets answer <- input = 'show weather'. answer is not 'K'/'I'/'A'/'' so lines 243/246/254 all fail \u2014 nothing executes, the program stalls. Next turn user types 'I': gate fires again (line 208, 'fires on EVERY user input, BEFORE command parsing'), phase still active, 'i' is not in continuation-cmds (line 221) and not ^\\d+$, so ELSE runs again \u2014 line 227 overwrites W:_interrupt-pending-input with 'I', destroying the original 'show weather', and re-renders the prompt. The interrupt/abort choices are unreachable and the original command is lost."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-23",
+   "title": "ADVISORY (kernel floor): predicate/validator/registry error handling",
+   "kernel_floor": true,
+   "files": [
+    "axon/tools/predicate.py",
+    "axon/tools/programs_registry.py",
+    "axon/tools/validator.py"
+   ],
+   "bugs": [
+    {
+     "id": "B011",
+     "file": "axon/tools/predicate.py",
+     "line": 684,
+     "severity": "high",
+     "category": "unhandled-exception",
+     "summary": "`matches` operator with an invalid regex RHS raises re.error, which is neither ParseError nor EvalError and is never caught, crashing the CLI and any workflow-gate caller instead of returning the uniform error envelope.",
+     "failure_scenario": "Predicate `name matches \"[\"` with ctx `{\"state\":{\"name\":\"abc\"}}`: _cmp reaches re.search(\"[\",\"abc\") which raises re.error('unterminated character set'). main() only catches (ParseError, EvalError), so the process exits with a traceback (verified) and non-JSON output. As a library gate evaluator this propagates an uncaught exception up through goal-acceptance/synapse/workflow gates, breaking the documented 'error+message always present' contract that lets gate-walkers distinguish a broken predicate from a false one."
+    },
+    {
+     "id": "B060",
+     "file": "axon/tools/predicate.py",
+     "line": 680,
+     "severity": "medium",
+     "category": "unhandled-exception",
+     "summary": "`in` operator guards the RHS type but not LHS/RHS compatibility: `<non-string> in <string>` raises TypeError, which is not caught by main()'s (ParseError, EvalError) handler and crashes.",
+     "failure_scenario": "Predicate `5 in name` with ctx `{\"state\":{\"name\":\"abc\"}}`: b=\"abc\" passes the isinstance(b,(list,tuple,str)) guard, then `5 in \"abc\"` raises TypeError('in <string> requires string as left operand, not int') (verified). Uncaught, so the tool aborts with a traceback / the gate evaluation crashes instead of returning a clean type_mismatch error."
+    },
+    {
+     "id": "B065",
+     "file": "axon/tools/validator.py",
+     "line": 40,
+     "severity": "medium",
+     "category": "logic-error",
+     "summary": "Data source is selected with a truthiness test (`if args.data`) instead of a None check, so an empty `--data ''` falls through to `open(args.data_file)` with args.data_file=None, raising an uncaught TypeError.",
+     "failure_scenario": "`python tools/validator.py --data '' --type object`: the mutually-exclusive group sets args.data='' and args.data_file=None. Line 40 evaluates `args.data` as falsy and runs `json.load(open(None))`, raising TypeError('expected str, bytes or os.PathLike object, not NoneType') (verified traceback). This is not in the caught (JSONDecodeError, FileNotFoundError) tuple, so the user gets a crash instead of the clean {\"error\": \"Data error: ...\"} envelope they'd get for other bad JSON."
+    },
+    {
+     "id": "B061",
+     "file": "axon/tools/programs_registry.py",
+     "line": 432,
+     "severity": "medium",
+     "category": "error-handling / gate-bypass",
+     "summary": "main() calls args.func(args) but never propagates the function's return value to sys.exit, so cmd_generate/cmd_query/cmd_validate's `return 1` error paths exit 0.",
+     "failure_scenario": "Running `programs_registry.py --workspace <ws-with-no-programs-dir> generate` prints {\"ok\": false, \"error\": \"no programs/ dir ...\"} yet the process exits 0 (verified empirically); likewise `query`/`validate` against a not-yet-generated REGISTRY.json return 1 internally but exit 0. Consumers that read the exit code treat these failures as success: freshness.refresh() records report['rc']['program_registry']=0, and synapse_scaffold.register() returns 0. Contrast cmd_check, which correctly sys.exit(2). The masked-error paths are a silent fail-open on the registry writer/validator."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-24",
+   "title": "ADVISORY (kernel floor): self_care substring false-positives",
+   "kernel_floor": true,
+   "files": [
+    "axon/tools/self_care.py"
+   ],
+   "bugs": [
+    {
+     "id": "B012",
+     "file": "axon/tools/self_care.py",
+     "line": 257,
+     "severity": "high",
+     "category": "wrong-tool-invocation",
+     "summary": "Health score is read via kv-store with an L: key, which kv_store.py refuses and which no longer holds the value, so score is always None and self-care always reports health as unknown / needs-attention.",
+     "failure_scenario": "health.py --persist has written L:health-score=95 to workspace/memory/longterm/health-score.md. `self-care check` calls _axon('kv-store','get','--key','L:health-score'); kv_store.py:46-51 rejects the L: namespace, printing {\"error\": ...} and exiting 2. _loads gives {'error':...}, hs.get('found') is falsy, so score=None. run_check sets health.ok via `score is None` -> True but appends 'health: unknown - run health-check' to needs_attention and reports overall status 'needs-attention', despite a healthy persisted score. The correct reader is memory.py --scope L --key health-score."
+    },
+    {
+     "id": "B064",
+     "file": "axon/tools/self_care.py",
+     "line": 200,
+     "severity": "medium",
+     "category": "logic-error",
+     "summary": "complete-claim check uses a substring test `\"complete\" in (status+\" \"+phase)`, which matches the substring inside 'incomplete', producing a false complete-claim-unbacked finding.",
+     "failure_scenario": "A dev-project _meta.md has `status: incomplete` and its manifest has a non-done phase (consistent with being incomplete). pointer_check evaluates `\"complete\" in (\"incomplete\" + \" \" + phase)` -> True, then lists the non-done phases and emits a 'complete-claim-unbacked' finding claiming the project 'claims complete but manifest has non-done phases', the exact opposite of reality, adding a spurious item to needs_attention."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-25",
+   "title": "ADVISORY (kernel floor): kernel tool logic/format (lib ts, clock, liveness, redact, rules_loader)",
+   "kernel_floor": true,
+   "files": [
+    "axon/tools/_axon_lib.py",
+    "axon/tools/clock.py",
+    "axon/tools/liveness_lint.py",
+    "axon/tools/redact.py",
+    "axon/tools/rules_loader.py"
+   ],
+   "bugs": [
+    {
+     "id": "B057",
+     "file": "axon/tools/_axon_lib.py",
+     "line": 173,
+     "severity": "medium",
+     "category": "contract-violation/timestamp-format",
+     "summary": "In-process usage_record writes ts as isoformat()+\"Z\" (\"...+00:00Z\"), which usage.py's readers cannot parse with datetime.fromisoformat, so those entries are silently dropped from all windowed queries.",
+     "failure_scenario": "The orchestrator/hooks record a program run via _axon_lib.usage_record(ws, kind='program', name='menu'). Line 173 appends a JSONL entry to workspace/memory/longterm/usage-log.jsonl with ts = datetime.now(timezone.utc).isoformat() + \"Z\", e.g. '2026-07-27T09:28:38.395+00:00Z'. That string has both a +00:00 offset AND a trailing Z, which is invalid ISO-8601; datetime.fromisoformat() raises ValueError on it (verified on the repo's Python 3.10.12). usage.py's read_entries (line 67, used by `usage top` and `usage suggest`), aggregate (line 136, `--since`), and cmd_prune (line 248) all parse ts via datetime.fromisoformat inside a try/except that skips the entry on failure. Result: (a) `usage top --window 7d` and `usage suggest --window 30d` (the defaults) drop every in-process-recorded run, so frequently-run programs never surface as compile candidates; (b) `usage prune --before 90d` treats them as unparseable and keeps them forever (unbounded log growth). usage.py's own CLI `record` uses now_iso() WITHOUT the trailing 'Z' (line 33), so the two writers to the same log file disagree on ts format and only the CLI-written entries are readable."
+    },
+    {
+     "id": "B058",
+     "file": "axon/tools/clock.py",
+     "line": 46,
+     "severity": "medium",
+     "category": "logic-error",
+     "summary": "clock's `unix` field is computed with naive-UTC `.timestamp()`, which Python interprets as LOCAL time, so `unix` is wrong (off by the host's UTC offset) on any non-UTC machine while iso/date/time stay correct.",
+     "failure_scenario": "`_now()` returns a naive datetime from `datetime.datetime.utcnow()` (or `utcfromtimestamp`). In `_fmt`, `int(now.timestamp())` treats that UTC wall-clock as local time. On the user's Europe/Amsterdam host (UTC+2 in July), running `clock` emits `unix` = true_unix - 7200 (verified: -7200s), i.e. 2 hours behind, while the `iso`/`date`/`time` fields report the correct UTC instant. Any program that consumes `unix` for age/ordering/arithmetic (or compares it against `iso`) gets a value hours off from reality on every non-UTC runner."
+    },
+    {
+     "id": "B059",
+     "file": "axon/tools/liveness_lint.py",
+     "line": 47,
+     "severity": "medium",
+     "category": "incorrect-regex-fail-open",
+     "summary": "The sentinel-seam caller pattern r'\\bauthorized\\s*\\(' for autonomous_mode.authorized matches unrelated English prose, so a genuinely-dead governance seam is reported as wired.",
+     "failure_scenario": "check_sentinel_seams() scans the production corpus for callers of the S1 seam autonomous_mode.authorized using patterns including r'\\bauthorized\\s*\\('. workspace/programs/quality-loop.md contains the prose 'S-fixes authorized (earned, revocable)'; \\s* matches the space so 'authorized (' matches. Verified live: that prose line counts as a 'caller'. Therefore, even if autonomous_mode.authorized() has ZERO real production call sites (the audit's #1 'coded, never called' defect), no dead-sentinel finding is emitted and run() reports ok, silently regressing the seam the lint exists to protect."
+    },
+    {
+     "id": "B062",
+     "file": "axon/tools/redact.py",
+     "line": 32,
+     "severity": "medium",
+     "category": "correctness",
+     "summary": "Reported hit start/end offsets are relative to the progressively-redacted string, not the original text, so hits from any pattern after the first are misreported when an earlier pattern replaced text of a different length (contradicts the line-27 'original positions' contract).",
+     "failure_scenario": "Input text `sk-` followed by 30 chars (33-char anthropic key) then ` AKIA1234567890123456`. The first pattern (anthropic-openai) replaces the 33-char key with the 27-char `[REDACTED:anthropic-openai]`, shrinking `out` by 6. The AWS pattern then runs on this shortened string and reports the AKIA hit's start/end 6 positions lower than its true offset in the original text, so any consumer using start/end to locate/highlight the secret in the original input indexes the wrong span."
+    },
+    {
+     "id": "B063",
+     "file": "axon/tools/rules_loader.py",
+     "line": 175,
+     "severity": "medium",
+     "category": "logic-error",
+     "summary": "Dead-rule detection uses substring containment (`r[\"id\"] not in log_text`), so a rule id that is a prefix of another (R-1 vs R-10) is falsely counted as referenced and never flagged dead.",
+     "failure_scenario": "audit() marks a rule dead only if `r[\"id\"] not in log_text`. Rule ids are `R-\\d+`, so 'R-1' is a substring of 'R-10', 'R-11', etc. With rules R-1 and R-10 in safety/rules.md and a workspace/log/_actions.log that references only 'R-10', I called audit(): dead=[] (checked=2). R-1, which is genuinely never referenced, is reported as alive because 'R-1' in 'R-10' is True. The catalog-hygiene audit therefore silently omits any low-numbered rule whose number is a prefix of a referenced higher-numbered rule."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-26",
+   "title": "ADVISORY (kernel floor): compiler template defects (chat-session, feedback-loop, qc-workflow)",
+   "kernel_floor": true,
+   "files": [
+    "axon/compiler/templates/chat-session.tpl.md",
+    "axon/compiler/templates/feedback-loop.tpl.md",
+    "axon/compiler/templates/qc-workflow.tpl.md"
+   ],
+   "bugs": [
+    {
+     "id": "B005",
+     "file": "axon/compiler/templates/chat-session.tpl.md",
+     "line": 45,
+     "severity": "high",
+     "category": "wrong-arg-marshaling",
+     "summary": "Save Output invokes the translate program with the arg key `input:` instead of the required `source:`, so translate receives no content and hard-fails.",
+     "failure_scenario": "Instantiate chat-session with output-path=\"workspace/out.md\" (any output-format). After Execute Goal populates W:chat-output, Save Output runs EXEC(translate, {input: W:chat-output, format: \"doc\"}). The semantic translate program (workspace/programs/translate.md) requires the `source` input; its Step 1 sees source=\u2205 -> W:content=\u2205 -> FAIL(T-current, \"No content to translate\"). W:formatted-output is never produced, WRITE writes nothing/garbage, yet Close still logs and records the chat output as saved. (Secondary: the template's output-format enum {doc|report|list|raw} also offers `list`/`raw`, which are not valid translate formats [explanation|report|doc|audit].)"
+    },
+    {
+     "id": "B006",
+     "file": "axon/compiler/templates/feedback-loop.tpl.md",
+     "line": 74,
+     "severity": "high",
+     "category": "broken-control-flow",
+     "summary": "Actor-failure branch falls through to EVAL instead of skipping the iteration; its eval-result write is dead and EVAL runs on empty/FAIL input.",
+     "failure_scenario": "When the actor EXEC returns \u2205 or FAIL (line 71), the branch sets eval-result\u2190{score:0,...} (line 74) and the comment on line 75 claims 'Skip to next iteration'. But there is no CONTINUE/loop-restart and Phase 3 (line 79) is unconditional, so control falls straight into EVAL(W:actor-output=\u2205, criteria, tolerance)\u2192eval-result. The score:0 write is immediately overwritten (dead write), and EVAL is invoked on the exact empty/failed output the branch was meant to avoid \u2014 producing a garbage score (or crash) that then drives the passed/UNTIL decision instead of a clean retry."
+    },
+    {
+     "id": "B054",
+     "file": "axon/compiler/templates/qc-workflow.tpl.md",
+     "line": 51,
+     "severity": "medium",
+     "category": "undefined-interpolation",
+     "summary": "Slack alert message interpolates {W:batch-key}, a memory key that is never stored.",
+     "failure_scenario": "On escalation, TOOL(notify, ...) builds message \"QC ALERT: {W:fail-count} failures on {{item-name}} batch {W:batch-key}\". The batch list was stored to W:batch (line 24); no key named W:batch-key exists. So {W:batch-key} resolves to \u2205/blank and the alert reads 'batch ' with no identifier. The correct token is the template param {{batch-key}} (used correctly on line 52 EMIT and line 61 APPEND), or {W:batch}."
+    },
+    {
+     "id": "B055",
+     "file": "axon/compiler/templates/qc-workflow.tpl.md",
+     "line": 33,
+     "severity": "medium",
+     "category": "wrong-op-invocation",
+     "summary": "RAND(W:batch, W:sample-size) misuses RAND \u2014 there is no 'sample N without replacement' form.",
+     "failure_scenario": "The line claims 'random sample without replacement' and stores the result as W:sample, then the loop does `LOOP(\u2200 item \u2208 W:sample)`. But RAND (LANG.md EXT-002) is only `RAND(list)` -> one element, or `RAND(min,max)` -> one integer. With two args the second being a count, it is parsed as RAND(min=W:batch, max=W:sample-size), yielding a single scalar, not a size-N subset. The inspection loop then iterates over a non-list (or a single item), so the QC never samples the intended sample-size items."
+    }
+   ]
+  },
+  {
+   "pr_id": "PR-27b",
+   "title": "ADVISORY (kernel floor): kernel program specs (dev-new, plan-list, register-preference)",
+   "kernel_floor": true,
+   "files": [
+    "axon/programs/dev-new.md",
+    "axon/programs/plan-list.md",
+    "axon/programs/register-preference.md"
+   ],
+   "bugs": [
+    {
+     "id": "B007",
+     "file": "axon/programs/dev-new.md",
+     "line": 48,
+     "severity": "high",
+     "category": "wrong-terminator",
+     "summary": "Scaffold template hardcodes DONE(dev-new) instead of DONE({W:dev-new-name}), so every new program created by dev-new terminates with the wrong program name.",
+     "failure_scenario": "User runs `dev-new my-tool \"desc\"`. dev-new WRITEs the scaffold (lines 28-49) in which the header, GUARD FAIL, and banner all interpolate {W:dev-new-name} to 'my-tool', but line 48 emits the literal DONE(dev-new). The generated workspace/programs/my-tool.md therefore ends with `DONE(dev-new)`. When the user later runs `my-tool`, it emits DONE(dev-new) \u2014 closing/marking-done the wrong program/process, and my-tool never gets a matching DONE, violating PROGRAMS.md's 'DONE([name]) matching the filename' contract."
+    },
+    {
+     "id": "B008",
+     "file": "axon/programs/plan-list.md",
+     "line": 22,
+     "severity": "high",
+     "category": "logic-error",
+     "summary": "FIND used where a filter is needed \u2014 only the first active/completed plan is ever captured, so the list under-reports.",
+     "failure_scenario": "With 4 active plans in workspace/plans/, `active \u2190 FIND(plans, status=\"active\")` returns only the FIRST matching plan object (FIND per LANG.md EXT-003 = 'first item where cond is true, or \u2205'), not a list. Downstream `\u2192 \"ACTIVE ({COUNT(active)})\"` prints '(1)' and `\u2200 p in SORT(active, ...)` iterates a single object, so 3 of the 4 active plans are silently omitted from the menu. Same defect for `complete \u2190 FIND(plans, status=\"completed\")` on line 23. The code needs a filter/WHERE (as mode-run.md uses `progs WHERE ...`), not FIND."
+    },
+    {
+     "id": "B056",
+     "file": "axon/programs/register-preference.md",
+     "line": 47,
+     "severity": "medium",
+     "category": "state-lifecycle-ordering",
+     "summary": "OUTPUT section interpolates W:pref-topic/pref-key/pref-value after they were CLEARed three lines earlier, so the user-facing confirmation renders with blank fields.",
+     "failure_scenario": "User runs `register-preference output output-mode PYTHON_FAST`. The WRITE section correctly persists the value to disk and to W:user-prefs, then executes CLEAR(W:pref-topic), CLEAR(W:pref-key), CLEAR(W:pref-value) at lines 42-44. Execution then reaches the OUTPUT section (lines 46-53), which interpolates the now-empty keys. The user sees '\u25b6 register-preference  \u00b7  ' (empty topic), 'Saved:  = ' (empty key and value), and 'File: workspace/preferences/.md' (empty topic) instead of the actual saved preference \u2014 a broken/misleading confirmation. Fix: move the three CLEAR ops to after the OUTPUT section (or before DONE)."
+    }
+   ]
+  }
+ ]
+}

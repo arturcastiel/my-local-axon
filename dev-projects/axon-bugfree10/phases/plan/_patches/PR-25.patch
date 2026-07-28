@@ -1,0 +1,229 @@
+diff --git a/tests/test_pr25_kernel_fixes.py b/tests/test_pr25_kernel_fixes.py
+new file mode 100644
+index 0000000..614fe41
+--- /dev/null
++++ b/tests/test_pr25_kernel_fixes.py
+@@ -0,0 +1,114 @@
++"""PR-25 — kernel tool logic/format regression tests.
++
++Each test pins a concrete failure_scenario from the bug specs and fails against the
++pre-fix code, passes after:
++
++  B057 _axon_lib.usage_record — ts must be plain isoformat() (no trailing 'Z'), else
++        usage.py's datetime.fromisoformat readers silently drop the row.
++  B058 clock._fmt          — unix must be correct on a non-UTC host (naive .timestamp()
++        skews it by the host offset).
++  B059 liveness_lint       — the autonomous_mode.authorized seam must not treat prose
++        'authorized (' as a production caller.
++  B062 redact              — hit start/end must be offsets into the ORIGINAL text.
++  B063 rules_loader.audit  — 'R-1' must not be counted as referenced by 'R-10'.
++"""
++from __future__ import annotations
++
++import json
++import os
++import sys
++from datetime import datetime
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parent.parent
++sys.path.insert(0, str(ROOT / "tools"))
++
++
++# ── B057 ─────────────────────────────────────────────────────────────────────
++def test_usage_record_ts_is_parseable(tmp_path):
++    import _axon_lib
++
++    ws = tmp_path / "workspace"
++    ws.mkdir()
++    _axon_lib.usage_record(str(ws), kind="program", name="menu")
++    log = ws / "memory" / "longterm" / "usage-log.jsonl"
++    entry = json.loads(log.read_text().splitlines()[0])
++    # The old code wrote '...+00:00Z' which raises ValueError here.
++    parsed = datetime.fromisoformat(entry["ts"])
++    assert parsed is not None
++    assert not entry["ts"].endswith("Z")
++
++
++# ── B058 ─────────────────────────────────────────────────────────────────────
++def test_clock_unix_matches_iso_instant(monkeypatch):
++    # Force a non-UTC local timezone so a naive .timestamp() would skew unix.
++    monkeypatch.setenv("TZ", "Europe/Amsterdam")
++    import time as _time
++
++    if hasattr(_time, "tzset"):
++        _time.tzset()
++    try:
++        import importlib
++
++        import clock as clock_mod
++
++        importlib.reload(clock_mod)
++        fixed = datetime(2026, 7, 27, 9, 28, 38)  # naive UTC, like clock._now()
++        out = clock_mod._fmt(fixed, "system")
++        expected = int(fixed.replace(tzinfo=__import__("datetime").timezone.utc).timestamp())
++        assert out["unix"] == expected
++    finally:
++        monkeypatch.delenv("TZ", raising=False)
++        if hasattr(_time, "tzset"):
++            _time.tzset()
++
++
++# ── B059 ─────────────────────────────────────────────────────────────────────
++def test_authorized_prose_is_not_a_caller():
++    import re
++
++    import liveness_lint
++
++    _module, patterns, _note = liveness_lint.SENTINEL_SEAMS["autonomous_mode.authorized"]
++    prose = "S-fixes authorized (earned, revocable)"
++    assert not any(re.search(pt, prose) for pt in patterns), \
++        "prose 'authorized (' must not count as a production caller of the seam"
++    # A genuine call site must still be recognised.
++    real = "if autonomous_mode.authorized(ctx):"
++    assert any(re.search(pt, real) for pt in patterns)
++
++
++# ── B062 ─────────────────────────────────────────────────────────────────────
++def test_redact_offsets_are_original_positions():
++    from redact import redact
++
++    key = "sk-" + "a" * 30                      # 33-char anthropic key
++    text = key + " AKIA1234567890123456"        # then a 20-char AWS key at offset 34
++    clean, hits = redact(text)
++    aws = [h for h in hits if h["pattern"] == "aws-access-key"]
++    assert aws, "AWS key not detected"
++    h = aws[0]
++    assert text[h["start"]:h["end"]] == "AKIA1234567890123456", \
++        f"offsets {h['start']}:{h['end']} do not index the AWS key in the ORIGINAL text"
++    assert h["start"] == 34
++    assert "[REDACTED:anthropic-openai]" in clean
++    assert "[REDACTED:aws-access-key]" in clean
++
++
++# ── B063 ─────────────────────────────────────────────────────────────────────
++def test_rule_id_prefix_not_falsely_alive(tmp_path):
++    import rules_loader as RL
++
++    ws = tmp_path
++    (ws / "safety").mkdir()
++    (ws / "safety" / "rules.md").write_text(
++        "## R-1 — low id\nstatus: active\n\n## R-10 — high id\nstatus: active\n",
++        encoding="utf-8",
++    )
++    (ws / "log").mkdir()
++    (ws / "log" / "_actions.log").write_text("action applied R-10\n", encoding="utf-8")
++
++    res = RL.audit(workspace=ws)
++    dead_ids = {d["id"] for d in res["dead"]}
++    assert "R-1" in dead_ids, "R-1 is never referenced and must be flagged dead"
++    assert "R-10" not in dead_ids, "R-10 is referenced and must stay alive"
+diff --git a/tools/_axon_lib.py b/tools/_axon_lib.py
+index f3dd423..1281e00 100644
+--- a/tools/_axon_lib.py
++++ b/tools/_axon_lib.py
+@@ -170,7 +170,10 @@ def usage_record(workspace: str, *, kind: str, name: str,
+     log_path = Path(workspace) / "memory" / "longterm" / "usage-log.jsonl"
+     log_path.parent.mkdir(parents=True, exist_ok=True)
+     entry = {
+-        "ts":        datetime.now(timezone.utc).isoformat() + "Z",
++        # Match usage.py's now_iso() exactly (no trailing 'Z'): an offset-aware
++        # isoformat already carries '+00:00', and appending 'Z' makes it invalid
++        # ISO-8601 so usage.py's datetime.fromisoformat readers silently drop the row.
++        "ts":        datetime.now(timezone.utc).isoformat(),
+         "kind":      kind,
+         "name":      name,
+         "args":      args or {},
+diff --git a/tools/clock.py b/tools/clock.py
+index 94fe458..dffc36a 100644
+--- a/tools/clock.py
++++ b/tools/clock.py
+@@ -43,7 +43,9 @@ def _fmt(now, source):
+         "iso":       now.isoformat() + "Z",
+         "date":      now.strftime("%Y-%m-%d"),
+         "time":      now.strftime("%H:%M:%S"),
+-        "unix":      int(now.timestamp()),
++        # `now` is a NAIVE UTC datetime; naive .timestamp() assumes LOCAL time, which
++        # skews unix by the host's UTC offset. Stamp UTC before converting.
++        "unix":      int(now.replace(tzinfo=datetime.timezone.utc).timestamp()),
+         "source":    source,
+     }
+ 
+diff --git a/tools/liveness_lint.py b/tools/liveness_lint.py
+index 66d3362..02157b3 100644
+--- a/tools/liveness_lint.py
++++ b/tools/liveness_lint.py
+@@ -44,7 +44,9 @@ WHITELIST_PATH = TOOLS / "liveness_whitelist.json"
+ # seam-id → (defining module, [caller regexes — python AND md/TOOL forms], note)
+ SENTINEL_SEAMS = {
+     "autonomous_mode.authorized": ("autonomous_mode",
+-        [r"autonomous_mode\.authorized\s*\(", r"\bauthorized\s*\(",
++        # The bare r"\bauthorized\s*\(" matched unrelated prose (e.g. "authorized (earned...")
++        # so a genuinely-dead seam read as wired. Only qualified call shapes count as callers.
++        [r"autonomous_mode\.authorized\s*\(",
+          r"autonomous-mode\b.*check"],
+         "destructive-git grant decision — the S1 'coded, never called' finding"),
+     "aegis_policy.resolve": ("aegis_policy",
+diff --git a/tools/redact.py b/tools/redact.py
+index cdcc1cf..4f7b26f 100644
+--- a/tools/redact.py
++++ b/tools/redact.py
+@@ -23,19 +23,35 @@ PATTERNS: list[tuple[str, re.Pattern]] = [
+ 
+ def redact(text: str) -> tuple[str, list[dict]]:
+     hits: list[dict] = []
+-    out = text
+-    # Apply each pattern; collect hits with original positions, then replace.
++    # Match every pattern against the ORIGINAL text so reported start/end are offsets
++    # into the input (the contract), not into the progressively-redacted string. A span
++    # already claimed by an earlier pattern is skipped, preserving the previous
++    # earlier-pattern-wins behaviour where later patterns ran on already-redacted text.
++    spans: list[tuple[int, int, str]] = []   # (start, end, replacement)
++    claimed: list[tuple[int, int]] = []
+     for name, pat in PATTERNS:
+-        def _sub(m):
++        for m in pat.finditer(text):
++            s, e = m.start(), m.end()
++            if any(s < ce and cs < e for cs, ce in claimed):
++                continue  # overlaps a region an earlier pattern already redacted
++            claimed.append((s, e))
+             hits.append({
+                 "pattern": name,
+-                "start": m.start(),
+-                "end": m.end(),
++                "start": s,
++                "end": e,
+                 "sample": m.group(0)[:8],
+             })
+-            return f"[REDACTED:{name}]"
+-        out = pat.sub(_sub, out)
+-    return out, hits
++            spans.append((s, e, f"[REDACTED:{name}]"))
++    # Rebuild the redacted output from the original text using the collected spans.
++    spans.sort()
++    out_parts: list[str] = []
++    last = 0
++    for s, e, rep in spans:
++        out_parts.append(text[last:s])
++        out_parts.append(rep)
++        last = e
++    out_parts.append(text[last:])
++    return "".join(out_parts), hits
+ 
+ 
+ def main():
+diff --git a/tools/rules_loader.py b/tools/rules_loader.py
+index 9f04ca6..cce57ae 100644
+--- a/tools/rules_loader.py
++++ b/tools/rules_loader.py
+@@ -172,7 +172,9 @@ def audit(workspace: Path | None = None, dead_after_days: int = 90) -> dict:
+     # a cutoff datetime and DISCARDED it (a no-op) while the message falsely claimed a "{N}d threshold".
+     dead = []
+     for r in rules:
+-        if r["id"] not in log_text:
++        # Whole-token match, not substring: 'R-1' must not be counted as referenced
++        # merely because 'R-10' appears in the log (\b after the digits blocks the prefix).
++        if not re.search(rf"\b{re.escape(r['id'])}\b", log_text):
+             dead.append({"id": r["id"], "title": r.get("title", ""),
+                           "reason": "never referenced in the actions log"})
+     return {"ok": True, "contradictions": contradictions, "dead": dead,

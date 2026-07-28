@@ -1,0 +1,173 @@
+diff --git a/tests/test_pr23_error_envelopes.py b/tests/test_pr23_error_envelopes.py
+new file mode 100644
+index 0000000..c610c24
+--- /dev/null
++++ b/tests/test_pr23_error_envelopes.py
+@@ -0,0 +1,115 @@
++"""PR-23 — error-handling regressions for predicate / validator / programs_registry.
++
++Each test pins a concrete failure_scenario that crashed with an uncaught
++exception (or masked a failure as success) before the PR-23 fixes.
++"""
++
++from __future__ import annotations
++
++import json
++import subprocess
++import sys
++from pathlib import Path
++
++import pytest
++
++ROOT = Path(__file__).resolve().parents[1]
++sys.path.insert(0, str(ROOT / "tools"))
++
++import predicate  # noqa: E402
++
++PREDICATE = ROOT / "tools" / "predicate.py"
++VALIDATOR = ROOT / "tools" / "validator.py"
++REGISTRY = ROOT / "tools" / "programs_registry.py"
++
++
++# ── B011: `matches` with an invalid regex RHS ───────────────────────────────────
++
++def test_b011_matches_invalid_regex_raises_evalerror() -> None:
++    # re.error must be converted into the uniform EvalError envelope, not propagate.
++    with pytest.raises(predicate.EvalError) as exc:
++        predicate.evaluate_expr('name matches "["', {"state": {"name": "abc"}})
++    assert exc.value.code == "invalid_regex"
++
++
++def test_b011_matches_invalid_regex_cli_clean_envelope() -> None:
++    proc = subprocess.run(
++        [sys.executable, str(PREDICATE), "eval",
++         "--expr", 'name matches "["', "--ctx", '{"state":{"name":"abc"}}'],
++        capture_output=True, text=True,
++    )
++    # Clean JSON envelope + rc 1, not a traceback / rc>1.
++    assert proc.returncode == 1, proc.stderr
++    out = json.loads(proc.stdout)
++    assert out["error"] == "invalid_regex"
++    assert out["message"]
++
++
++# ── B060: `<non-string> in <string>` ────────────────────────────────────────────
++
++def test_b060_int_in_string_raises_evalerror() -> None:
++    with pytest.raises(predicate.EvalError) as exc:
++        predicate.evaluate_expr("5 in name", {"state": {"name": "abc"}})
++    assert exc.value.code == "type_mismatch"
++
++
++def test_b060_int_in_string_cli_clean_envelope() -> None:
++    proc = subprocess.run(
++        [sys.executable, str(PREDICATE), "eval",
++         "--expr", "5 in name", "--ctx", '{"state":{"name":"abc"}}'],
++        capture_output=True, text=True,
++    )
++    assert proc.returncode == 1, proc.stderr
++    out = json.loads(proc.stdout)
++    assert out["error"] == "type_mismatch"
++
++
++def test_b060_string_in_string_still_works() -> None:
++    # Preserve the non-buggy path: substring membership.
++    assert predicate.evaluate_expr('"b" in name', {"state": {"name": "abc"}}) is True
++
++
++# ── B065: validator `--data ''` (empty string, not None) ────────────────────────
++
++def test_b065_empty_data_clean_envelope() -> None:
++    proc = subprocess.run(
++        [sys.executable, str(VALIDATOR), "--data", "", "--type", "object"],
++        capture_output=True, text=True,
++    )
++    # Empty string is now routed through json.loads('') → JSONDecodeError → clean
++    # "Data error" envelope + rc 1, instead of open(None) TypeError traceback.
++    assert proc.returncode == 1, proc.stderr
++    out = json.loads(proc.stdout)
++    assert out["error"].startswith("Data error"), out
++
++
++# ── B061: programs_registry error paths must exit non-zero ──────────────────────
++
++def test_b061_generate_no_programs_dir_exits_nonzero(tmp_path: Path) -> None:
++    proc = subprocess.run(
++        [sys.executable, str(REGISTRY), "--workspace", str(tmp_path), "generate"],
++        capture_output=True, text=True,
++    )
++    out = json.loads(proc.stdout)
++    assert out["ok"] is False
++    assert proc.returncode != 0, "error path must not fail-open with exit 0"
++
++
++def test_b061_query_before_generate_exits_nonzero(tmp_path: Path) -> None:
++    proc = subprocess.run(
++        [sys.executable, str(REGISTRY), "--workspace", str(tmp_path), "query"],
++        capture_output=True, text=True,
++    )
++    out = json.loads(proc.stdout)
++    assert out["ok"] is False
++    assert proc.returncode != 0
++
++
++def test_b061_validate_before_generate_exits_nonzero(tmp_path: Path) -> None:
++    proc = subprocess.run(
++        [sys.executable, str(REGISTRY), "--workspace", str(tmp_path), "validate"],
++        capture_output=True, text=True,
++    )
++    out = json.loads(proc.stdout)
++    assert out["ok"] is False
++    assert proc.returncode != 0
+diff --git a/tools/predicate.py b/tools/predicate.py
+index c421d87..408d03b 100644
+--- a/tools/predicate.py
++++ b/tools/predicate.py
+@@ -677,11 +677,16 @@ def _cmp(op: str, a: Any, b: Any) -> bool:
+     if op == "in":
+         if not isinstance(b, (list, tuple, str)):
+             raise EvalError("type_mismatch", f"`in` RHS must be list/string, got {type(b).__name__}")
++        if isinstance(b, str) and not isinstance(a, str):
++            raise EvalError("type_mismatch", f"`in` on a string requires string LHS, got {type(a).__name__}")
+         return a in b
+     if op == "matches":
+         if not isinstance(a, str) or not isinstance(b, str):
+             raise EvalError("type_mismatch", "`matches` requires string LHS and regex RHS")
+-        return re.search(b, a) is not None
++        try:
++            return re.search(b, a) is not None
++        except re.error as e:
++            raise EvalError("invalid_regex", f"invalid regex on `matches`: {e}")
+     # numeric/string ordering
+     if isinstance(a, bool) or isinstance(b, bool):
+         # bools coerce to int for numeric ops
+diff --git a/tools/programs_registry.py b/tools/programs_registry.py
+index 5a3958f..229014d 100644
+--- a/tools/programs_registry.py
++++ b/tools/programs_registry.py
+@@ -429,7 +429,11 @@ def main():
+     pin.set_defaults(func=cmd_intent)
+ 
+     args = p.parse_args()
+-    args.func(args)
++    # Propagate each command's return value to the exit code so error paths
++    # (cmd_generate/cmd_query/cmd_validate `return 1`) surface as a non-zero
++    # exit instead of a silent fail-open. Commands that call sys.exit() directly
++    # (check/menu/category) never reach here; those returning None exit 0.
++    sys.exit(args.func(args))
+ 
+ 
+ if __name__ == "__main__":
+diff --git a/tools/validator.py b/tools/validator.py
+index 2ab429e..fbe66de 100644
+--- a/tools/validator.py
++++ b/tools/validator.py
+@@ -37,7 +37,7 @@ schema_group.add_argument("--type",        choices=QUICK_SCHEMAS.keys(),
+ args = parser.parse_args()
+ 
+ try:
+-    data = json.loads(args.data) if args.data else json.load(open(args.data_file))
++    data = json.loads(args.data) if args.data is not None else json.load(open(args.data_file))
+ except (json.JSONDecodeError, FileNotFoundError) as e:
+     print(json.dumps({"error": f"Data error: {e}"}))
+     sys.exit(1)
