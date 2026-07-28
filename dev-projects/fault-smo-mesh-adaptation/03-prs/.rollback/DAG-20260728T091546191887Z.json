@@ -1,0 +1,229 @@
+{
+  "schema": "axon-dag",
+  "schema-version": "v1",
+  "level": "plan",
+  "owner": "project:fault-smo-mesh-adaptation",
+  "generated": "2026-07-28T09:07:29Z",
+  "generator": "tools/dag.py",
+  "validated": true,
+  "critical-path": [],
+  "nodes": [
+    {
+      "id": "PR-001",
+      "kind": "pr",
+      "name": "Write CPG grid keywords to an INCLUDE deck",
+      "label": "Write CPG grid keywords to an INCLUDE deck",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-002",
+      "kind": "pr",
+      "name": "Pillar lattice accessors and validity primitives",
+      "label": "Pillar lattice accessors and validity primitives",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-003",
+      "kind": "pr",
+      "name": "Carry segment provenance through projection",
+      "label": "Carry segment provenance through projection",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-004",
+      "kind": "pr",
+      "name": "morph_pillars least-squares core",
+      "label": "morph_pillars least-squares core",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-005",
+      "kind": "pr",
+      "name": "Validity-guaranteed solve: bisection on w",
+      "label": "Validity-guaranteed solve: bisection on w",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-006",
+      "kind": "pr",
+      "name": "targets_from_polyline (stage 1)",
+      "label": "targets_from_polyline (stage 1)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-007",
+      "kind": "pr",
+      "name": "Stage-1 end to end: deck in, deformed INCLUDE out",
+      "label": "Stage-1 end to end: deck in, deformed INCLUDE out",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-008",
+      "kind": "pr",
+      "name": "Regenerate FAULTS and assert face-set invariance",
+      "label": "Regenerate FAULTS and assert face-set invariance",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-009",
+      "kind": "pr",
+      "name": "targets_from_polygon (stage 2)",
+      "label": "targets_from_polygon (stage 2)",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-010",
+      "kind": "pr",
+      "name": "Rim taper",
+      "label": "Rim taper",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-011",
+      "kind": "pr",
+      "name": "Stage-2 validity: slanted-pillar fold detection",
+      "label": "Stage-2 validity: slanted-pillar fold detection",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-012",
+      "kind": "pr",
+      "name": "Stage-2 end to end, including curved faults",
+      "label": "Stage-2 end to end, including curved faults",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-013",
+      "kind": "pr",
+      "name": "P1: build_topology must survive welded corners",
+      "label": "P1: build_topology must survive welded corners",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-014",
+      "kind": "pr",
+      "name": "P2: projected_topology on slanted pillars",
+      "label": "P2: projected_topology on slanted pillars",
+      "status": "pending",
+      "child-dag": null
+    },
+    {
+      "id": "PR-015",
+      "kind": "pr",
+      "name": "Norne validation harness and benchmark",
+      "label": "Norne validation harness and benchmark",
+      "status": "pending",
+      "child-dag": null
+    }
+  ],
+  "edges": [
+    {
+      "from": "PR-002",
+      "to": "PR-004",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-004",
+      "to": "PR-005",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-002",
+      "to": "PR-005",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-003",
+      "to": "PR-006",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-002",
+      "to": "PR-006",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-001",
+      "to": "PR-007",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-005",
+      "to": "PR-007",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-006",
+      "to": "PR-007",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-007",
+      "to": "PR-008",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-006",
+      "to": "PR-009",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-009",
+      "to": "PR-010",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-005",
+      "to": "PR-011",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-009",
+      "to": "PR-011",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-007",
+      "to": "PR-012",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-009",
+      "to": "PR-012",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-011",
+      "to": "PR-012",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-008",
+      "to": "PR-015",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-013",
+      "to": "PR-015",
+      "kind": "depends"
+    },
+    {
+      "from": "PR-014",
+      "to": "PR-015",
+      "kind": "depends"
+    }
+  ]
+}

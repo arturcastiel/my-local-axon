@@ -177,5 +177,23 @@
     "bindings": [],
     "created": "2026-06-23",
     "done_ts": ""
+  },
+  {
+    "id": "552cf78f",
+    "text": "graphify_bridge.py two defects found 2026-07-28 (fault-smo-mesh-adaptation graphify run, both REPRODUCED): (1) _meta_path():101 hardcodes 'graph.meta.json' via with_name(), ignoring the graph stem -- two graphs in one dir SHARE one provenance sidecar, last build wins, staleness for the overwritten graph then reports against the WRONG repo (observed: graph.json and cpg2python.json both returned built_ts 08:38:18). Fix: with_name(Path(graph_path).stem + '.meta.json') + fallback to graph.meta.json for existing graphs. (2) _repo_signal() dirty-hash collides across repos: it folds size/mtime only when fp.is_file(), so a dirty set of DIRECTORY entries contributes nothing repo-specific. graphify writes graphify-out/ into every repo it scans, so two unrelated repos both hashed to c955036d0817f8f2 -- staleness degrades to commit-only and misses working-tree edits. Fix: hash dir entries by recursive content, or fold the repo path/name into the digest. Also related: code-dev-graphify is single-repo (ignores _profile.md cross-repo[]) -- see igap 2026-07-28.",
+    "due": "",
+    "status": "open",
+    "bindings": [],
+    "created": "2026-07-28",
+    "done_ts": ""
+  },
+  {
+    "id": "a9baf4fd",
+    "text": "SECURITY (autonomous_mode.py, found 2026-07-28 during fault-smo GRANT A): the anti-self-mint guard is escapable in two commands. _refuse_self_mint() keys on run_active(), which is just 'grant.active AND grant.mode==unattended'. grant_off() has NO guard. So an unattended agent refused by bind/grant_on can run: autonomous_mode.py off  ->  run_active() becomes False  ->  autonomous_mode.py on --mode interactive  -> fresh self-minted authority, bypassing the human-only act entirely. AXON declined to use this path and surfaced it instead. FIX options: (a) guard grant_off while run_active (revoke becomes human-only too, or records a 'revoked-by-agent' flag that blocks a subsequent self-grant); (b) persist a run-id/doctrine ledger so authority cannot be re-minted within the same run regardless of grant state; (c) make the guard key on an append-only run record rather than mutable grant state. (c) is the durable fix - the current guard trusts the same mutable file the agent is allowed to clear.",
+    "due": "",
+    "status": "open",
+    "bindings": [],
+    "created": "2026-07-28",
+    "done_ts": ""
   }
 ]

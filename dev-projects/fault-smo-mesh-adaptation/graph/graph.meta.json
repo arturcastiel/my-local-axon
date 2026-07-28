@@ -1,0 +1,11 @@
+{
+  "target_repo": "/mnt/c/projects/library-development/cpg2python",
+  "built_ts": "2026-07-28T08:38:18.851891+00:00",
+  "graphify_version": "graphify 0.8.36",
+  "signal": {
+    "kind": "git",
+    "git_commit": "c6202dfca965ab3d8690807bf079206ab051116f",
+    "dirty": true,
+    "content_hash": "c955036d0817f8f2"
+  }
+}
