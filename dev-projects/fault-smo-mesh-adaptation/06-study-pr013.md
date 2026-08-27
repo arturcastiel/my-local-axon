@@ -186,6 +186,52 @@ Touches `geometry`, `graph`, `mesh3d`, `planview`, `minimal_surface`,
 
 ---
 
+## 4b. ATTEMPTED 2026-07-29 — Steps A and B built, and rejected
+
+Preserved on `cpg2python@wip/build-topology-stepAB`. **Not merged.** Two reasons.
+
+**It regresses cell volumes.** Every cell in the faulted fixtures is a unit cube.
+
+| fixture | | faces | vol min | vol max | vol sum |
+|---|---|---:|---:|---:|---:|
+| `simple_faulted_3x3x2` | HEAD | 75 | 1.0000 | 1.0000 | **18.0000** |
+| | Step A+B | 78 | 0.6000 | 1.4000 | **18.4000** |
+| `simple_faulted_2x2x2` | HEAD | 36 | 1.0000 | 1.0000 | 8.0000 |
+| | Step A+B | 38 | 0.8333 | 1.1667 | 8.0000 |
+
+Volume is not conserved on 3x3x2. A straddling cell gets two faces on one side,
+`cell_faces` has one slot per direction, the second write silently overwrites the
+first, and `cell_geometry` then integrates over an incomplete surface. The face
+COUNTS are right — 12→14 and 24→27 i-faces, re-derived by hand — so the routing
+change is sound; the container it writes into is not.
+
+**And it does not reach the goal.** Norne still fails, now earlier. Full-deck
+census: 14,889 polygons — 3-corner 3005, 4-corner 9420, 5-corner **1919**,
+6-corner **545**.
+
+| wall | size | status |
+|---|---|---|
+| 5- and 6-corner polygons | 2,464 of 14,889 (**16.6%**) | Step B covers the other 83.4% |
+| the all-active-stack restriction | **445 of 886** faulted stacks contain inactive cells | untouched |
+| **D3, the 3-neighbour collision** | **1,445 events on 497 distinct faces** | **STILL LIVE** |
+
+### Open question 4 is now answered: NO
+
+"Is D3 still reachable after Step A?" — yes. With the first two walls stubbed, the
+original error returns verbatim, `face 40241 has more than 2 neighbours`. Step A
+did not remove D3; it hid it behind an earlier raise. The hoped-for outcome —
+that routing alone might delete a whole defect — did not happen.
+
+### A separable bug found on the way
+
+`_faulted_i_sides` / `_faulted_j_sides` order `pa`/`pb` **larger-z first**, while
+`compute_face_geometry` expects smaller-z first. The result is the UNION envelope
+of the two cell faces rather than their overlap: on `simple_faulted_2x2x2` the
+fault area is 4.0 against an exact 3.0, and total face area moves 36.0 → 41.0 once
+the path is engaged. **Pre-existing at HEAD** and reachable today through
+`find_i_faces`. The fix is a column-order swap. Worth its own change with a test,
+independent of everything above.
+
 ## 5. Open questions
 
 1. **Does `cell_faces (Ncells, 6)` bound faces per cell?** A faulted cell can face
