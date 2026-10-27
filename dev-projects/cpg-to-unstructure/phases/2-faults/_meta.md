@@ -1,12 +1,20 @@
 # Phase: 2-faults
 schema-version: v4
-status:         active
-workflow-step:  merged
+status:         done
+workflow-step:  released
 branch:         main
-current-pr:     PR-15
+current-pr:     — (PR-1…PR-21 all merged; v0.2.0 tagged)
 predecessors:   [1-design]
 created:        2026-05-22
-updated:        2026-05-24
+updated:        2026-10-26
+
+## Closure (reconciled 2026-10-26)
+- Shipped as v0.2.0 (2026-05-24). Viz eye-check done (PR-16). Repo made PUBLIC since.
+- Known residual, found AFTER release by fault-smo-mesh-adaptation's PR-013 study:
+  · D1 (silent) — `build_topology` never routes through `find_i_faces`/`find_j_faces`,
+    so the faulted path delivered here is not used by the top-level builder. Still on main.
+  · Union-envelope fault polygons in `_find_faulted_i_faces` — FIXED in cpg2python #44 (07-29).
+  These belong to a new phase/project (Norne via build_topology), not a reopen of this one.
 
 ## Goal
 Port Tier B of `processGRDECL.m` so cpg2unstructured handles
@@ -72,7 +80,7 @@ unstructured grid representation" — the stated project goal.
 - Authoring pattern A — AXON writes source files; user runs driver
   scripts (`pr*-build.sh`).
 - Scripts default to --pr (full commit + push + open PR).
-- Same codebase: `/mnt/c/projects/cpg2python`.
+- Same codebase: `/mnt/c/projects/library-development/cpg2python` (moved from `/mnt/c/projects/cpg2python`).
 - v0.1.0 already released — this phase builds toward v0.2.0.
 - Viz sidecar (`viz/`) used for visual verification of every PR.
 

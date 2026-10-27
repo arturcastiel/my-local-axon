@@ -1651,3 +1651,45 @@ current-pr (none)→PR-9.
   human action (or explicit one-off). gh repo edit ... --visibility public.
 
 - 2026-07-09: pointer-repair (axon-stale-pointers): custom phase '2-faults' registered in _phases.json (was split-brain: meta named a phase the manifest never knew)
+
+## SESSION RESUME — 2026-09-02T07:34:09.433166Z
+project:         cpg-to-unstructure
+phase:           2-faults (active)
+workflow-step:   merged
+branch:          main  (git: main  ✓)
+shadow:          index empty (0 files)
+reviewer:        current-pr PR-15
+prohibitions:    4 active · decisions: 3 ADRs
+note:            _meta.codebase is STALE (/mnt/c/projects/cpg2python absent); live path
+                 is /mnt/c/projects/library-development/cpg2python. dual-load with
+                 fault-smo-mesh-adaptation.
+
+## RECONCILIATION — 2026-10-26 (git/GitHub → log; work 05-24..07-29, never logged)
+Source: `git log` (main @ e4637cc) + `gh pr/issue list`. Codebase moved:
+`/mnt/c/projects/cpg2python` → `/mnt/c/projects/library-development/cpg2python`.
+
+**2-faults wrap-up (05-24)** — merged after PR-18, not logged at the time:
+- PR-19 (#33) scrub DARSim + private paths from docstrings
+- PR-20 (#34) professional MRST attribution
+- PR-21 (#35) professional README + changelog
+- Repo visibility → PUBLIC (the pending open-source step). Done.
+→ Phase 2-faults closed: `_phases.json` 2-faults = done.
+
+**Post-release, outside any tracked phase**
+- #36–#37 (06-18) `.EGRID` input via resfo + `CornerPointGrid` pivot + docs.
+- #38–#46 (07-28..29) delivered under fault-smo-mesh-adaptation (morph engine, validity,
+  distortion/polish, GRDECL writer, orthogonality term). Logged in that project's 04-log.md.
+- #44 (07-29) fixes a 2-faults defect: `_faulted_i_sides` ordered pa/pb larger-z first
+  while `compute_face_geometry` expects smaller-z first → fault faces were the union
+  envelope, not the overlap.
+
+**Open**
+- D1 (silent wrong topology) verified LIVE on main 2026-10-26: `build_topology`
+  (unstructured.py:1079) builds i/j faces with `_i_face_quads`/`_j_face_quads` directly
+  (lines 1119/1124), bypassing the fault-aware `find_i_faces`/`find_j_faces`.
+  Study: fault-smo-mesh-adaptation/06-study-pr013.md. WIP: branch
+  `wip/build-topology-stepAB` (5e21f82) — NOT FOR MERGE (cell volumes regress).
+- Issue #45 (OPEN): `boundary='slide'` rim tangents from lattice indices, not coordinates.
+- No release since v0.2.0; main carries EGRID + morph engine unreleased.
+- Sidecars: viz moved to `/mnt/c/projects/library-development/viz-cpg2unstructured/`;
+  `cpg2python-notebooks/` and `launch-viz-nb.sh` no longer exist.

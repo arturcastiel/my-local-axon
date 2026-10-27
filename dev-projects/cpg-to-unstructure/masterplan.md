@@ -4,9 +4,12 @@
 
 - **1-design** ✓ shipped as v0.1.0 (2026-05-22) — matching-Z CPG to
   lean numpy. 13 PRs across 6 waves.
-   → **2-faults** (active, 2026-05-22) — port Tier B of processGRDECL:
-     non-matching-Z fault geometry, findConnections, face
-     intersection. Closes the gap to "any CPG grid → unstructured".
+   → **2-faults** ✓ shipped as v0.2.0 (2026-05-24) — Tier B of
+     processGRDECL: non-matching-Z fault geometry, findConnections, face
+     intersection, PINCH NNCs, component split.
+   → **next (not created)** — route `build_topology` through the
+     fault-aware finders (D1) + Norne ingestion. Study exists:
+     fault-smo-mesh-adaptation/06-study-pr013.md. (added 2026-10-26)
 
 ## Out-of-scope (will NOT become phases — see refined goal)
 

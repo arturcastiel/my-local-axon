@@ -11,9 +11,19 @@ workflow:        _workflow.yml
 parent:          (none)
 sub-projects:    []
 created:         2026-07-28
-updated:         2026-07-28 (COMPLETE — 15/17 PRs delivered, 1 superseded, 1 deferred with study)
+updated:         2026-10-26 (reconciled to git/GitHub — post-completion work logged; see 04-log.md)
 
-## Working Context
+## Current state (reconciled 2026-10-26)
+- COMPLETE stands. All owner-gated merges done: cpg2python #38, #39 · fault-projections #1.
+- Post-completion work (07-28 → 07-29) shipped but was never logged until 2026-10-26:
+  cpg2python #40–#46 merged; fault-projections bench + engineer's guide (main @ 0837f07).
+- Open follow-ups (outside this project's scope):
+  · cpg2python issue #45 — `boundary='slide'` moves rim pillars off non-axis-aligned outlines.
+  · PR-013 (Norne via `build_topology`) — study in 06-study-pr013.md; WIP evidence on
+    cpg2python branch `wip/build-topology-stepAB` (NOT FOR MERGE). Run as its own project.
+  · cpg-fault-fieldbook CI red — fault-projections is still PRIVATE.
+
+## Working Context (historical — project scaffold, 2026-07-28)
 - New project. Run: code-dev study  to begin first phase.
 - Codebase selected 2026-07-28 after a repo-provenance sweep. Three DISTINCT GitHub repos
   exist with confusingly similar names — recorded here so the wrong one is never picked again:

@@ -339,3 +339,54 @@ Study is terminal: further analysis yields nothing, Step A is the right instrume
   Validated on Norne (real m_east fault) and synthetics; D7 never violated.
   9 pre-existing library defects found and fixed along the way, two of them silent.
   Outstanding and owner-gated: merge cpg#38, cpg#39, fp#1.
+
+## SESSION RESUME — 2026-09-02T07:34:09.433166Z
+project:         fault-smo-mesh-adaptation
+phase:           complete (manifest: study ✓ plan ✓ pr ✓ log ✓ audit ✓)
+workflow-step:   build
+branch:          main  (git: main  ✓)
+shadow:          fresh:4 stale:8 branch-stale:0
+reviewer:        no PR in review
+prohibitions:    3 active (seeds)
+note:            dual-load with cpg-to-unstructure for deck/context work
+
+## RECONCILIATION — 2026-10-26 (git/GitHub → log; work done 07-28..10-12, never logged)
+Source: `git log` on both repos + `gh pr/issue/run list`. Nothing below was in this log or
+in 07-audit-2.md (which stops at cpg2python #40 and lists fp#1 as open/CI-red).
+
+**Merged — cpg2python (main @ e4637cc, CI green, repo now PUBLIC)**
+| PR | merged | change |
+|----|--------|--------|
+| #41 | 07-28 | fix(morph): a pillar already on the fault was constrained by nothing |
+| #42 | 07-28 | feat(distortion): explicit orthogonality term (Ryskin–Leal) |
+| #43 | 07-28 | fix(validity): stop rejecting morphs for folding cells that do not exist |
+| #44 | 07-29 | fix(unstructured): fault faces were the union envelope, not the overlap (pre-existing; found in PR-013 WIP) |
+| #46 | 07-29 | docs(morph): elastic operator does not price shear above the Laplacian |
+
+**Merged — fault-projections (main @ 0837f07, CI green, repo still PRIVATE)**
+- f70c53f `feat(from_faults)` — read Eclipse FAULTS records back into plan-view traces.
+- fp#1 merged 07-29 (8e2fd59) after CI fixes: cpg2python token made optional (now public),
+  `benchmarks` importable under bare pytest, quad_surface test no longer machine-bound.
+- Bench: authored ground truth (d3f2dce), orthogonality configs + method-by-method report
+  (23232d1), winner that keeps the model outline (d3b61c1).
+- Docs: engineer's guide, 69 pages, every number traceable (0837f07).
+
+**Opened, not merged**
+- cpg2python issue #45 (07-29, OPEN): `boundary='slide'` moves rim pillars OFF a
+  non-axis-aligned outline and returns ok=True. Cause: `_rim_tangents(mask)` derives
+  tangents from lattice index directions, never from pillar coordinates.
+- cpg2python branch `wip/build-topology-stepAB` (5e21f82, 07-29, pushed) — PR-013 Step A+B.
+  NOT FOR MERGE: face counts correct, but `cell_faces` one-slot-per-direction overwrite
+  breaks cell volumes (3x3x2 sum 18.0 → 18.4). Norne still fails on: 5–6-corner polygons
+  (16.6%), inactive cells in 445/886 faulted stacks, D3 node welding (1,445 collisions).
+  D1 verified still live on main 2026-10-26: `build_topology` calls `_i_face_quads` directly.
+
+**New sibling repo (not an AXON project)**
+- `/mnt/c/projects/library-development/cpg-fault-fieldbook` — github.com/arturcastiel/
+  cpg-fault-fieldbook, PUBLIC, 1 commit (254667d, 10-12). Runnable tutorial + wiki;
+  `upstream-lock.toml` pins cpg2python e4637cc + fault-projections 0837f07 (= both mains).
+  CI RED: pip cannot clone fault-projections (PRIVATE) anonymously.
+- Also: `cpg-fault-wiki.html` (10-12), `fault-project-theory/` (LaTeX, 05-29, not git),
+  `fault-projections-benchmarks/` (scripts, not git), results in `~/projects/results-faults`.
+
+**Status unchanged: COMPLETE.** Follow-ups (#45, PR-013, fieldbook CI) belong to new projects.
