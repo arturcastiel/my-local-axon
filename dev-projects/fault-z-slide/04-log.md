@@ -131,3 +131,10 @@ branch:         main
 - Clean-up: all branches except main deleted locally and on GitHub (no open PRs); unmerged
   branches kept as archive/* tags; spike/z-slide → tag archive/spike-z-slide.
 - Open: fieldbook CI fails until the user sets FAULT_PROJECTIONS_TOKEN (read-only PAT).
+
+## 2026-10-27 — Phase 2-core: zcorn_ops merged, slide API in PR
+- User chose the core slide API plus all gaps (ADR-201…206 in phases/2-core/_decisions.md).
+- cpg2python PR #47 merged: `zcorn_ops` (P1) + 6 previously unbound exports.
+- fault-projections PR #2: `slide.py` (Throw, slide_grid, slide_deck, SlideResult report,
+  fault_blocks). Matches the prototype on 8 cases; ring with outside hanging wall fixed.
+- Two background agents: D2/inactive/pinch-out (cpg2python), gallery gaps (fault-projections).

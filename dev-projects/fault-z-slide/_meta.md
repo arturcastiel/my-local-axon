@@ -3,14 +3,14 @@ slug:            fault-z-slide
 schema-version:  v4
 status:          active
 legacy:          false
-phase:           1-prereqs
+phase:           2-core
 workflow-step:   build
 branch:          main
 codebase:        /mnt/c/projects/library-development/fault-projections
 parent:          (none)
 sub-projects:    []
 created:         2026-10-26
-updated:         2026-10-26
+updated:         2026-10-27
 
 ## Working Context
 - Goal: slide existing faults by editing ZCORN only — corners move ALONG their pillars
