@@ -152,3 +152,13 @@ branch:         main
   Steep-trace limit verified fixed (9/9 cases faces_invariant True). Merged with CI red only
   for the missing FAULT_PROJECTIONS_TOKEN secret; 45 tests + 29 lessons pass locally.
 - Clean-up: worktrees removed, merged branches deleted (local + remote), /tmp files removed.
+
+## 2026-10-28 — Phase 3-pipeline complete: fault-projections v0.3.0, fieldbook v0.4.0
+- fault-projections PR #5: `adapt_deck(slide=, slide_options=)` + P7 validation tests (tilted
+  pillars, slide_deck leaves FAULTS, Norne two-fault deck). Guide J.1 + rebuilt PDF. 274 tests.
+- PR #6 release v0.3.0 (7222fc4), tag + GitHub release.
+- Fieldbook PR #2 → v0.4.0 (4b09559): lesson 30 deck_slide_workflows (adapt+slide in one call;
+  Norne slide_deck), lessons 23–29 without interior/close_ring (verified no-ops), pins 0.3.0.
+  46 tests + 30 lessons pass locally; CI red only for the missing secret.
+- Clean-up: branches deleted, all repos main-only, no open PRs, /tmp/norne removed.
+

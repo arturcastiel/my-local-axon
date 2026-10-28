@@ -3,8 +3,8 @@ slug:            fault-z-slide
 schema-version:  v4
 status:          active
 legacy:          false
-phase:           2-core
-workflow-step:   done (2-core complete; next phase not chosen)
+phase:           3-pipeline
+workflow-step:   done (3-pipeline complete; next phase not chosen)
 branch:          main
 codebase:        /mnt/c/projects/library-development/fault-projections
 parent:          (none)
@@ -20,4 +20,6 @@ updated:         2026-10-28
   no open PRs, no worktrees.
 - Library API: `fault_projections.slide_grid/slide_deck/Throw` on `cpg2unstructured.zcorn_ops`.
 - User action pending: set fieldbook secret FAULT_PROJECTIONS_TOKEN (read-only PAT) — CI red until then.
-- Next candidates: see phases/2-core/_meta.md "NOT DONE".
+- Phase 3-pipeline COMPLETE (2026-10-28): fault-projections v0.3.0 (7222fc4, adapt_deck(slide=),
+  validation incl. Norne, guide PDF), fieldbook v0.4.0 (4b09559, lesson 30, guards dropped).
+- Next candidates: see phases/3-pipeline/_meta.md "STILL OPEN".
