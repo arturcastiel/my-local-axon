@@ -162,3 +162,11 @@ branch:         main
   46 tests + 30 lessons pass locally; CI red only for the missing secret.
 - Clean-up: branches deleted, all repos main-only, no open PRs, /tmp/norne removed.
 
+## 2026-10-28 — Phase 4-limits complete: fault-projections v0.4.0, fieldbook v0.5.0
+- fault-projections PR #7 (247507e, tag + release v0.4.0): `live_faces` + faces_invariant on
+  live faces (L-shape fix); `adapt_grid/adapt_deck(top_trace=)` two-stage dipping faults in one
+  call, `surface_top_trace`; `viz.plot_slide`, `write_slide_png`, `slide_deck(png=)`.
+  283 passed / 1 skipped, CI green.
+- Fieldbook PR #3 (8b04e9d, tag + release v0.5.0): lesson 30 C (65° polygon, top_trace="auto",
+  15 m slide, volume −1.2 % vs wedge), B PNG optional, lesson 25 uses top_trace (identical
+  output); docs + pins 0.4.0 + inventory. 46 tests (30 lessons) pass; CI red only for the secret.

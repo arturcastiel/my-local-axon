@@ -3,8 +3,8 @@ slug:            fault-z-slide
 schema-version:  v4
 status:          active
 legacy:          false
-phase:           3-pipeline
-workflow-step:   done (3-pipeline complete; next phase not chosen)
+phase:           4-limits
+workflow-step:   done (4-limits complete; next phase not chosen)
 branch:          main
 codebase:        /mnt/c/projects/library-development/fault-projections
 parent:          (none)
@@ -22,4 +22,6 @@ updated:         2026-10-28
 - User action pending: set fieldbook secret FAULT_PROJECTIONS_TOKEN (read-only PAT) — CI red until then.
 - Phase 3-pipeline COMPLETE (2026-10-28): fault-projections v0.3.0 (7222fc4, adapt_deck(slide=),
   validation incl. Norne, guide PDF), fieldbook v0.4.0 (4b09559, lesson 30, guards dropped).
-- Next candidates: see phases/3-pipeline/_meta.md "STILL OPEN".
+- Phase 4-limits COMPLETE (2026-10-28): fault-projections v0.4.0 (247507e: top_trace two-stage,
+  surface_top_trace, live_faces L-shape fix, slide PNG), fieldbook v0.5.0 (8b04e9d: lesson 30 C).
+- Next candidates: see phases/4-limits/_meta.md "STILL OPEN".

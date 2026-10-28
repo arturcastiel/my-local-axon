@@ -2,7 +2,7 @@
 
 ## Phase graph (directed)
 
-- **0-spike** → 1-prereqs → 2-core → 3-pipeline → 4-validation → 5-docs
+- **0-spike** → 1-prereqs → 2-core → 3-pipeline → 4-validation → 5-docs → 4-limits
   (1-prereqs may run in parallel with the spike; 2-core needs both)
 
 | Phase | Skeleton | Repo(s) | Content |
@@ -13,5 +13,6 @@
 | 3-pipeline (complete, fp v0.3.0) | P5–P6 | fault-projections | P5 juxtaposition / throw / NNC report. P6 `slide_grid`, `slide_deck`, `adapt_deck(slide=…)`, INCLUDE + FAULTS-invariant + VTK/PNG. |
 | 4-validation (done inside 3-pipeline: tests in fp test_slide.py + Norne) | P7 | both libs | Synthetic closed block, fault-with-tip, dipping deck (stage-2), Norne. Invariants: Δ=0 identity, +Δ/−Δ round-trip, COORD & FAULTS unchanged, thickness preserved. |
 | 5-docs (done except optional learn/throw.md, cases/relay-ramp.md — covered by lessons 22, 24; fieldbook v0.4.0) | P8 | cpg-fault-fieldbook | examples 19 (slide) / 20 (dip-slip) (renumbered: 01–18 taken after P0.2); `functions/slide-faults.md`, `learn/throw.md`, `cases/relay-ramp.md`; api-inventory; `upstream-lock.toml` bump. |
+| 4-limits (complete, fp v0.4.0 / fieldbook v0.5.0) | — | fault-projections, fieldbook | Open items after 3-pipeline: L-shape faces_invariant (live faces), stage-2 chain (`top_trace=` two-stage), slide PNG; lesson 30 C. |
 
 Phases are added by: code-dev phase new
