@@ -1,9 +1,9 @@
 # Phase: 1-prereqs
 schema-version: v4
-status:         active
+status:         complete
 workflow-step:  build
 branch:         fix/d1-fault-aware-topology (cpg2python)
-current-pr:     (none — local commit 1eef539, not pushed)
+current-pr:     (none) — shipped in cpg2python v0.3.0 (897040d), pushed 2026-10-27
 created:        2026-10-26
 
 ## Working Context

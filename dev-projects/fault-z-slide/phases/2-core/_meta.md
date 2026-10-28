@@ -1,17 +1,22 @@
 # Phase: 2-core
 schema-version: v4
-status:         active
+status:         complete
 workflow-step:  build
-branch:         feat/slide (fault-projections), feat/general-fault-faces + fix/gallery-gaps (worktrees)
-current-pr:     fault-projections #2 (slide); cpg2python #47 merged (zcorn_ops)
+branch:         main (all repos)
+current-pr:     (none) — merged: cpg2python #47 #48 #49, fault-projections #2 #3 #4, fieldbook #1
+completed:      2026-10-28
 created:        2026-10-27
 
 ## Working Context
-- P1 DONE: cpg2python `zcorn_ops` (zcorn_cube, with_zcorn, apply_zcorn_displacement,
-  unwelded_faces, zcorn_validity) — PR #47 merged (03b65cc). Also bound 6 unbound `__all__` names.
-- P2–P6 DONE on fault-projections `feat/slide` (PR #2): `slide.py` ported from fieldbook
-  zslide.py; bit-identical on 8 comparison cases; fixes prototype ring-closing patch. 15 tests.
-- Agents: cpg-faces (D2, inactive, pinch-out) in wt-cpg2python-faces; fp-gaps (faults_after,
-  path spurs, ragged adapt, taper, pinned rim, vtk precision/.vtu/.pvd, INCLUDE, deck names)
-  in wt-fault-projections-gaps.
-- Next: merge agents' branches, releases, `adapt_deck(slide=)`, fieldbook migration, Norne.
+- DONE: cpg2python v0.4.0 (7d98aeb): `zcorn_ops` (#47), general fault faces D2 — inactive cells,
+  pinch-outs, edge-crossing nodes, `Faces.loops`; Norne 0 open cells (#48); release (#49).
+- DONE: fault-projections v0.2.0 (353b049): `slide.py` (#2), gallery gaps 1–8 + deterministic
+  stitch tie-break (I-step first) + targets weight floor (#3), CHANGELOG + release (#4).
+- DONE: fieldbook v0.3.0 (8f5a1ad, PR #1): zslide.py over `slide_grid`; lessons 20/25/26/28 show
+  D2 instead of NonMatchingZError; pins bumped; new page docs/functions/fault-slide.md;
+  limits/coverage/gallery/z-slide/README updated. 45 tests + all 29 lessons pass locally.
+- Fieldbook PR #1 merged with CI red ONLY because secret FAULT_PROJECTIONS_TOKEN is unset (user).
+- NOT DONE (candidates for next phase): `adapt_deck(slide=...)`; Norne `slide_deck` check (P7);
+  drop lesson guards (interior/close_ring/named_chains/taper_cells=0, custom vtu, INCLUDE in 29);
+  rebuild engineers' guide PDF; k-direction faults; skew-pillar volume drift (≤4.4 % Norne);
+  L-shaped active region → faces_invariant False.

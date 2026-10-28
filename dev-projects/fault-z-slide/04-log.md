@@ -138,3 +138,17 @@ branch:         main
 - fault-projections PR #2: `slide.py` (Throw, slide_grid, slide_deck, SlideResult report,
   fault_blocks). Matches the prototype on 8 cases; ring with outside hanging wall fixed.
 - Two background agents: D2/inactive/pinch-out (cpg2python), gallery gaps (fault-projections).
+
+## 2026-10-28 — Phase 2-core complete: releases v0.4.0 / v0.2.0 / v0.3.0
+- fault-projections PR #3 merged (gaps 1–8). CI on newer scipy broke the ring test: Dijkstra
+  tie-break on diagonal lattice steps. Fix: `stitch_path` resolves 2-edge ties I-step first
+  (matches `targets._lattice_path`); `targets_from_polygon` drops weights ≤ 1e-9.
+- cpg2python PR #48 merged (D2): Faces.loops, segment crossings, intersection nodes in k-faces;
+  Norne 0 open cells, closure 1.2e-12. Releases: cpg2python v0.4.0 (PR #49, 7d98aeb),
+  fault-projections v0.2.0 (PR #4, 353b049, new CHANGELOG, needs cpg2unstructured>=0.4.0).
+- Fieldbook PR #1 → v0.3.0 (8f5a1ad): zslide.py over slide_grid; lessons 20/25/26/28 assert the
+  D2 behaviour (15 m taper: 10 faces with intersection nodes; inactive cell → boundary faces);
+  pins + inventory; docs/functions/fault-slide.md; limits rewritten (fixed vs still open).
+  Steep-trace limit verified fixed (9/9 cases faces_invariant True). Merged with CI red only
+  for the missing FAULT_PROJECTIONS_TOKEN secret; 45 tests + 29 lessons pass locally.
+- Clean-up: worktrees removed, merged branches deleted (local + remote), /tmp files removed.
